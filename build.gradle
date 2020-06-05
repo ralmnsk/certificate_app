@@ -1,0 +1,117 @@
+//plugins {
+//     id 'application'
+//}
+
+apply plugin: 'java'
+//apply plugin: 'war'
+apply plugin: 'application'
+apply plugin: 'idea'
+//apply plugin: 'com.bmuschko.tomcat'
+mainClassName = 'com.epam.esm.web.Main'
+
+group 'com.epam.esm'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+subprojects{
+     apply plugin: 'java'
+     group = 'com.epam.esm'
+     version = '1.0-SNAPSHOT'
+     sourceCompatibility = '1.8'
+     targetCompatibility = '1.8'
+}
+
+allprojects{
+     repositories {
+          mavenCentral()
+     }
+     dependencies {
+     //Utils
+          // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+          implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
+          // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+          implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.11.0'
+          // https://mvnrepository.com/artifact/javax.validation/validation-api
+          implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+          // https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator
+          implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.5.Final'
+          // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+          implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.7'
+
+     //Spring
+          // https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+          implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.2.6.RELEASE'
+          implementation group: 'org.springframework', name: 'spring-web', version: '5.2.6.RELEASE'
+          // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
+          implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.2.6.RELEASE'
+
+          // https://mvnrepository.com/artifact/org.springframework/spring-context
+          implementation group: 'org.springframework', name: 'spring-context', version: '5.2.6.RELEASE'
+
+
+     //loggin
+          // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+          implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+     //jdbc
+          // https://mvnrepository.com/artifact/org.postgresql/postgresql
+          implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.12'
+          // https://mvnrepository.com/artifact/com.mchange/c3p0
+//          implementation group: 'com.mchange', name: 'c3p0', version: '0.9.5.5'
+
+          // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+//          implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
+//server & servlet
+          // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
+          implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+          implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version:'8.5.23'
+          // https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
+          implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '8.5.23'
+          // https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper
+          implementation group: 'org.apache.tomcat', name: 'tomcat-jasper', version: '8.5.23'
+
+          //testing
+          // https://mvnrepository.com/artifact/org.mockito/mockito-core
+          testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
+          // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+          testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.3.3'
+
+          // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+          implementation "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+          implementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+//          testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.0'
+          testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.6.1"
+     }
+
+//     test{
+//          useJUnitPlatform()
+//     }
+
+     tasks.withType(Test){
+          useJUnitPlatform()
+//          jvmArgs '--enable-preview'
+     }
+}
+
+//dependencies {
+//     def tomcatVersion = '9.0.30'
+//
+//     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+//             "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+//             "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+//}
+//
+//
+//buildscript {
+//
+//     repositories {
+//          jcenter()
+//     }
+//
+//     dependencies {
+//          classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.2'
+//     }
+//}
+
+
+

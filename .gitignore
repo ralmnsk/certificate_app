@@ -1,0 +1,17 @@
+.idea/
+# Project exclude paths
+/.gradle/
+/build/
+/model/build/
+/model/out/
+/model/out/production/classes/
+/repository/build/
+/repository/out/
+/repository/out/production/classes/
+/repository/out/test/classes/
+/service/build/
+/service/out/
+/service/out/production/classes/
+/service/out/test/classes/
+/web/out/
+/web/out/production/classes/
