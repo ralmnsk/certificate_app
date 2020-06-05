@@ -1,7 +1,8 @@
-package com.epam.esm.service;
+package com.epam.esm.service.tag;
 
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.tag.TagRepository;
+import com.epam.esm.service.certificate.CertificateServiceDefault;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.TagDto;
 import org.slf4j.Logger;

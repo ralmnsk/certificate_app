@@ -1,5 +1,4 @@
 rootProject.name = 'certificate_app'
-include 'model'
 include 'repository'
 include 'service'
 include 'web'

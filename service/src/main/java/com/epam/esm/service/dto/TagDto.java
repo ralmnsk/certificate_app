@@ -5,25 +5,16 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TagDto {
-
-    private long id;
+public class TagDto extends Dto<Long> {
 
     @NotNull
     @Size(min = 2, max = 190, message
             = "Name must be between 2 and 190 characters")
     private String name;
+
     private Set<CertificateDto> certificateDtos = new HashSet<CertificateDto>();
 
     public TagDto() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -60,7 +51,7 @@ public class TagDto {
     @Override
     public String toString() {
         return "TagDto{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", certificateDtos=" + certificateDtos +
                 '}';

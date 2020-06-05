@@ -5,9 +5,7 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Tag {
-
-    private long id;
+public class Tag extends Entity<Long> {
 
     @NotNull
     @Size(min = 2, max = 190, message
@@ -16,14 +14,6 @@ public class Tag {
     private Set<Certificate> certificates = new HashSet<Certificate>();
 
     public Tag() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -60,7 +50,7 @@ public class Tag {
     @Override
     public String toString() {
         return "Tag{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", certificates=" + certificates +
                 '}';

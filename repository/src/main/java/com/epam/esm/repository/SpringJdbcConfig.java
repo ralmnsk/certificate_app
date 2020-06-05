@@ -10,19 +10,17 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-
 @Configuration
 @ComponentScan("com.epam.esm.repository")
 @PropertySource("classpath:repository.properties")
 public class SpringJdbcConfig {
 
-    @Autowired
-    Environment environment;
-
     private final String URL = "jdbc";
     private final String USER = "user";
     private final String DRIVER = "driver";
     private final String PASSWORD = "password";
+    @Autowired
+    Environment environment;
 
     @Bean
     DataSource dataSource() {

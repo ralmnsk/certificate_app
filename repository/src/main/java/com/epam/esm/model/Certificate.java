@@ -9,45 +9,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class Certificate {
+public class Certificate extends Entity<Long> {
 
-    private Long id;
-
-    @NotNull
-    @Size(min = 2, max = 190, message
-            = "Name must be between 2 and 190 characters")
     private String name;
 
-    @Size(min = 0, max = 999, message
-            = "Description must be between 0 and 999 characters")
     private String description;
 
-    @DecimalMin(value = "0.00")
-    @DecimalMax(value = "1000000000000.00")
-    @Digits(integer = 13, fraction = 2)
     private BigDecimal price;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant creation;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant modification;
 
-    @Min(value = 0)
-    @Max(value = 100000)
     private Integer duration;
 
     private Set<Tag> tags = new HashSet<Tag>();
 
     public Certificate() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -110,9 +88,7 @@ public class Certificate {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Certificate that = (Certificate) o;
-
         if (!name.equals(that.name)) return false;
         return creation.equals(that.creation);
     }
@@ -120,7 +96,6 @@ public class Certificate {
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + description.hashCode();
         result = 31 * result + creation.hashCode();
         return result;
     }
@@ -128,7 +103,7 @@ public class Certificate {
     @Override
     public String toString() {
         return "Certificate{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +

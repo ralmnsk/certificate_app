@@ -1,6 +1,6 @@
-package com.epam.esm.web;
+package com.epam.esm.web.controller;
 
-import com.epam.esm.service.CertificateService;
+import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

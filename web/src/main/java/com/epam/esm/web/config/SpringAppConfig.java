@@ -1,4 +1,4 @@
-package com.epam.esm.web;
+package com.epam.esm.web.config;
 
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;

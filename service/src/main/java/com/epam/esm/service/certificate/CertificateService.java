@@ -1,7 +1,8 @@
-package com.epam.esm.service;
+package com.epam.esm.service.certificate;
 
 
-import com.epam.esm.model.Certificate;
+import com.epam.esm.service.Service;
+
 import java.util.List;
 
 public interface CertificateService<T> extends Service<T> {

@@ -1,6 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.model.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.validation.constraints.*;
@@ -10,9 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class CertificateDto {
-
-    private Long id;
+public class CertificateDto extends Dto<Long> {
 
     @NotNull
     @Size(min = 2, max = 190, message
@@ -41,14 +38,6 @@ public class CertificateDto {
     private Set<TagDto> tagDtos = new HashSet<TagDto>();
 
     public CertificateDto() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -128,7 +117,7 @@ public class CertificateDto {
     @Override
     public String toString() {
         return "CertificateDto{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +

@@ -1,4 +1,4 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.certificate.tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

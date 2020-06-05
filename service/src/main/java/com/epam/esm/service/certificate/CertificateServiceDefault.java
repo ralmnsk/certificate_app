@@ -1,10 +1,10 @@
-package com.epam.esm.service;
+package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.CertificateRepository;
-import com.epam.esm.repository.CertificateTagRepository;
-import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.certificate.CertificateRepository;
+import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
+import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;

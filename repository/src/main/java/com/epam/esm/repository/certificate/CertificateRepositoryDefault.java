@@ -1,6 +1,7 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.certificate;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.repository.mapper.CertificateMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

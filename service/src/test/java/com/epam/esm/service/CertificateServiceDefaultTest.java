@@ -1,7 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.repository.CertificateRepository;
+import com.epam.esm.repository.certificate.CertificateRepository;
+import com.epam.esm.service.certificate.CertificateServiceDefault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

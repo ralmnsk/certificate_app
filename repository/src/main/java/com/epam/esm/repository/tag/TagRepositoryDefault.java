@@ -1,6 +1,7 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.tag;
 
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.mapper.TagMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

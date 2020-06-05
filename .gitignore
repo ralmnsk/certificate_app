@@ -15,3 +15,5 @@
 /service/out/test/classes/
 /web/out/
 /web/out/production/classes/
+*.log
+/logs/
