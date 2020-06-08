@@ -2,19 +2,20 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.web.exception.CertificateAlreadyExistsException;
+import com.epam.esm.web.exception.CertificateNotFoundException;
+import com.epam.esm.web.exception.CertificateUpdateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping
+@RequestMapping("/certificates")
 public class CertificateController {
     private final CertificateService<CertificateDto> certificateService;
 
@@ -23,54 +24,42 @@ public class CertificateController {
         this.certificateService = certificateService;
     }
 
-    @GetMapping("/certificates")
-    public ResponseEntity<List<CertificateDto>> certificates() {
-        List<CertificateDto> list = certificateService.getAll();
-        if (list.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<CertificateDto> getAll() {
+        return certificateService.getAll();
     }
 
-    @GetMapping("/certificate/{id}")
-    public ResponseEntity<CertificateDto> getCertificate(@PathVariable Long id) {
-        Optional<CertificateDto> certificateDto = Optional.ofNullable(certificateService.get(id));
-        return certificateDto
-                .map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @GetMapping("/{id}")
+    public CertificateDto get(@PathVariable Long id) {
+        return certificateService.get(id)
+                .orElseThrow(() -> new CertificateNotFoundException(id));
     }
 
-    @PostMapping("/certificate")
-    public ResponseEntity<CertificateDto>
-    createCertificate(@Valid @RequestBody CertificateDto certificateDto) throws URISyntaxException {
-        if (certificateService.save(certificateDto)) {
-            CertificateDto result = certificateService.getByName(certificateDto.getName());
-            if (result != null) {
-                return ResponseEntity.created(new URI("/certificate" + result.getId())).body(result);
-            }
+    @PostMapping
+    public CertificateDto
+    create(@Valid @RequestBody CertificateDto certificateDto)
+            throws CertificateAlreadyExistsException {
+        Optional<CertificateDto> certificateDtoOptional = certificateService.save(certificateDto);
+        if (certificateDtoOptional.isPresent()){
+            return certificateDtoOptional.get();
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        throw new CertificateAlreadyExistsException();
     }
 
-    @PutMapping("/certificate/{id}")
-    public ResponseEntity<CertificateDto>
-    updateCertificate(@Valid @RequestBody CertificateDto certificateDto) {
-        boolean result = certificateService.update(certificateDto);
-        if (result) {
-            Optional<CertificateDto> found = Optional.ofNullable(certificateService.getByName(certificateDto.getName()));
-            found
-                    .map(response -> ResponseEntity.ok().body(response))
-                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @PutMapping("/{id}")
+    public CertificateDto
+    update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) throws CertificateUpdateException{
+        certificateDto.setId(id);
+        Optional<CertificateDto> certificateDtoOptional = certificateService.update(certificateDto);
+        if(certificateDtoOptional.isPresent()){
+            return certificateDtoOptional.get();
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        throw new CertificateUpdateException(certificateDto);
     }
 
-    @DeleteMapping("/certificate/{id}")
-    public ResponseEntity<CertificateDto> deleteCertificate(@PathVariable Long id) {
-        boolean delete = certificateService.delete(id);
-        if (delete) {
-            return ResponseEntity.ok().build();
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        certificateService.delete(id);
     }
 }

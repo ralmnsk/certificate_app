@@ -1,8 +1,10 @@
 package com.epam.esm.service;
 
+import java.util.Optional;
+
 public interface Service<T> {
-    boolean save(T t);
-    T get(Long id);
-    boolean update(T t);
+    Optional<T> save(T t);
+    Optional<T> get(Long id);
+    Optional<T> update(T t);
     boolean delete(Long id);
 }

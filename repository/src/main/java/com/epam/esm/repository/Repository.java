@@ -1,12 +1,14 @@
 package com.epam.esm.repository;
 
-public interface Repository<T> {
+import java.util.Optional;
 
-    boolean save(T t);
+public interface Repository<T,E> {
 
-    T get(Long id);
+    Optional<T> save(T t);
 
-    boolean update(T t);
+    Optional<T> get(E id);
 
-    boolean delete(Long id);
+    Optional<T> update(T t);
+
+    boolean delete(E id);
 }

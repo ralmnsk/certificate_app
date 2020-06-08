@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class CertificateMapper implements RowMapper<Certificate> {
+
     public Certificate mapRow(ResultSet resultSet, int i) throws SQLException {
         Certificate certificate = new Certificate();
         certificate.setId(resultSet.getLong("id"));

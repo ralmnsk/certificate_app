@@ -4,10 +4,11 @@ import com.epam.esm.model.Certificate;
 import com.epam.esm.repository.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface CertificateRepository<T> extends Repository<T> {
+public interface CertificateRepository<T,E> extends Repository<T,E> {
 
     List<T> getAll();
 
-    T getByName(String name);
+    Optional<T> getByName(String name);
 }

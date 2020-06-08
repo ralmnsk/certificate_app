@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,15 +24,15 @@ import java.util.stream.Collectors;
 public class CertificateServiceDefault implements CertificateService<CertificateDto> {
 
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceDefault.class);
-    private CertificateRepository<Certificate> certificateRepository;
+    private CertificateRepository<Certificate, Long> certificateRepository;
     private CertificateTagRepository certificateTagRepository;
-    private TagRepository<Tag> tagRepository;
+    private TagRepository<Tag, Long> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
-    public CertificateServiceDefault(CertificateRepository<Certificate> certificateRepository,
+    public CertificateServiceDefault(CertificateRepository<Certificate, Long> certificateRepository,
                                      CertificateTagRepository certificateTagRepository,
-                                     TagRepository<Tag> tagRepository,
+                                     TagRepository<Tag, Long> tagRepository,
                                      CertificateConverter certificateConverter,
                                      TagConverter tagConverter) {
         this.certificateRepository = certificateRepository;
@@ -42,16 +43,16 @@ public class CertificateServiceDefault implements CertificateService<Certificate
     }
 
     @Override
-    public CertificateDto getByName(String name) {
+    public Optional<CertificateDto> getByName(String name) {
         if (name != null) {
-            Certificate certificate = certificateRepository.getByName(name);
-            if (certificate != null) {
-                CertificateDto certificateDto = certificateConverter.toDto(certificate);
+            Optional<Certificate> optionalCertificate = certificateRepository.getByName(name);
+            if (optionalCertificate.isPresent()) {
+                CertificateDto certificateDto = certificateConverter.toDto(optionalCertificate.get());
                 addCollection(certificateDto);
-                return certificateDto;
+                return Optional.ofNullable(certificateDto);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private void addCollection(CertificateDto certificateDto) {  //add list to the set of certificateDto
@@ -74,35 +75,51 @@ public class CertificateServiceDefault implements CertificateService<Certificate
     }
 
     @Override
-    public boolean save(CertificateDto certificateDto) {
+    public Optional<CertificateDto> save(CertificateDto certificateDto) {
         if (certificateDto != null) {
             Certificate certificate = certificateConverter.toEntity(certificateDto);
             if (certificate != null) {
-                boolean isSaved = certificateRepository.save(certificate);
-                if (isSaved && certificate.getName() != null) {
-                    certificate = certificateRepository.getByName(certificate.getName());
-                    saveTags(certificate);
+                Optional<Certificate> certificateOptional = certificateRepository.save(certificate);
+                if (certificateOptional.isPresent() && certificate.getName() != null) {
+                    saveTags(certificateOptional.get());
+                    return Optional.ofNullable(certificateConverter.toDto(certificateOptional.get()));
                 }
-                return isSaved;
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     private boolean saveTags(Certificate certificate) {
         if (certificate != null && !certificate.getTags().isEmpty()) {
             certificate.getTags().forEach(t -> {
                 if (t != null && t.getName() != null) {
-                    Tag tag = tagRepository.getByName(t.getName());
-                    if (tag == null) {
-                        if (tagRepository.save(t)) {
-                            tag = tagRepository.getByName(t.getName());
-                            certificateTagRepository
-                                    .saveCertificateTag(certificate.getId(),
-                                            tag.getId());
+                    Optional<Tag> tagOptional = tagRepository.save(t);
+                    if(tagOptional.isPresent()){ //new tag save and connect to the certificate
+                        certificateTagRepository.saveCertificateTag(certificate.getId(),tagOptional.get().getId());
+                    } else{ //existing tag connecting to the certificate
+                        Optional<Tag> tagByNameOptional = tagRepository.getByName(t.getName());
+                        if (tagByNameOptional.isPresent()){
+                            Tag tag = tagByNameOptional.get();
+                            t.setId(tag.getId());
+                            certificateTagRepository.saveCertificateTag(certificate.getId(),tag.getId());
                         }
-
                     }
+//                    Optional<Tag> optionalTag = tagRepository.getByName(t.getName());
+//                    if (!optionalTag.isPresent()) {
+//                        optionalTag = tagRepository.save(t);
+//                    } else {
+//                        optionalTag = tagRepository.getByName(t.getName());
+//                    }
+//                    optionalTag
+//                            .ifPresent(tag ->
+//                            {
+//                                boolean isSavedCertificateTag = certificateTagRepository
+//                                        .saveCertificateTag(certificate.getId(), tag.getId());
+//                                if(!isSavedCertificateTag){
+//                                    t
+//                                }
+//
+//                            });
                 }
             });
             return true;
@@ -111,28 +128,34 @@ public class CertificateServiceDefault implements CertificateService<Certificate
     }
 
     @Override
-    public CertificateDto get(Long id) {
-        Certificate certificate = certificateRepository.get(id);
-        if (certificate != null) {
-            CertificateDto certificateDto = certificateConverter.toDto(certificate);
+    public Optional<CertificateDto> get(Long id) {
+        Optional<Certificate> certificateOptional = certificateRepository.get(id);
+        if (certificateOptional.isPresent()) {
+            CertificateDto certificateDto = certificateConverter.toDto(certificateOptional.get());
             addCollection(certificateDto);
-            return certificateDto;
+            return Optional.ofNullable(certificateDto);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public boolean update(CertificateDto certificateDto) {
+    public Optional<CertificateDto> update(CertificateDto certificateDto) {
         if (certificateDto != null) {
             Certificate certificate = certificateConverter.toEntity(certificateDto);
-            boolean isUpdated = certificateRepository.update(certificate);
-            if (isUpdated && certificate.getName() !=null) {
-                certificate = certificateRepository.getByName(certificate.getName());
-                saveTags(certificate);
+            if (certificate != null) {
+                Optional<Certificate> certificateOptional = certificateRepository.update(certificate);
+                if (certificateOptional.isPresent()){
+                    certificate = certificateOptional.get();
+                    saveTags(certificate);
+                    certificateDto = certificateConverter.toDto(certificate);
+                    if (certificateDto != null){
+                        addCollection(certificateDto);
+                    }
+                    return Optional.ofNullable(certificateDto);
+                }
             }
-            return isUpdated;
         }
-        return false;
+        return Optional.ofNullable(certificateDto);
     }
 
     @Override
@@ -150,7 +173,8 @@ public class CertificateServiceDefault implements CertificateService<Certificate
             return listTagIds
                     .stream()
                     .map(tagRepository::get)
-                    .filter(Objects::nonNull)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .map(tagConverter::toDto)
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());

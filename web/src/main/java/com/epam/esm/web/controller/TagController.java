@@ -2,6 +2,8 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.web.exception.TagAlreadyExistsException;
+import com.epam.esm.web.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping
+@RequestMapping("/tags")
 public class TagController {
     private final TagService<TagDto> tagService;
 
@@ -23,54 +25,32 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @GetMapping("/tags")
-    public ResponseEntity<List<TagDto>> tags() {
-        List<TagDto> list = tagService.getAll();
-        if (list.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<TagDto> tags() {
+        return tagService.getAll();
     }
 
-    @GetMapping("/tag/{id}")
-    public ResponseEntity<TagDto> getTag(@PathVariable Long id) {
-        Optional<TagDto> tagDto = Optional.ofNullable(tagService.get(id));
-        return tagDto
-                .map(response -> ResponseEntity.ok().body(response))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @GetMapping("/{id}")
+    public TagDto get(@PathVariable Long id) {
+        return tagService.get(id)
+                .orElseThrow(() -> new TagNotFoundException(id));
     }
 
-    @PostMapping("/tag")
-    public ResponseEntity<TagDto>
-    createTag(@Valid @RequestBody TagDto tagDto) throws URISyntaxException {
-        if (tagService.save(tagDto)) {
-            TagDto result = tagService.getByName(tagDto.getName());
-            if (result != null) {
-                return ResponseEntity.created(new URI("/tag" + result.getId())).body(result);
-            }
+    @PostMapping
+    public TagDto
+    create(@Valid @RequestBody TagDto tagDto) throws TagAlreadyExistsException {
+        Optional<TagDto> tagDtoOptional = tagService.save(tagDto);
+        if (tagDtoOptional.isPresent()){
+            return tagDtoOptional.get();
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        throw new TagAlreadyExistsException();
     }
 
-    @PutMapping("/tag/{id}")
-    public ResponseEntity<TagDto>
-    updateTag(@Valid @RequestBody TagDto tagDto) {
-        boolean result = tagService.update(tagDto);
-        if (result) {
-            Optional<TagDto> found = Optional.ofNullable(tagService.getByName(tagDto.getName()));
-            found
-                    .map(response -> ResponseEntity.ok().body(response))
-                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
 
-    @DeleteMapping("/tag/{id}")
-    public ResponseEntity<TagDto> deleteTag(@PathVariable Long id) {
-        boolean delete = tagService.delete(id);
-        if (delete) {
-            return ResponseEntity.ok().build();
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        tagService.delete(id);
     }
 }

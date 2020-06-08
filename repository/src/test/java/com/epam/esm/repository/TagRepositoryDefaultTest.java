@@ -10,12 +10,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TagRepositoryDefaultTest {
-    private TagRepository<Tag> repository;
+    private TagRepository<Tag,Long> repository;
     private Tag one;
     private Tag two;
 
@@ -32,17 +33,17 @@ class TagRepositoryDefaultTest {
 
     @AfterEach
     void tearDown() {
-        Tag byName = repository.getByName(one.getName());
-        if (byName != null) {
-            repository.delete(byName.getId());
+        Optional<Tag> byName = repository.getByName(one.getName());
+        if (byName.isPresent()) {
+            repository.delete(byName.get().getId());
         }
     }
 
     @Test
     void getByName() {
         repository.save(one);
-        Tag byName = repository.getByName(one.getName());
-        assertTrue(byName.getName().equals(one.getName()));
+        Optional<Tag> byName = repository.getByName(one.getName());
+        assertTrue(byName.get().getName().equals(one.getName()));
     }
 
     @Test
@@ -59,7 +60,7 @@ class TagRepositoryDefaultTest {
                 .stream()
                 .filter(u -> u.getName().equals(two.getName()))
                 .collect(Collectors.toList()).size() > 0);
-        repository.delete(repository.getByName(two.getName()).getId());
+        repository.delete(repository.getByName(two.getName()).get().getId());
     }
 
     @Test
@@ -73,55 +74,55 @@ class TagRepositoryDefaultTest {
 
     @Test
     void save() {
-        assertTrue(repository.save(one));
+        assertTrue(repository.save(one).isPresent());
     }
 
     @Test
     void get() {
         repository.save(one);
-        Tag byName = repository.getByName(one.getName());
-        assertEquals(byName.getName(), one.getName());
+        Optional<Tag> byName = repository.getByName(one.getName());
+        assertEquals(byName.get().getName(), one.getName());
     }
 
     @Test
     void update() {
         repository.save(one);
-        Tag read = repository.getByName(one.getName());
-        read.setName("new_name");
-        repository.update(read);
-        Tag updated = repository.get(read.getId());
-        assertEquals("new_name", updated.getName());
-        one = updated;
-        assertFalse(repository.update(two));
+        Optional<Tag> read = repository.getByName(one.getName());
+        read.get().setName("new_name");
+        repository.update(read.get());
+        Optional<Tag> updated = repository.get(read.get().getId());
+        assertEquals("new_name", updated.get().getName());
+        one = updated.get();
+        assertFalse(repository.update(two).isPresent());
     }
 
     @Test
     void delete() {
         repository.save(one);
-        Tag tag = repository.getByName(one.getName());
-        Long id = tag.getId();
+        Optional<Tag> tag = repository.getByName(one.getName());
+        Long id = tag.get().getId();
         repository.delete(id);
-        Tag check = repository.get(id);
-        assertNull(check);
+        Optional<Tag> check = repository.get(id);
+        assertFalse(check.isPresent());
     }
 
     @Test
     void getByLoginNoInDB(){
-        Tag tag = repository.getByName("no");
-        assertNull(tag);
+        Optional<Tag> tag = repository.getByName("no");
+        assertFalse(tag.isPresent());
     }
 
     @Test
     void getByIdNoInDB(){
-        Tag tag = repository.get(111111111L);
-        assertNull(tag);
+        Optional<Tag> tag = repository.get(111111111L);
+        assertFalse(tag.isPresent());
     }
 
     @Test
     void saveAlreadyExists() throws Exception{
         repository.save(one);
-        boolean saved = repository.save(one);
-        assertFalse(saved);
+        Optional<Tag> saved = repository.save(one);
+        assertFalse(saved.isPresent());
     }
 
     @Test

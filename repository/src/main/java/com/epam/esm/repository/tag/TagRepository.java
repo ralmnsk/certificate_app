@@ -3,10 +3,11 @@ package com.epam.esm.repository.tag;
 import com.epam.esm.repository.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface TagRepository<T> extends Repository<T> {
+public interface TagRepository<T, E> extends Repository<T, E> {
 
     List<T> getAll();
 
-    T getByName(String name);
+    Optional<T> getByName(String name);
 }
