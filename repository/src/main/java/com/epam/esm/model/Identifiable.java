@@ -1,6 +1,6 @@
 package com.epam.esm.model;
 
-public abstract class Entity<T> {
+public abstract class Identifiable<T> {
     private T id;
 
     public T getId() {

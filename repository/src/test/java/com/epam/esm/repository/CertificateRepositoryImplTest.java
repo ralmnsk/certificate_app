@@ -2,7 +2,7 @@ package com.epam.esm.repository;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.repository.certificate.CertificateRepositoryDefault;
+import com.epam.esm.repository.certificate.CertificateRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CertificateRepositoryDefaultTest {
+class CertificateRepositoryImplTest {
 
     private CertificateRepository<Certificate,Long> repository;
     private Certificate one;
@@ -29,7 +29,7 @@ class CertificateRepositoryDefaultTest {
     @BeforeEach
     void setUp() {
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringJdbcConfig.class);
-        repository = context.getBean(CertificateRepositoryDefault.class);
+        repository = context.getBean(CertificateRepositoryImpl.class);
 
         one = new Certificate();
         one.setName("name1");

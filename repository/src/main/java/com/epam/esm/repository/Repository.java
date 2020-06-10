@@ -2,7 +2,7 @@ package com.epam.esm.repository;
 
 import java.util.Optional;
 
-public interface Repository<T,E> {
+public interface Repository<T, E> {
 
     Optional<T> save(T t);
 
@@ -11,4 +11,6 @@ public interface Repository<T,E> {
     Optional<T> update(T t);
 
     boolean delete(E id);
+
+    Optional<T> getByName(String name);
 }

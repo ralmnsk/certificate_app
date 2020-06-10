@@ -12,16 +12,16 @@ import java.util.List;
 
 @Repository
 @Transactional
-public class CertificateTagRepositoryDefault implements CertificateTagRepository {
+public class CertificateTagRepositoryImpl implements CertificateTagRepository {
 
-    private static Logger logger = LoggerFactory.getLogger(CertificateTagRepositoryDefault.class);
+    private static Logger logger = LoggerFactory.getLogger(CertificateTagRepositoryImpl.class);
     private final String SQL_CERTIFICATE_BY_TAG_ID = "select certificate_id from certificate_tag where tag_id = ?";
     private final String SQL_TAG_BY_CERTIFICATE_ID = "select tag_id from certificate_tag where certificate_id = ?";
     private final String SQL_DELETE = "delete from certificate_tag where certificate_id = ? and tag_id = ?";
     private final String SQL_INSERT = "insert into certificate_tag(certificate_id, tag_id) values(?,?)";
     private JdbcTemplate jdbcTemplate;
 
-    public CertificateTagRepositoryDefault(DataSource dataSource) {
+    public CertificateTagRepositoryImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 

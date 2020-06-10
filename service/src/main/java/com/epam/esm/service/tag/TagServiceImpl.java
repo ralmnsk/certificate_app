@@ -5,13 +5,18 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
 import com.epam.esm.repository.tag.TagRepository;
-import com.epam.esm.service.certificate.CertificateServiceDefault;
+import com.epam.esm.service.certificate.CertificateServiceImpl;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagSaveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,19 +27,19 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class TagServiceDefault implements TagService<TagDto> {
-    private static Logger logger = LoggerFactory.getLogger(CertificateServiceDefault.class);
+public class TagServiceImpl implements TagService<TagDto> {
+    private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
     private CertificateRepository<Certificate, Long> certificateRepository;
     private CertificateTagRepository certificateTagRepository;
     private TagRepository<Tag, Long> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
-    public TagServiceDefault(CertificateRepository<Certificate, Long> certificateRepository,
-                             CertificateTagRepository certificateTagRepository,
-                             TagRepository<Tag, Long> tagRepository,
-                             CertificateConverter certificateConverter,
-                             TagConverter tagConverter) {
+    public TagServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
+                          CertificateTagRepository certificateTagRepository,
+                          TagRepository<Tag, Long> tagRepository,
+                          CertificateConverter certificateConverter,
+                          TagConverter tagConverter) {
         this.certificateRepository = certificateRepository;
         this.certificateTagRepository = certificateTagRepository;
         this.tagRepository = tagRepository;
@@ -44,13 +49,17 @@ public class TagServiceDefault implements TagService<TagDto> {
 
     @Override
     public Optional<TagDto> getByName(String name) {
-        if (name != null) {
-            Optional<Tag> optionalTag = tagRepository.getByName(name);
-            if (optionalTag.isPresent()) {
-                TagDto tagDto = tagConverter.toDto(optionalTag.get());
-                addCollection(tagDto);
-                return Optional.ofNullable(tagDto);
+        try {
+            if (name != null) {
+                Optional<Tag> optionalTag = tagRepository.getByName(name);
+                if (optionalTag.isPresent()) {
+                    TagDto tagDto = tagConverter.toDto(optionalTag.get());
+                    addCollection(tagDto);
+                    return Optional.ofNullable(tagDto);
+                }
             }
+        } catch (EmptyResultDataAccessException e) {
+            logger.info("There is no such tag name = {}", name, e);
         }
         return Optional.empty();
     }
@@ -76,47 +85,62 @@ public class TagServiceDefault implements TagService<TagDto> {
 
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
+
         if (tagDto != null) {
             tagDto.getCertificateDtos().clear();
             Tag tag = tagConverter.toEntity(tagDto);
-            if (tag != null) {
-                Optional<Tag> optionalTag = tagRepository.save(tag);
-                if (optionalTag.isPresent() && tag.getName() != null) {
+            if (tag != null && tag.getName() != null && !getByName(tag.getName()).isPresent()) {
+                try {
+                    Optional<Tag> optionalTag = tagRepository.save(tag);
+                    if (optionalTag.isPresent() && tag.getName() != null) {
 //                    saveCertificates(optionalTag.get());
-                    return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
+                        return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
+                    }
+                } catch (DuplicateKeyException e) {
+                    logger.info("This tag already exists: {} {}", tag.getName(), e);
+                } catch (NullPointerException e) {
+                    logger.info("Tag id Nullpointer exception ", e);
+                    throw new TagSaveException(tagDto);
                 }
             }
         }
-        return Optional.empty();
+        throw new TagAlreadyExistsException(tagDto);
+
     }
 
-    private boolean saveCertificates(Tag tag) {
-        if (tag != null && !tag.getCertificates().isEmpty()) {
-            tag.getCertificates().forEach(c -> {
-                if (c != null && c.getName() != null) {
-                    Optional<Certificate> optionalCertificate = certificateRepository.getByName(c.getName());
-                    if (!optionalCertificate.isPresent()) {
-                        optionalCertificate = certificateRepository.save(c);
-                        optionalCertificate
-                                .ifPresent(certificate ->
-                                        certificateTagRepository.saveCertificateTag(certificate.getId(), tag.getId()));
-                    }
-                }
-            });
-            return true;
-        }
-        return false;
-    }
+//    private boolean saveCertificates(Tag tag) {
+//        if (tag != null && !tag.getCertificates().isEmpty()) {
+//            tag.getCertificates().forEach(c -> {
+//                if (c != null && c.getName() != null) {
+//                    Optional<Certificate> optionalCertificate = certificateRepository.getByName(c.getName());
+//                    if (!optionalCertificate.isPresent()) {
+//                        optionalCertificate = certificateRepository.save(c);
+//                        optionalCertificate
+//                                .ifPresent(certificate ->
+//                                        certificateTagRepository.saveCertificateTag(certificate.getId(), tag.getId()));
+//                    }
+//                }
+//            });
+//            return true;
+//        }
+//        return false;
+//    }
 
 
     @Override
     public Optional<TagDto> get(Long id) {
-        Optional<Tag> tagOptional = tagRepository.get(id);
-        if (tagOptional.isPresent()) {
-            TagDto tagDto = tagConverter.toDto(tagOptional.get());
-            addCollection(tagDto);
-            return Optional.ofNullable(tagDto);
+        try {
+            Optional<Tag> tagOptional = tagRepository.get(id);
+            if (tagOptional.isPresent()) {
+                TagDto tagDto = tagConverter.toDto(tagOptional.get());
+                addCollection(tagDto);
+                return Optional.ofNullable(tagDto);
+            }
+        } catch (EmptyResultDataAccessException e) {
+            logger.info("There is no tag id = {}", id, e);
+            throw new TagNotFoundException(id);
         }
+
         return Optional.empty();
     }
 

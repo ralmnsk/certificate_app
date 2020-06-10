@@ -1,15 +1,10 @@
 package com.epam.esm.model;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Tag extends Entity<Long> {
+public class Tag extends Identifiable<Long> {
 
-    @NotNull
-    @Size(min = 2, max = 190, message
-            = "Name must be between 2 and 190 characters")
     private String name;
     private Set<Certificate> certificates = new HashSet<Certificate>();
 

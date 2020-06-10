@@ -1,15 +1,12 @@
 package com.epam.esm.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
 
-public class Certificate extends Entity<Long> {
+public class Certificate extends Identifiable<Long> {
 
     private String name;
 
@@ -88,15 +85,23 @@ public class Certificate extends Entity<Long> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Certificate that = (Certificate) o;
+
         if (!name.equals(that.name)) return false;
-        return creation.equals(that.creation);
+        if (!description.equals(that.description)) return false;
+        if (!price.equals(that.price)) return false;
+        if (!creation.equals(that.creation)) return false;
+        return duration.equals(that.duration);
     }
 
     @Override
     public int hashCode() {
         int result = name.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + price.hashCode();
         result = 31 * result + creation.hashCode();
+        result = 31 * result + duration.hashCode();
         return result;
     }
 

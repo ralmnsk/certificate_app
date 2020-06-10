@@ -2,7 +2,7 @@ package com.epam.esm.repository;
 
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.tag.TagRepository;
-import com.epam.esm.repository.tag.TagRepositoryDefault;
+import com.epam.esm.repository.tag.TagRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TagRepositoryDefaultTest {
+class TagRepositoryImplTest {
     private TagRepository<Tag,Long> repository;
     private Tag one;
     private Tag two;
@@ -28,7 +28,7 @@ class TagRepositoryDefaultTest {
         two.setName("tagTwo");
 
         ApplicationContext context = new AnnotationConfigApplicationContext(SpringJdbcConfig.class);
-        repository = context.getBean(TagRepositoryDefault.class);
+        repository = context.getBean(TagRepositoryImpl.class);
     }
 
     @AfterEach

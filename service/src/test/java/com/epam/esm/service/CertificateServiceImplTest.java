@@ -3,16 +3,15 @@ package com.epam.esm.service;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.repository.certificate.CertificateRepositoryDefault;
+import com.epam.esm.repository.certificate.CertificateRepositoryImpl;
 import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
 import com.epam.esm.repository.tag.TagRepository;
-import com.epam.esm.repository.tag.TagRepositoryDefault;
+import com.epam.esm.repository.tag.TagRepositoryImpl;
 import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.certificate.CertificateServiceDefault;
+import com.epam.esm.service.certificate.CertificateServiceImpl;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.TagDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CertificateServiceDefaultTest {
+class CertificateServiceImplTest {
     private CertificateService<CertificateDto> service;
     private Tag tagOne;
     private Tag tagTwo;
@@ -46,10 +45,10 @@ class CertificateServiceDefaultTest {
     @BeforeEach
     void setUp() {
         ApplicationContext context = new AnnotationConfigApplicationContext(ServiceConfiguration.class);
-        service = context.getBean(CertificateServiceDefault.class);
-        certificateRepository = context.getBean(CertificateRepositoryDefault.class);
+        service = context.getBean(CertificateServiceImpl.class);
+        certificateRepository = context.getBean(CertificateRepositoryImpl.class);
         certificateTagRepository = context.getBean(CertificateTagRepository.class);
-        tagRepository = context.getBean(TagRepositoryDefault.class);
+        tagRepository = context.getBean(TagRepositoryImpl.class);
         certificateConverter = context.getBean(CertificateConverter.class);
         tagConverter = context.getBean(TagConverter.class);
 

@@ -1,7 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.web.exception.TagAlreadyExistsException;
-import com.epam.esm.web.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.TagNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

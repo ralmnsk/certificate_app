@@ -2,7 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.service.certificate.CertificateServiceDefault;
+import com.epam.esm.service.certificate.CertificateServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,7 +16,7 @@ class CertificateServiceTest {
     @Mock
     private CertificateRepository<Certificate,Long> repository;
     @InjectMocks
-    private CertificateServiceDefault service;
+    private CertificateServiceImpl service;
 
     @BeforeEach
     void setUp() {
@@ -32,8 +32,8 @@ class CertificateServiceTest {
 
     @Test
     void getAll() {
-        service.getAll();
-        Mockito.verify(repository).getAll();
+        service.getAll("","","","");
+        Mockito.verify(repository).getAll("","","","");
     }
 
     @Test

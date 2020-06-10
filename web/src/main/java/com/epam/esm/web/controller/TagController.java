@@ -2,16 +2,13 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.web.exception.TagAlreadyExistsException;
-import com.epam.esm.web.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagAlreadyExistsException;
+import com.epam.esm.service.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,19 +30,14 @@ public class TagController {
 
     @GetMapping("/{id}")
     public TagDto get(@PathVariable Long id) {
-        return tagService.get(id)
-                .orElseThrow(() -> new TagNotFoundException(id));
+        return tagService.get(id).get();
+//                .orElseThrow(() -> new TagNotFoundException(id));
     }
 
     @PostMapping
     public TagDto
     create(@Valid @RequestBody TagDto tagDto) throws TagAlreadyExistsException {
-        Optional<TagDto> tagDtoOptional = tagService.save(tagDto);
-        if (tagDtoOptional.isPresent()){
-            return tagDtoOptional.get();
-        }
-
-        throw new TagAlreadyExistsException();
+        return tagService.save(tagDto).get();
     }
 
 
