@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface CertificateRepository<T, E> extends Repository<T, E> {
 
-    List<T> getAll(String tagName, String name, String sortByName, String sortByDate);
+    List<T> getAll(FilterDto filter);
+
+    List<T> getByName(String name);
 
 }

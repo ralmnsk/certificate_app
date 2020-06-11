@@ -1,13 +1,10 @@
 package com.epam.esm.repository.tag;
 
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.exception.UpdateTagException;
 import com.epam.esm.repository.mapper.TagMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -25,23 +22,22 @@ import java.util.Optional;
 public class TagRepositoryImpl implements TagRepository<Tag, Long> {
 
     private static Logger logger = LoggerFactory.getLogger(TagRepositoryImpl.class);
-    private final String SQL_FIND = "select * from tag where id = ?";
-    private final String SQL_FIND_BY_NAME = "select * from tag where name = ?";
+    private final String SQL_FIND = "select tag.id, tag.name from tag where id = ?";
+    private final String SQL_FIND_BY_NAME = "select tag.id, tag.name from tag where name = ?";
     private final String SQL_DELETE = "delete from tag where id = ?";
     private final String SQL_INSERT = "insert into tag(name) values(?)";
     private final String SQL_UPDATE = "update tag set name = ? where id = ?";
-    private final String SQL_GET_ALL = "select * from tag";
+    private final String SQL_GET_ALL = "select tag.id, tag.name from tag";
     private JdbcTemplate jdbcTemplate;
     private TagMapper tagMapper;
 
-    @Autowired
-    public TagRepositoryImpl(DataSource dataSource) {
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        tagMapper = new TagMapper();
+    public TagRepositoryImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.tagMapper = tagMapper;
     }
 
     @Override
-    public Optional<Tag> getByName(String name) throws EmptyResultDataAccessException {
+    public Optional<Tag> getByName(String name) {
         return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND_BY_NAME, new Object[]{name}, tagMapper));
     }
 
@@ -51,7 +47,7 @@ public class TagRepositoryImpl implements TagRepository<Tag, Long> {
     }
 
     @Override
-    public Optional<Tag> save(Tag tag) throws DuplicateKeyException, NullPointerException {
+    public Optional<Tag> save(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection
@@ -68,13 +64,13 @@ public class TagRepositoryImpl implements TagRepository<Tag, Long> {
 
 
     @Override
-    public Optional<Tag> get(Long id) throws EmptyResultDataAccessException{
-            return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND, new Object[]{id}, tagMapper));
+    public Optional<Tag> get(Long id) {
+        return Optional.ofNullable(jdbcTemplate.queryForObject(SQL_FIND, new Object[]{id}, tagMapper));
     }
 
     @Override
     public Optional<Tag> update(Tag tag) {
-            throw new UpdateTagException("TagRepository has not update method implementation");
+        return Optional.empty();
     }
 
     @Override

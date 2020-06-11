@@ -7,5 +7,5 @@ public interface Service<T> {
     Optional<T> get(Long id);
     Optional<T> update(T t);
     boolean delete(Long id);
-    Optional<T> getByName(String name);
+
 }

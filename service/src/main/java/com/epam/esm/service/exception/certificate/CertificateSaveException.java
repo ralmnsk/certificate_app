@@ -1,8 +1,9 @@
-package com.epam.esm.service.exception;
+package com.epam.esm.service.exception.certificate;
 
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.exception.GeneralException;
 
-public class CertificateSaveException extends RuntimeException {
+public class CertificateSaveException extends GeneralException {
     public CertificateSaveException(CertificateDto certificateDto) {
         super("Certificate save exception: " + certificateDto);
     }

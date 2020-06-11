@@ -2,15 +2,12 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
-import com.epam.esm.service.exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/tags")
@@ -36,7 +33,7 @@ public class TagController {
 
     @PostMapping
     public TagDto
-    create(@Valid @RequestBody TagDto tagDto) throws TagAlreadyExistsException {
+    create(@Valid @RequestBody TagDto tagDto) {
         return tagService.save(tagDto).get();
     }
 

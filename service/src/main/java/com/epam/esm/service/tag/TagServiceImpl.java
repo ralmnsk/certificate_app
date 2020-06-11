@@ -10,9 +10,9 @@ import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.TagAlreadyExistsException;
-import com.epam.esm.service.exception.TagNotFoundException;
-import com.epam.esm.service.exception.TagSaveException;
+import com.epam.esm.service.exception.tag.TagNotFoundException;
+import com.epam.esm.service.exception.tag.TagSaveException;
+import com.epam.esm.service.exception.tag.TagUpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -98,34 +98,12 @@ public class TagServiceImpl implements TagService<TagDto> {
                     }
                 } catch (DuplicateKeyException e) {
                     logger.info("This tag already exists: {} {}", tag.getName(), e);
-                } catch (NullPointerException e) {
-                    logger.info("Tag id Nullpointer exception ", e);
-                    throw new TagSaveException(tagDto);
+                    throw new TagSaveException("This tag already exists: ", tagDto, e);
                 }
             }
         }
-        throw new TagAlreadyExistsException(tagDto);
-
+        return Optional.empty();
     }
-
-//    private boolean saveCertificates(Tag tag) {
-//        if (tag != null && !tag.getCertificates().isEmpty()) {
-//            tag.getCertificates().forEach(c -> {
-//                if (c != null && c.getName() != null) {
-//                    Optional<Certificate> optionalCertificate = certificateRepository.getByName(c.getName());
-//                    if (!optionalCertificate.isPresent()) {
-//                        optionalCertificate = certificateRepository.save(c);
-//                        optionalCertificate
-//                                .ifPresent(certificate ->
-//                                        certificateTagRepository.saveCertificateTag(certificate.getId(), tag.getId()));
-//                    }
-//                }
-//            });
-//            return true;
-//        }
-//        return false;
-//    }
-
 
     @Override
     public Optional<TagDto> get(Long id) {
@@ -146,8 +124,7 @@ public class TagServiceImpl implements TagService<TagDto> {
 
     @Override
     public Optional<TagDto> update(TagDto tagDto) {
-        //not implemented
-        return Optional.empty();
+        throw new TagUpdateException();
     }
 
     @Override

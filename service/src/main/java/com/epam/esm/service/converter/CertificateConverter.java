@@ -25,9 +25,11 @@ public class CertificateConverter implements Converter<CertificateDto, Certifica
             if (certificate != null && !certificateDto.getTagDtos().isEmpty()) {
                 Set<TagDto> tagDtos = certificateDto.getTagDtos();
                 tagDtos.forEach(tagDto -> {
-                    Tag tag = modelMapper.map(tagDto, Tag.class);
-                    if (tag != null) {
-                        certificate.getTags().add(tag);
+                    if (tagDto != null){
+                        Tag tag = modelMapper.map(tagDto, Tag.class);
+                        if (tag != null) {
+                            certificate.getTags().add(tag);
+                        }
                     }
                 });
             }
@@ -42,9 +44,11 @@ public class CertificateConverter implements Converter<CertificateDto, Certifica
             CertificateDto certificateDto = modelMapper.map(certificate, CertificateDto.class);
             if (certificateDto != null && !certificate.getTags().isEmpty()) {
                 certificate.getTags().forEach(tag -> {
-                    TagDto tagDto = modelMapper.map(tag, TagDto.class);
-                    if (tagDto != null) {
-                        certificateDto.getTagDtos().add(tagDto);
+                    if (tag != null){
+                        TagDto tagDto = modelMapper.map(tag, TagDto.class);
+                        if (tagDto != null) {
+                            certificateDto.getTagDtos().add(tagDto);
+                        }
                     }
                 });
             }

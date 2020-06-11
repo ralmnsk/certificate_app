@@ -4,28 +4,23 @@ import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
-import com.epam.esm.repository.exception.UpdateCertificateException;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.repository.certificate.FilterDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.CertificateAlreadyExistsException;
-import com.epam.esm.service.exception.CertificateNotFoundException;
-import com.epam.esm.service.exception.CertificateSaveException;
-import com.epam.esm.service.exception.CertificateUpdateException;
-import com.epam.esm.service.validator.CertificateValidator;
+import com.epam.esm.service.exception.certificate.CertificateNotFoundException;
+import com.epam.esm.service.exception.certificate.CertificateUpdateException;
+import com.epam.esm.service.validator.FilterValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +33,6 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private TagRepository<Tag, Long> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
-    private CertificateValidator validator;
 
     public CertificateServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
                                   CertificateTagRepository certificateTagRepository,
@@ -53,26 +47,9 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Autowired
-    public void setValidator(CertificateValidator validator) {
-        this.validator = validator;
-    }
+    private FilterValidator filterValidator;
 
-    @Override
-    public Optional<CertificateDto> getByName(String name) {
-        if (name != null) {
-            try {
-                Optional<Certificate> optionalCertificate = certificateRepository.getByName(name);
-                if (optionalCertificate.isPresent()) {
-                    CertificateDto certificateDto = certificateConverter.toDto(optionalCertificate.get());
-                    addCollection(certificateDto);
-                    return Optional.ofNullable(certificateDto);
-                }
-            } catch (EmptyResultDataAccessException e) {
-                logger.info("There is no such certificate name = {}", name, e);
-            }
-        }
-        return Optional.empty();
-    }
+
 
     private void addCollection(CertificateDto certificateDto) {  //add list to the set of certificateDto
         if (certificateDto != null) {
@@ -84,8 +61,12 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public List<CertificateDto> getAll(String tagName, String name, String sortByName, String sortByDate) {                                  //Lazy get
-        List<Certificate> certificates = certificateRepository.getAll(tagName, name, sortByName, sortByDate);
+    public List<CertificateDto> getAll(FilterDto filter) {                                  //Lazy get
+        FilterDto validFilter = filterValidator.validate(filter);
+        List<String> params = validFilter.getParams();
+
+        List<Certificate> certificates = certificateRepository
+                .getAll(validFilter);
         if (certificates != null && !certificates.isEmpty()) {
             return certificates.stream().map(certificateConverter::toDto)
                     .collect(Collectors.toList());
@@ -97,22 +78,25 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     public Optional<CertificateDto> save(CertificateDto certificateDto) {
         if (certificateDto != null) {
             Certificate certificate = certificateConverter.toEntity(certificateDto);
-            if (certificate != null && !validator.isExist(certificate)) {
-                try {
-                    Optional<Certificate> certificateOptional = certificateRepository.save(certificate);
-                    if (certificateOptional.isPresent() && certificate.getName() != null) {
-                        saveTags(certificateOptional.get());
-                        return Optional.ofNullable(certificateConverter.toDto(certificateOptional.get()));
-                    }
-                } catch (DuplicateKeyException e) {
-                    logger.info("This certificate already exists: {}", certificate.getName(), e);
-                } catch (NullPointerException e) {
-                    logger.info("Certificate save exception", e); //repository gets id with keyHolder
-                    throw new CertificateSaveException(certificateDto);
+            if (certificate != null) {
+//                try {
+                Optional<Certificate> certificateOptional = certificateRepository.save(certificate);
+                if (certificateOptional.isPresent()) {
+                    saveTags(certificate);
+                    CertificateDto savedCertificateDto = certificateConverter.toDto(certificateOptional.get());
+                    addCollection(savedCertificateDto);
+                    return Optional.ofNullable(savedCertificateDto);
                 }
+//                } catch (DuplicateKeyException e) {
+//                    logger.info("This certificate already exists: {}", certificate.getName(), e);
+//                }
+//                catch (NullPointerException e) {
+//                    logger.info("Certificate save exception", e); //repository gets id with keyHolder
+//                    throw new CertificateSaveException(certificateDto);
+//                }
             }
         }
-                    throw new CertificateAlreadyExistsException();
+     return Optional.empty();
     }
 
 
@@ -146,46 +130,51 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     @Override
     public Optional<CertificateDto> get(Long id) {
+        Optional<Certificate> certificateOptional = Optional.empty();
         try {
-            Optional<Certificate> certificateOptional = certificateRepository.get(id);
-            if (certificateOptional.isPresent()) {
-                CertificateDto certificateDto = certificateConverter.toDto(certificateOptional.get());
-                addCollection(certificateDto);
-                return Optional.ofNullable(certificateDto);
-            }
+            certificateOptional = certificateRepository.get(id);
         } catch (EmptyResultDataAccessException e) {
             logger.info("There is no certificate id = {}", id, e);
-            throw new CertificateNotFoundException(id);
+            throw new CertificateNotFoundException(id,e);
         }
-        return Optional.empty();
+        Optional<CertificateDto> certificateOptionalDto = Optional.empty();
+        if (certificateOptional.isPresent()) {
+            CertificateDto certificateDto = certificateConverter.toDto(certificateOptional.get());
+            addCollection(certificateDto);
+            return Optional.ofNullable(certificateDto);
+        }
+        return certificateOptionalDto;
     }
 
     @Override
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
         if (certificateDto != null) {
             Certificate certificate = certificateConverter.toEntity(certificateDto);
-
-            if (validator.isExist(certificate.getId())) {
-
-                Optional<Certificate> certificateOptional = certificateRepository.update(certificate);
-
-                if (certificateOptional.isPresent()) {
-                    certificate = certificateOptional.get();
-                    saveTags(certificate);
-                    certificateDto = certificateConverter.toDto(certificate);
-
-                    if (certificateDto != null) {
-                        addCollection(certificateDto);
-                    }
-                    return Optional.ofNullable(certificateDto);
-                }
-            } else {
-
-                CertificateUpdateException ex = new CertificateUpdateException("id == null or could not be found in database");
-
-                logger.info(ex.getMessage());
-                throw ex;
+            Set<Tag> tags = certificate.getTags();
+            Optional<Certificate> certificateOptional = Optional.empty();
+            try{
+                certificateOptional = certificateRepository.update(certificate);
+            } catch (EmptyResultDataAccessException e) {
+                logger.info("There is no certificate with id = {}", certificateDto.getId(), e);
+                throw new CertificateUpdateException(certificateDto.getId(),e);
             }
+
+            if (certificateOptional.isPresent()) {
+                certificate = certificateOptional.get();
+                certificate.getTags().addAll(tags);
+                saveTags(certificate);
+                certificateDto = certificateConverter.toDto(certificate);
+
+                if (certificateDto != null) {
+                    addCollection(certificateDto);
+                }
+                return Optional.ofNullable(certificateDto);
+            }
+
+//            CertificateUpdateException ex = new CertificateUpdateException("id == null or could not be found in database");
+//
+//            logger.info(ex.getMessage());
+//            throw ex;
         }
         return Optional.empty();
     }

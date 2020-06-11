@@ -1,5 +1,6 @@
 package com.epam.esm.repository;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,16 +21,17 @@ public class SpringJdbcConfig {
     private final String DRIVER = "driver";
     private final String PASSWORD = "password";
     @Autowired
-    Environment environment;
+    Environment env;
 
     @Bean
     DataSource dataSource() {
-        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setUrl(environment.getProperty(URL));
-        driverManagerDataSource.setUsername(environment.getProperty(USER));
-        driverManagerDataSource.setPassword(environment.getProperty(PASSWORD));
-        driverManagerDataSource.setDriverClassName(environment.getProperty(DRIVER));
-        return driverManagerDataSource;
+        final HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(env.getProperty(DRIVER));//("com.mysql.cj.jdbc.Driver");
+        dataSource.setJdbcUrl(env.getProperty(URL));
+        dataSource.setUsername(env.getProperty(USER));
+        dataSource.setPassword(env.getProperty(PASSWORD));
+
+        return dataSource;
     }
 
 }

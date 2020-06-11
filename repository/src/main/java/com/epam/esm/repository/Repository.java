@@ -12,5 +12,5 @@ public interface Repository<T, E> {
 
     boolean delete(E id);
 
-    Optional<T> getByName(String name);
+
 }
