@@ -39,21 +39,20 @@ class TagConverterTest {
         tag.setName("tagNameOne");
 
         one.getTags().add(tag);
-        tag.getCertificates().add(one);
     }
 
     @Test
     void toEntity() {
         toDto();
         Tag tag = tagConverter.toEntity(tagDto);
-        assertEquals(tag.getCertificates().size(),1);
+        assertEquals(tag.getName(),tagDto.getName());
 
     }
 
     @Test
     void toDto() {
         TagDto tagDto = tagConverter.toDto(tag);
-        assertEquals(tagDto.getCertificateDtos().size(),1);
+        assertEquals(tag.getName(),tagDto.getName());
         this.tagDto = tagDto;
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TagRepositoryImplTest {
-    private TagRepository<Tag,Long> repository;
+    private TagRepository<Tag,Integer> repository;
     private Tag one;
     private Tag two;
 
@@ -27,15 +28,18 @@ class TagRepositoryImplTest {
         two = new Tag();
         two.setName("tagTwo");
 
-        ApplicationContext context = new AnnotationConfigApplicationContext(SpringJdbcConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(RepositoryConfiguration.class);
         repository = context.getBean(TagRepositoryImpl.class);
     }
 
     @AfterEach
     void tearDown() {
-        Optional<Tag> byName = repository.getByName(one.getName());
-        if (byName.isPresent()) {
-            repository.delete(byName.get().getId());
+        Optional<Tag> byName = Optional.empty();
+        try {
+            byName = repository.getByName(one.getName());
+            byName.ifPresent(tag -> repository.delete(tag.getId()));
+        }catch (Exception ignored){
+
         }
     }
 
@@ -63,16 +67,7 @@ class TagRepositoryImplTest {
         repository.delete(repository.getByName(two.getName()).get().getId());
     }
 
-    @Test
-    void getAllNoInDB() throws Exception{
-        List<Tag> tags = repository.getAll();
-        assertTrue(tags
-                .stream()
-                .filter(u -> u.getName().equals(one.getName()))
-                .collect(Collectors.toList()).size() == 0);
-    }
-
-    @Test
+        @Test
     void save() {
         assertTrue(repository.save(one).isPresent());
     }
@@ -85,49 +80,26 @@ class TagRepositoryImplTest {
     }
 
     @Test
-    void update() {
-        repository.save(one);
-        Optional<Tag> read = repository.getByName(one.getName());
-        read.get().setName("new_name");
-        repository.update(read.get());
-        Optional<Tag> updated = repository.get(read.get().getId());
-        assertEquals("new_name", updated.get().getName());
-        one = updated.get();
-        assertFalse(repository.update(two).isPresent());
-    }
-
-    @Test
     void delete() {
         repository.save(one);
         Optional<Tag> tag = repository.getByName(one.getName());
-        Long id = tag.get().getId();
-        repository.delete(id);
-        Optional<Tag> check = repository.get(id);
-        assertFalse(check.isPresent());
+        Integer id = tag.get().getId();
+        assertTrue(repository.delete(id));
     }
 
     @Test
     void getByLoginNoInDB(){
-        Optional<Tag> tag = repository.getByName("no");
-        assertFalse(tag.isPresent());
+        Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.getByName("no"));
     }
 
     @Test
     void getByIdNoInDB(){
-        Optional<Tag> tag = repository.get(111111111L);
-        assertFalse(tag.isPresent());
-    }
-
-    @Test
-    void saveAlreadyExists() throws Exception{
-        repository.save(one);
-        Optional<Tag> saved = repository.save(one);
-        assertFalse(saved.isPresent());
+        Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.get(111111111));
     }
 
     @Test
     void deleteNoInDB(){
-        boolean deleted = repository.delete(1111133333L);
+        boolean deleted = repository.delete(1111133333);
         assertFalse(deleted);
     }
 }

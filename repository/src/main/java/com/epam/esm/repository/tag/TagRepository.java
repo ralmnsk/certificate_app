@@ -1,11 +1,11 @@
 package com.epam.esm.repository.tag;
 
-import com.epam.esm.repository.Repository;
+import com.epam.esm.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TagRepository<T, E> extends Repository<T, E> {
+public interface TagRepository<T, E> extends CrudRepository<T, E> {
 
     List<T> getAll();
 

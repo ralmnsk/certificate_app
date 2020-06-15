@@ -31,9 +31,9 @@ public class CertificateDto extends Dto<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant modification;
 
-    @NotNull
     @Min(value = 0)
     @Max(value = 100000)
+//    @NotNull
     private Integer duration;
 
     private Set<TagDto> tagDtos = new HashSet<TagDto>();

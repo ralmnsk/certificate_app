@@ -2,7 +2,7 @@ package com.epam.esm.repository;
 
 import java.util.Optional;
 
-public interface Repository<T, E> {
+public interface CrudRepository<T, E> {
 
     Optional<T> save(T t);
 

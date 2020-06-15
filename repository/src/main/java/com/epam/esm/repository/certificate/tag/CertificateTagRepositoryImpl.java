@@ -26,17 +26,17 @@ public class CertificateTagRepositoryImpl implements CertificateTagRepository {
     }
 
     @Override
-    public List<Long> getCertificateIdsByTagId(Long id) {
+    public List<Long> getCertificateIdsByTagId(Integer id) {
         return jdbcTemplate.queryForList(SQL_CERTIFICATE_BY_TAG_ID,new Object[]{id},Long.class);
     }
 
     @Override
-    public List<Long> getTagIdsByCertificateId(Long id) {
-        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id},Long.class);
+    public List<Integer> getTagIdsByCertificateId(Long id) {
+        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id},Integer.class);
     }
 
     @Override
-    public boolean saveCertificateTag(Long certId, Long tagId) {
+    public boolean saveCertificateTag(Long certId, Integer tagId) {
         try {
             return jdbcTemplate.update(SQL_INSERT,
                     certId, tagId) > 0;
@@ -47,7 +47,7 @@ public class CertificateTagRepositoryImpl implements CertificateTagRepository {
     }
 
     @Override
-    public boolean deleteCertificateTag(Long certId, Long tagId) {
+    public boolean deleteCertificateTag(Long certId, Integer tagId) {
         return jdbcTemplate.update(SQL_DELETE, certId, tagId) > 0;
     }
 }

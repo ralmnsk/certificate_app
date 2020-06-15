@@ -8,29 +8,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
+
+import static com.epam.esm.repository.RepositoryConstants.*;
 
 @Component
 public class CertificateMapper implements RowMapper<Certificate> {
 
     public Certificate mapRow(ResultSet resultSet, int i) throws SQLException {
         Certificate certificate = new Certificate();
-        certificate.setId(resultSet.getLong("id"));
-        certificate.setName(resultSet.getString("name"));
-        certificate.setDescription(resultSet.getString("description"));
-        certificate.setPrice(resultSet.getBigDecimal("price"));
+        certificate.setId(resultSet.getLong(ID));
+        certificate.setName(resultSet.getString(NAME));
+        certificate.setDescription(resultSet.getString(DESCRIPTION));
+        certificate.setPrice(resultSet.getBigDecimal(PRICE));
 
-        Timestamp creationTimestamp = resultSet.getTimestamp("creation");
+        Timestamp creationTimestamp = resultSet.getTimestamp(CREATION);
         Instant creation = creationTimestamp.toLocalDateTime().toInstant(ZoneOffset.UTC);
         certificate.setCreation(creation);
 
-        Timestamp modificationTimestamp = resultSet.getTimestamp("modification");
+        Timestamp modificationTimestamp = resultSet.getTimestamp(MODIFICATION);
         if (modificationTimestamp != null) {
             Instant modification = modificationTimestamp.toLocalDateTime().toInstant(ZoneOffset.UTC); //utc->local
             certificate.setModification(modification);
         }
-        certificate.setDuration(resultSet.getInt("duration"));
+        certificate.setDuration(resultSet.getInt(DURATION));
 
         return certificate;
     }

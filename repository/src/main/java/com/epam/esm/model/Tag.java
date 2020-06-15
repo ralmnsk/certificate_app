@@ -3,10 +3,9 @@ package com.epam.esm.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Tag extends Identifiable<Long> {
+public class Tag extends Identifiable<Integer> {
 
     private String name;
-    private Set<Certificate> certificates = new HashSet<Certificate>();
 
     public Tag() {
     }
@@ -17,14 +16,6 @@ public class Tag extends Identifiable<Long> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<Certificate> getCertificates() {
-        return certificates;
-    }
-
-    public void setCertificates(Set<Certificate> certificates) {
-        this.certificates = certificates;
     }
 
     @Override
@@ -47,7 +38,6 @@ public class Tag extends Identifiable<Long> {
         return "Tag{" +
                 "id=" + getId() +
                 ", name='" + name + '\'' +
-                ", certificates=" + certificates +
                 '}';
     }
 }

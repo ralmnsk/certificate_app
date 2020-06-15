@@ -1,24 +1,17 @@
 package com.epam.esm.repository.certificate;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Filter;
 import com.epam.esm.repository.mapper.CertificateMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +25,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     private final String SQL_DELETE_CERTIFICATE = "delete from certificate where id = ?";
     private final String SQL_UPDATE_CERTIFICATE = "update certificate set name = ?, description = ?, price  = ?, duration = ? where id = ?";
 
-    private final String SQL_INSERT_CERTIFICATE = "insert into certificate(name, description, price, duration) values(?,?,?,?)";
+    private final String SQL_INSERT_CERTIFICATE = "insert into certificate(name, description, price, duration) values(?,?,?,?) returning id,name,description,price,creation,modification,duration";
     private final String SQL_PERCENT = "%";
     private final String SQL_EMPTY = "";
 
@@ -54,7 +47,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     }
 
     @Override
-    public List<Certificate> getAll(FilterDto filter) {
+    public List<Certificate> getAll(Filter filter) {
         String sql = queryBuilder.build(filter);
         logger.info("SQL query for {} {}", this.getClass(), sql);
 
@@ -73,19 +66,15 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
 
     @Override
     public Optional<Certificate> save(Certificate certificate) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(SQL_INSERT_CERTIFICATE, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, certificate.getName());
-            ps.setString(2, certificate.getDescription());
-            ps.setBigDecimal(3, certificate.getPrice());
-            ps.setInt(4, certificate.getDuration());
-            return ps;
-        }, keyHolder);
-        Long id = Long.valueOf((Integer) keyHolder.getKeys().get("id"));
-        certificate.setId(id);
-
-        return get(id);
+        return Optional.ofNullable(jdbcTemplate.query(SQL_INSERT_CERTIFICATE, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                ps.setString(1, certificate.getName());
+                ps.setString(2, certificate.getDescription());
+                ps.setBigDecimal(3, certificate.getPrice());
+                ps.setInt(4, certificate.getDuration());
+            }
+        }, certificateMapper).get(0));
     }
 
     @Override

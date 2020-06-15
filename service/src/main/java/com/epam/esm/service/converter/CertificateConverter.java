@@ -5,11 +5,11 @@ import com.epam.esm.model.Tag;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
-@Service
+@Component
 public class CertificateConverter implements Converter<CertificateDto, Certificate> {
 
     private ModelMapper modelMapper;
@@ -25,7 +25,7 @@ public class CertificateConverter implements Converter<CertificateDto, Certifica
             if (certificate != null && !certificateDto.getTagDtos().isEmpty()) {
                 Set<TagDto> tagDtos = certificateDto.getTagDtos();
                 tagDtos.forEach(tagDto -> {
-                    if (tagDto != null){
+                    if (tagDto != null) {
                         Tag tag = modelMapper.map(tagDto, Tag.class);
                         if (tag != null) {
                             certificate.getTags().add(tag);
@@ -44,7 +44,7 @@ public class CertificateConverter implements Converter<CertificateDto, Certifica
             CertificateDto certificateDto = modelMapper.map(certificate, CertificateDto.class);
             if (certificateDto != null && !certificate.getTags().isEmpty()) {
                 certificate.getTags().forEach(tag -> {
-                    if (tag != null){
+                    if (tag != null) {
                         TagDto tagDto = modelMapper.map(tag, TagDto.class);
                         if (tagDto != null) {
                             certificateDto.getTagDtos().add(tagDto);

@@ -1,7 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.tag.TagService;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.tag.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/tags")
 public class TagController {
-    private final TagService<TagDto> tagService;
+    private final TagService<TagDto, Integer> tagService;
 
     @Autowired
-    public TagController(TagService<TagDto> tagService) {
+    public TagController(TagService<TagDto, Integer> tagService) {
         this.tagService = tagService;
     }
 
@@ -26,9 +26,8 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public TagDto get(@PathVariable Long id) {
+    public TagDto get(@PathVariable Integer id) {
         return tagService.get(id).get();
-//                .orElseThrow(() -> new TagNotFoundException(id));
     }
 
     @PostMapping
@@ -39,7 +38,7 @@ public class TagController {
 
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        tagService.delete(id);
+    public boolean delete(@PathVariable Integer id) {
+        return tagService.delete(id);
     }
 }

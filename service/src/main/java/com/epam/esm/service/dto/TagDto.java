@@ -5,7 +5,7 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TagDto extends Dto<Long> {
+public class TagDto extends Dto<Integer> {
 
     @NotNull
     @Size(min = 2, max = 190, message

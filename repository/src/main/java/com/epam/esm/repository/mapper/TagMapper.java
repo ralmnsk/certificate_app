@@ -7,14 +7,17 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.epam.esm.repository.RepositoryConstants.ID;
+import static com.epam.esm.repository.RepositoryConstants.NAME;
+
 @Component
 public class TagMapper implements RowMapper<Tag> {
 
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
         Tag tag = new Tag();
-        tag.setId(rs.getLong("id"));
-        tag.setName(rs.getString("name"));
+        tag.setId(rs.getInt(ID));
+        tag.setName(rs.getString(NAME));
 
         return tag;
     }

@@ -10,9 +10,8 @@ import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.tag.TagNotFoundException;
-import com.epam.esm.service.exception.tag.TagSaveException;
-import com.epam.esm.service.exception.tag.TagUpdateException;
+import com.epam.esm.service.exception.NotFoundException;
+import com.epam.esm.service.exception.SaveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -27,17 +26,17 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class TagServiceImpl implements TagService<TagDto> {
+public class TagServiceImpl implements TagService<TagDto, Integer> {
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
     private CertificateRepository<Certificate, Long> certificateRepository;
     private CertificateTagRepository certificateTagRepository;
-    private TagRepository<Tag, Long> tagRepository;
+    private TagRepository<Tag, Integer> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
     public TagServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
                           CertificateTagRepository certificateTagRepository,
-                          TagRepository<Tag, Long> tagRepository,
+                          TagRepository<Tag, Integer> tagRepository,
                           CertificateConverter certificateConverter,
                           TagConverter tagConverter) {
         this.certificateRepository = certificateRepository;
@@ -86,27 +85,23 @@ public class TagServiceImpl implements TagService<TagDto> {
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
 
-        if (tagDto != null) {
-            tagDto.getCertificateDtos().clear();
-            Tag tag = tagConverter.toEntity(tagDto);
-            if (tag != null && tag.getName() != null && !getByName(tag.getName()).isPresent()) {
-                try {
-                    Optional<Tag> optionalTag = tagRepository.save(tag);
-                    if (optionalTag.isPresent() && tag.getName() != null) {
+        tagDto.getCertificateDtos().clear();
+        Tag tag = tagConverter.toEntity(tagDto);
+        try {
+            Optional<Tag> optionalTag = tagRepository.save(tag);
+            if (optionalTag.isPresent() && tag.getName() != null) {
 //                    saveCertificates(optionalTag.get());
-                        return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
-                    }
-                } catch (DuplicateKeyException e) {
-                    logger.info("This tag already exists: {} {}", tag.getName(), e);
-                    throw new TagSaveException("This tag already exists: ", tagDto, e);
-                }
+                return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
             }
+        } catch (DuplicateKeyException e) {
+            logger.info("This tag already exists: {} {}", tag.getName(), e);
+            throw new SaveException("This tag already exists: " + tag.getName() + e);
         }
-        return Optional.empty();
+        throw new SaveException("Tag save exception happened");
     }
 
     @Override
-    public Optional<TagDto> get(Long id) {
+    public Optional<TagDto> get(Integer id) {
         try {
             Optional<Tag> tagOptional = tagRepository.get(id);
             if (tagOptional.isPresent()) {
@@ -116,7 +111,7 @@ public class TagServiceImpl implements TagService<TagDto> {
             }
         } catch (EmptyResultDataAccessException e) {
             logger.info("There is no tag id = {}", id, e);
-            throw new TagNotFoundException(id);
+            throw new NotFoundException(id, e);
         }
 
         return Optional.empty();
@@ -124,11 +119,13 @@ public class TagServiceImpl implements TagService<TagDto> {
 
     @Override
     public Optional<TagDto> update(TagDto tagDto) {
-        throw new TagUpdateException();
+        //It should not be implemented by the task
+        //Request will not pass here because there is no @Put method in the TagController
+        return Optional.empty();
     }
 
     @Override
-    public boolean delete(Long tagId) {
+    public boolean delete(Integer tagId) {
         certificateTagRepository
                 .getCertificateIdsByTagId(tagId)
                 .forEach(certId -> certificateTagRepository
@@ -136,7 +133,7 @@ public class TagServiceImpl implements TagService<TagDto> {
         return tagRepository.delete(tagId);
     }
 
-    public List<CertificateDto> getCertificatesByTagId(Long id) {
+    public List<CertificateDto> getCertificatesByTagId(Integer id) {
         List<Long> listCertificateIds = certificateTagRepository.getCertificateIdsByTagId(id);
         if (listCertificateIds != null && !listCertificateIds.isEmpty()) {
             return listCertificateIds

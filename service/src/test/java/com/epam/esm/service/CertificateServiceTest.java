@@ -1,8 +1,10 @@
 package com.epam.esm.service;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Filter;
 import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.service.certificate.CertificateServiceImpl;
+import com.epam.esm.service.converter.CertificateConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +17,9 @@ import static org.mockito.ArgumentMatchers.any;
 class CertificateServiceTest {
     @Mock
     private CertificateRepository<Certificate,Long> repository;
+    @Mock
+    private CertificateConverter certificateConverter;
+
     @InjectMocks
     private CertificateServiceImpl service;
 
@@ -25,15 +30,10 @@ class CertificateServiceTest {
 
 
     @Test
-    void getByName() {
-        service.getByName(any());
-        Mockito.verify(repository).getByName(any());
-    }
-
-    @Test
     void getAll() {
-        service.getAll("","","","");
-        Mockito.verify(repository).getAll("","","","");
+        Filter filter = new Filter();
+        service.getAll(filter);
+        Mockito.verify(repository).getAll(filter);
     }
 
     @Test

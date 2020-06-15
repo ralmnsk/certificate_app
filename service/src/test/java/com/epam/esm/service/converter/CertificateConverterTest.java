@@ -39,7 +39,6 @@ class CertificateConverterTest {
         tag.setName("tagNameOne");
 
         one.getTags().add(tag);
-        tag.getCertificates().add(one);
     }
 
 
@@ -48,12 +47,14 @@ class CertificateConverterTest {
         toDto();
         Certificate certificate = certificateConverter.toEntity(oneDto);
         assertEquals(1, oneDto.getTagDtos().size());
+        assertEquals(certificate.getName(),oneDto.getName());
     }
 
     @Test
     void toDto() {
         CertificateDto dto = certificateConverter.toDto(one);
         assertEquals(1, dto.getTagDtos().size());
+        assertEquals(dto.getName(),one.getName());
         oneDto = dto;
     }
 }

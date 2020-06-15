@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Filter;
 import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.repository.certificate.CertificateRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 
 import java.math.BigDecimal;
@@ -28,7 +30,7 @@ class CertificateRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(SpringJdbcConfig.class);
+        ApplicationContext context = new AnnotationConfigApplicationContext(RepositoryConfiguration.class);
         repository = context.getBean(CertificateRepositoryImpl.class);
 
         one = new Certificate();
@@ -50,42 +52,42 @@ class CertificateRepositoryImplTest {
 
     @AfterEach
     void tearDown() {
-        Optional<Certificate> byName = repository.getByName(one.getName());
-        byName.ifPresent(certificate -> repository.delete(certificate.getId()));
+        List<Certificate> byName = repository.getByName(one.getName());
+        if (!byName.isEmpty()){
+        byName.forEach(certificate -> repository.delete(certificate.getId()));
+        }
     }
 
     @Test
     void getByName() {
         repository.save(one);
-        Optional<Certificate> byLogin = repository.getByName(one.getName());
-        assertTrue(byLogin.get().getName().equals(one.getName()));
+        List<Certificate> byLogin = repository.getByName(one.getName());
+        assertEquals(byLogin.get(0).getName(), one.getName());
     }
 
     @Test
     void getAll() {
-//        repository.save(one);
-//        repository.save(two);
-//        List<Certificate> certificates = repository.getAll();
-//        assertTrue(certificates.size() > 0);
-//        assertTrue(certificates
-//                .stream()
-//                .filter(u -> u.getName().equals(one.getName()))
-//                .collect(Collectors.toList()).size() > 0);
-//        assertTrue(certificates
-//                .stream()
-//                .filter(u -> u.getName().equals(two.getName()))
-//                .collect(Collectors.toList()).size() > 0);
-//        repository.delete(repository.getByName(two.getName()).get().getId());
+        repository.save(one);
+        repository.save(two);
+        Filter filter = new Filter();
+        filter.setName("");
+        filter.setTagName("");
+        filter.setPageInt(1);
+        filter.setSizeInt(1000);
+        filter.setSort("sort=(name,creation)");
+        List<Certificate> certificates = repository.getAll(filter);
+        assertTrue(certificates.size() > 0);
+        assertTrue(certificates
+                .stream()
+                .filter(u -> u.getName().equals(one.getName()))
+                .collect(Collectors.toList()).size() > 0);
+        assertTrue(certificates
+                .stream()
+                .filter(u -> u.getName().equals(two.getName()))
+                .collect(Collectors.toList()).size() > 0);
+        repository.delete(repository.getByName(two.getName()).get(0).getId());
     }
 
-    @Test
-    void getAllNoInDB() throws Exception{
-//        List<Certificate> certificates = repository.getAll();
-//        assertTrue(certificates
-//                .stream()
-//                .filter(u -> u.getName().equals(one.getName()))
-//                .collect(Collectors.toList()).size() == 0);
-    }
 
     @Test
     void save() {
@@ -95,52 +97,48 @@ class CertificateRepositoryImplTest {
     @Test
     void get() {
         repository.save(one);
-        Optional<Certificate> byLogin = repository.getByName(one.getName());
-        assertEquals(byLogin.get().getName(), one.getName());
+        List<Certificate> byLogin = repository.getByName(one.getName());
+        assertEquals(byLogin.get(0).getName(), one.getName());
     }
 
     @Test
-    void update() throws Exception{
+    void update(){
         repository.save(one);
-        Optional<Certificate> read = repository.getByName(one.getName());
-        read.get().setName("new_name");
-        read.get().setDescription("new_description");
-        repository.update(read.get());
-        Optional<Certificate> updated = repository.get(read.get().getId());
+        List<Certificate> read = repository.getByName(one.getName());
+        read.get(0).setName("new_name");
+        read.get(0).setDescription("new_description");
+        repository.update(read.get(0));
+        Optional<Certificate> updated = repository.get(read.get(0).getId());
         assertEquals("new_name", updated.get().getName());
         assertEquals("new_description", updated.get().getDescription());
         one = updated.get();
-        assertFalse(repository.update(two).isPresent());
     }
 
     @Test
     void delete() {
         repository.save(one);
-        Optional<Certificate> certificate = repository.getByName(one.getName());
-        Long id = certificate.get().getId();
-        repository.delete(id);
-        Optional<Certificate> check = repository.get(id);
-        assertFalse(check.isPresent());
+        List<Certificate> certificate = repository.getByName(one.getName());
+        Long id = certificate.get(0).getId();
+        assertTrue(repository.delete(id));
     }
 
 
     @Test
     void getByLoginNoInDB(){
-        Optional<Certificate> certificate = repository.getByName("no");
-        assertFalse(certificate.isPresent());
+        List<Certificate> certificates = repository.getByName("no");
+        assertTrue(certificates.isEmpty());
     }
 
     @Test
     void getByIdNoInDB(){
-        Optional<Certificate> certificate = repository.get(111111111L);
-        assertFalse(certificate.isPresent());
+        Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.get(111111111L));
     }
 
     @Test
     void saveAlreadyExists() throws Exception{
         repository.save(one);
         Optional<Certificate> saved = repository.save(one);
-        assertFalse(saved.isPresent());
+        assertTrue(saved.isPresent());
     }
 
     @Test

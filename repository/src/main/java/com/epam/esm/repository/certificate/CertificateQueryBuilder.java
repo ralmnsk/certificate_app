@@ -1,5 +1,6 @@
 package com.epam.esm.repository.certificate;
 
+import com.epam.esm.model.Filter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,17 +22,17 @@ public class CertificateQueryBuilder {
     private final String CERTIFICATE_CREATION = " certificate.creation desc ";
     private final String SQL_EMPTY = "";
 
-    private FilterDto filter;
+    private Filter filter;
 
-    public FilterDto getFilter() {
+    public Filter getFilter() {
         return filter;
     }
 
-    public void setFilter(FilterDto filter) {
+    public void setFilter(Filter filter) {
         this.filter = filter;
     }
 
-    public String build(FilterDto filter){
+    public String build(Filter filter){
         StringBuilder sql = new StringBuilder(SQL_START);
 
         boolean flag_tag_like = false;

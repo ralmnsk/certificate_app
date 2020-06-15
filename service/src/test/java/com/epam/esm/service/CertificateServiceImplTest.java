@@ -29,7 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CertificateServiceImplTest {
-    private CertificateService<CertificateDto> service;
+    private CertificateService<CertificateDto,Long> service;
     private Tag tagOne;
     private Tag tagTwo;
     private Certificate one;
@@ -37,7 +37,7 @@ class CertificateServiceImplTest {
 
     private CertificateRepository<Certificate, Long> certificateRepository;
     private CertificateTagRepository certificateTagRepository;
-    private TagRepository<Tag, Long> tagRepository;
+    private TagRepository<Tag, Integer> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
@@ -91,7 +91,7 @@ class CertificateServiceImplTest {
         Optional<Tag> byName = tagRepository.getByName(tagOne.getName());
         assertTrue(byName.isPresent());
 
-        List<Long> tagIdsByCertificateId = certificateTagRepository.getTagIdsByCertificateId(save.get().getId());
+        List<Integer> tagIdsByCertificateId = certificateTagRepository.getTagIdsByCertificateId(save.get().getId());
         assertTrue(tagIdsByCertificateId.size() > 0);
 
         certificateTagRepository.deleteCertificateTag(save.get().getId(),byName.get().getId());
@@ -113,7 +113,7 @@ class CertificateServiceImplTest {
         Optional<Tag> byName = tagRepository.getByName(tagOne.getName());
         assertTrue(byName.isPresent());
 
-        List<Long> tagIdsByCertificateId = certificateTagRepository.getTagIdsByCertificateId(save.get().getId());
+        List<Integer> tagIdsByCertificateId = certificateTagRepository.getTagIdsByCertificateId(save.get().getId());
         assertTrue(tagIdsByCertificateId.size() > 0);
 
         certificateTagRepository.deleteCertificateTag(save.get().getId(),byName.get().getId());
