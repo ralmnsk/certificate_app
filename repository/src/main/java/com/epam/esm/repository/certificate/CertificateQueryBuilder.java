@@ -21,6 +21,7 @@ public class CertificateQueryBuilder {
     private final String COMMA = " , ";
     private final String CERTIFICATE_CREATION = " certificate.creation desc ";
     private final String SQL_EMPTY = "";
+    private final int ONE = 1;
 
     private Filter filter;
 
@@ -32,7 +33,7 @@ public class CertificateQueryBuilder {
         this.filter = filter;
     }
 
-    public String build(Filter filter){
+    public String build(Filter filter) {
         StringBuilder sql = new StringBuilder(SQL_START);
 
         boolean flag_tag_like = false;
@@ -45,12 +46,9 @@ public class CertificateQueryBuilder {
             sql.append(TAG_LIKE + AND);
         }
         sql.append(CERTIFICATE_LIKE);
-//        if (filter.getName() == null) {
-//            name = SQL_EMPTY;
-//        }
         if (!filter.getParams().isEmpty()) {
             sql.append(ORDER_BY);
-            boolean flag_comma =false;
+            boolean flag_comma = false;
             List<String> findName = filter
                     .getParams()
                     .stream()
@@ -63,12 +61,12 @@ public class CertificateQueryBuilder {
             List<String> findDate = filter
                     .getParams()
                     .stream()
-                    .filter(p->p.equals("creation"))
+                    .filter(p -> p.equals("creation"))
                     .collect(Collectors.toList());
             if (!findDate.isEmpty()) {
-                if (flag_comma){
+                if (flag_comma) {
                     sql.append(COMMA).append(CERTIFICATE_CREATION);
-                } else{
+                } else {
                     sql.append(CERTIFICATE_CREATION);
                 }
             }
@@ -77,7 +75,7 @@ public class CertificateQueryBuilder {
         int page = filter.getPageInt();
         int size = filter.getSizeInt();
         sql.append(" LIMIT ").append(size);
-        int offset = (page - 1)*size;
+        int offset = (page - ONE) * size;
         sql.append(" OFFSET ").append(offset);
 
         return sql.toString();

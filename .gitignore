@@ -5,6 +5,7 @@
 /model/build/
 /model/out/
 /model/out/production/classes/
+/report/
 /repository/build/
 /repository/out/
 /repository/out/production/classes/
@@ -13,6 +14,11 @@
 /service/out/
 /service/out/production/classes/
 /service/out/test/classes/
+/tomcat.8082/
+/tomcat.8082/work/
+/tomcat.8082/work/Tomcat/
+/tomcat.8082/work/Tomcat/localhost/
+/tomcat.8082/work/Tomcat/localhost/ROOT/
 /web/out/
 /web/out/production/classes/
 *.log

@@ -63,7 +63,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
         return Optional.empty();
     }
 
-    private void addCollection(TagDto tagDto) {  //add list to the set of tagDto
+    private void addCollection(TagDto tagDto) {
         if (tagDto != null) {
             List<CertificateDto> certificateDtos = getCertificatesByTagId(tagDto.getId());
             if (certificateDtos != null && !certificateDtos.isEmpty()) {
@@ -90,7 +90,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
         try {
             Optional<Tag> optionalTag = tagRepository.save(tag);
             if (optionalTag.isPresent() && tag.getName() != null) {
-//                    saveCertificates(optionalTag.get());
                 return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
             }
         } catch (DuplicateKeyException e) {
@@ -119,8 +118,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     @Override
     public Optional<TagDto> update(TagDto tagDto) {
-        //It should not be implemented by the task
-        //Request will not pass here because there is no @Put method in the TagController
         return Optional.empty();
     }
 

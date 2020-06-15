@@ -1,7 +1,6 @@
 package com.epam.esm.repository;
 
 public class RepositoryConstants {
-    //mappers
     public final static String ID = "id";
     public final static String NAME = "name";
     public final static String DESCRIPTION = "description";

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TagRepositoryImplTest {
-    private TagRepository<Tag,Integer> repository;
+    private TagRepository<Tag, Integer> repository;
     private Tag one;
     private Tag two;
 
@@ -38,7 +38,7 @@ class TagRepositoryImplTest {
         try {
             byName = repository.getByName(one.getName());
             byName.ifPresent(tag -> repository.delete(tag.getId()));
-        }catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -47,7 +47,7 @@ class TagRepositoryImplTest {
     void getByName() {
         repository.save(one);
         Optional<Tag> byName = repository.getByName(one.getName());
-        assertTrue(byName.get().getName().equals(one.getName()));
+        assertEquals(byName.get().getName(), one.getName());
     }
 
     @Test
@@ -67,7 +67,7 @@ class TagRepositoryImplTest {
         repository.delete(repository.getByName(two.getName()).get().getId());
     }
 
-        @Test
+    @Test
     void save() {
         assertTrue(repository.save(one).isPresent());
     }
@@ -88,17 +88,17 @@ class TagRepositoryImplTest {
     }
 
     @Test
-    void getByLoginNoInDB(){
+    void getByLoginNoInDB() {
         Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.getByName("no"));
     }
 
     @Test
-    void getByIdNoInDB(){
+    void getByIdNoInDB() {
         Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.get(111111111));
     }
 
     @Test
-    void deleteNoInDB(){
+    void deleteNoInDB() {
         boolean deleted = repository.delete(1111133333);
         assertFalse(deleted);
     }

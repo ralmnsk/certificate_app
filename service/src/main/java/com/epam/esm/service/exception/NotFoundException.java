@@ -1,6 +1,6 @@
 package com.epam.esm.service.exception;
 
-public class NotFoundException extends GeneralException { //https://spring.io/guides/tutorials/rest/
+public class NotFoundException extends GeneralException {
 
     public NotFoundException(Long id, Exception e) {
         super("Could not find entity id:" + id + " " + e.getMessage());

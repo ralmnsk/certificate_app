@@ -33,7 +33,7 @@ public class CertificateDto extends Dto<Long> {
 
     @Min(value = 0)
     @Max(value = 100000)
-//    @NotNull
+
     private Integer duration;
 
     private Set<TagDto> tagDtos = new HashSet<TagDto>();

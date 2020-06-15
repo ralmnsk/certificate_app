@@ -1,8 +1,5 @@
 package com.epam.esm.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Tag extends Identifiable<Integer> {
 
     private String name;

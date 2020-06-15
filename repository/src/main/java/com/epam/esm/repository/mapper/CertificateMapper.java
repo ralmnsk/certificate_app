@@ -28,7 +28,7 @@ public class CertificateMapper implements RowMapper<Certificate> {
 
         Timestamp modificationTimestamp = resultSet.getTimestamp(MODIFICATION);
         if (modificationTimestamp != null) {
-            Instant modification = modificationTimestamp.toLocalDateTime().toInstant(ZoneOffset.UTC); //utc->local
+            Instant modification = modificationTimestamp.toLocalDateTime().toInstant(ZoneOffset.UTC);
             certificate.setModification(modification);
         }
         certificate.setDuration(resultSet.getInt(DURATION));

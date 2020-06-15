@@ -14,7 +14,8 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CertificateConverterTest {
     private Certificate one;
@@ -47,14 +48,24 @@ class CertificateConverterTest {
         toDto();
         Certificate certificate = certificateConverter.toEntity(oneDto);
         assertEquals(1, oneDto.getTagDtos().size());
-        assertEquals(certificate.getName(),oneDto.getName());
+        assertEquals(certificate.getName(), oneDto.getName());
     }
 
     @Test
     void toDto() {
         CertificateDto dto = certificateConverter.toDto(one);
         assertEquals(1, dto.getTagDtos().size());
-        assertEquals(dto.getName(),one.getName());
+        assertEquals(dto.getName(), one.getName());
         oneDto = dto;
+    }
+
+    @Test
+    void testToEntityNull() {
+        assertNull(certificateConverter.toEntity(null));
+    }
+
+    @Test
+    void testToDtoNull() {
+        assertNull(certificateConverter.toDto(null));
     }
 }

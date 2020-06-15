@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 @Import({RepositoryConfiguration.class}) //Integration test for collections of main entities
 public class ServiceConfiguration {
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 }

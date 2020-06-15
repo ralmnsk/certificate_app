@@ -10,10 +10,12 @@ import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.Dto;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.validator.FilterValidator;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -37,22 +39,25 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
     private FilterValidator filterValidator;
+    private ModelMapper modelMapper;
 
     public CertificateServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
                                   CertificateTagRepository certificateTagRepository,
                                   TagRepository<Tag, Integer> tagRepository,
                                   CertificateConverter certificateConverter,
                                   TagConverter tagConverter,
-                                  FilterValidator filterValidator) {
+                                  FilterValidator filterValidator,
+                                  ModelMapper modelMapper) {
         this.certificateRepository = certificateRepository;
         this.certificateTagRepository = certificateTagRepository;
         this.tagRepository = tagRepository;
         this.certificateConverter = certificateConverter;
         this.tagConverter = tagConverter;
         this.filterValidator = filterValidator;
+        this.modelMapper = modelMapper;
     }
 
-    private void addCollection(CertificateDto certificateDto) {  //add list to the set of certificateDto
+    private void addCollection(CertificateDto certificateDto) {
         if (certificateDto != null) {
             List<TagDto> tagDtos = getTagsByCertificateId(certificateDto.getId());
             if (tagDtos != null && !tagDtos.isEmpty()) {
@@ -62,16 +67,16 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public List<CertificateDto> getAll(Filter filter) {                                  //Lazy get
-        Filter validFilter = FilterValidator.validate(filter);
-
+    public List<CertificateDto> getAll(FilterDto filterDto) {
+        FilterDto validFilterDto = FilterValidator.validate(filterDto);
+        Filter validFilter = modelMapper.map(validFilterDto, Filter.class);
         List<Certificate> certificates = certificateRepository
                 .getAll(validFilter);
         if (certificates != null && !certificates.isEmpty()) {
             return certificates.stream().map(certificateConverter::toDto)
                     .collect(Collectors.toList());
         }
-        return null; //Optional ?
+        return null;
     }
 
     @Override
@@ -95,20 +100,19 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
                 if (t != null && t.getName() != null) {
                     Optional<Tag> foundTagOptional = Optional.empty();
                     try {
-                        foundTagOptional = tagRepository.getByName(t.getName()); // tag finding by name
+                        foundTagOptional = tagRepository.getByName(t.getName());
                     } catch (EmptyResultDataAccessException e) {
                         logger.info(this.getClass() + ": TagRepository.getName(): tag not found: " + t);
                     }
-//                    try{
-                    if (!foundTagOptional.isPresent()) {                        //if tag doesn't exist save a new tag
+                    if (!foundTagOptional.isPresent()) {
                         Optional<Tag> tagOptional = tagRepository.save(t);
-                                                                                //a new tag save and connect to the certificate
                         tagOptional
                                 .ifPresent(tag -> {
                                     t.setId(tagOptional.get().getId());
                                     certificateTagRepository
-                                        .saveCertificateTag(certificate.getId(), tag.getId());});
-                    } else {                                                    //existing tag connecting to the certificate
+                                            .saveCertificateTag(certificate.getId(), tag.getId());
+                                });
+                    } else {
                         Tag tag = foundTagOptional.get();
                         t.setId(tag.getId());
                         certificateTagRepository.saveCertificateTag(certificate.getId(), tag.getId());
@@ -169,7 +173,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private void updateTags(Certificate certificate) {
         List<TagDto> tagsByCertificateId = getTagsByCertificateId(certificate.getId());
         if (tagsByCertificateId != null) {
-            tagsByCertificateId                                 //remove tags of existing (previous) certificate except tags that are in the updating certificate
+            tagsByCertificateId
                     .stream()
                     .map(Dto::getId)
                     .map(tagRepository::get)
@@ -180,7 +184,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
                         certificateTagRepository.deleteCertificateTag(certificate.getId(), t.getId());
                     });
         }
-        saveTags(certificate);  //save tags of set in the certificate
+        saveTags(certificate);
     }
 
     @Override

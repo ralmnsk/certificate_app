@@ -1,6 +1,6 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.service.dto.FilterDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -13,55 +13,55 @@ import java.util.Objects;
 public class FilterValidator {
     private static Logger logger = LoggerFactory.getLogger(FilterValidator.class);
 
-    public static Filter validate(Filter filter) {
-        if (filter != null) {
+    public static FilterDto validate(FilterDto filterDto) {
+        if (filterDto != null) {
             String tagName = "";
             String name = "";
             int pageInt = 1;
             int sizeInt = 10;
 
-            if (filter.getTagName() != null) {
-                tagName = filter.getTagName();
+            if (filterDto.getTagName() != null) {
+                tagName = filterDto.getTagName();
             }
-            if (filter.getName() != null) {
-                name = filter.getName();
+            if (filterDto.getName() != null) {
+                name = filterDto.getName();
             }
-            if (filter.getSize() != null) {
+            if (filterDto.getSize() != null) {
                 try {
-                    sizeInt = Integer.parseInt(filter.getSize());
+                    sizeInt = Integer.parseInt(filterDto.getSize());
                 } catch (NumberFormatException e) {
                     logger.info(FilterValidator.class + " set page size to default =10 " + e);
                     sizeInt = 10;
                 }
             }
-            if (filter.getPage() != null) {
+            if (filterDto.getPage() != null) {
                 try {
-                    pageInt = Integer.parseInt(filter.getPage());
+                    pageInt = Integer.parseInt(filterDto.getPage());
                 } catch (NumberFormatException e) {
                     logger.info(FilterValidator.class + " set page to default =1 " + e);
                     pageInt = 1;
                 }
             }
-            if (filter.getSort() != null) {
-                parseSort(filter);
+            if (filterDto.getSort() != null) {
+                parseSort(filterDto);
             }
-            filter.setTagName(tagName);
-            filter.setName(name);
-            filter.setPageInt(pageInt);
-            filter.setSizeInt(sizeInt);
+            filterDto.setTagName(tagName);
+            filterDto.setName(name);
+            filterDto.setPageInt(pageInt);
+            filterDto.setSizeInt(sizeInt);
 
         }
-        return filter;
+        return filterDto;
     }
 
 
-    private static List<String> parseSort(Filter filter) {
-        String sort = filter.getSort();
-        sort = sort.replace("(", "");
+    private static List<String> parseSort(FilterDto filterDto) {
+        String sort = filterDto.getSort();
+        sort = sort.replace("sort=(", "");
         sort = sort.replace(")", "");
         String[] split = sort.split(",");
         Arrays.stream(split).filter(Objects::nonNull)
-                .map(String::trim).forEach(s -> filter.getParams().add(s));
-        return filter.getParams();
+                .map(String::trim).forEach(s -> filterDto.getParams().add(s));
+        return filterDto.getParams();
     }
 }

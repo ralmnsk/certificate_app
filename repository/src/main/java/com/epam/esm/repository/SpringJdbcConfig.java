@@ -20,14 +20,21 @@ public class SpringJdbcConfig {
     private String driver;
     @Value("${password}")
     private String password;
+    @Value("${pool.size}")
+    private String poolSize;
+    @Value("${minimum.idle}")
+    private String minIdle;
+
 
     @Bean
     DataSource dataSource() {
         final HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driver);//("com.mysql.cj.jdbc.Driver");
+        dataSource.setDriverClassName(driver);
         dataSource.setJdbcUrl(url);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
+        dataSource.setMaximumPoolSize(Integer.parseInt(poolSize));
+        dataSource.setMinimumIdle(Integer.parseInt(minIdle));
 
         return dataSource;
     }

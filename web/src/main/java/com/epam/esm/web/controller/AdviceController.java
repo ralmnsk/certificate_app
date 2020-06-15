@@ -16,8 +16,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class AdviceController {
 
-    //https://tools.ietf.org/html/rfc7231 This is status codes
-    @ResponseBody // to return text of exception
+    @ResponseBody
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String certificateNotFoundException(NotFoundException ex) {
@@ -26,7 +25,7 @@ public class AdviceController {
 
     @ResponseBody
     @ExceptionHandler(UpdateException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)   //409
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public String certificateUpdateException(UpdateException ex) {
         return ex.getMessage();
     }

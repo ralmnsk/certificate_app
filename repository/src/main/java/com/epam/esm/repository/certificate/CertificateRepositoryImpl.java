@@ -35,7 +35,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
 
     public CertificateRepositoryImpl(JdbcTemplate jdbcTemplate,
                                      CertificateMapper certificateMapper,
-                                    CertificateQueryBuilder queryBuilder) {
+                                     CertificateQueryBuilder queryBuilder) {
         this.jdbcTemplate = jdbcTemplate;
         this.certificateMapper = certificateMapper;
         this.queryBuilder = queryBuilder;

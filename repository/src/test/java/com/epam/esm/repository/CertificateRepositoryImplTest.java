@@ -11,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
@@ -24,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CertificateRepositoryImplTest {
 
-    private CertificateRepository<Certificate,Long> repository;
+    private CertificateRepository<Certificate, Long> repository;
     private Certificate one;
     private Certificate two;
 
@@ -36,7 +35,7 @@ class CertificateRepositoryImplTest {
         one = new Certificate();
         one.setName("name1");
         one.setDescription("description1");
-        one.setPrice(new BigDecimal(119.194).setScale(2,RoundingMode.HALF_UP));
+        one.setPrice(new BigDecimal(119.194).setScale(2, RoundingMode.HALF_UP));
         one.setCreation(Instant.now());
         one.setModification(Instant.now().plus(Duration.ofDays(10)));
         one.setDuration(100);
@@ -44,7 +43,7 @@ class CertificateRepositoryImplTest {
         two = new Certificate();
         two.setName("name2");
         two.setDescription("description2");
-        two.setPrice(new BigDecimal(18.186).setScale(2,RoundingMode.HALF_UP));
+        two.setPrice(new BigDecimal(18.186).setScale(2, RoundingMode.HALF_UP));
         two.setCreation(Instant.now().minus(Duration.ofDays(1)));
         two.setModification(Instant.now().plus(Duration.ofDays(20)));
         two.setDuration(50);
@@ -53,8 +52,8 @@ class CertificateRepositoryImplTest {
     @AfterEach
     void tearDown() {
         List<Certificate> byName = repository.getByName(one.getName());
-        if (!byName.isEmpty()){
-        byName.forEach(certificate -> repository.delete(certificate.getId()));
+        if (!byName.isEmpty()) {
+            byName.forEach(certificate -> repository.delete(certificate.getId()));
         }
     }
 
@@ -102,7 +101,7 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void update(){
+    void update() {
         repository.save(one);
         List<Certificate> read = repository.getByName(one.getName());
         read.get(0).setName("new_name");
@@ -124,25 +123,25 @@ class CertificateRepositoryImplTest {
 
 
     @Test
-    void getByLoginNoInDB(){
+    void getByLoginNoInDB() {
         List<Certificate> certificates = repository.getByName("no");
         assertTrue(certificates.isEmpty());
     }
 
     @Test
-    void getByIdNoInDB(){
+    void getByIdNoInDB() {
         Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> repository.get(111111111L));
     }
 
     @Test
-    void saveAlreadyExists() throws Exception{
+    void saveAlreadyExists() throws Exception {
         repository.save(one);
         Optional<Certificate> saved = repository.save(one);
         assertTrue(saved.isPresent());
     }
 
     @Test
-    void deleteNoInDB(){
+    void deleteNoInDB() {
         boolean deleted = repository.delete(1111133333L);
         assertFalse(deleted);
     }

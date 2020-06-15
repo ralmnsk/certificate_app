@@ -27,12 +27,12 @@ public class CertificateTagRepositoryImpl implements CertificateTagRepository {
 
     @Override
     public List<Long> getCertificateIdsByTagId(Integer id) {
-        return jdbcTemplate.queryForList(SQL_CERTIFICATE_BY_TAG_ID,new Object[]{id},Long.class);
+        return jdbcTemplate.queryForList(SQL_CERTIFICATE_BY_TAG_ID, new Object[]{id}, Long.class);
     }
 
     @Override
     public List<Integer> getTagIdsByCertificateId(Long id) {
-        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id},Integer.class);
+        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id}, Integer.class);
     }
 
     @Override
