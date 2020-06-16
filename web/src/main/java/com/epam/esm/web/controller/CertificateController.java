@@ -2,10 +2,13 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.CustomPage;
 import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.page.PageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -13,20 +16,22 @@ import java.util.List;
 @RequestMapping("/certificates")
 public class CertificateController {
     private final CertificateService<CertificateDto, Long> certificateService;
+    private final PageBuilder pageBuilder;
 
-
-    public CertificateController(CertificateService<CertificateDto, Long> certificateService) {
+    public CertificateController(CertificateService<CertificateDto, Long> certificateService,
+                                 PageBuilder pageBuilder) {
         this.certificateService = certificateService;
+        this.pageBuilder = pageBuilder;
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CertificateDto> getAll(
-            @Valid String tagName,
-            @Valid String name,
-            @Valid String page,
-            @Valid String size,
-            @Valid String sort
+    public CustomPage<CertificateDto, Integer> getAll(
+            @RequestParam(value = "tagName", defaultValue = "") @Valid String tagName,
+            @RequestParam(value = "name", defaultValue = "") @Valid String name,
+            @RequestParam(value = "page", defaultValue = "1") @Valid int page,
+            @RequestParam(value = "size", defaultValue = "10") @Valid int size,
+            @RequestParam(required = false) @Valid List<String> sort
     ) {
         FilterDto filterDto = new FilterDto();
         filterDto.setTagName(tagName);
@@ -34,7 +39,7 @@ public class CertificateController {
         filterDto.setPage(page);
         filterDto.setSize(size);
         filterDto.setSort(sort);
-        return certificateService.getAll(filterDto);
+        return pageBuilder.build(filterDto);
     }
 
     @GetMapping("/{id}")
@@ -55,8 +60,14 @@ public class CertificateController {
         return certificateService.update(certificateDto).get();
     }
 
+
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Long id) {
-        return certificateService.delete(id);
+    public void delete(@PathVariable Long id, HttpServletResponse response) {
+
+        if (certificateService.delete(id)) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
     }
 }

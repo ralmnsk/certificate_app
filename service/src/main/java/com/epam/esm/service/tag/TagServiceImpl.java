@@ -3,7 +3,6 @@ package com.epam.esm.service.tag;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.certificate.CertificateServiceImpl;
 import com.epam.esm.service.converter.CertificateConverter;
@@ -29,18 +28,15 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService<TagDto, Integer> {
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
     private CertificateRepository<Certificate, Long> certificateRepository;
-    private CertificateTagRepository certificateTagRepository;
     private TagRepository<Tag, Integer> tagRepository;
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
     public TagServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
-                          CertificateTagRepository certificateTagRepository,
                           TagRepository<Tag, Integer> tagRepository,
                           CertificateConverter certificateConverter,
                           TagConverter tagConverter) {
         this.certificateRepository = certificateRepository;
-        this.certificateTagRepository = certificateTagRepository;
         this.tagRepository = tagRepository;
         this.certificateConverter = certificateConverter;
         this.tagConverter = tagConverter;
@@ -53,7 +49,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
                 Optional<Tag> optionalTag = tagRepository.getByName(name);
                 if (optionalTag.isPresent()) {
                     TagDto tagDto = tagConverter.toDto(optionalTag.get());
-                    addCollection(tagDto);
+                    addCertificatesToTag(tagDto);
                     return Optional.ofNullable(tagDto);
                 }
             }
@@ -63,7 +59,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
         return Optional.empty();
     }
 
-    private void addCollection(TagDto tagDto) {
+    private void addCertificatesToTag(TagDto tagDto) {
         if (tagDto != null) {
             List<CertificateDto> certificateDtos = getCertificatesByTagId(tagDto.getId());
             if (certificateDtos != null && !certificateDtos.isEmpty()) {
@@ -105,7 +101,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             Optional<Tag> tagOptional = tagRepository.get(id);
             if (tagOptional.isPresent()) {
                 TagDto tagDto = tagConverter.toDto(tagOptional.get());
-                addCollection(tagDto);
+                addCertificatesToTag(tagDto);
                 return Optional.ofNullable(tagDto);
             }
         } catch (EmptyResultDataAccessException e) {
@@ -123,15 +119,15 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     @Override
     public boolean delete(Integer tagId) {
-        certificateTagRepository
+        certificateRepository
                 .getCertificateIdsByTagId(tagId)
-                .forEach(certId -> certificateTagRepository
+                .forEach(certId -> certificateRepository
                         .deleteCertificateTag(certId, tagId));
         return tagRepository.delete(tagId);
     }
 
     public List<CertificateDto> getCertificatesByTagId(Integer id) {
-        List<Long> listCertificateIds = certificateTagRepository.getCertificateIdsByTagId(id);
+        List<Long> listCertificateIds = certificateRepository.getCertificateIdsByTagId(id);
         if (listCertificateIds != null && !listCertificateIds.isEmpty()) {
             return listCertificateIds
                     .stream()

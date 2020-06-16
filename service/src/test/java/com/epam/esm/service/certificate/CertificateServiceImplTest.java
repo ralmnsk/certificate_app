@@ -4,7 +4,6 @@ import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Filter;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
@@ -12,7 +11,6 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
-import com.epam.esm.service.validator.FilterValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -39,13 +37,9 @@ class CertificateServiceImplTest {
     @Mock
     private CertificateConverter certificateConverter;
     @Mock
-    private CertificateTagRepository certificateTagRepository;
-    @Mock
     private TagRepository<Tag, Integer> tagRepository;
     @Mock
     private TagConverter tagConverter;
-    @Mock
-    private FilterValidator filterValidator;
     @Mock
     private ModelMapper modelMapper;
 
@@ -166,9 +160,9 @@ class CertificateServiceImplTest {
         Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
 
         service.save(certificateDto);
-        Mockito.verify(certificateTagRepository).getTagIdsByCertificateId(any());
+        Mockito.verify(repository).getTagIdsByCertificateId(any());
         Mockito.verify(tagRepository).getByName(any());
-        Mockito.verify(certificateTagRepository).saveCertificateTag(any(), any());
+        Mockito.verify(repository).saveCertificateTag(any(), any());
     }
 
     @Test
@@ -185,10 +179,31 @@ class CertificateServiceImplTest {
         Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
 
         service.save(certificateDto);
-        Mockito.verify(certificateTagRepository).getTagIdsByCertificateId(any());
+        Mockito.verify(repository).getTagIdsByCertificateId(any());
         Mockito.verify(tagRepository).getByName(any());
-        Mockito.verify(certificateTagRepository).saveCertificateTag(any(), any());
+        Mockito.verify(repository).saveCertificateTag(any(), any());
     }
 
 
+    @Test
+    void getTagsByCertificateId() {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        Tag tag = new Tag();
+        Mockito.when(repository.getTagIdsByCertificateId(1L)).thenReturn(list);
+        Mockito.when(tagRepository.get(any())).thenReturn(Optional.of(tag));
+        service.getTagsByCertificateId(1L);
+        Mockito.verify(repository).getTagIdsByCertificateId(any());
+        Mockito.verify(tagRepository).get(any());
+        Mockito.verify(tagConverter).toDto(any());
+    }
+
+    @Test
+    void getAllCount() {
+        FilterDto filterDto = new FilterDto();
+        Filter filter = new Filter();
+        Mockito.when(modelMapper.map(any(), any())).thenReturn(filter);
+        service.getAllCount(filterDto);
+        Mockito.verify(repository).getAllCount(any());
+    }
 }

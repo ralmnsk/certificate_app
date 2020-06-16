@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,9 +73,12 @@ class CertificateRepositoryImplTest {
         Filter filter = new Filter();
         filter.setName("");
         filter.setTagName("");
-        filter.setPageInt(1);
-        filter.setSizeInt(1000);
-        filter.setSort("sort=(name,creation)");
+        filter.setPage(1);
+        filter.setSize(1000);
+        List<String> sortParams = new ArrayList<>();
+        sortParams.add("name");
+        sortParams.add("creation");
+        filter.setSort(sortParams);
         List<Certificate> certificates = repository.getAll(filter);
         assertTrue(certificates.size() > 0);
         assertTrue(certificates
@@ -144,5 +149,35 @@ class CertificateRepositoryImplTest {
     void deleteNoInDB() {
         boolean deleted = repository.delete(1111133333L);
         assertFalse(deleted);
+    }
+
+    @Test
+    void getAllCount() {
+        Filter filter = new Filter();
+        filter.setTagName("");
+        filter.setName("name1");
+        filter.setPage(1);
+        filter.setSize(10);
+        filter.setCount(true);
+        filter.setSort(new ArrayList<String>(Arrays.asList("name", "creation")));
+        repository.save(one);
+        Long count = repository.getAllCount(filter);
+        assertEquals(count,1L);
+    }
+
+    @Test
+    void getCertificateIdsByTagId() {
+    }
+
+    @Test
+    void getTagIdsByCertificateId() {
+    }
+
+    @Test
+    void saveCertificateTag() {
+    }
+
+    @Test
+    void deleteCertificateTag() {
     }
 }

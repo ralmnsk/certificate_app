@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,7 +39,11 @@ public class TagController {
 
 
     @DeleteMapping("/{id}")
-    public boolean delete(@PathVariable Integer id) {
-        return tagService.delete(id);
+    public void delete(@PathVariable Integer id, HttpServletResponse response) {
+        if (tagService.delete(id)) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        }
     }
 }

@@ -5,18 +5,19 @@ import com.epam.esm.model.Filter;
 import com.epam.esm.repository.mapper.CertificateMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public class CertificateRepositoryImpl implements CertificateRepository<Certificate, Long> {
 
     private static Logger logger = LoggerFactory.getLogger(CertificateRepositoryImpl.class);
@@ -28,6 +29,12 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     private final String SQL_INSERT_CERTIFICATE = "insert into certificate(name, description, price, duration) values(?,?,?,?) returning id,name,description,price,creation,modification,duration";
     private final String SQL_PERCENT = "%";
     private final String SQL_EMPTY = "";
+
+    private final String SQL_CERTIFICATE_BY_TAG_ID = "select certificate_id from certificate_tag where tag_id = ?";
+    private final String SQL_TAG_BY_CERTIFICATE_ID = "select tag_id from certificate_tag where certificate_id = ?";
+    private final String SQL_DELETE = "delete from certificate_tag where certificate_id = ? and tag_id = ?";
+    private final String SQL_INSERT = "insert into certificate_tag(certificate_id, tag_id) values(?,?)";
+
 
     private JdbcTemplate jdbcTemplate;
     private CertificateMapper certificateMapper;
@@ -94,5 +101,54 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     @Override
     public boolean delete(Long id) {
         return jdbcTemplate.update(SQL_DELETE_CERTIFICATE, id) > 0;
+    }
+
+    @Override
+    public Long getAllCount(Filter filter) {
+        String sql = queryBuilder.build(filter);
+        logger.info("SQL query for {} {}", this.getClass(), sql);
+
+        return jdbcTemplate.query(sql, new PreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps) throws SQLException {
+                if (filter.getTagName() != null && !filter.getTagName().equals(SQL_EMPTY)) {
+                    ps.setString(1, SQL_PERCENT + filter.getTagName() + SQL_PERCENT);
+                    ps.setString(2, SQL_PERCENT + filter.getName() + SQL_PERCENT);
+                } else {
+                    ps.setString(1, SQL_PERCENT + filter.getName() + SQL_PERCENT);
+                }
+            }
+        }, new RowMapper<Long>() {
+            @Override
+            public Long mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return rs.getLong("count");
+            }
+        }).get(0);
+    }
+
+    @Override
+    public List<Long> getCertificateIdsByTagId(Integer id) {
+        return jdbcTemplate.queryForList(SQL_CERTIFICATE_BY_TAG_ID, new Object[]{id}, Long.class);
+    }
+
+    @Override
+    public List<Integer> getTagIdsByCertificateId(Long id) {
+        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id}, Integer.class);
+    }
+
+    @Override
+    public boolean saveCertificateTag(Long certId, Integer tagId) {
+        try {
+            return jdbcTemplate.update(SQL_INSERT,
+                    certId, tagId) > 0;
+        } catch (DuplicateKeyException e) {
+            logger.info("This certificate_tag already exists: certId={}, tagId={}", certId, tagId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteCertificateTag(Long certId, Integer tagId) {
+        return jdbcTemplate.update(SQL_DELETE, certId, tagId) > 0;
     }
 }

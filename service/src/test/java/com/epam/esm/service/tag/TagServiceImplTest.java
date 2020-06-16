@@ -3,7 +3,6 @@ package com.epam.esm.service.tag;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
-import com.epam.esm.repository.certificate.tag.CertificateTagRepository;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
@@ -35,8 +34,6 @@ import static org.mockito.ArgumentMatchers.any;
 class TagServiceImplTest {
     @Mock
     private CertificateRepository<Certificate, Long> certificateRepository;
-    @Mock
-    private CertificateTagRepository certificateTagRepository;
     @Mock
     private TagRepository<Tag, Integer> tagRepository;
     @Mock
@@ -82,7 +79,7 @@ class TagServiceImplTest {
 
         Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.ofNullable(tagOne));
         Mockito.when(tagConverter.toDto(any())).thenReturn(tagDto);
-        Mockito.when(certificateTagRepository.getCertificateIdsByTagId(any())).thenReturn(list);
+        Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
         Mockito.when(certificateRepository.get(any())).thenReturn(Optional.of(certificate));
         Mockito.when(certificateConverter.toDto(any())).thenReturn(certificateDto);
 
@@ -135,10 +132,10 @@ class TagServiceImplTest {
     void delete() {
         List<Long> list = new ArrayList<>();
         list.add(1L);
-        Mockito.when(certificateTagRepository.getCertificateIdsByTagId(any())).thenReturn(list);
+        Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
         service.delete(any());
         Mockito.verify(tagRepository).delete(any());
-        Mockito.verify(certificateTagRepository).deleteCertificateTag(any(), any());
+        Mockito.verify(certificateRepository).deleteCertificateTag(any(), any());
     }
 
     @Test

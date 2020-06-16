@@ -11,4 +11,14 @@ public interface CertificateRepository<T, E> extends CrudRepository<T, E> {
 
     List<T> getByName(String name);
 
+    E getAllCount(Filter filter);
+
+    List<Long> getCertificateIdsByTagId(Integer id);
+
+    List<Integer> getTagIdsByCertificateId(Long id);
+
+    boolean saveCertificateTag(Long certId, Integer tagId);
+
+    boolean deleteCertificateTag(Long certId, Integer tagId);
+
 }

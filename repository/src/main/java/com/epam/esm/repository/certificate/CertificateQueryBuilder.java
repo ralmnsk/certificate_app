@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class CertificateQueryBuilder {
     private final String SQL_START = "select distinct certificate.id,certificate.name,certificate.description,certificate.price," +
             " certificate.creation, certificate.modification, certificate.duration from certificate ";
+    private final String SQL_START_COUNT = "select distinct count (*) from certificate ";
     private final String JOIN_TAG_NAME = " join certificate_tag on certificate_tag.certificate_id=certificate.id " +
             " join tag on certificate_tag.tag_id = tag.id ";
     private final String WHERE = " where ";
@@ -35,6 +36,9 @@ public class CertificateQueryBuilder {
 
     public String build(Filter filter) {
         StringBuilder sql = new StringBuilder(SQL_START);
+        if (filter.isCount()) {
+            sql = new StringBuilder(SQL_START_COUNT);
+        }
 
         boolean flag_tag_like = false;
         if (filter.getTagName() != null && !filter.getTagName().equals(SQL_EMPTY)) {
@@ -46,11 +50,14 @@ public class CertificateQueryBuilder {
             sql.append(TAG_LIKE + AND);
         }
         sql.append(CERTIFICATE_LIKE);
-        if (!filter.getParams().isEmpty()) {
+        if (filter.getSort() != null
+                && (filter.getSort().contains("name")
+                || filter.getSort().contains("creation"))
+                && !filter.isCount()) {
             sql.append(ORDER_BY);
             boolean flag_comma = false;
             List<String> findName = filter
-                    .getParams()
+                    .getSort()
                     .stream()
                     .filter(p -> p.equals("name"))
                     .collect(Collectors.toList());
@@ -59,7 +66,7 @@ public class CertificateQueryBuilder {
                 flag_comma = true;
             }
             List<String> findDate = filter
-                    .getParams()
+                    .getSort()
                     .stream()
                     .filter(p -> p.equals("creation"))
                     .collect(Collectors.toList());
@@ -72,11 +79,13 @@ public class CertificateQueryBuilder {
             }
         }
 
-        int page = filter.getPageInt();
-        int size = filter.getSizeInt();
-        sql.append(" LIMIT ").append(size);
-        int offset = (page - ONE) * size;
-        sql.append(" OFFSET ").append(offset);
+        int page = filter.getPage();
+        int size = filter.getSize();
+        if (!filter.isCount()) {
+            sql.append(" LIMIT ").append(size);
+            int offset = (page - ONE) * size;
+            sql.append(" OFFSET ").append(offset);
+        }
 
         return sql.toString();
     }

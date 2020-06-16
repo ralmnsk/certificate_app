@@ -10,5 +10,5 @@ public interface CertificateService<T, E> extends CrudService<T, E> {
 
     List<T> getAll(FilterDto filterDto);
 
-
+    E getAllCount(FilterDto filterDto);
 }

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
 
     private static Logger logger = LoggerFactory.getLogger(TagRepositoryImpl.class);
@@ -23,7 +21,6 @@ public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
     private final String SQL_FIND_BY_NAME = "select tag.id, tag.name from tag where name = ?";
     private final String SQL_DELETE = "delete from tag where id = ?";
     private final String SQL_INSERT = "insert into tag(name) values(?) returning id,name";
-    private final String SQL_UPDATE = "update tag set name = ? where id = ?";
     private final String SQL_GET_ALL = "select tag.id, tag.name from tag";
     private JdbcTemplate jdbcTemplate;
     private TagMapper tagMapper;
