@@ -22,6 +22,9 @@ public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
     private final String SQL_DELETE = "delete from tag where id = ?";
     private final String SQL_INSERT = "insert into tag(name) values(?) returning id,name";
     private final String SQL_GET_ALL = "select tag.id, tag.name from tag";
+
+    private final String SQL_DELETE_MIDDLE_TAG = "delete from certificate_tag where tag_id = ? ";
+
     private JdbcTemplate jdbcTemplate;
     private TagMapper tagMapper;
 
@@ -64,6 +67,7 @@ public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
 
     @Override
     public boolean delete(Integer id) {
+        jdbcTemplate.update(SQL_DELETE_MIDDLE_TAG, id);
         return jdbcTemplate.update(SQL_DELETE, id) > 0;
     }
 }

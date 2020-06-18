@@ -84,7 +84,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
             certificateOptional = certificateRepository.get(id);
         } catch (EmptyResultDataAccessException e) {
             logger.info("There is no certificate id = {}", id, e);
-            throw new NotFoundException(id, e);
+            throw new NotFoundException(id);
         }
         Optional<CertificateDto> certificateOptionalDto = Optional.empty();
         if (certificateOptional.isPresent()) {
@@ -104,7 +104,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
             certificateOptional = certificateRepository.update(certificate);
         } catch (EmptyResultDataAccessException e) {
             logger.info("There is no certificate with id = {}", certificateDto.getId(), e);
-            throw new UpdateException(certificateDto.getId(), e);
+            throw new UpdateException(certificateDto.getId());
         }
 
         if (certificateOptional.isPresent()) {
@@ -125,10 +125,6 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     @Override
     public boolean delete(Long certId) {
-        certificateRepository
-                .getTagIdsByCertificateId(certId)
-                .forEach(tagId -> certificateRepository
-                        .deleteCertificateTag(certId, tagId));
         return certificateRepository.delete(certId);
     }
 

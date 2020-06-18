@@ -1,20 +1,17 @@
 package com.epam.esm.service.dto;
 
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FilterDto {
 
     private String tagName;
+
     private String name;
-    @Max(value = 1000000)
-    @Min(value = 1)
+
     private int page;
-    @Max(value = 100)
-    @Min(value =1)
+
     private int size;
     private List<String> sort = new ArrayList<>();
     private boolean isCount;

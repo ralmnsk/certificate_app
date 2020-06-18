@@ -8,8 +8,8 @@ import java.util.Set;
 public class TagDto extends Dto<Integer> {
 
     @NotNull
-    @Size(min = 2, max = 190, message
-            = "Name must be between 2 and 190 characters")
+    @Size(min = 2, max = 128, message
+            = "Name must be between 2 and 128 characters")
     private String name;
 
     private Set<CertificateDto> certificateDtos = new HashSet<CertificateDto>();

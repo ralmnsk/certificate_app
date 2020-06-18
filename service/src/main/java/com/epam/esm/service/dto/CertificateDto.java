@@ -1,6 +1,7 @@
 package com.epam.esm.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -8,12 +9,12 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-
+@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 public class CertificateDto extends Dto<Long> {
 
     @NotNull
-    @Size(min = 2, max = 190, message
-            = "Name must be between 2 and 190 characters")
+    @Size(min = 2, max = 256, message
+            = "Name must be between 2 and 256 characters")
     private String name;
 
     @Size(min = 0, max = 999, message
@@ -31,9 +32,9 @@ public class CertificateDto extends Dto<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant modification;
 
+    @NotNull
     @Min(value = 0)
     @Max(value = 100000)
-
     private Integer duration;
 
     private Set<TagDto> tagDtos = new HashSet<TagDto>();

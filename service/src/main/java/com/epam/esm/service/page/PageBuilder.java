@@ -17,6 +17,7 @@ public class PageBuilder {
     }
 
     public CustomPage<CertificateDto, Integer> build(FilterDto filterDto) {
+
         List<CertificateDto> certificates = service.getAll(filterDto);
         CustomPage<CertificateDto, Integer> page = new CustomPage<>();
         if (certificates != null && !certificates.isEmpty()) {

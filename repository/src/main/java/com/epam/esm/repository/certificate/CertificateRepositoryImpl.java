@@ -35,6 +35,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     private final String SQL_DELETE = "delete from certificate_tag where certificate_id = ? and tag_id = ?";
     private final String SQL_INSERT = "insert into certificate_tag(certificate_id, tag_id) values(?,?)";
 
+    private final String SQL_DELETE_MIDDLE_CERTIFICATE = "delete from certificate_tag where certificate_id = ? ";
 
     private JdbcTemplate jdbcTemplate;
     private CertificateMapper certificateMapper;
@@ -100,6 +101,8 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
 
     @Override
     public boolean delete(Long id) {
+        jdbcTemplate.update(SQL_DELETE_MIDDLE_CERTIFICATE,id);
+
         return jdbcTemplate.update(SQL_DELETE_CERTIFICATE, id) > 0;
     }
 

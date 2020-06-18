@@ -90,7 +90,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             }
         } catch (DuplicateKeyException e) {
             logger.info("This tag already exists: {} {}", tag.getName(), e);
-            throw new SaveException("This tag already exists: " + tag.getName() + e);
+            throw new SaveException("This tag already exists: " + tag.getName()+ ". Change name.");
         }
         throw new SaveException("Tag save exception happened");
     }
@@ -106,7 +106,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             }
         } catch (EmptyResultDataAccessException e) {
             logger.info("There is no tag id = {}", id, e);
-            throw new NotFoundException(id, e);
+            throw new NotFoundException(id);
         }
 
         return Optional.empty();
@@ -119,10 +119,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     @Override
     public boolean delete(Integer tagId) {
-        certificateRepository
-                .getCertificateIdsByTagId(tagId)
-                .forEach(certId -> certificateRepository
-                        .deleteCertificateTag(certId, tagId));
         return tagRepository.delete(tagId);
     }
 
