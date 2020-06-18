@@ -101,7 +101,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
 
     @Override
     public boolean delete(Long id) {
-        jdbcTemplate.update(SQL_DELETE_MIDDLE_CERTIFICATE,id);
+        jdbcTemplate.update(SQL_DELETE_MIDDLE_CERTIFICATE, id);
 
         return jdbcTemplate.update(SQL_DELETE_CERTIFICATE, id) > 0;
     }

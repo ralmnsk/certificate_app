@@ -5,7 +5,6 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -24,11 +23,12 @@ public class SpringAppConfig implements WebApplicationInitializer {
 
         AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
 
-        ServletRegistration.Dynamic dispatcher = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext){
+        ServletRegistration.Dynamic dispatcher = container.addServlet("dispatcher", new DispatcherServlet(dispatcherContext) {
             @Override
             protected void noHandlerFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
                 throw new NoHandlerException("No handler found");
             }
+
         });
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

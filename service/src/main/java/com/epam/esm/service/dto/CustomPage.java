@@ -1,13 +1,25 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.service.view.Profile;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomPage<T,E extends Number> {
+public class CustomPage<T, E extends Number> {
+    @JsonView(Profile.PublicView.class)
     private List<T> list = new ArrayList<>();
+
+    @JsonView(Profile.PublicView.class)
     private E number;
+
+    @JsonView(Profile.PublicView.class)
     private E size;
+
+    @JsonView(Profile.PublicView.class)
     private E totalElements;
+
+    @JsonView(Profile.PublicView.class)
     private E totalPages;
 
     public CustomPage() {

@@ -1,14 +1,12 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.ExceptionResponse;
-import com.epam.esm.service.exception.NoHandlerException;
-import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.exception.UpdateException;
+import com.epam.esm.service.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,8 +18,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class AdviceController {
@@ -36,14 +33,14 @@ public class AdviceController {
 
     @ResponseBody
     @ExceptionHandler(UpdateException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     public ExceptionResponse certificateUpdateException(UpdateException ex) {
         return new ExceptionResponse("UpdateException", ex.getMessage());
     }
 
     @ResponseBody
     @ExceptionHandler(SaveException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(CONFLICT)
     public ExceptionResponse certificateSaveException(SaveException ex) {
         return new ExceptionResponse("SaveException", ex.getMessage());
     }
@@ -59,8 +56,16 @@ public class AdviceController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ExceptionResponse methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        StringBuilder message = new StringBuilder(ex.getMessage());
+        if (ex.getBindingResult().getAllErrors().get(0).getDefaultMessage() != null) {
+            message = new StringBuilder(Objects.requireNonNull(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
+            String[] codes = ex.getBindingResult().getAllErrors().get(0).getCodes();
+            if (codes != null && codes.length >= 1) {
+                message = new StringBuilder(codes[0]).append(" ").append(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+            }
+        }
         return new ExceptionResponse("MethodArgumentNotValidException",
-                ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+                message.toString());
     }
 
     @ResponseBody
@@ -106,6 +111,33 @@ public class AdviceController {
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponse constraintViolationException(ConstraintViolationException ex) {
         return new ExceptionResponse("ConstraintViolationException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(METHOD_NOT_ALLOWED)
+    public ExceptionResponse httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ExceptionResponse("HttpRequestMethodNotSupportedException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(InconsistencyIdException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponse inconsistencyIdException(InconsistencyIdException ex) {
+        return new ExceptionResponse("InconsistencyIdException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(IdInNewTagException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponse idInNewTagException(IdInNewTagException ex) {
+        return new ExceptionResponse("IdInNewTagException",
                 ex.getMessage());
     }
 }

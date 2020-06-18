@@ -11,6 +11,8 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.Dto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.IdInNewTagException;
+import com.epam.esm.service.exception.InconsistencyIdException;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import org.modelmapper.ModelMapper;
@@ -155,30 +157,64 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         } else {
             certificate.getTags().forEach(t -> {
                 if (t != null && t.getName() != null) {
-                    Optional<Tag> foundTagOptional = Optional.empty();
-                    try {
-                        foundTagOptional = tagRepository.getByName(t.getName());
-                    } catch (EmptyResultDataAccessException e) {
-                        logger.info(this.getClass() + ": TagRepository.getName(): tag not found: " + t);
-                    }
+                    Optional<Tag> foundTagOptional = getOptionalTag(t);
                     if (!foundTagOptional.isPresent()) {
-                        Optional<Tag> tagOptional = tagRepository.save(t);
-                        tagOptional
-                                .ifPresent(tag -> {
-                                    t.setId(tagOptional.get().getId());
-                                    certificateRepository
-                                            .saveCertificateTag(certificate.getId(), tag.getId());
-                                });
+                        isIdInNewTag(t);
+                        saveNewTag(certificate, t);
                     } else {
-                        Tag tag = foundTagOptional.get();
-                        t.setId(tag.getId());
-                        certificateRepository.saveCertificateTag(certificate.getId(), tag.getId());
+                        saveExistingTag(certificate, t, foundTagOptional);
                     }
 
                 }
             });
             return true;
         }
+    }
+
+    private boolean isIdInNewTag(Tag t) {
+        if (t.getId() != null && t.getId() > 0) {
+            throw new IdInNewTagException("New Tag can not have id because it doesn't present in a database");
+        }
+        return false;
+    }
+
+    private Optional<Tag> getOptionalTag(Tag t) {
+        Optional<Tag> foundTagOptional = Optional.empty();
+        try {
+            foundTagOptional = tagRepository.getByName(t.getName());
+
+        } catch (EmptyResultDataAccessException e) {
+            logger.info(this.getClass() + ": TagRepository.getName(): tag not found: " + t);
+        }
+        return foundTagOptional;
+    }
+
+    private void saveNewTag(Certificate certificate, Tag t) {
+        Optional<Tag> tagOptional = tagRepository.save(t);
+        tagOptional
+                .ifPresent(tag -> {
+                    t.setId(tagOptional.get().getId());
+                    certificateRepository
+                            .saveCertificateTag(certificate.getId(), tag.getId());
+                });
+    }
+
+    private void saveExistingTag(Certificate certificate, Tag t, Optional<Tag> foundTagOptional) {
+        Tag tag = foundTagOptional.get();
+        if (isEqualsTags(t, tag)) {
+            t.setId(tag.getId());
+            certificateRepository.saveCertificateTag(certificate.getId(), tag.getId());
+        }
+    }
+
+    private boolean isEqualsTags(Tag t, Tag tag) {
+        if (!t.getName().equals(tag.getName())) {
+            return false;
+        }
+        if (t.getId() != null && t.getId() > 0 && !t.getId().equals(tag.getId())) {
+            throw new InconsistencyIdException("Inconsistency of id and name. Get the tag name by id or remove id");
+        }
+        return true;
     }
 
 

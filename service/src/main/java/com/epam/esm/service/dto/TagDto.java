@@ -1,12 +1,15 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.service.view.Profile;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
 public class TagDto extends Dto<Integer> {
-
+    @JsonView(Profile.PublicView.class)
     @NotNull
     @Size(min = 2, max = 128, message
             = "Name must be between 2 and 128 characters")
