@@ -47,14 +47,14 @@ class CertificateConverterTest {
     void toEntity() {
         toDto();
         Certificate certificate = certificateConverter.toEntity(oneDto);
-        assertEquals(1, oneDto.getTagDtos().size());
+        assertEquals(1, oneDto.getTags().size());
         assertEquals(certificate.getName(), oneDto.getName());
     }
 
     @Test
     void toDto() {
         CertificateDto dto = certificateConverter.toDto(one);
-        assertEquals(1, dto.getTagDtos().size());
+        assertEquals(1, dto.getTags().size());
         assertEquals(dto.getName(), one.getName());
         oneDto = dto;
     }

@@ -135,7 +135,6 @@ class TagServiceImplTest {
         Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
         service.delete(any());
         Mockito.verify(tagRepository).delete(any());
-        Mockito.verify(certificateRepository).deleteCertificateTag(any(), any());
     }
 
     @Test

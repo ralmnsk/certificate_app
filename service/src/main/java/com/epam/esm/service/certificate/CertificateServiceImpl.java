@@ -154,21 +154,20 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private boolean saveTags(Certificate certificate) {
         if (certificate.getTags().isEmpty()) {
             return false;
-        } else {
-            certificate.getTags().forEach(t -> {
-                if (t != null && t.getName() != null) {
-                    Optional<Tag> foundTagOptional = getOptionalTag(t);
-                    if (!foundTagOptional.isPresent()) {
-                        isIdInNewTag(t);
-                        saveNewTag(certificate, t);
-                    } else {
-                        saveExistingTag(certificate, t, foundTagOptional);
-                    }
-
-                }
-            });
-            return true;
         }
+        certificate.getTags().forEach(t -> {
+            if (t != null && t.getName() != null) {
+                Optional<Tag> foundTagOptional = getOptionalTag(t);
+                if (!foundTagOptional.isPresent()) {
+                    isIdInNewTag(t);
+                    saveNewTag(certificate, t);
+                } else {
+                    saveExistingTag(certificate, t, foundTagOptional);
+                }
+
+            }
+        });
+        return true;
     }
 
     private boolean isIdInNewTag(Tag t) {
@@ -223,7 +222,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         if (certificateDto != null) {
             List<TagDto> tagDtos = getTagsByCertificateId(certificateDto.getId());
             if (tagDtos != null && !tagDtos.isEmpty()) {
-                certificateDto.getTagDtos().addAll(tagDtos);
+                certificateDto.getTags().addAll(tagDtos);
             }
         }
     }

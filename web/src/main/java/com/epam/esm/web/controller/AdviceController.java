@@ -3,6 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.ExceptionResponse;
 import com.epam.esm.service.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -73,15 +74,15 @@ public class AdviceController {
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponse httpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return new ExceptionResponse("HttpMessageNotReadableException",
-                Objects.requireNonNull(ex.getRootCause()).getMessage());
+                "parameter is not valid: "+ Objects.requireNonNull(ex.getCause()).getMessage());
     }
-
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponse methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return new ExceptionResponse("MethodArgumentTypeMismatchException", ex.getMessage());
+        return new ExceptionResponse("MethodArgumentTypeMismatchException",
+                ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
     }
 
     @ResponseBody

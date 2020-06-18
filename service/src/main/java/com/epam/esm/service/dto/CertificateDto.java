@@ -4,6 +4,7 @@ import com.epam.esm.service.view.Profile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -25,9 +26,9 @@ public class CertificateDto extends Dto<Long> {
     private String description;
 
     @JsonView(Profile.PublicView.class)
+    @Digits(integer = 13, fraction = 2, message = " price should be numeric 12.34")
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "1000000000000.00")
-    @Digits(integer = 13, fraction = 2)
     private BigDecimal price;
 
     @JsonView(Profile.PublicView.class)
@@ -39,13 +40,12 @@ public class CertificateDto extends Dto<Long> {
     private Instant modification;
 
     @JsonView(Profile.PublicView.class)
-    @NotNull
-    @Min(value = 0)
-    @Max(value = 100000)
+    @NotNull(message = "duration has to be not null")
+    @Range(min = 0, max = 100000, message = "duration range: 0 - 100000")
     private Integer duration;
 
     @JsonView(Profile.PublicView.class)
-    private Set<TagDto> tagDtos = new HashSet<TagDto>();
+    private Set<TagDto> tags = new HashSet<TagDto>();
 
     public CertificateDto() {
     }
@@ -98,12 +98,12 @@ public class CertificateDto extends Dto<Long> {
         this.duration = duration;
     }
 
-    public Set<TagDto> getTagDtos() {
-        return tagDtos;
+    public Set<TagDto> getTags() {
+        return tags;
     }
 
-    public void setTagDtos(Set<TagDto> tagDtos) {
-        this.tagDtos = tagDtos;
+    public void setTags(Set<TagDto> tags) {
+        this.tags = tags;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class CertificateDto extends Dto<Long> {
                 ", creation=" + creation +
                 ", modification=" + modification +
                 ", duration=" + duration +
-                ", tagDtos=" + tagDtos +
+                ", tagDtos=" + tags +
                 '}';
     }
 }

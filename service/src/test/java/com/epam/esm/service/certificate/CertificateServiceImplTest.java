@@ -9,6 +9,8 @@ import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.IdInNewTagException;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,9 +123,17 @@ class CertificateServiceImplTest {
     void update() {
         CertificateDto certificateDto = new CertificateDto();
         certificateDto.setId(1L);
+        TagDto tagDto = new TagDto();
+        tagDto.setName("name1");
+        tagDto.setId(1);
+        certificateDto.getTags().add(tagDto);
+        List<Integer> list = new ArrayList<>(Arrays.asList(1));
         Mockito.when(certificateConverter.toEntity(any())).thenReturn(one);
         Mockito.when(repository.update(any())).thenReturn(Optional.of(one));
         Mockito.when(certificateConverter.toDto(any())).thenReturn(certificateDto);
+        Mockito.when(repository.getTagIdsByCertificateId(any())).thenReturn(list);
+        Mockito.when(tagRepository.get(any())).thenReturn(Optional.of(tagOne));
+        Mockito.when(tagConverter.toDto(any())).thenReturn(tagDto);
 
         service.update(certificateDto);
         Mockito.verify(repository).update(any());
@@ -162,7 +173,6 @@ class CertificateServiceImplTest {
         service.save(certificateDto);
         Mockito.verify(repository).getTagIdsByCertificateId(any());
         Mockito.verify(tagRepository).getByName(any());
-        Mockito.verify(repository).saveCertificateTag(any(), any());
     }
 
     @Test
@@ -178,10 +188,8 @@ class CertificateServiceImplTest {
         Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.empty());
         Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
 
-        service.save(certificateDto);
-        Mockito.verify(repository).getTagIdsByCertificateId(any());
+        Exception exception = assertThrows(IdInNewTagException.class,()->service.save(certificateDto));
         Mockito.verify(tagRepository).getByName(any());
-        Mockito.verify(repository).saveCertificateTag(any(), any());
     }
 
 
