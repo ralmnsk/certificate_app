@@ -8,6 +8,9 @@ import org.springframework.context.annotation.PropertySource;
 
 import javax.sql.DataSource;
 
+/**
+ * The type Spring jdbc config.
+ */
 @Configuration
 @PropertySource("classpath:repository.properties")
 public class SpringJdbcConfig {
@@ -26,6 +29,11 @@ public class SpringJdbcConfig {
     private String minIdle;
 
 
+    /**
+     * Data source data source.
+     *
+     * @return the data source
+     */
     @Bean
     DataSource dataSource() {
         final HikariDataSource dataSource = new HikariDataSource();

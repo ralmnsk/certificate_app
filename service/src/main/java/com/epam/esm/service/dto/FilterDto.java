@@ -4,6 +4,9 @@ package com.epam.esm.service.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Filter dto.
+ */
 public class FilterDto {
 
     private String tagName;
@@ -16,50 +19,110 @@ public class FilterDto {
     private List<String> sort = new ArrayList<>();
     private boolean isCount;
 
+    /**
+     * Gets tag name.
+     *
+     * @return the tag name
+     */
     public String getTagName() {
         return tagName;
     }
 
+    /**
+     * Sets tag name.
+     *
+     * @param tagName the tag name
+     */
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets page.
+     *
+     * @return the page
+     */
     public int getPage() {
         return page;
     }
 
+    /**
+     * Sets page.
+     *
+     * @param page the page
+     */
     public void setPage(int page) {
         this.page = page;
     }
 
+    /**
+     * Gets size.
+     *
+     * @return the size
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Sets size.
+     *
+     * @param size the size
+     */
     public void setSize(int size) {
         this.size = size;
     }
 
+    /**
+     * Gets sort.
+     *
+     * @return the sort
+     */
     public List<String> getSort() {
         return sort;
     }
 
+    /**
+     * Sets sort.
+     *
+     * @param sort the sort
+     */
     public void setSort(List<String> sort) {
         this.sort = sort;
     }
 
+    /**
+     * Is count boolean.
+     *
+     * @return the boolean
+     */
     public boolean isCount() {
         return isCount;
     }
 
+    /**
+     * Sets count.
+     *
+     * @param count the count
+     */
     public void setCount(boolean count) {
         isCount = count;
     }

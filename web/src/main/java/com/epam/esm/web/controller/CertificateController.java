@@ -18,6 +18,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
 
+/**
+ * The type Certificate controller.
+ */
 @Validated
 @RestController
 @RequestMapping("/certificates")
@@ -25,12 +28,28 @@ public class CertificateController {
     private final CertificateService<CertificateDto, Long> certificateService;
     private final PageBuilder pageBuilder;
 
+    /**
+     * Instantiates a new Certificate controller.
+     *
+     * @param certificateService the certificate service
+     * @param pageBuilder        the page builder
+     */
     public CertificateController(CertificateService<CertificateDto, Long> certificateService,
                                  PageBuilder pageBuilder) {
         this.certificateService = certificateService;
         this.pageBuilder = pageBuilder;
     }
 
+    /**
+     * Gets all.
+     *
+     * @param tagName the tag name
+     * @param name    the name
+     * @param page    the page
+     * @param size    the size
+     * @param sort    the sort
+     * @return the all
+     */
     @JsonView(Profile.PublicView.class)
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -65,12 +84,24 @@ public class CertificateController {
         return pageBuilder.build(filterDto);
     }
 
+    /**
+     * Get certificate dto.
+     *
+     * @param id the id
+     * @return the certificate dto
+     */
     @JsonView(Profile.PublicView.class)
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {
         return certificateService.get(id).get();
     }
 
+    /**
+     * Create certificate dto.
+     *
+     * @param certificateDto the certificate dto
+     * @return the certificate dto
+     */
     @JsonView(Profile.PublicView.class)
     @PostMapping
     public CertificateDto
@@ -78,6 +109,13 @@ public class CertificateController {
         return certificateService.save(certificateDto).get();
     }
 
+    /**
+     * Update certificate dto.
+     *
+     * @param certificateDto the certificate dto
+     * @param id             the id
+     * @return the certificate dto
+     */
     @JsonView(Profile.PublicView.class)
     @PutMapping("/{id}")
     public CertificateDto
@@ -87,6 +125,12 @@ public class CertificateController {
     }
 
 
+    /**
+     * Delete.
+     *
+     * @param id       the id
+     * @param response the response
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id, HttpServletResponse response) {
 

@@ -3,7 +3,6 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.ExceptionResponse;
 import com.epam.esm.service.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,10 +20,19 @@ import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
+/**
+ * The type Advice controller.
+ */
 @ControllerAdvice
 public class AdviceController {
 
 
+    /**
+     * Certificate not found exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -32,6 +40,12 @@ public class AdviceController {
         return new ExceptionResponse("NotFoundException", ex.getMessage());
     }
 
+    /**
+     * Certificate update exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(UpdateException.class)
     @ResponseStatus(NOT_FOUND)
@@ -39,6 +53,12 @@ public class AdviceController {
         return new ExceptionResponse("UpdateException", ex.getMessage());
     }
 
+    /**
+     * Certificate save exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(SaveException.class)
     @ResponseStatus(CONFLICT)
@@ -46,6 +66,12 @@ public class AdviceController {
         return new ExceptionResponse("SaveException", ex.getMessage());
     }
 
+    /**
+     * Incorrect result size data access exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
@@ -53,6 +79,12 @@ public class AdviceController {
         return new ExceptionResponse("IncorrectResultSizeDataAccessException", ex.getMessage());
     }
 
+    /**
+     * Method argument not valid exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
@@ -69,14 +101,26 @@ public class AdviceController {
                 message.toString());
     }
 
+    /**
+     * Http message not readable exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponse httpMessageNotReadableException(HttpMessageNotReadableException ex) {
         return new ExceptionResponse("HttpMessageNotReadableException",
-                "parameter is not valid: "+ Objects.requireNonNull(ex.getCause()).getMessage());
+                Objects.requireNonNull(ex.getCause()).getMessage());
     }
 
+    /**
+     * Method argument type mismatch exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
@@ -85,6 +129,12 @@ public class AdviceController {
                 ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
     }
 
+    /**
+     * Json parse exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(JsonParseException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
@@ -93,6 +143,12 @@ public class AdviceController {
     }
 
 
+    /**
+     * No handler found exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(NOT_FOUND)
@@ -100,6 +156,12 @@ public class AdviceController {
         return new ExceptionResponse("NoHandlerFoundException", ex.getMessage());
     }
 
+    /**
+     * No handler exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(NoHandlerException.class)
     @ResponseStatus(NOT_FOUND)
@@ -107,6 +169,12 @@ public class AdviceController {
         return new ExceptionResponse("NoHandlerException", ex.getMessage());
     }
 
+    /**
+     * Constraint violation exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
@@ -116,6 +184,12 @@ public class AdviceController {
     }
 
 
+    /**
+     * Http request method not supported exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(METHOD_NOT_ALLOWED)
@@ -125,6 +199,12 @@ public class AdviceController {
     }
 
 
+    /**
+     * Inconsistency id exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(InconsistencyIdException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
@@ -134,6 +214,12 @@ public class AdviceController {
     }
 
 
+    /**
+     * Id in new tag exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
     @ResponseBody
     @ExceptionHandler(IdInNewTagException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)

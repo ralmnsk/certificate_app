@@ -28,6 +28,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+/**
+ * The type Certificate service.
+ */
 @Service
 @Transactional
 public class CertificateServiceImpl implements CertificateService<CertificateDto, Long> {
@@ -39,6 +43,15 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private TagConverter tagConverter;
     private ModelMapper modelMapper;
 
+    /**
+     * Instantiates a new Certificate service.
+     *
+     * @param certificateRepository the certificate repository
+     * @param tagRepository         the tag repository
+     * @param certificateConverter  the certificate converter
+     * @param tagConverter          the tag converter
+     * @param modelMapper           the model mapper
+     */
     public CertificateServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
                                   TagRepository<Tag, Integer> tagRepository,
                                   CertificateConverter certificateConverter,
@@ -130,6 +143,12 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         return certificateRepository.delete(certId);
     }
 
+    /**
+     * Gets tags by certificate id.
+     *
+     * @param id the id
+     * @return the tags by certificate id
+     */
     public List<TagDto> getTagsByCertificateId(Long id) {
         List<Integer> listTagIds = certificateRepository.getTagIdsByCertificateId(id);
         if (listTagIds != null && !listTagIds.isEmpty()) {

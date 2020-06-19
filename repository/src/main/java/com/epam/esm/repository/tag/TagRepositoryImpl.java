@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Tag repository.
+ */
 @Repository
 public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
 
@@ -28,6 +31,12 @@ public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
     private JdbcTemplate jdbcTemplate;
     private TagMapper tagMapper;
 
+    /**
+     * Instantiates a new Tag repository.
+     *
+     * @param jdbcTemplate the jdbc template
+     * @param tagMapper    the tag mapper
+     */
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.tagMapper = tagMapper;

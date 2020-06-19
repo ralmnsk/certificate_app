@@ -9,11 +9,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+/**
+ * The type Certificate converter.
+ */
 @Component
 public class CertificateConverter implements Converter<CertificateDto, Certificate> {
 
     private ModelMapper modelMapper;
 
+    /**
+     * Instantiates a new Certificate converter.
+     *
+     * @param modelMapper the model mapper
+     */
     public CertificateConverter(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }

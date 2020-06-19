@@ -23,6 +23,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * The type Tag service.
+ */
 @Service
 @Transactional
 public class TagServiceImpl implements TagService<TagDto, Integer> {
@@ -32,6 +35,14 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
+    /**
+     * Instantiates a new Tag service.
+     *
+     * @param certificateRepository the certificate repository
+     * @param tagRepository         the tag repository
+     * @param certificateConverter  the certificate converter
+     * @param tagConverter          the tag converter
+     */
     public TagServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
                           TagRepository<Tag, Integer> tagRepository,
                           CertificateConverter certificateConverter,
@@ -90,7 +101,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             }
         } catch (DuplicateKeyException e) {
             logger.info("This tag already exists: {} {}", tag.getName(), e);
-            throw new SaveException("This tag already exists: " + tag.getName()+ ". Change name.");
+            throw new SaveException("This tag already exists: " + tag.getName() + ". Change name.");
         }
         throw new SaveException("Tag save exception happened");
     }
@@ -122,6 +133,12 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
         return tagRepository.delete(tagId);
     }
 
+    /**
+     * Gets certificates by tag id.
+     *
+     * @param id the id
+     * @return the certificates by tag id
+     */
     public List<CertificateDto> getCertificatesByTagId(Integer id) {
         List<Long> listCertificateIds = certificateRepository.getCertificateIdsByTagId(id);
         if (listCertificateIds != null && !listCertificateIds.isEmpty()) {

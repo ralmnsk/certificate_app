@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import static com.epam.esm.repository.RepositoryConstants.ID;
 import static com.epam.esm.repository.RepositoryConstants.NAME;
 
+/**
+ * The type Tag mapper.
+ */
 @Component
 public class TagMapper implements RowMapper<Tag> {
 

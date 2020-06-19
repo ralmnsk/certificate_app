@@ -12,6 +12,9 @@ import java.time.ZoneOffset;
 
 import static com.epam.esm.repository.RepositoryConstants.*;
 
+/**
+ * The type Certificate mapper.
+ */
 @Component
 public class CertificateMapper implements RowMapper<Certificate> {
 

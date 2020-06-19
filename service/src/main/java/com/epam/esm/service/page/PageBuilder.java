@@ -8,14 +8,28 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * The type Page builder.
+ */
 @Component
 public class PageBuilder {
     private CertificateService<CertificateDto, Long> service;
 
+    /**
+     * Instantiates a new Page builder.
+     *
+     * @param service the service
+     */
     public PageBuilder(CertificateService<CertificateDto, Long> service) {
         this.service = service;
     }
 
+    /**
+     * Build custom page.
+     *
+     * @param filterDto the filter dto
+     * @return the custom page
+     */
     public CustomPage<CertificateDto, Integer> build(FilterDto filterDto) {
 
         List<CertificateDto> certificates = service.getAll(filterDto);

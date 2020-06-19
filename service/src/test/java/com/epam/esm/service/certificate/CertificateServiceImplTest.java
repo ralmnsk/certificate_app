@@ -188,7 +188,7 @@ class CertificateServiceImplTest {
         Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.empty());
         Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
 
-        Exception exception = assertThrows(IdInNewTagException.class,()->service.save(certificateDto));
+        Exception exception = assertThrows(IdInNewTagException.class, () -> service.save(certificateDto));
         Mockito.verify(tagRepository).getByName(any());
     }
 

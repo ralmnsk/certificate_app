@@ -5,10 +5,18 @@ import com.epam.esm.service.dto.TagDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Tag converter.
+ */
 @Component
 public class TagConverter implements Converter<TagDto, Tag> {
     private ModelMapper modelMapper;
 
+    /**
+     * Instantiates a new Tag converter.
+     *
+     * @param modelMapper the model mapper
+     */
     public TagConverter(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }

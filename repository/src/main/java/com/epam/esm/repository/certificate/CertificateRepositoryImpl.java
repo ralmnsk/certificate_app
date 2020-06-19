@@ -17,6 +17,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The type Certificate repository.
+ */
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository<Certificate, Long> {
 
@@ -41,6 +44,13 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     private CertificateMapper certificateMapper;
     private CertificateQueryBuilder queryBuilder;
 
+    /**
+     * Instantiates a new Certificate repository.
+     *
+     * @param jdbcTemplate      the jdbc template
+     * @param certificateMapper the certificate mapper
+     * @param queryBuilder      the query builder
+     */
     public CertificateRepositoryImpl(JdbcTemplate jdbcTemplate,
                                      CertificateMapper certificateMapper,
                                      CertificateQueryBuilder queryBuilder) {

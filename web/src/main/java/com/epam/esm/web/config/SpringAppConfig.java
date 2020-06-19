@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
+/**
+ * The type Spring app config.
+ */
 public class SpringAppConfig implements WebApplicationInitializer {
 
     @Override

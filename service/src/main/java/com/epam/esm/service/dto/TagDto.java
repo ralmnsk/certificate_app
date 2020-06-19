@@ -8,6 +8,9 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * The type Tag dto.
+ */
 public class TagDto extends Dto<Integer> {
     @JsonView(Profile.PublicView.class)
     @NotNull
@@ -17,21 +20,44 @@ public class TagDto extends Dto<Integer> {
 
     private Set<CertificateDto> certificateDtos = new HashSet<CertificateDto>();
 
+    /**
+     * Instantiates a new Tag dto.
+     */
     public TagDto() {
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets certificate dtos.
+     *
+     * @return the certificate dtos
+     */
     public Set<CertificateDto> getCertificateDtos() {
         return certificateDtos;
     }
 
+    /**
+     * Sets certificate dtos.
+     *
+     * @param certificateDtos the certificate dtos
+     */
     public void setCertificateDtos(Set<CertificateDto> certificateDtos) {
         this.certificateDtos = certificateDtos;
     }

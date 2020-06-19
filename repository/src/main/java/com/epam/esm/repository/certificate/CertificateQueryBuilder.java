@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The type Certificate query builder.
+ */
 @Component
 public class CertificateQueryBuilder {
     private final String SQL_START = "select distinct certificate.id,certificate.name,certificate.description,certificate.price," +
@@ -26,14 +29,30 @@ public class CertificateQueryBuilder {
 
     private Filter filter;
 
+    /**
+     * Gets filter.
+     *
+     * @return the filter
+     */
     public Filter getFilter() {
         return filter;
     }
 
+    /**
+     * Sets filter.
+     *
+     * @param filter the filter
+     */
     public void setFilter(Filter filter) {
         this.filter = filter;
     }
 
+    /**
+     * Build string.
+     *
+     * @param filter the filter
+     * @return the string
+     */
     public String build(Filter filter) {
         StringBuilder sql = new StringBuilder(SQL_START);
         if (filter.isCount()) {

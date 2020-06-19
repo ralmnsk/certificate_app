@@ -1,16 +1,32 @@
 package com.epam.esm.model;
 
+/**
+ * The type Tag.
+ */
 public class Tag extends Identifiable<Integer> {
 
     private String name;
 
+    /**
+     * Instantiates a new Tag.
+     */
     public Tag() {
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
