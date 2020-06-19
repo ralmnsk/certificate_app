@@ -3,6 +3,7 @@ package com.epam.esm.service.dto;
 import com.epam.esm.service.view.Profile;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @param <T> the type parameter
  * @param <E> the type parameter
  */
-public class CustomPage<T, E extends Number> {
+public class CustomPage<T, E extends Number> implements Serializable {
     @JsonView(Profile.PublicView.class)
     private List<T> list = new ArrayList<>();
 

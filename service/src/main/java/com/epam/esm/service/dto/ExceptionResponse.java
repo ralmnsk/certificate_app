@@ -1,9 +1,11 @@
 package com.epam.esm.service.dto;
 
+import java.io.Serializable;
+
 /**
  * The type Exception response.
  */
-public class ExceptionResponse {
+public class ExceptionResponse implements Serializable {
     private String exception;
     private String message;
 

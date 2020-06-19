@@ -32,7 +32,7 @@ public class CertificateDto extends Dto<Long> {
     private String description;
 
     @JsonView(Profile.PublicView.class)
-    @Digits(integer = 13, fraction = 2, message = " price should be numeric 12.34")
+    @Digits(integer = 13, fraction = 2, message = " should be numeric, example: 12.34 ")
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "1000000000000.00")
     @JsonDeserialize(converter = StringToDecimalConverter.class)
