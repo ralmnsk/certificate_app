@@ -18,6 +18,9 @@ import java.util.List;
 
 /**
  * The type Certificate controller.
+ * The CertificateController takes care of mapping certificate request data
+ * to the defined request handler method. Once response body is generated
+ * from the handler method, it converts it to JSON response.
  */
 @Validated
 @RestController
@@ -28,6 +31,7 @@ public class CertificateController {
 
     /**
      * Instantiates a new Certificate controller.
+     * Spring injects parameters into constructor automatically.
      *
      * @param certificateService the certificate service
      * @param pageBuilder        the page builder
@@ -41,12 +45,12 @@ public class CertificateController {
     /**
      * Gets all.
      *
-     * @param tagName the tag name
-     * @param name    the name
-     * @param page    the page
-     * @param size    the size
-     * @param sort    the sort
-     * @return the all
+     * @param tagName    the tag name for the filtering
+     * @param name       the certificate name for the filtering
+     * @param page       the page number for certificates
+     * @param size       the count of certificates on the page
+     * @param sortParams the sorting parameters (name, creation)
+     * @return CustomPage with parameters and a certificate list
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -70,22 +74,22 @@ public class CertificateController {
                     int size,
 
             @RequestParam(required = false)
-                    List<String> sort
+                    List<String> sortParams
     ) {
         FilterDto filterDto = new FilterDto();
         filterDto.setTagName(tagName);
         filterDto.setName(name);
         filterDto.setPage(page);
         filterDto.setSize(size);
-        filterDto.setSortParams(sort);
+        filterDto.setSortParams(sortParams);
         return pageBuilder.build(filterDto);
     }
 
     /**
-     * Get certificate dto.
+     * Get certificate dto by the certificate id.
      *
-     * @param id the id
-     * @return the certificate dto
+     * @param id the certificate id
+     * @return the certificate dto from the database
      */
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {
@@ -93,10 +97,10 @@ public class CertificateController {
     }
 
     /**
-     * Create certificate dto.
+     * Create and return certificate dto.
      *
-     * @param certificateDto the certificate dto
-     * @return the certificate dto
+     * @param certificateDto the certificate dto to save
+     * @return the saved certificate dto
      */
     @PostMapping
     public CertificateDto
@@ -105,11 +109,11 @@ public class CertificateController {
     }
 
     /**
-     * Update certificate dto.
+     * Update existing certificate dto by the certificate id.
      *
-     * @param certificateDto the certificate dto
-     * @param id             the id
-     * @return the certificate dto
+     * @param certificateDto the certificate dto to update
+     * @param id             the certificate id
+     * @return the updated certificate dto
      */
     @PutMapping("/{id}")
     public CertificateDto
@@ -120,10 +124,11 @@ public class CertificateController {
 
 
     /**
-     * Delete.
+     * Delete existing certificate by the certificate id.
      *
-     * @param id       the id
-     * @param response the response
+     * @param id       the certificate id
+     * @param response the response with status SC_OK(successful) or
+     *                 SC_NO_CONTENT (content not found)
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id, HttpServletResponse response) {

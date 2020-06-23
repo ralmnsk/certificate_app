@@ -25,10 +25,10 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -80,9 +80,6 @@ class TagServiceImplTest {
 
         Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.ofNullable(tagOne));
         Mockito.when(tagConverter.toDto(any())).thenReturn(tagDto);
-        Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
-        Mockito.when(certificateRepository.get(any())).thenReturn(Optional.of(certificate));
-        Mockito.when(certificateConverter.toDto(any())).thenReturn(certificateDto);
 
         service.getByName(tagOne.getName());
         Mockito.verify(tagRepository).getByName(any());
@@ -96,7 +93,14 @@ class TagServiceImplTest {
         service.getAll();
         Mockito.verify(tagRepository).getAll();
         Mockito.verify(tagConverter).toDto(any());
+    }
 
+    @Test
+    void getAllNull() {
+        List<Tag> list = null;
+        Mockito.when(tagRepository.getAll()).thenReturn(list);
+        service.getAll();
+        assertNull(service.getAll());
     }
 
     @Test
@@ -106,7 +110,9 @@ class TagServiceImplTest {
         TagDto tagDto = new TagDto();
         tagDto.setName("tagOne");
         tagDto.setId(1);
+
         service.save(tagDto);
+        Mockito.verify(tagConverter).toEntity(any());
         Mockito.verify(tagRepository).save(any());
     }
 
@@ -114,6 +120,17 @@ class TagServiceImplTest {
     void saveThrowsException() {
         Mockito.when(tagConverter.toEntity(any())).thenReturn(tagOne);
         Mockito.when(tagRepository.save(any())).thenThrow(DuplicateKeyException.class);
+        TagDto tagDto = new TagDto();
+        tagDto.setName("tagOne");
+        tagDto.setId(1);
+
+        Exception exception = assertThrows(SaveException.class, () -> service.save(tagDto));
+    }
+
+    @Test
+    void saveOptionalEmpty() {
+        Mockito.when(tagConverter.toEntity(any())).thenReturn(tagOne);
+        Mockito.when(tagRepository.save(any())).thenReturn(Optional.empty());
         TagDto tagDto = new TagDto();
         tagDto.setName("tagOne");
         tagDto.setId(1);
@@ -153,20 +170,5 @@ class TagServiceImplTest {
         Mockito.when(tagRepository.get(any())).thenThrow(EmptyResultDataAccessException.class);
 
         Exception exception = assertThrows(NotFoundException.class, () -> service.get(any()));
-    }
-
-    @Test
-    void getCertificatesByTagId() {
-        List<Long> list = Arrays.asList(1L, 2L, 3L);
-        Certificate c = new Certificate();
-        CertificateDto cDto = new CertificateDto();
-
-        Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
-        Mockito.when(certificateRepository.get(any())).thenReturn(Optional.of(c));
-        Mockito.when(certificateConverter.toDto(any())).thenReturn(cDto);
-
-        service.getCertificatesByTagId(1);
-
-        Mockito.verify(certificateRepository).getCertificateIdsByTagId(any());
     }
 }

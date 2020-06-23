@@ -4,10 +4,12 @@ import com.epam.esm.service.dto.CertificateDto;
 
 /**
  * The type Save exception.
+ * Thrown to indicate that exception happened during entity the saving process.
  */
 public class SaveException extends GeneralException {
     /**
      * Instantiates a new Save exception.
+     * Constructor with the specified detail message.
      *
      * @param certificateDto the certificate dto
      */

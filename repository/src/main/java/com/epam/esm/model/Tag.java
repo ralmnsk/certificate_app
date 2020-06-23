@@ -12,6 +12,7 @@ public class Tag extends Identifiable<Integer> {
 
     /**
      * Instantiates a new Tag.
+     * Default constructor.  Setter is used to set name of the tag.
      */
     public Tag() {
     }
@@ -19,7 +20,7 @@ public class Tag extends Identifiable<Integer> {
     /**
      * Gets name.
      *
-     * @return the name
+     * @return the name of the tag
      */
     public String getName() {
         return name;
@@ -28,7 +29,7 @@ public class Tag extends Identifiable<Integer> {
     /**
      * Sets name.
      *
-     * @param name the name
+     * @param name the name of the tag
      */
     public void setName(String name) {
         this.name = name;

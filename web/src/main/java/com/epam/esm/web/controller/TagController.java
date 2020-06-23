@@ -2,7 +2,6 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.tag.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +11,9 @@ import java.util.List;
 
 /**
  * The type Tag controller.
+ * The TagController takes care of mapping tag request data
+ * to the defined request handler method. Once response body is generated
+ * from the handler method, it converts it to JSON response.
  */
 @RestController
 @RequestMapping("/tags")
@@ -20,10 +22,11 @@ public class TagController {
 
     /**
      * Instantiates a new Tag controller.
+     * Spring injects parameters into constructor automatically.
      *
      * @param tagService the tag service
      */
-    @Autowired
+
     public TagController(TagService<TagDto, Integer> tagService) {
         this.tagService = tagService;
     }
@@ -42,8 +45,8 @@ public class TagController {
     /**
      * Get tag dto.
      *
-     * @param id the id
-     * @return the tag dto
+     * @param id the tag id
+     * @return the tag dto from a database
      */
     @GetMapping("/{id}")
     public TagDto get(@PathVariable Integer id) {
@@ -51,10 +54,10 @@ public class TagController {
     }
 
     /**
-     * Create tag dto.
+     * Create and return tag dto .
      *
-     * @param tagDto the tag dto
-     * @return the tag dto
+     * @param tagDto the tag dto to create
+     * @return the created tag dto
      */
     @PostMapping
     public TagDto
@@ -64,10 +67,11 @@ public class TagController {
 
 
     /**
-     * Delete.
+     * Delete tag by the id.
      *
-     * @param id       the id
-     * @param response the response
+     * @param id       the tag id
+     * @param response the response with status SC_OK(successful) or
+     *                 SC_NO_CONTENT (content not found)
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id, HttpServletResponse response) {

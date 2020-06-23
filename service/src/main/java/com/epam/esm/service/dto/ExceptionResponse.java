@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 /**
  * The type Exception response.
+ * The pojo class to keep an exception name and message.
  */
 public class ExceptionResponse implements Serializable {
     private String exception;

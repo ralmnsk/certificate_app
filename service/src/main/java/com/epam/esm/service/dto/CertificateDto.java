@@ -17,6 +17,9 @@ import java.util.Set;
 
 /**
  * The type Certificate dto.
+ * The CertificateDto is a DTO used to transfer
+ * an certificate data between software application subsystems or
+ * layers.
  */
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 public class CertificateDto extends Dto<Long> {
@@ -57,7 +60,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets name.
      *
-     * @return the name
+     * @return the name of the CertificateDto.
      */
     public String getName() {
         return name;
@@ -66,7 +69,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets name.
      *
-     * @param name the name
+     * @param name the name of the CertificateDto.
      */
     public void setName(String name) {
         this.name = name;
@@ -75,7 +78,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets description.
      *
-     * @return the description
+     * @return the description of the CertificateDto.
      */
     public String getDescription() {
         return description;
@@ -84,7 +87,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets description.
      *
-     * @param description the description
+     * @param description the description of the CertificateDto
      */
     public void setDescription(String description) {
         this.description = description;
@@ -93,7 +96,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets price.
      *
-     * @return the price
+     * @return the price of the CertificateDto.
      */
     public BigDecimal getPrice() {
         return price;
@@ -102,7 +105,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets price.
      *
-     * @param price the price
+     * @param price the price of the CertificateDto.
      */
     public void setPrice(BigDecimal price) {
         this.price = price;
@@ -111,7 +114,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets creation.
      *
-     * @return the creation
+     * @return the creation date of the CertificateDto.
      */
     public Instant getCreation() {
         return creation;
@@ -120,7 +123,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets creation.
      *
-     * @param creation the creation
+     * @param creation the creation date of the CertificateDto
      */
     public void setCreation(Instant creation) {
         this.creation = creation;
@@ -129,7 +132,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets modification.
      *
-     * @return the modification
+     * @return the modification date of the CertificateDto
      */
     public Instant getModification() {
         return modification;
@@ -138,7 +141,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets modification.
      *
-     * @param modification the modification
+     * @param modification the modification date of the CertificateDto
      */
     public void setModification(Instant modification) {
         this.modification = modification;
@@ -147,7 +150,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets duration.
      *
-     * @return the duration
+     * @return the duration in days of the CertificateDto
      */
     public Integer getDuration() {
         return duration;
@@ -156,7 +159,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets duration.
      *
-     * @param duration the duration
+     * @param duration the duration in days of the CertificateDto
      */
     public void setDuration(Integer duration) {
         this.duration = duration;
@@ -165,7 +168,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Gets tags.
      *
-     * @return the tags
+     * @return the tags that are contained in the CertificateDto
      */
     public Set<TagDto> getTags() {
         return tags;
@@ -174,7 +177,7 @@ public class CertificateDto extends Dto<Long> {
     /**
      * Sets tags.
      *
-     * @param tags the tags
+     * @param tags the tags that are contained in the CertificateDto
      */
     public void setTags(Set<TagDto> tags) {
         this.tags = tags;

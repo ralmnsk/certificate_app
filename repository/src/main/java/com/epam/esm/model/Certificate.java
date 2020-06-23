@@ -30,6 +30,7 @@ public class Certificate extends Identifiable<Long> {
 
     /**
      * Instantiates a new Certificate.
+     * Default constructor.  Setters are used to set fields of the certificate.
      */
     public Certificate() {
     }
@@ -64,7 +65,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets description.
      *
-     * @param description the description
+     * @param description the description of the certificate
      */
     public void setDescription(String description) {
         this.description = description;
@@ -73,7 +74,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Gets price.
      *
-     * @return the price
+     * @return the price of the certificate
      */
     public BigDecimal getPrice() {
         return price;
@@ -82,7 +83,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets price.
      *
-     * @param price the price
+     * @param price the price of the certificate
      */
     public void setPrice(BigDecimal price) {
         this.price = price;
@@ -91,7 +92,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Gets creation.
      *
-     * @return the creation
+     * @return the creation date of the certificate
      */
     public Instant getCreation() {
         return creation;
@@ -100,7 +101,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets creation.
      *
-     * @param creation the creation
+     * @param creation the creation date of the certificate
      */
     public void setCreation(Instant creation) {
         this.creation = creation;
@@ -109,7 +110,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Gets modification.
      *
-     * @return the modification
+     * @return the modification date of the certificate
      */
     public Instant getModification() {
         return modification;
@@ -118,7 +119,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets modification.
      *
-     * @param modification the modification
+     * @param modification the modification date of the certificate
      */
     public void setModification(Instant modification) {
         this.modification = modification;
@@ -127,7 +128,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Gets duration.
      *
-     * @return the duration
+     * @return the duration in days of the certificate
      */
     public Integer getDuration() {
         return duration;
@@ -136,7 +137,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets duration.
      *
-     * @param duration the duration
+     * @param duration the duration in days of the certificate
      */
     public void setDuration(Integer duration) {
         this.duration = duration;
@@ -145,7 +146,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Gets tags.
      *
-     * @return the tags
+     * @return the tags contained in the certificate
      */
     public Set<Tag> getTags() {
         return tags;
@@ -154,7 +155,7 @@ public class Certificate extends Identifiable<Long> {
     /**
      * Sets tags.
      *
-     * @param tags the tags
+     * @param tags the tags contained in the certificate
      */
     public void setTags(Set<Tag> tags) {
         this.tags = tags;

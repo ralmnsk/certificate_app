@@ -162,7 +162,7 @@ class CertificateRepositoryImplTest {
         filter.setSortParams(new ArrayList<String>(Arrays.asList("name", "creation")));
         repository.save(one);
         Long count = repository.getAllCount(filter);
-        assertEquals(count,1L);
+        assertEquals(count, 1L);
     }
 
     @Test

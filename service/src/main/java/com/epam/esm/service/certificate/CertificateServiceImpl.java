@@ -11,8 +11,8 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.Dto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.IdInNewTagException;
 import com.epam.esm.service.exception.InconsistencyIdException;
+import com.epam.esm.service.exception.NewTagHasIdInCertificateException;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import org.modelmapper.ModelMapper;
@@ -30,10 +30,14 @@ import java.util.stream.Collectors;
 
 
 /**
- * The type Certificate service.
+ * The type Certificate service implementation.
+ * Tag service uses {@link CertificateRepository}, {@link TagRepository}
+ * for database crud operations with models(entities),
+ * {@link TagConverter}, {@link CertificateConverter} for converting
+ * DTO into model and vice versa.
  */
 @Service
-@Transactional()
+@Transactional
 public class CertificateServiceImpl implements CertificateService<CertificateDto, Long> {
 
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
@@ -45,6 +49,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     /**
      * Instantiates a new Certificate service.
+     * Spring injects parameters into constructor automatically.
      *
      * @param certificateRepository the certificate repository
      * @param tagRepository         the tag repository
@@ -199,7 +204,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     private boolean isIdInNewTag(Tag t) {
         if (t.getId() != null && t.getId() > 0) {
-            throw new IdInNewTagException("New Tag can not have id because it doesn't present in a database");
+            throw new NewTagHasIdInCertificateException("New Tag can not have id because it doesn't present in a database");
         }
         return false;
     }

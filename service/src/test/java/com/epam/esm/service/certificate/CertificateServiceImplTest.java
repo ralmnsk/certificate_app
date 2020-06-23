@@ -10,7 +10,7 @@ import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.IdInNewTagException;
+import com.epam.esm.service.exception.NewTagHasIdInCertificateException;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import org.junit.jupiter.api.BeforeEach;
@@ -187,7 +187,7 @@ class CertificateServiceImplTest {
         Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.empty());
         Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
 
-        Exception exception = assertThrows(IdInNewTagException.class, () -> service.save(certificateDto));
+        Exception exception = assertThrows(NewTagHasIdInCertificateException.class, () -> service.save(certificateDto));
         Mockito.verify(tagRepository).getByName(any());
     }
 

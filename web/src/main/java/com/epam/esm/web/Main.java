@@ -9,6 +9,8 @@ import java.io.File;
 
 /**
  * The type Main.
+ * The main application class that starts a rest service with embedded
+ * Tomcat server.
  */
 public class Main {
     private static final String PORT = "8082";

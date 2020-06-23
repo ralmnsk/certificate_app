@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * The interface Certificate repository.
  *
- * @param <T> the type parameter
- * @param <E> the type parameter
+ * @param <T> the type parameter for objects(items)
+ * @param <E> the type parameter for numeric such as Long, Integer, etc.
  */
 public interface CertificateRepository<T, E> extends CrudRepository<T, E> {
 
@@ -17,7 +17,7 @@ public interface CertificateRepository<T, E> extends CrudRepository<T, E> {
      * Gets all.
      *
      * @param filter the filter
-     * @return the all
+     * @return the all items
      */
     List<T> getAll(Filter filter);
 
@@ -25,7 +25,7 @@ public interface CertificateRepository<T, E> extends CrudRepository<T, E> {
      * Gets by name.
      *
      * @param name the name
-     * @return the by name
+     * @return the by name of an item
      */
     List<T> getByName(String name);
 

@@ -10,6 +10,9 @@ import java.util.List;
 
 /**
  * The type Page builder.
+ * The PageBuilder creates {@link CustomPage} objects with using
+ * {@link CertificateService} implemented service and
+ * {@link FilterDto} instances.
  */
 @Component
 public class PageBuilder {

@@ -8,6 +8,9 @@ import javax.validation.constraints.Size;
 
 /**
  * The type Tag dto.
+ * The TagDto is a DTO used to transfer
+ * an tag data between software application subsystems or
+ * layers.
  */
 public class TagDto extends Dto<Integer> {
     @NotNull

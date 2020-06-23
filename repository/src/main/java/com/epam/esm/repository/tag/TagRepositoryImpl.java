@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * The type Tag repository.
+ * The type Tag repository implementation.
+ * The TagRepositoryImpl uses crud operations with help of
+ * {@link org.springframework.jdbc.core.JdbcTemplate} to interact with
+ * a database, and TagMapper {@link com.epam.esm.repository.mapper.TagMapper}
+ * converts ResultSet into Certificate.
  */
 @Repository
 public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
@@ -33,6 +37,7 @@ public class TagRepositoryImpl implements TagRepository<Tag, Integer> {
 
     /**
      * Instantiates a new Tag repository.
+     * Spring injects parameters automatically.
      *
      * @param jdbcTemplate the jdbc template
      * @param tagMapper    the tag mapper

@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * The type Filter dto.
+ * The FilterDto class is an DTO to transfer filtering data
+ * between software application subsystems or layers.
  */
 public class FilterDto {
 

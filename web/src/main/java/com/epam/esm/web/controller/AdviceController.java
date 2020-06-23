@@ -23,28 +23,29 @@ import static org.springframework.http.HttpStatus.*;
 
 /**
  * The type Advice controller.
+ * The AdviceController handles errors that could appear during application work.
  */
 @ControllerAdvice
 public class AdviceController {
 
 
     /**
-     * Certificate not found exception exception response.
+     * NotFoundException handler returns ExceptionResponse in JSON and ResponseStatus NOT_FOUND
      *
-     * @param ex the ex
+     * @param ex the NotFoundException
      * @return the exception response
      */
     @ResponseBody
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionResponse certificateNotFoundException(NotFoundException ex) {
+    public ExceptionResponse notFoundException(NotFoundException ex) {
         return new ExceptionResponse("NotFoundException", ex.getMessage());
     }
 
     /**
-     * Certificate update exception exception response.
+     * UpdateException handler returns ExceptionResponse in JSON and ResponseStatus NOT_FOUND
      *
-     * @param ex the ex
+     * @param ex the UpdateException
      * @return the exception response
      */
     @ResponseBody
@@ -55,9 +56,9 @@ public class AdviceController {
     }
 
     /**
-     * Certificate save exception exception response.
+     * SaveException handler returns ExceptionResponse in JSON and ResponseStatus CONFLICT
      *
-     * @param ex the ex
+     * @param ex the SaveException
      * @return the exception response
      */
     @ResponseBody
@@ -68,9 +69,10 @@ public class AdviceController {
     }
 
     /**
-     * Incorrect result size data access exception exception response.
+     * IncorrectResultSizeDataAccessException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the IncorrectResultSizeDataAccessException
      * @return the exception response
      */
     @ResponseBody
@@ -81,9 +83,10 @@ public class AdviceController {
     }
 
     /**
-     * Method argument not valid exception exception response.
+     * MethodArgumentNotValidException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the MethodArgumentNotValidException
      * @return the exception response
      */
     @ResponseBody
@@ -103,9 +106,10 @@ public class AdviceController {
     }
 
     /**
-     * Http message not readable exception exception response.
+     * HttpMessageNotReadableException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the HttpMessageNotReadableException
      * @return the exception response
      */
     @ResponseBody
@@ -117,9 +121,10 @@ public class AdviceController {
     }
 
     /**
-     * Method argument type mismatch exception exception response.
+     * MethodArgumentTypeMismatchException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the MethodArgumentTypeMismatchException
      * @return the exception response
      */
     @ResponseBody
@@ -131,9 +136,10 @@ public class AdviceController {
     }
 
     /**
-     * Json parse exception exception response.
+     * JsonParseException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the JsonParseException
      * @return the exception response
      */
     @ResponseBody
@@ -145,9 +151,10 @@ public class AdviceController {
 
 
     /**
-     * No handler found exception exception response.
+     * NoHandlerFoundException handler returns ExceptionResponse in JSON
+     * and ResponseStatus NOT_FOUND
      *
-     * @param ex the ex
+     * @param ex the NoHandlerFoundException
      * @return the exception response
      */
     @ResponseBody
@@ -158,9 +165,10 @@ public class AdviceController {
     }
 
     /**
-     * No handler exception exception response.
+     * NoHandlerException handler returns ExceptionResponse in JSON
+     * and ResponseStatus NOT_FOUND
      *
-     * @param ex the ex
+     * @param ex the NoHandlerException
      * @return the exception response
      */
     @ResponseBody
@@ -171,9 +179,10 @@ public class AdviceController {
     }
 
     /**
-     * Constraint violation exception exception response.
+     * ConstraintViolationException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the ConstraintViolationException
      * @return the exception response
      */
     @ResponseBody
@@ -186,9 +195,10 @@ public class AdviceController {
 
 
     /**
-     * Http request method not supported exception exception response.
+     * HttpRequestMethodNotSupportedException handler returns ExceptionResponse in JSON
+     * and ResponseStatus METHOD_NOT_ALLOWED
      *
-     * @param ex the ex
+     * @param ex the HttpRequestMethodNotSupportedException
      * @return the exception response
      */
     @ResponseBody
@@ -201,9 +211,10 @@ public class AdviceController {
 
 
     /**
-     * Inconsistency id exception exception response.
+     * InconsistencyIdException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the InconsistencyIdException
      * @return the exception response
      */
     @ResponseBody
@@ -216,23 +227,25 @@ public class AdviceController {
 
 
     /**
-     * Id in new tag exception exception response.
+     * NewTagHasIdInCertificateException handler returns ExceptionResponse in JSON
+     * and ResponseStatus UNPROCESSABLE_ENTITY
      *
-     * @param ex the ex
+     * @param ex the NewTagHasIdInCertificateException
      * @return the exception response
      */
     @ResponseBody
-    @ExceptionHandler(IdInNewTagException.class)
+    @ExceptionHandler(NewTagHasIdInCertificateException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse idInNewTagException(IdInNewTagException ex) {
+    public ExceptionResponse idInNewTagException(NewTagHasIdInCertificateException ex) {
         return new ExceptionResponse("IdInNewTagException",
                 ex.getMessage());
     }
 
     /**
-     * Data access resource failure exception exception response.
+     * DataAccessResourceFailureException handler returns ExceptionResponse in JSON
+     * and ResponseStatus NOT_ACCEPTABLE
      *
-     * @param ex the ex
+     * @param ex the DataAccessResourceFailureException
      * @return the exception response
      */
     @ResponseBody

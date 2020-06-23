@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 /**
  * The type Certificate query builder.
+ * The CertificateQueryBuilder creates a query for getting certificates
+ * from a database and a query for counting filtered certificates.
  */
 @Component
 public class CertificateQueryBuilder {
@@ -40,17 +42,17 @@ public class CertificateQueryBuilder {
     /**
      * Sets filter.
      *
-     * @param filter the filter
+     * @param filter the filter for the creating query
      */
     public void setFilter(Filter filter) {
         this.filter = filter;
     }
 
     /**
-     * Build string.
+     * Build the string sql query.
      *
      * @param filter the filter
-     * @return the string
+     * @return the string of query
      */
     public String build(Filter filter) {
         StringBuilder sql = new StringBuilder(SQL_START);

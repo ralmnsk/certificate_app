@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * The type Dto.
+ * An abstract class DTO to extend.
  *
  * @param <T> the type parameter
  */

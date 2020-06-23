@@ -9,9 +9,11 @@ import java.util.List;
 
 /**
  * The type Custom page.
+ * The CustomPage is used to keep an list of items T and
+ * information: page, size, total elements and total pages.
  *
- * @param <T> the type parameter
- * @param <E> the type parameter
+ * @param <T> the type parameter is used for items
+ * @param <E> the type parameter is used for numbers
  */
 public class CustomPage<T, E extends Number> implements Serializable {
     private List<T> list = new ArrayList<>();
@@ -33,7 +35,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Gets number.
      *
-     * @return the number
+     * @return the number of the CustomPage
      */
     public E getNumber() {
         return number;
@@ -42,7 +44,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Sets number.
      *
-     * @param number the number
+     * @param number the number of the CustomPage
      */
     public void setNumber(E number) {
         this.number = number;
@@ -51,7 +53,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Gets size.
      *
-     * @return the size
+     * @return the CustomPage size
      */
     public E getSize() {
         return size;
@@ -60,7 +62,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Sets size.
      *
-     * @param size the size
+     * @param size the size of the CustomPage
      */
     public void setSize(E size) {
         this.size = size;
@@ -69,7 +71,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Gets total elements.
      *
-     * @return the total elements
+     * @return the total elements on the CustomPage
      */
     public E getTotalElements() {
         return totalElements;
@@ -78,7 +80,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Sets total elements.
      *
-     * @param totalElements the total elements
+     * @param totalElements the total elements on the CustomPage
      */
     public void setTotalElements(E totalElements) {
         this.totalElements = totalElements;
@@ -87,7 +89,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Gets total pages.
      *
-     * @return the total pages
+     * @return the total of CustomPages
      */
     public E getTotalPages() {
         return totalPages;
@@ -96,7 +98,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Sets total pages.
      *
-     * @param totalPages the total pages
+     * @param totalPages the total of CustomPages
      */
     public void setTotalPages(E totalPages) {
         this.totalPages = totalPages;
@@ -105,7 +107,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Gets list.
      *
-     * @return the list
+     * @return the items T list on the CustomPage
      */
     public List<T> getList() {
         return list;
@@ -114,7 +116,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Sets list.
      *
-     * @param list the list
+     * @param list the items T list on the CustomPage
      */
     public void setList(List<T> list) {
         this.list = list;

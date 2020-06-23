@@ -7,6 +7,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Filter.
+ * The Filter is used for pagination as a property container.
+ */
 public class Filter {
 
     private String tagName;
@@ -16,50 +20,110 @@ public class Filter {
     private List<String> sortParams = new ArrayList<>();
     private boolean isTurnCountingOn;
 
+    /**
+     * Gets tag name.
+     *
+     * @return the tag name for the filtration
+     */
     public String getTagName() {
         return tagName;
     }
 
+    /**
+     * Sets tag name.
+     *
+     * @param tagName the tag name for the filtration
+     */
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
 
+    /**
+     * Gets name.
+     *
+     * @return the name of the certificate for the filtration
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name of the certificate for the filtration
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets page.
+     *
+     * @return the page number
+     */
     public int getPage() {
         return page;
     }
 
+    /**
+     * Sets page.
+     *
+     * @param page the page number
+     */
     public void setPage(int page) {
         this.page = page;
     }
 
+    /**
+     * Gets size.
+     *
+     * @return the size that is a count of items on a page
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Sets size.
+     *
+     * @param size the size that is a count of items on a page
+     */
     public void setSize(int size) {
         this.size = size;
     }
 
+    /**
+     * Gets sort params.
+     *
+     * @return the sort params are parameters for sorting items on the page
+     */
     public List<String> getSortParams() {
         return sortParams;
     }
 
+    /**
+     * Sets sort params.
+     *
+     * @param sortParams the sort params are parameters for sorting items on the page
+     */
     public void setSortParams(List<String> sortParams) {
         this.sortParams = sortParams;
     }
 
+    /**
+     * This parameter turns on the counting of items when it is set as true.
+     *
+     * @return the boolean
+     */
     public boolean isTurnCountingOn() {
         return isTurnCountingOn;
     }
 
+    /**
+     * Sets turn counting on.
+     *
+     * @param turnCountingOn the turn counting on
+     */
     public void setTurnCountingOn(boolean turnCountingOn) {
         isTurnCountingOn = turnCountingOn;
     }

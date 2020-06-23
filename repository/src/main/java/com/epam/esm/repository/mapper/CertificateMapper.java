@@ -13,7 +13,8 @@ import java.time.ZoneOffset;
 import static com.epam.esm.repository.RepositoryConstants.*;
 
 /**
- * The type Certificate mapper.
+ * The type Certificate mapper implements {@link org.springframework.jdbc.core.RowMapper} interface.
+ * The CertificateMapper converts a ResultSet from a database into Certificate.
  */
 @Component
 public class CertificateMapper implements RowMapper<Certificate> {

@@ -11,7 +11,8 @@ import static com.epam.esm.repository.RepositoryConstants.ID;
 import static com.epam.esm.repository.RepositoryConstants.NAME;
 
 /**
- * The type Tag mapper.
+ * The type Tag mapper implements {@link org.springframework.jdbc.core.RowMapper} interface.
+ * The TagMapper converts a ResultSet from a database into Tag.
  */
 @Component
 public class TagMapper implements RowMapper<Tag> {

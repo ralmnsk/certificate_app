@@ -5,8 +5,8 @@ import java.util.Optional;
 /**
  * The interface Crud repository.
  *
- * @param <T> the type parameter
- * @param <E> the type parameter
+ * @param <T> the type parameter for object(item)
+ * @param <E> the type parameter for numeric such as Long, Integer, etc.
  */
 public interface CrudRepository<T, E> {
 

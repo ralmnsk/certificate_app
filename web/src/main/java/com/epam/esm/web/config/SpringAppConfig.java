@@ -14,9 +14,15 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * The type Spring app config.
+ * The implementation of {@link WebApplicationInitializer} interface.
  */
 public class SpringAppConfig implements WebApplicationInitializer {
-
+    /*
+     * onStartup method configures {@link javax.servlet.ServletContext},
+     * creates web application context, adds dispatcher and set
+     * dispatcher configuration.
+     *
+     * */
     @Override
     public void onStartup(ServletContext container) {
 
@@ -31,7 +37,6 @@ public class SpringAppConfig implements WebApplicationInitializer {
             protected void noHandlerFound(HttpServletRequest request, HttpServletResponse response) throws Exception {
                 throw new NoHandlerException("No handler found");
             }
-
         });
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

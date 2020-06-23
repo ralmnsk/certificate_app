@@ -1,13 +1,9 @@
 package com.epam.esm.service.tag;
 
-import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.certificate.CertificateServiceImpl;
-import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
-import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
@@ -19,37 +15,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * The type Tag service.
+ * The type Tag service implementation.
+ * Tag service uses {@link TagRepository}
+ * for database crud operations with models(entities),
+ * {@link TagConverter} for converting
+ * DTO into model and vice versa.
  */
 @Service
 @Transactional
 public class TagServiceImpl implements TagService<TagDto, Integer> {
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
-    private CertificateRepository<Certificate, Long> certificateRepository;
     private TagRepository<Tag, Integer> tagRepository;
-    private CertificateConverter certificateConverter;
     private TagConverter tagConverter;
 
     /**
      * Instantiates a new Tag service.
+     * Spring injects parameters into constructor automatically.
      *
-     * @param certificateRepository the certificate repository
-     * @param tagRepository         the tag repository
-     * @param certificateConverter  the certificate converter
-     * @param tagConverter          the tag converter
+     * @param tagRepository the tag repository
+     * @param tagConverter  the tag converter
      */
-    public TagServiceImpl(CertificateRepository<Certificate, Long> certificateRepository,
-                          TagRepository<Tag, Integer> tagRepository,
-                          CertificateConverter certificateConverter,
+    public TagServiceImpl(TagRepository<Tag, Integer> tagRepository,
                           TagConverter tagConverter) {
-        this.certificateRepository = certificateRepository;
         this.tagRepository = tagRepository;
-        this.certificateConverter = certificateConverter;
         this.tagConverter = tagConverter;
     }
 
@@ -59,8 +51,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             if (name != null) {
                 Optional<Tag> optionalTag = tagRepository.getByName(name);
                 if (optionalTag.isPresent()) {
-                    TagDto tagDto = tagConverter.toDto(optionalTag.get());
-                    return Optional.ofNullable(tagDto);
+                    return Optional.ofNullable(tagConverter.toDto(optionalTag.get()));
                 }
             }
         } catch (EmptyResultDataAccessException e) {
@@ -107,7 +98,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             logger.info("There is no tag id = {}", id, e);
             throw new NotFoundException(id);
         }
-
         return Optional.empty();
     }
 
@@ -119,26 +109,5 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     @Override
     public boolean delete(Integer tagId) {
         return tagRepository.delete(tagId);
-    }
-
-    /**
-     * Gets certificates by tag id.
-     *
-     * @param id the id
-     * @return the certificates by tag id
-     */
-    public List<CertificateDto> getCertificatesByTagId(Integer id) {
-        List<Long> listCertificateIds = certificateRepository.getCertificateIdsByTagId(id);
-        if (listCertificateIds != null && !listCertificateIds.isEmpty()) {
-            return listCertificateIds
-                    .stream()
-                    .map(certificateRepository::get)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(certificateConverter::toDto)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-        }
-        return null;
     }
 }

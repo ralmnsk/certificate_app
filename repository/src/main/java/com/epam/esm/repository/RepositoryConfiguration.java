@@ -10,15 +10,16 @@ import javax.sql.DataSource;
 
 /**
  * The type Repository configuration.
+ * The configuration is created with Spring component scan automatically.
  */
 @Configuration
 @ComponentScan("com.epam.esm.repository")
 @Import(SpringJdbcConfig.class)
 public class RepositoryConfiguration {
     /**
-     * Jdbc template jdbc template.
+     * {@link org.springframework.jdbc.core.JdbcTemplate} jdbc template.
      *
-     * @param dataSource the data source
+     * @param dataSource the data source is injected into jdbc template
      * @return the jdbc template
      */
     @Bean

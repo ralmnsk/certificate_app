@@ -18,7 +18,12 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * The type Certificate repository.
+ * The type Certificate repository implementation.
+ * The CertificateRepositoryImpl uses crud operations with help of
+ * {@link org.springframework.jdbc.core.JdbcTemplate} to interact with
+ * a database, a getAll method uses {@link CertificateQueryBuilder},
+ * and CertificateMapper {@link com.epam.esm.repository.mapper.CertificateMapper}
+ * converts ResultSet into Certificate.
  */
 @Repository
 public class CertificateRepositoryImpl implements CertificateRepository<Certificate, Long> {
@@ -46,6 +51,7 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
 
     /**
      * Instantiates a new Certificate repository.
+     * Spring injects parameters automatically.
      *
      * @param jdbcTemplate      the jdbc template
      * @param certificateMapper the certificate mapper

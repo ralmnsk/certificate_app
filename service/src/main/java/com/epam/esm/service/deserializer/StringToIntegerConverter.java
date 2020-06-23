@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.util.StdConverter;
 
 /**
  * The type String to integer converter.
+ * The StringToIntegerConverter converts an numeric string into Integer
+ * or throws RuntimeException.
  */
 public class StringToIntegerConverter extends StdConverter<String, Integer> {
     @Override

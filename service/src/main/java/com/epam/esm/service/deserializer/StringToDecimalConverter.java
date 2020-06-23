@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 /**
  * The type String to decimal converter.
+ * The StringToDecimalConverter converts an numeric String into BigDecimal
+ * or throws RuntimeException.
  */
 public class StringToDecimalConverter extends StdConverter<String, BigDecimal> {
     @Override

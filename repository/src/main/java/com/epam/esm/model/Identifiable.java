@@ -9,7 +9,6 @@ public abstract class Identifiable<T> {
     private T id;
 
     /**
-     *
      * Gets id.
      *
      * @return the id

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * The type Tag converter.
+ * The TagConverter converts {@link TagDto} into {@link Tag}
+ * and vice versa.
  */
 @Component
 public class TagConverter implements Converter<TagDto, Tag> {
@@ -15,7 +17,7 @@ public class TagConverter implements Converter<TagDto, Tag> {
     /**
      * Instantiates a new Tag converter.
      *
-     * @param modelMapper the model mapper
+     * @param modelMapper the model mapper is attached automatically with Spring.
      */
     public TagConverter(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
