@@ -24,8 +24,7 @@ public class CertificateQueryBuilder {
     private final String CERTIFICATE_NAME = " certificate.name desc ";
     private final String COMMA = " , ";
     private final String CERTIFICATE_CREATION = " certificate.creation desc ";
-    private final String SQL_EMPTY = "";
-    private final int ONE = 1;
+    private final int FIRST_PAGE_NUMBER = 1;
 
     private Filter filter;
 
@@ -55,28 +54,28 @@ public class CertificateQueryBuilder {
      */
     public String build(Filter filter) {
         StringBuilder sql = new StringBuilder(SQL_START);
-        if (filter.isCount()) {
+        if (filter.isTurnCountingOn()) {
             sql = new StringBuilder(SQL_START_COUNT);
         }
 
-        boolean flag_tag_like = false;
-        if (filter.getTagName() != null && !filter.getTagName().equals(SQL_EMPTY)) {
+        boolean flagForTagLike = false;
+        if (filter.getTagName() != null && !filter.getTagName().isEmpty()) {
             sql.append(JOIN_TAG_NAME);
-            flag_tag_like = true;
+            flagForTagLike = true;
         }
         sql.append(WHERE);
-        if (flag_tag_like) {
+        if (flagForTagLike) {
             sql.append(TAG_LIKE + AND);
         }
         sql.append(CERTIFICATE_LIKE);
-        if (filter.getSort() != null
-                && (filter.getSort().contains("name")
-                || filter.getSort().contains("creation"))
-                && !filter.isCount()) {
+        if (filter.getSortParams() != null
+                && (filter.getSortParams().contains("name")
+                || filter.getSortParams().contains("creation"))
+                && !filter.isTurnCountingOn()) {
             sql.append(ORDER_BY);
             boolean flag_comma = false;
             List<String> findName = filter
-                    .getSort()
+                    .getSortParams()
                     .stream()
                     .filter(p -> p.equals("name"))
                     .collect(Collectors.toList());
@@ -85,7 +84,7 @@ public class CertificateQueryBuilder {
                 flag_comma = true;
             }
             List<String> findDate = filter
-                    .getSort()
+                    .getSortParams()
                     .stream()
                     .filter(p -> p.equals("creation"))
                     .collect(Collectors.toList());
@@ -100,9 +99,9 @@ public class CertificateQueryBuilder {
 
         int page = filter.getPage();
         int size = filter.getSize();
-        if (!filter.isCount()) {
+        if (!filter.isTurnCountingOn()) {
             sql.append(" LIMIT ").append(size);
-            int offset = (page - ONE) * size;
+            int offset = (page - FIRST_PAGE_NUMBER) * size;
             sql.append(" OFFSET ").append(offset);
         }
 

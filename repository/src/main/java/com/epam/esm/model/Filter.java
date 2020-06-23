@@ -1,151 +1,100 @@
 package com.epam.esm.model;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The type Filter.
- */
 public class Filter {
 
     private String tagName;
     private String name;
     private int page;
     private int size;
-    private List<String> sort = new ArrayList<>();
-    private boolean isCount;
+    private List<String> sortParams = new ArrayList<>();
+    private boolean isTurnCountingOn;
 
-    /**
-     * Gets tag name.
-     *
-     * @return the tag name
-     */
     public String getTagName() {
         return tagName;
     }
 
-    /**
-     * Sets tag name.
-     *
-     * @param tagName the tag name
-     */
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets page.
-     *
-     * @return the page
-     */
     public int getPage() {
         return page;
     }
 
-    /**
-     * Sets page.
-     *
-     * @param page the page
-     */
     public void setPage(int page) {
         this.page = page;
     }
 
-    /**
-     * Gets size.
-     *
-     * @return the size
-     */
     public int getSize() {
         return size;
     }
 
-    /**
-     * Sets size.
-     *
-     * @param size the size
-     */
     public void setSize(int size) {
         this.size = size;
     }
 
-    /**
-     * Gets sort.
-     *
-     * @return the sort
-     */
-    public List<String> getSort() {
-        return sort;
+    public List<String> getSortParams() {
+        return sortParams;
     }
 
-    /**
-     * Sets sort.
-     *
-     * @param sort the sort
-     */
-    public void setSort(List<String> sort) {
-        this.sort = sort;
+    public void setSortParams(List<String> sortParams) {
+        this.sortParams = sortParams;
     }
 
-    /**
-     * Is count boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isCount() {
-        return isCount;
+    public boolean isTurnCountingOn() {
+        return isTurnCountingOn;
     }
 
-    /**
-     * Sets count.
-     *
-     * @param count the count
-     */
-    public void setCount(boolean count) {
-        isCount = count;
+    public void setTurnCountingOn(boolean turnCountingOn) {
+        isTurnCountingOn = turnCountingOn;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Filter filter = (Filter) o;
-
-        if (page != filter.page) return false;
-        if (size != filter.size) return false;
-        if (isCount != filter.isCount) return false;
-        if (tagName != null ? !tagName.equals(filter.tagName) : filter.tagName != null) return false;
-        return name != null ? name.equals(filter.name) : filter.name == null;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Filter f = (Filter) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.tagName, f.getTagName())
+                .append(this.name, f.getName())
+                .append(this.page, f.getPage())
+                .append(this.size, f.getSize())
+                .append(this.isTurnCountingOn, f.isTurnCountingOn())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = tagName != null ? tagName.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + page;
-        result = 31 * result + size;
-        result = 31 * result + (isCount ? 1 : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(tagName)
+                .append(name)
+                .append(page)
+                .append(size)
+                .append(isTurnCountingOn)
+                .toHashCode();
     }
 
     @Override
@@ -155,8 +104,8 @@ public class Filter {
                 ", name='" + name + '\'' +
                 ", page=" + page +
                 ", size=" + size +
-                ", sort=" + sort +
-                ", isCount=" + isCount +
+                ", sort=" + sortParams +
+                ", isTurnCountingOn=" + isTurnCountingOn +
                 '}';
     }
 }

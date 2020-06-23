@@ -78,7 +78,7 @@ class CertificateRepositoryImplTest {
         List<String> sortParams = new ArrayList<>();
         sortParams.add("name");
         sortParams.add("creation");
-        filter.setSort(sortParams);
+        filter.setSortParams(sortParams);
         List<Certificate> certificates = repository.getAll(filter);
         assertTrue(certificates.size() > 0);
         assertTrue(certificates
@@ -158,8 +158,8 @@ class CertificateRepositoryImplTest {
         filter.setName("name1");
         filter.setPage(1);
         filter.setSize(10);
-        filter.setCount(true);
-        filter.setSort(new ArrayList<String>(Arrays.asList("name", "creation")));
+        filter.setTurnCountingOn(true);
+        filter.setSortParams(new ArrayList<String>(Arrays.asList("name", "creation")));
         repository.save(one);
         Long count = repository.getAllCount(filter);
         assertEquals(count,1L);

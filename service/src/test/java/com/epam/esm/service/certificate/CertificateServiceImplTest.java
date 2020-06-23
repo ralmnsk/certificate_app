@@ -92,7 +92,6 @@ class CertificateServiceImplTest {
         service.getAll(filterDto);
         Mockito.verify(modelMapper).map(any(), any());
         Mockito.verify(repository).getAll(any());
-        Mockito.verify(certificateConverter).toDto(any());
     }
 
     @Test

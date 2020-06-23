@@ -1,5 +1,8 @@
 package com.epam.esm.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
@@ -23,7 +26,7 @@ public class Certificate extends Identifiable<Long> {
 
     private Integer duration;
 
-    private Set<Tag> tags = new HashSet<Tag>();
+    private Set<Tag> tags = new HashSet<>();
 
     /**
      * Instantiates a new Certificate.
@@ -158,27 +161,37 @@ public class Certificate extends Identifiable<Long> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Certificate that = (Certificate) o;
-
-        if (!name.equals(that.name)) return false;
-        if (!description.equals(that.description)) return false;
-        if (!price.equals(that.price)) return false;
-        if (!creation.equals(that.creation)) return false;
-        return duration.equals(that.duration);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Certificate c = (Certificate) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.name, c.getName())
+                .append(this.description, c.getDescription())
+                .append(this.price, c.getPrice())
+                .append(this.creation, c.getCreation())
+                .append(this.modification, c.getModification())
+                .append(this.duration, c.getDescription())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + price.hashCode();
-        result = 31 * result + creation.hashCode();
-        result = 31 * result + duration.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(name)
+                .append(description)
+                .append(price)
+                .append(creation)
+                .append(duration)
+                .toHashCode();
     }
 
     @Override

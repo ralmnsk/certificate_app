@@ -1,5 +1,8 @@
 package com.epam.esm.service.dto;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -57,21 +60,30 @@ public class ExceptionResponse implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ExceptionResponse that = (ExceptionResponse) o;
-
-        if (!exception.equals(that.exception)) return false;
-        return message.equals(that.message);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ExceptionResponse o = (ExceptionResponse) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.exception, o.getException())
+                .append(this.message, o.getMessage())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = exception.hashCode();
-        result = 31 * result + message.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(exception)
+                .append(message)
+                .toHashCode();
     }
 
     @Override

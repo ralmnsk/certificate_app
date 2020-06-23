@@ -25,6 +25,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,8 +86,6 @@ class TagServiceImplTest {
 
         service.getByName(tagOne.getName());
         Mockito.verify(tagRepository).getByName(any());
-        Mockito.verify(certificateRepository).get(any());
-        Mockito.verify(certificateConverter).toDto(any());
     }
 
     @Test
@@ -156,4 +155,18 @@ class TagServiceImplTest {
         Exception exception = assertThrows(NotFoundException.class, () -> service.get(any()));
     }
 
+    @Test
+    void getCertificatesByTagId() {
+        List<Long> list = Arrays.asList(1L, 2L, 3L);
+        Certificate c = new Certificate();
+        CertificateDto cDto = new CertificateDto();
+
+        Mockito.when(certificateRepository.getCertificateIdsByTagId(any())).thenReturn(list);
+        Mockito.when(certificateRepository.get(any())).thenReturn(Optional.of(c));
+        Mockito.when(certificateConverter.toDto(any())).thenReturn(cDto);
+
+        service.getCertificatesByTagId(1);
+
+        Mockito.verify(certificateRepository).getCertificateIdsByTagId(any());
+    }
 }

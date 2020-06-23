@@ -5,8 +5,6 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.CustomPage;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.page.PageBuilder;
-import com.epam.esm.service.view.Profile;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +48,6 @@ public class CertificateController {
      * @param sort    the sort
      * @return the all
      */
-    @JsonView(Profile.PublicView.class)
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public CustomPage<CertificateDto, Integer> getAll(
@@ -80,7 +77,7 @@ public class CertificateController {
         filterDto.setName(name);
         filterDto.setPage(page);
         filterDto.setSize(size);
-        filterDto.setSort(sort);
+        filterDto.setSortParams(sort);
         return pageBuilder.build(filterDto);
     }
 
@@ -90,7 +87,6 @@ public class CertificateController {
      * @param id the id
      * @return the certificate dto
      */
-    @JsonView(Profile.PublicView.class)
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {
         return certificateService.get(id).get();
@@ -102,7 +98,6 @@ public class CertificateController {
      * @param certificateDto the certificate dto
      * @return the certificate dto
      */
-    @JsonView(Profile.PublicView.class)
     @PostMapping
     public CertificateDto
     create(@Valid @RequestBody CertificateDto certificateDto) {
@@ -116,7 +111,6 @@ public class CertificateController {
      * @param id             the id
      * @return the certificate dto
      */
-    @JsonView(Profile.PublicView.class)
     @PutMapping("/{id}")
     public CertificateDto
     update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) {

@@ -2,11 +2,11 @@ package com.epam.esm.service.dto;
 
 import com.epam.esm.service.deserializer.StringToDecimalConverter;
 import com.epam.esm.service.deserializer.StringToIntegerConverter;
-import com.epam.esm.service.view.Profile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.*;
@@ -20,40 +20,33 @@ import java.util.Set;
  */
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 public class CertificateDto extends Dto<Long> {
-    @JsonView(Profile.PublicView.class)
     @NotNull
     @Size(min = 2, max = 256, message
             = "Name must be between 2 and 256 characters")
     private String name;
 
-    @JsonView(Profile.PublicView.class)
     @Size(min = 0, max = 999, message
             = "Description must be between 0 and 999 characters")
     private String description;
 
-    @JsonView(Profile.PublicView.class)
     @Digits(integer = 13, fraction = 2, message = " should be numeric, example: 12.34 ")
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "1000000000000.00")
     @JsonDeserialize(converter = StringToDecimalConverter.class)
     private BigDecimal price;
 
-    @JsonView(Profile.PublicView.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant creation;
 
-    @JsonView(Profile.PublicView.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = "UTC")
     private Instant modification;
 
-    @JsonView(Profile.PublicView.class)
     @NotNull(message = "duration has to be not null")
     @Range(min = 0, max = 100000, message = "duration range: 0 - 100000")
     @JsonDeserialize(converter = StringToIntegerConverter.class)
     private Integer duration;
 
-    @JsonView(Profile.PublicView.class)
-    private Set<TagDto> tags = new HashSet<TagDto>();
+    private Set<TagDto> tags = new HashSet<>();
 
     /**
      * Instantiates a new Certificate dto.
@@ -188,21 +181,37 @@ public class CertificateDto extends Dto<Long> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CertificateDto that = (CertificateDto) o;
-
-        if (!name.equals(that.name)) return false;
-        return creation.equals(that.creation);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        CertificateDto c = (CertificateDto) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.name, c.getName())
+                .append(this.description, c.getDescription())
+                .append(this.price, c.getPrice())
+                .append(this.creation, c.getCreation())
+                .append(this.modification, c.getModification())
+                .append(this.duration, c.getDescription())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + creation.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(name)
+                .append(description)
+                .append(price)
+                .append(creation)
+                .append(duration)
+                .toHashCode();
     }
 
     @Override
@@ -215,7 +224,7 @@ public class CertificateDto extends Dto<Long> {
                 ", creation=" + creation +
                 ", modification=" + modification +
                 ", duration=" + duration +
-                ", tagDtos=" + tags +
+                ", tags=" + tags +
                 '}';
     }
 }

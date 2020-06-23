@@ -1,6 +1,9 @@
 package com.epam.esm.service.dto;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +19,8 @@ public class FilterDto {
     private int page;
 
     private int size;
-    private List<String> sort = new ArrayList<>();
-    private boolean isCount;
+    private List<String> sortParams = new ArrayList<>();
+    private boolean isTurnCountingOn;
 
     /**
      * Gets tag name.
@@ -96,17 +99,17 @@ public class FilterDto {
      *
      * @return the sort
      */
-    public List<String> getSort() {
-        return sort;
+    public List<String> getSortParams() {
+        return sortParams;
     }
 
     /**
      * Sets sort.
      *
-     * @param sort the sort
+     * @param sortParams the sort
      */
-    public void setSort(List<String> sort) {
-        this.sort = sort;
+    public void setSortParams(List<String> sortParams) {
+        this.sortParams = sortParams;
     }
 
     /**
@@ -114,41 +117,50 @@ public class FilterDto {
      *
      * @return the boolean
      */
-    public boolean isCount() {
-        return isCount;
+    public boolean isTurnCountingOn() {
+        return isTurnCountingOn;
     }
 
     /**
      * Sets count.
      *
-     * @param count the count
+     * @param turnCountingOn the count
      */
-    public void setCount(boolean count) {
-        isCount = count;
+    public void setTurnCountingOn(boolean turnCountingOn) {
+        isTurnCountingOn = turnCountingOn;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FilterDto filterDto = (FilterDto) o;
-
-        if (page != filterDto.page) return false;
-        if (size != filterDto.size) return false;
-        if (isCount != filterDto.isCount) return false;
-        if (tagName != null ? !tagName.equals(filterDto.tagName) : filterDto.tagName != null) return false;
-        return name != null ? name.equals(filterDto.name) : filterDto.name == null;
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        FilterDto f = (FilterDto) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.tagName, f.getTagName())
+                .append(this.name, f.getName())
+                .append(this.page, f.getPage())
+                .append(this.size, f.getSize())
+                .append(this.isTurnCountingOn, f.isTurnCountingOn())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = tagName != null ? tagName.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + page;
-        result = 31 * result + size;
-        result = 31 * result + (isCount ? 1 : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(tagName)
+                .append(name)
+                .append(page)
+                .append(size)
+                .append(isTurnCountingOn)
+                .toHashCode();
     }
 
     @Override
@@ -158,8 +170,8 @@ public class FilterDto {
                 ", name='" + name + '\'' +
                 ", page=" + page +
                 ", size=" + size +
-                ", sort=" + sort +
-                ", isCount=" + isCount +
+                ", sort=" + sortParams +
+                ", isCount=" + isTurnCountingOn +
                 '}';
     }
 }

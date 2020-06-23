@@ -3,6 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.ExceptionResponse;
 import com.epam.esm.service.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -226,5 +227,19 @@ public class AdviceController {
     public ExceptionResponse idInNewTagException(IdInNewTagException ex) {
         return new ExceptionResponse("IdInNewTagException",
                 ex.getMessage());
+    }
+
+    /**
+     * Data access resource failure exception exception response.
+     *
+     * @param ex the ex
+     * @return the exception response
+     */
+    @ResponseBody
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    @ResponseStatus(NOT_ACCEPTABLE)
+    public ExceptionResponse dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+        return new ExceptionResponse("DataAccessResourceFailureException",
+                "Failed to obtain JDBC Connection.");
     }
 }

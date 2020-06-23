@@ -1,7 +1,7 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.service.view.Profile;
-import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,19 +14,14 @@ import java.util.List;
  * @param <E> the type parameter
  */
 public class CustomPage<T, E extends Number> implements Serializable {
-    @JsonView(Profile.PublicView.class)
     private List<T> list = new ArrayList<>();
 
-    @JsonView(Profile.PublicView.class)
     private E number;
 
-    @JsonView(Profile.PublicView.class)
     private E size;
 
-    @JsonView(Profile.PublicView.class)
     private E totalElements;
 
-    @JsonView(Profile.PublicView.class)
     private E totalPages;
 
     /**
@@ -126,25 +121,34 @@ public class CustomPage<T, E extends Number> implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CustomPage<?, ?> that = (CustomPage<?, ?>) o;
-
-        if (!number.equals(that.number)) return false;
-        if (!size.equals(that.size)) return false;
-        if (!totalElements.equals(that.totalElements)) return false;
-        return totalPages.equals(that.totalPages);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        CustomPage c = (CustomPage) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.number, c.getNumber())
+                .append(this.size, c.getSize())
+                .append(this.totalElements, c.getTotalElements())
+                .append(this.totalPages, c.getTotalPages())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = number.hashCode();
-        result = 31 * result + size.hashCode();
-        result = 31 * result + totalElements.hashCode();
-        result = 31 * result + totalPages.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(number)
+                .append(size)
+                .append(totalElements)
+                .append(totalPages)
+                .toHashCode();
     }
 
     @Override

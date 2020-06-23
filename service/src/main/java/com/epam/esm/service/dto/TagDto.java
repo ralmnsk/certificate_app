@@ -1,24 +1,19 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.service.view.Profile;
-import com.fasterxml.jackson.annotation.JsonView;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The type Tag dto.
  */
 public class TagDto extends Dto<Integer> {
-    @JsonView(Profile.PublicView.class)
     @NotNull
     @Size(min = 2, max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;
-
-    private Set<CertificateDto> certificateDtos = new HashSet<CertificateDto>();
 
     /**
      * Instantiates a new Tag dto.
@@ -44,37 +39,29 @@ public class TagDto extends Dto<Integer> {
         this.name = name;
     }
 
-    /**
-     * Gets certificate dtos.
-     *
-     * @return the certificate dtos
-     */
-    public Set<CertificateDto> getCertificateDtos() {
-        return certificateDtos;
-    }
-
-    /**
-     * Sets certificate dtos.
-     *
-     * @param certificateDtos the certificate dtos
-     */
-    public void setCertificateDtos(Set<CertificateDto> certificateDtos) {
-        this.certificateDtos = certificateDtos;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TagDto tagDto = (TagDto) o;
-
-        return name.equals(tagDto.name);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        TagDto t = (TagDto) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.name, t.getName())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return new HashCodeBuilder()
+                .append(name)
+                .toHashCode();
     }
 
     @Override
@@ -82,7 +69,6 @@ public class TagDto extends Dto<Integer> {
         return "TagDto{" +
                 "id=" + getId() +
                 ", name='" + name + '\'' +
-                ", certificateDtos=" + certificateDtos +
                 '}';
     }
 }

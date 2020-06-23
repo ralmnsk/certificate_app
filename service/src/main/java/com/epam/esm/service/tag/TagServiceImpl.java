@@ -60,7 +60,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
                 Optional<Tag> optionalTag = tagRepository.getByName(name);
                 if (optionalTag.isPresent()) {
                     TagDto tagDto = tagConverter.toDto(optionalTag.get());
-                    addCertificatesToTag(tagDto);
                     return Optional.ofNullable(tagDto);
                 }
             }
@@ -68,15 +67,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             logger.info("There is no such tag name = {}", name, e);
         }
         return Optional.empty();
-    }
-
-    private void addCertificatesToTag(TagDto tagDto) {
-        if (tagDto != null) {
-            List<CertificateDto> certificateDtos = getCertificatesByTagId(tagDto.getId());
-            if (certificateDtos != null && !certificateDtos.isEmpty()) {
-                tagDto.getCertificateDtos().addAll(certificateDtos);
-            }
-        }
     }
 
     @Override
@@ -92,7 +82,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
 
-        tagDto.getCertificateDtos().clear();
         Tag tag = tagConverter.toEntity(tagDto);
         try {
             Optional<Tag> optionalTag = tagRepository.save(tag);
@@ -112,7 +101,6 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
             Optional<Tag> tagOptional = tagRepository.get(id);
             if (tagOptional.isPresent()) {
                 TagDto tagDto = tagConverter.toDto(tagOptional.get());
-                addCertificatesToTag(tagDto);
                 return Optional.ofNullable(tagDto);
             }
         } catch (EmptyResultDataAccessException e) {

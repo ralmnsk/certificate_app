@@ -39,7 +39,7 @@ public class PageBuilder {
         }
         page.setNumber(filterDto.getPage());
         page.setSize(filterDto.getSize());
-        filterDto.setCount(true);
+        filterDto.setTurnCountingOn(true);
         int count = service.getAllCount(filterDto).intValue();
         page.setTotalElements(count);
         int totalPages = count / page.getSize();

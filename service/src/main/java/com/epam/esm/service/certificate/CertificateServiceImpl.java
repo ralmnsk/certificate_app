@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * The type Certificate service.
  */
 @Service
-@Transactional
+@Transactional()
 public class CertificateServiceImpl implements CertificateService<CertificateDto, Long> {
 
     private static Logger logger = LoggerFactory.getLogger(CertificateServiceImpl.class);
@@ -68,10 +68,14 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     @Override
     public List<CertificateDto> getAll(FilterDto filterDto) {
         Filter filter = modelMapper.map(filterDto, Filter.class);
-        List<Certificate> certificates = certificateRepository
-                .getAll(filter);
+        List<Certificate> certificates = certificateRepository.getAll(filter);
         if (certificates != null && !certificates.isEmpty()) {
-            return certificates.stream().map(certificateConverter::toDto)
+            return certificates
+                    .stream()
+                    .map(Certificate::getId)
+                    .map(this::get)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList());
         }
         return null;
@@ -115,6 +119,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         Certificate certificate = certificateConverter.toEntity(certificateDto);
         Set<Tag> tags = certificate.getTags();
         Optional<Certificate> certificateOptional = Optional.empty();
+
         try {
             certificateOptional = certificateRepository.update(certificate);
         } catch (EmptyResultDataAccessException e) {
@@ -174,18 +179,21 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         if (certificate.getTags().isEmpty()) {
             return false;
         }
-        certificate.getTags().forEach(t -> {
-            if (t != null && t.getName() != null) {
-                Optional<Tag> foundTagOptional = getOptionalTag(t);
-                if (!foundTagOptional.isPresent()) {
-                    isIdInNewTag(t);
-                    saveNewTag(certificate, t);
-                } else {
-                    saveExistingTag(certificate, t, foundTagOptional);
-                }
 
-            }
-        });
+        certificate.getTags()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(t -> t.getName() != null)
+                .forEach(t -> {
+                    Optional<Tag> foundTagOptional = getOptionalTag(t);
+                    if (!foundTagOptional.isPresent()) {
+                        isIdInNewTag(t);
+                        saveNewTag(certificate, t);
+                    } else {
+                        saveExistingTag(certificate, t, foundTagOptional);
+                    }
+
+                });
         return true;
     }
 
@@ -230,7 +238,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
             return false;
         }
         if (t.getId() != null && t.getId() > 0 && !t.getId().equals(tag.getId())) {
-            throw new InconsistencyIdException("Inconsistency of id and name. Get the tag name by id or remove id");
+            throw new InconsistencyIdException("Inconsistency of id and name. Get the tag name by id or remove id:" + t.getId());
         }
         return true;
     }
@@ -241,7 +249,12 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         if (certificateDto != null) {
             List<TagDto> tagDtos = getTagsByCertificateId(certificateDto.getId());
             if (tagDtos != null && !tagDtos.isEmpty()) {
-                certificateDto.getTags().addAll(tagDtos);
+                tagDtos
+                        .stream()
+                        .filter(t -> certificateDto.getTags()
+                                .stream()
+                                .noneMatch(tag -> t.getName().equals(tag.getName())))
+                        .forEach(t -> certificateDto.getTags().add(t));
             }
         }
     }

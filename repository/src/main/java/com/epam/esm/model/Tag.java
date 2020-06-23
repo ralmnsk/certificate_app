@@ -1,5 +1,8 @@
 package com.epam.esm.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * The type Tag.
  */
@@ -32,18 +35,28 @@ public class Tag extends Identifiable<Integer> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Tag tag = (Tag) o;
-
-        return name.equals(tag.name);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Tag t = (Tag) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.name, t.getName())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return new HashCodeBuilder()
+                .append(name)
+                .toHashCode();
     }
 
     @Override
