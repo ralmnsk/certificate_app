@@ -1,8 +1,9 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.ExceptionResponse;
+import com.epam.esm.service.dto.ExceptionResponseDto;
 import com.epam.esm.service.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Objects;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -38,8 +39,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ExceptionResponse notFoundException(NotFoundException ex) {
-        return new ExceptionResponse("NotFoundException", ex.getMessage());
+    public ExceptionResponseDto notFoundException(NotFoundException ex) {
+        return new ExceptionResponseDto("NotFoundException", ex.getMessage());
     }
 
     /**
@@ -51,8 +52,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(UpdateException.class)
     @ResponseStatus(NOT_FOUND)
-    public ExceptionResponse certificateUpdateException(UpdateException ex) {
-        return new ExceptionResponse("UpdateException", ex.getMessage());
+    public ExceptionResponseDto certificateUpdateException(UpdateException ex) {
+        return new ExceptionResponseDto("UpdateException", ex.getMessage());
     }
 
     /**
@@ -64,8 +65,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(SaveException.class)
     @ResponseStatus(CONFLICT)
-    public ExceptionResponse certificateSaveException(SaveException ex) {
-        return new ExceptionResponse("SaveException", ex.getMessage());
+    public ExceptionResponseDto certificateSaveException(SaveException ex) {
+        return new ExceptionResponseDto("SaveException", ex.getMessage());
     }
 
     /**
@@ -78,8 +79,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse incorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex) {
-        return new ExceptionResponse("IncorrectResultSizeDataAccessException", ex.getMessage());
+    public ExceptionResponseDto incorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex) {
+        return new ExceptionResponseDto("IncorrectResultSizeDataAccessException", ex.getMessage());
     }
 
     /**
@@ -92,17 +93,12 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ExceptionResponse methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        StringBuilder message = new StringBuilder(ex.getMessage());
-        if (ex.getBindingResult().getAllErrors().get(0).getDefaultMessage() != null) {
-            message = new StringBuilder(Objects.requireNonNull(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
-            String[] codes = ex.getBindingResult().getAllErrors().get(0).getCodes();
-            if (codes != null && codes.length >= 1) {
-                message = new StringBuilder(codes[0]).append(" ").append(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
-            }
-        }
-        return new ExceptionResponse("MethodArgumentNotValidException",
-                message.toString());
+    public ExceptionResponseDto methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        Optional<String> message = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .reduce((a, b) -> a + ", " + b);
+        return new ExceptionResponseDto("MethodArgumentNotValidException", message.get());
     }
 
     /**
@@ -114,10 +110,15 @@ public class AdviceController {
      */
     @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse httpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return new ExceptionResponse("HttpMessageNotReadableException",
-                Objects.requireNonNull(ex.getCause()).getMessage());
+    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto httpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Throwable e = ex;
+        String message = e.getMessage();
+        while (e != null) {
+            message = e.getMessage();
+            e = e.getCause();
+        }
+        return new ExceptionResponseDto("HttpMessageNotReadableException", message);
     }
 
     /**
@@ -130,8 +131,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        return new ExceptionResponse("MethodArgumentTypeMismatchException",
+    public ExceptionResponseDto methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return new ExceptionResponseDto("MethodArgumentTypeMismatchException",
                 ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
     }
 
@@ -145,8 +146,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(JsonParseException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse jsonParseException(JsonParseException ex) {
-        return new ExceptionResponse("JsonParseException", ex.getMessage());
+    public ExceptionResponseDto jsonParseException(JsonParseException ex) {
+        return new ExceptionResponseDto("JsonParseException", ex.getMessage());
     }
 
 
@@ -160,8 +161,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(NOT_FOUND)
-    public ExceptionResponse noHandlerFoundException(NoHandlerFoundException ex) {
-        return new ExceptionResponse("NoHandlerFoundException", ex.getMessage());
+    public ExceptionResponseDto noHandlerFoundException(NoHandlerFoundException ex) {
+        return new ExceptionResponseDto("NoHandlerFoundException", ex.getMessage());
     }
 
     /**
@@ -174,8 +175,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(NoHandlerException.class)
     @ResponseStatus(NOT_FOUND)
-    public ExceptionResponse noHandlerException(NoHandlerException ex) {
-        return new ExceptionResponse("NoHandlerException", ex.getMessage());
+    public ExceptionResponseDto noHandlerException(NoHandlerException ex) {
+        return new ExceptionResponseDto("NoHandlerException", ex.getMessage());
     }
 
     /**
@@ -188,8 +189,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse constraintViolationException(ConstraintViolationException ex) {
-        return new ExceptionResponse("ConstraintViolationException",
+    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
+        return new ExceptionResponseDto("ConstraintViolationException",
                 ex.getMessage());
     }
 
@@ -204,8 +205,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(METHOD_NOT_ALLOWED)
-    public ExceptionResponse httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        return new ExceptionResponse("HttpRequestMethodNotSupportedException",
+    public ExceptionResponseDto httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ExceptionResponseDto("HttpRequestMethodNotSupportedException",
                 ex.getMessage());
     }
 
@@ -220,8 +221,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(InconsistencyIdException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse inconsistencyIdException(InconsistencyIdException ex) {
-        return new ExceptionResponse("InconsistencyIdException",
+    public ExceptionResponseDto inconsistencyIdException(InconsistencyIdException ex) {
+        return new ExceptionResponseDto("InconsistencyIdException",
                 ex.getMessage());
     }
 
@@ -236,8 +237,8 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(NewTagHasIdInCertificateException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponse idInNewTagException(NewTagHasIdInCertificateException ex) {
-        return new ExceptionResponse("IdInNewTagException",
+    public ExceptionResponseDto idInNewTagException(NewTagHasIdInCertificateException ex) {
+        return new ExceptionResponseDto("IdInNewTagException",
                 ex.getMessage());
     }
 
@@ -251,8 +252,23 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(DataAccessResourceFailureException.class)
     @ResponseStatus(NOT_ACCEPTABLE)
-    public ExceptionResponse dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
-        return new ExceptionResponse("DataAccessResourceFailureException",
+    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+        return new ExceptionResponseDto("DataAccessResourceFailureException",
+                "Failed to obtain JDBC Connection.");
+    }
+
+    /**
+     * Throwable handler returns ExceptionResponse in JSON
+     * and ResponseStatus BAD_REQUEST
+     *
+     * @param ex the Throwable
+     * @return the exception response
+     */
+    @ResponseBody
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponseDto throwable(Throwable ex) {
+        return new ExceptionResponseDto("Exception",
                 "Failed to obtain JDBC Connection.");
     }
 }

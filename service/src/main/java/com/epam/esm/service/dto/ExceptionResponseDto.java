@@ -9,7 +9,7 @@ import java.io.Serializable;
  * The type Exception response.
  * The pojo class to keep an exception name and message.
  */
-public class ExceptionResponse implements Serializable {
+public class ExceptionResponseDto implements Serializable {
     private String exception;
     private String message;
 
@@ -19,7 +19,7 @@ public class ExceptionResponse implements Serializable {
      * @param exception the exception
      * @param message   the message
      */
-    public ExceptionResponse(String exception, String message) {
+    public ExceptionResponseDto(String exception, String message) {
         this.exception = exception;
         this.message = message;
     }
@@ -71,7 +71,7 @@ public class ExceptionResponse implements Serializable {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        ExceptionResponse o = (ExceptionResponse) obj;
+        ExceptionResponseDto o = (ExceptionResponseDto) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.exception, o.getException())

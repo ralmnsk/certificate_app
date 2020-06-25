@@ -56,25 +56,20 @@ public class CertificateController {
     @ResponseStatus(HttpStatus.OK)
     public CustomPage<CertificateDto, Integer> getAll(
             @RequestParam(value = "tagName", defaultValue = "")
-            @Size(max = 16, message = "tagName should be 0-16 characters")
-                    String tagName,
+            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 
             @RequestParam(value = "name", defaultValue = "")
-            @Size(max = 16, message = "name should be 0-16 characters")
-                    String name,
+            @Size(max = 16, message = "name should be 0-16 characters") String name,
 
             @RequestParam(value = "page", defaultValue = "1")
             @Min(1)
-            @Max(10000000)
-                    int page,
+            @Max(10000000) int page,
 
             @RequestParam(value = "size", defaultValue = "10")
             @Min(1)
-            @Max(100)
-                    int size,
+            @Max(100) int size,
 
-            @RequestParam(required = false)
-                    List<String> sortParams
+            @RequestParam(required = false) List<String> sortParams
     ) {
         FilterDto filterDto = new FilterDto();
         filterDto.setTagName(tagName);
@@ -103,8 +98,7 @@ public class CertificateController {
      * @return the saved certificate dto
      */
     @PostMapping
-    public CertificateDto
-    create(@Valid @RequestBody CertificateDto certificateDto) {
+    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto) {
         return certificateService.save(certificateDto).get();
     }
 
@@ -116,8 +110,7 @@ public class CertificateController {
      * @return the updated certificate dto
      */
     @PutMapping("/{id}")
-    public CertificateDto
-    update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) {
+    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) {
         certificateDto.setId(id);
         return certificateService.update(certificateDto).get();
     }

@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 public class CertificateDto extends Dto<Long> {
-    @NotNull
+    @NotNull (message = "Name must be not null")
     @Size(min = 2, max = 256, message
             = "Name must be between 2 and 256 characters")
     private String name;
