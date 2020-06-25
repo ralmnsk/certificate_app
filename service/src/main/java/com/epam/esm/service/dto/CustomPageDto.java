@@ -15,7 +15,7 @@ import java.util.List;
  * @param <T> the type parameter is used for items
  * @param <E> the type parameter is used for numbers
  */
-public class CustomPage<T, E extends Number> implements Serializable {
+public class CustomPageDto<T, E extends Number> implements Serializable {
     private List<T> list = new ArrayList<>();
 
     private E number;
@@ -29,7 +29,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
     /**
      * Instantiates a new Custom page.
      */
-    public CustomPage() {
+    public CustomPageDto() {
     }
 
     /**
@@ -133,7 +133,7 @@ public class CustomPage<T, E extends Number> implements Serializable {
         if (obj.getClass() != getClass()) {
             return false;
         }
-        CustomPage c = (CustomPage) obj;
+        CustomPageDto c = (CustomPageDto) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.number, c.getNumber())

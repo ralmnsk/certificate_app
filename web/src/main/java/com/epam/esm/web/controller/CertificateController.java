@@ -2,7 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.CustomPage;
+import com.epam.esm.service.dto.CustomPageDto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.page.PageBuilder;
 import org.springframework.http.HttpStatus;
@@ -54,7 +54,7 @@ public class CertificateController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CustomPage<CertificateDto, Integer> getAll(
+    public CustomPageDto<CertificateDto, Integer> getAll(
             @RequestParam(value = "tagName", defaultValue = "")
             @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 

@@ -56,6 +56,7 @@ public class TagDto extends Dto<Integer> {
         TagDto t = (TagDto) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
+                .append(this.getId(), t.getId())
                 .append(this.name, t.getName())
                 .isEquals();
     }

@@ -38,22 +38,6 @@ public interface CertificateRepository<T, E> extends CrudRepository<T, E> {
     E getAllCount(Filter filter);
 
     /**
-     * Gets certificate ids by tag id.
-     *
-     * @param id the id
-     * @return the certificate ids by tag id
-     */
-    List<Long> getCertificateIdsByTagId(Integer id);
-
-    /**
-     * Gets tag ids by certificate id.
-     *
-     * @param id the id
-     * @return the tag ids by certificate id
-     */
-    List<Integer> getTagIdsByCertificateId(Long id);
-
-    /**
      * Save certificate tag boolean.
      *
      * @param certId the cert id

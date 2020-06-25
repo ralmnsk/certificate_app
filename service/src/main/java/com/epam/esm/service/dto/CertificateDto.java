@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 public class CertificateDto extends Dto<Long> {
-    @NotNull (message = "Name must be not null")
+    @NotNull(message = "Name must be not null")
     @Size(min = 2, max = 256, message
             = "Name must be between 2 and 256 characters")
     private String name;
@@ -32,9 +32,9 @@ public class CertificateDto extends Dto<Long> {
             = "Description must be between 0 and 999 characters")
     private String description;
 
-    @Digits(integer = 13, fraction = 2, message = " should be numeric, example: 12.34 ")
-    @DecimalMin(value = "0.00")
-    @DecimalMax(value = "1000000000000.00")
+    @Digits(integer = 13, fraction = 2, message = " Price should be numeric, example: 12.34 ")
+    @DecimalMin(value = "0.00", message = "Price should be 0.00 - 1000000000000.00")
+    @DecimalMax(value = "1000000000000.00", message = "Price should be 0.00 - 1000000000000.00")
     @JsonDeserialize(converter = StringToDecimalConverter.class)
     private BigDecimal price;
 

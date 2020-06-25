@@ -8,7 +8,6 @@ import com.epam.esm.repository.tag.TagRepository;
 import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.converter.TagConverter;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.Dto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.InconsistencyIdException;
@@ -92,9 +91,11 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         Optional<Certificate> certificateOptional = certificateRepository.save(certificate);
         if (certificateOptional.isPresent()) {
             certificate.setId(certificateOptional.get().getId());
-            saveTags(certificate);
             CertificateDto savedCertificateDto = certificateConverter.toDto(certificateOptional.get());
-            addTagsToCertificate(savedCertificateDto);
+            List<TagDto> tagsDtos = updateTags(certificate);
+            if (tagsDtos != null) {
+                savedCertificateDto.getTags().addAll(tagsDtos);
+            }
             return Optional.ofNullable(savedCertificateDto);
         }
         return Optional.empty();
@@ -135,11 +136,11 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         if (certificateOptional.isPresent()) {
             certificate = certificateOptional.get();
             certificate.getTags().addAll(tags);
-            updateTags(certificate);
+            List<TagDto> tagsDtos = updateTags(certificate);
             certificateDto = certificateConverter.toDto(certificate);
-
-            if (certificateDto != null) {
-                addTagsToCertificate(certificateDto);
+            certificateDto.getTags().clear();
+            if (tagsDtos != null) {
+                certificateDto.getTags().addAll(tagsDtos);
             }
             return Optional.ofNullable(certificateDto);
         }
@@ -160,15 +161,11 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
      * @return the tags by certificate id
      */
     public List<TagDto> getTagsByCertificateId(Long id) {
-        List<Integer> listTagIds = certificateRepository.getTagIdsByCertificateId(id);
-        if (listTagIds != null && !listTagIds.isEmpty()) {
-            return listTagIds
+        List<Tag> tags = tagRepository.getTagsByCertificateId(id);
+        if (tags != null && !tags.isEmpty()) {
+            return tags
                     .stream()
-                    .map(tagRepository::get)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
                     .map(tagConverter::toDto)
-                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
         }
         return null;
@@ -188,7 +185,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         certificate.getTags()
                 .stream()
                 .filter(Objects::nonNull)
-                .filter(t -> t.getName() != null)
+                .filter(t -> t.getName() != null || (t.getId() != null && t.getId() > 0))
                 .forEach(t -> {
                     Optional<Tag> foundTagOptional = getOptionalTag(t);
                     if (!foundTagOptional.isPresent()) {
@@ -204,7 +201,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     private boolean isIdInNewTag(Tag t) {
         if (t.getId() != null && t.getId() > 0) {
-            throw new NewTagHasIdInCertificateException("New Tag can not have id because it doesn't present in a database");
+            throw new NewTagHasIdInCertificateException("New Tag can not have id because it doesn't present in a database, id:" + t.getId() + ", name:" + t.getName());
         }
         return false;
     }
@@ -212,8 +209,14 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private Optional<Tag> getOptionalTag(Tag t) {
         Optional<Tag> foundTagOptional = Optional.empty();
         try {
-            foundTagOptional = tagRepository.getByName(t.getName());
-
+            if (t.getId() != null && t.getId() > 0) {
+                foundTagOptional = tagRepository.get(t.getId());
+            }
+            foundTagOptional.ifPresent(tag -> isEqualsTags(t, tag));
+            if (t.getName() != null) {
+                foundTagOptional = tagRepository.getByName(t.getName());
+            }
+            foundTagOptional.ifPresent(tag -> isEqualsTags(t, tag));
         } catch (EmptyResultDataAccessException e) {
             logger.info(this.getClass() + ": TagRepository.getName(): tag not found: " + t);
         }
@@ -239,18 +242,22 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     private boolean isEqualsTags(Tag t, Tag tag) {
-        if (!t.getName().equals(tag.getName())) {
-            return false;
+        if (t.getId() != null && t.getId() > 0 && t.getId().equals(tag.getId())) {
+            if (t.getName() != null && t.getName().equals(tag.getName())) {
+                return true;
+            }
+            if (t.getName() == null) {
+                return true;
+            }
         }
-        if (t.getId() != null && t.getId() > 0 && !t.getId().equals(tag.getId())) {
-            throw new InconsistencyIdException("Inconsistency of id and name. Get the tag name by id or remove id:" + t.getId());
+        if ((t.getId() == null || t.getId() == 0) && t.getName().equals(tag.getName())) {
+            return true;
         }
-        return true;
+        throw new InconsistencyIdException("Inconsistency of id and name. Get the tag name by id or remove id:" + t.getId());
     }
 
 
-    private void addTagsToCertificate
-            (CertificateDto certificateDto) {
+    private void addTagsToCertificate(CertificateDto certificateDto) {
         if (certificateDto != null) {
             List<TagDto> tagDtos = getTagsByCertificateId(certificateDto.getId());
             if (tagDtos != null && !tagDtos.isEmpty()) {
@@ -264,20 +271,10 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         }
     }
 
-    private void updateTags(Certificate certificate) {
-        List<TagDto> tagsByCertificateId = getTagsByCertificateId(certificate.getId());
-        if (tagsByCertificateId != null) {
-            tagsByCertificateId
-                    .stream()
-                    .map(Dto::getId)
-                    .map(tagRepository::get)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .filter(t -> !certificate.getTags().contains(t))
-                    .forEach(t -> {
-                        certificateRepository.deleteCertificateTag(certificate.getId(), t.getId());
-                    });
-        }
+    private List<TagDto> updateTags(Certificate certificate) {
+        tagRepository.removeTagsByCertificateId(certificate.getId());
         saveTags(certificate);
+        certificate.getTags().clear();
+        return getTagsByCertificateId(certificate.getId());
     }
 }

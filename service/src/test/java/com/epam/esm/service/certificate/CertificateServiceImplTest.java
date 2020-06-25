@@ -130,7 +130,6 @@ class CertificateServiceImplTest {
         Mockito.when(certificateConverter.toEntity(any())).thenReturn(one);
         Mockito.when(repository.update(any())).thenReturn(Optional.of(one));
         Mockito.when(certificateConverter.toDto(any())).thenReturn(certificateDto);
-        Mockito.when(repository.getTagIdsByCertificateId(any())).thenReturn(list);
         Mockito.when(tagRepository.get(any())).thenReturn(Optional.of(tagOne));
         Mockito.when(tagConverter.toDto(any())).thenReturn(tagDto);
 
@@ -139,6 +138,7 @@ class CertificateServiceImplTest {
         Mockito.verify(certificateConverter).toDto(any());
 
     }
+
 
     @Test
     void updateThrowsException() {
@@ -157,21 +157,35 @@ class CertificateServiceImplTest {
     }
 
     @Test
-    void saveTagsAndAddCollection() {
-        one.getTags().add(tagTwo);
+    void addTagsToCertificate() {
+        Certificate cert = new Certificate();
+        cert.setId(1L);
+        cert.setName("name");
+        Optional<Certificate> cOptional = Optional.of(cert);
+        Mockito.when(repository.get(any())).thenReturn(cOptional);
 
-        CertificateDto certificateDto = new CertificateDto();
-        certificateDto.setId(1L);
+        CertificateDto cDto = new CertificateDto();
+        cDto.setId(1L);
+        cDto.setName("name");
 
-        Mockito.when(certificateConverter.toEntity(any())).thenReturn(one);
-        Mockito.when(repository.save(any())).thenReturn(Optional.ofNullable(one));
-        Mockito.when(certificateConverter.toDto(any())).thenReturn(certificateDto);
-        Mockito.when(tagRepository.getByName(any())).thenReturn(Optional.ofNullable(tagOne));
-        Mockito.when(tagRepository.save(any())).thenReturn(Optional.ofNullable(tagOne));
+        Mockito.when(certificateConverter.toDto(any())).thenReturn(cDto);
 
-        service.save(certificateDto);
-        Mockito.verify(repository).getTagIdsByCertificateId(any());
-        Mockito.verify(tagRepository).getByName(any());
+        List<Tag> tags = new ArrayList<>();
+        Tag tag = new Tag();
+        tag.setId(1);
+        tag.setName("tag");
+        tags.add(tag);
+        Mockito.when(tagRepository.getTagsByCertificateId(any())).thenReturn(tags);
+
+        TagDto tagDto = new TagDto();
+        tagDto.setId(1);
+        tagDto.setName("tag");
+        Mockito.when(tagConverter.toDto(any())).thenReturn(tagDto);
+        cDto.getTags().add(tagDto);
+
+        service.get(any());
+
+        Mockito.verify(tagConverter).toDto(any());
     }
 
     @Test
@@ -194,14 +208,15 @@ class CertificateServiceImplTest {
 
     @Test
     void getTagsByCertificateId() {
-        List<Integer> list = new ArrayList<>();
-        list.add(1);
+        List<Tag> list = new ArrayList<>();
         Tag tag = new Tag();
-        Mockito.when(repository.getTagIdsByCertificateId(1L)).thenReturn(list);
+        list.add(tag);
+        Mockito.when(tagRepository.getTagsByCertificateId(any())).thenReturn(list);
         Mockito.when(tagRepository.get(any())).thenReturn(Optional.of(tag));
+
         service.getTagsByCertificateId(1L);
-        Mockito.verify(repository).getTagIdsByCertificateId(any());
-        Mockito.verify(tagRepository).get(any());
+
+        Mockito.verify(tagRepository).getTagsByCertificateId(any());
         Mockito.verify(tagConverter).toDto(any());
     }
 

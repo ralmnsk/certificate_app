@@ -2,8 +2,11 @@ package com.epam.esm.repository;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Filter;
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.certificate.CertificateRepository;
 import com.epam.esm.repository.certificate.CertificateRepositoryImpl;
+import com.epam.esm.repository.tag.TagRepository;
+import com.epam.esm.repository.tag.TagRepositoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,11 +31,13 @@ class CertificateRepositoryImplTest {
     private CertificateRepository<Certificate, Long> repository;
     private Certificate one;
     private Certificate two;
+    private TagRepository<Tag, Integer> tagRepository;
 
     @BeforeEach
     void setUp() {
         ApplicationContext context = new AnnotationConfigApplicationContext(RepositoryConfiguration.class);
         repository = context.getBean(CertificateRepositoryImpl.class);
+        tagRepository = context.getBean(TagRepositoryImpl.class);
 
         one = new Certificate();
         one.setName("name1");
@@ -166,18 +171,22 @@ class CertificateRepositoryImplTest {
     }
 
     @Test
-    void getCertificateIdsByTagId() {
-    }
+    void testSaveCertificateTag() {
+        Tag tag = new Tag();
+        tag.setName("commodity");
+        one.getTags().add(tag);
 
-    @Test
-    void getTagIdsByCertificateId() {
-    }
+        Optional<Certificate> testCertOpt = repository.save(one);
+        Optional<Tag> testTagOpt = tagRepository.save(tag);
 
-    @Test
-    void saveCertificateTag() {
-    }
+        Certificate cert = testCertOpt.get();
+        Tag tg = testTagOpt.get();
 
-    @Test
-    void deleteCertificateTag() {
+        repository.saveCertificateTag(cert.getId(), tg.getId());
+        List<Tag> tags = tagRepository.getTagsByCertificateId(cert.getId());
+        assertEquals(tags.get(0).getName(), tag.getName());
+
+        repository.deleteCertificateTag(cert.getId(), tg.getId());
+        tagRepository.delete(tg.getId());
     }
 }

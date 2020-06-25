@@ -38,8 +38,6 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     private final String SQL_PERCENT = "%";
     private final String SQL_EMPTY = "";
 
-    private final String SQL_CERTIFICATE_BY_TAG_ID = "select certificate_id from certificate_tag where tag_id = ?";
-    private final String SQL_TAG_BY_CERTIFICATE_ID = "select tag_id from certificate_tag where certificate_id = ?";
     private final String SQL_DELETE = "delete from certificate_tag where certificate_id = ? and tag_id = ?";
     private final String SQL_INSERT = "insert into certificate_tag(certificate_id, tag_id) values(?,?)";
 
@@ -74,7 +72,6 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     public List<Certificate> getAll(Filter filter) {
         String sql = queryBuilder.build(filter);
         logger.info("SQL query for {} {}", this.getClass(), sql);
-
         return jdbcTemplate.query(sql, new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
@@ -111,7 +108,6 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
         jdbcTemplate.update(SQL_UPDATE_CERTIFICATE, certificate.getName(),
                 certificate.getDescription(), certificate.getPrice(),
                 certificate.getDuration(), certificate.getId());
-
         return get(certificate.getId());
     }
 
@@ -126,7 +122,6 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
     public Long getAllCount(Filter filter) {
         String sql = queryBuilder.build(filter);
         logger.info("SQL query for {} {}", this.getClass(), sql);
-
         return jdbcTemplate.query(sql, new PreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps) throws SQLException {
@@ -143,16 +138,6 @@ public class CertificateRepositoryImpl implements CertificateRepository<Certific
                 return rs.getLong("count");
             }
         }).get(0);
-    }
-
-    @Override
-    public List<Long> getCertificateIdsByTagId(Integer id) {
-        return jdbcTemplate.queryForList(SQL_CERTIFICATE_BY_TAG_ID, new Object[]{id}, Long.class);
-    }
-
-    @Override
-    public List<Integer> getTagIdsByCertificateId(Long id) {
-        return jdbcTemplate.queryForList(SQL_TAG_BY_CERTIFICATE_ID, new Object[]{id}, Integer.class);
     }
 
     @Override

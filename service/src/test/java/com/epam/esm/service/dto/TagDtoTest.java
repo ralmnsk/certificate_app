@@ -4,7 +4,7 @@ import com.epam.esm.model.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TagDtoTest {
 
@@ -14,7 +14,7 @@ class TagDtoTest {
         tagA.setName("testName");
         Tag tagB = new Tag();
         tagB.setName("testName");
-        assertNotEquals(tagA, tagB);
+        assertFalse(tagA.equals(tagB));
         tagB = tagA;
         assertEquals(tagA, tagB);
     }

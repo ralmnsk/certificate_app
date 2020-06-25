@@ -121,6 +121,7 @@ public class AdviceController {
         return new ExceptionResponseDto("HttpMessageNotReadableException", message);
     }
 
+
     /**
      * MethodArgumentTypeMismatchException handler returns ExceptionResponse in JSON
      * and ResponseStatus UNPROCESSABLE_ENTITY
@@ -268,7 +269,13 @@ public class AdviceController {
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(BAD_REQUEST)
     public ExceptionResponseDto throwable(Throwable ex) {
+        Throwable e = ex;
+        String message = e.getMessage();
+        while (e != null) {
+            message = e.getMessage();
+            e = e.getCause();
+        }
         return new ExceptionResponseDto("Exception",
-                "Failed to obtain JDBC Connection.");
+                "Exception happened:" + message);
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.repository.tag;
 
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.CrudRepository;
 
 import java.util.List;
@@ -27,4 +28,20 @@ public interface TagRepository<T, E> extends CrudRepository<T, E> {
      * @return the by name of the tag
      */
     Optional<T> getByName(String name);
+
+    /**
+     * Gets tags by the certificate id.
+     *
+     * @param id the id of the certificate
+     * @return the tag list of the certificate
+     */
+    List<Tag> getTagsByCertificateId(Long id);
+
+
+    /**
+     * Remove tags by certificate id.
+     *
+     * @param id the certificate id
+     */
+    void removeTagsByCertificateId(Long id);
 }
