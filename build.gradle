@@ -1,27 +1,23 @@
-apply plugin: 'java'
-apply plugin: 'application'
-apply plugin: 'idea'
-mainClassName = 'com.epam.esm.web.Main'
-
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-subprojects {
-    apply plugin: 'java'
-    group = 'com.epam.esm'
-    version = '1.0-SNAPSHOT'
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
-}
 
 allprojects {
+    apply plugin: 'java'
+    apply plugin: 'application'
+    apply plugin: 'idea'
+
+    group 'com.epam.esm'
+    version '1.0-SNAPSHOT'
+    sourceCompatibility = '1.8'
+
     repositories {
         mavenCentral()
     }
+
     dependencies {
-        //Utils
+
+        //-----------------Utils--------------------------
+
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
         implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0'
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
@@ -35,36 +31,13 @@ allprojects {
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
 
+        //----------------jdbc---------------------------
 
-        //Spring
-        // https://mvnrepository.com/artifact/org.springframework/spring-webmvc
-        implementation group: 'org.springframework', name: 'spring-webmvc', version: '5.2.6.RELEASE'
-        implementation group: 'org.springframework', name: 'spring-web', version: '5.2.6.RELEASE'
-        // https://mvnrepository.com/artifact/org.springframework/spring-jdbc
-        implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.2.6.RELEASE'
-
-        // https://mvnrepository.com/artifact/org.springframework/spring-context
-        implementation group: 'org.springframework', name: 'spring-context', version: '5.2.6.RELEASE'
-
-        //loggin
-        // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-        implementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
-        //jdbc
         // https://mvnrepository.com/artifact/org.postgresql/postgresql
         implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.12'
 
-        //https://mvnrepository.com/artifact/com.zaxxer/HikariCP
-        implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.4.5'
-        //server & servlet
-        // https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api
-        implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-        implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '8.5.23'
-        // https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
-        implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '8.5.23'
-        // https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jasper
-        implementation group: 'org.apache.tomcat', name: 'tomcat-jasper', version: '8.5.23'
+        //----------------testing------------------------
 
-        //testing
         // https://mvnrepository.com/artifact/org.mockito/mockito-core
         testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
         // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
@@ -74,11 +47,39 @@ allprojects {
         implementation "org.junit.jupiter:junit-jupiter-engine:5.6.0"
         implementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
         testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.6.1"
-    }
 
+        //----------------Spring-------------------------
 
-    tasks.withType(Test) {
-        useJUnitPlatform()
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jdbc
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jdbc', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
+//        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-rest
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-hateoas
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-oauth2-client
+//        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+//        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.data/spring-data-rest-hal-browser
+        implementation group: 'org.springframework.data', name: 'spring-data-rest-hal-browser', version: '3.3.1.RELEASE'
+        // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+        testImplementation('org.springframework.boot:spring-boot-starter-test:2.3.1.RELEASE') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+
+        testImplementation 'org.springframework.security:spring-security-test'
     }
 }
+
+test {
+    useJUnitPlatform()
+}
+
+
 
