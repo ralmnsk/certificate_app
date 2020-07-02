@@ -1,70 +1,37 @@
 package com.epam.esm.model;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * The type Tag.
- */
+import javax.persistence.*;
+
+//@EqualsAndHashCode(callSuper = false)
+@Data
+@NoArgsConstructor
+@Entity
+@Cacheable
+@Table(name = "tag")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Tag extends Identifiable<Integer> {
-
     private String name;
-
-    /**
-     * Instantiates a new Tag.
-     * Default constructor.  Setter is used to set name of the tag.
-     */
-    public Tag() {
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return the name of the tag
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets name.
-     *
-     * @param name the name of the tag
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Column(unique = true, columnDefinition = "boolean default false")
+    private boolean deleted;
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        Tag t = (Tag) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.name, t.getName())
-                .isEquals();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+
+        if (deleted != tag.deleted) return false;
+        return name.equals(tag.name);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(name)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Tag{" +
-                "id=" + getId() +
-                ", name='" + name + '\'' +
-                '}';
+        int result = name.hashCode();
+        result = 31 * result + (deleted ? 1 : 0);
+        return result;
     }
 }

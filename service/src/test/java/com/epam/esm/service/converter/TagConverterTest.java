@@ -45,7 +45,7 @@ class TagConverterTest {
     @Test
     void toEntity() {
         toDto();
-        Tag tag = tagConverter.toEntity(tagDto);
+        Tag tag = tagConverter.toEntity(tagDto, Order.class);
         assertEquals(tag.getName(), tagDto.getName());
 
     }
@@ -64,6 +64,6 @@ class TagConverterTest {
 
     @Test
     void testToDtoNull() {
-        assertNull(tagConverter.toEntity(null));
+        assertNull(tagConverter.toEntity(null, Order.class));
     }
 }

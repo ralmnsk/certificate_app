@@ -12,17 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-/**
- * The type Spring app config.
- * The implementation of {@link WebApplicationInitializer} interface.
- */
 public class SpringAppConfig implements WebApplicationInitializer {
-    /*
-     * onStartup method configures {@link javax.servlet.ServletContext},
-     * creates web application context, adds dispatcher and set
-     * dispatcher configuration.
-     *
-     * */
     @Override
     public void onStartup(ServletContext container) {
 

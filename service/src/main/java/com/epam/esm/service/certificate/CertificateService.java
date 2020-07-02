@@ -2,31 +2,14 @@ package com.epam.esm.service.certificate;
 
 
 import com.epam.esm.service.CrudService;
-import com.epam.esm.service.dto.FilterDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
-/**
- * The interface Certificate service for implementation.
- *
- * @param <T> the type parameter for objects(items)
- * @param <E> the type parameter for numeric such as Long, Integer, etc.
- */
 public interface CertificateService<T, E> extends CrudService<T, E> {
 
-    /**
-     * Gets all.
-     *
-     * @param filterDto the filter dto to filtrate items
-     * @return the all items by filterDto
-     */
-    List<T> getAll(FilterDto filterDto);
+    Page<T> getAllByOrderId(E orderId, Pageable pageable);
 
-    /**
-     * Gets all count.
-     *
-     * @param filterDto the filter dto
-     * @return the count of all items by filterDto
-     */
-    E getAllCount(FilterDto filterDto);
+    Optional<T> createCertificateInOrder(E orderId, T certificateDto);
 }

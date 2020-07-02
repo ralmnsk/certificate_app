@@ -265,17 +265,17 @@ public class AdviceController {
      * @param ex the Throwable
      * @return the exception response
      */
-    @ResponseBody
-    @ExceptionHandler(Throwable.class)
-    @ResponseStatus(BAD_REQUEST)
-    public ExceptionResponseDto throwable(Throwable ex) {
-        Throwable e = ex;
-        String message = e.getMessage();
-        while (e != null) {
-            message = e.getMessage();
-            e = e.getCause();
-        }
-        return new ExceptionResponseDto("Exception",
-                "Exception happened:" + message);
-    }
+//    @ResponseBody
+//    @ExceptionHandler(Throwable.class)
+//    @ResponseStatus(BAD_REQUEST)
+//    public ExceptionResponseDto throwable(Throwable ex) {
+//        Throwable e = ex;
+//        String message = e.getMessage();
+//        while (e != null) {
+//            message = e.getMessage();
+//            e = e.getCause();
+//        }
+//        return new ExceptionResponseDto("Exception",
+//                "Exception happened:" + message);
+//    }
 }

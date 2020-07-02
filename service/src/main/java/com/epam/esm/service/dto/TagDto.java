@@ -1,78 +1,54 @@
 package com.epam.esm.service.dto;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * The type Tag dto.
- * The TagDto is a DTO used to transfer
- * an tag data between software application subsystems or
- * layers.
- */
-public class TagDto extends Dto<Integer> {
+@Data
+//@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@JsonRootName("tag")
+@Relation(collectionRelation = "tags")
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+public class TagDto extends RepresentationModel<TagDto> {
+    private Integer id;
     @NotNull
     @Size(min = 2, max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;
 
-    /**
-     * Instantiates a new Tag dto.
-     */
-    public TagDto() {
-    }
+    private boolean deleted;
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     */
     public void setName(String name) {
         this.name = name;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        TagDto t = (TagDto) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.getId(), t.getId())
-                .append(this.name, t.getName())
-                .isEquals();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        TagDto tagDto = (TagDto) o;
+
+        if (deleted != tagDto.deleted) return false;
+        return name.equals(tagDto.name);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(name)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "TagDto{" +
-                "id=" + getId() +
-                ", name='" + name + '\'' +
-                '}';
+        int result = super.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (deleted ? 1 : 0);
+        return result;
     }
 }

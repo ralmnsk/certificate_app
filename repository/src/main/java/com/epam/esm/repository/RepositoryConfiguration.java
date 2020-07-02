@@ -1,29 +1,15 @@
 package com.epam.esm.repository;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
-
-/**
- * The type Repository configuration.
- * The configuration is created with Spring component scan automatically.
- */
 @Configuration
 @ComponentScan("com.epam.esm.repository")
-@Import(SpringJdbcConfig.class)
+@EnableTransactionManagement
+@EnableJpaRepositories(basePackages = "com.epam.esm.repository.jpa")
+@EntityScan(basePackages = "com.epam.esm.model")
 public class RepositoryConfiguration {
-    /**
-     * {@link org.springframework.jdbc.core.JdbcTemplate} jdbc template.
-     *
-     * @param dataSource the data source is injected into jdbc template
-     * @return the jdbc template
-     */
-    @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
 }

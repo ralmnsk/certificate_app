@@ -46,7 +46,7 @@ class CertificateConverterTest {
     @Test
     void toEntity() {
         toDto();
-        Certificate certificate = certificateConverter.toEntity(oneDto);
+        Certificate certificate = certificateConverter.toEntity(oneDto, Order.class);
         assertEquals(1, oneDto.getTags().size());
         assertEquals(certificate.getName(), oneDto.getName());
     }
@@ -61,7 +61,7 @@ class CertificateConverterTest {
 
     @Test
     void testToEntityNull() {
-        assertNull(certificateConverter.toEntity(null));
+        assertNull(certificateConverter.toEntity(null, Order.class));
     }
 
     @Test

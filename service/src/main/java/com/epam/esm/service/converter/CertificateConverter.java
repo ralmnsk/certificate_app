@@ -5,38 +5,23 @@ import com.epam.esm.service.dto.CertificateDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-/**
- * The type Certificate converter.
- * The CertificateConverter converts {@link CertificateDto} into
- * {@link Certificate} and vice versa.
- */
 @Component
 public class CertificateConverter implements Converter<CertificateDto, Certificate> {
+    private ModelMapper mapper;
 
-    private ModelMapper modelMapper;
-
-    /**
-     * Instantiates a new Certificate converter.
-     *
-     * @param modelMapper the model mapper is attached automatically with Spring
-     */
-    public CertificateConverter(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public CertificateConverter(ModelMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
     public Certificate toEntity(CertificateDto certificateDto) {
-        if (certificateDto != null) {
-            return modelMapper.map(certificateDto, Certificate.class);
-        }
-        return null;
+        Certificate certificate = mapper.map(certificateDto, Certificate.class);
+        return certificate;
     }
 
     @Override
     public CertificateDto toDto(Certificate certificate) {
-        if (certificate != null) {
-            return modelMapper.map(certificate, CertificateDto.class);
-        }
-        return null;
+        CertificateDto certificateDto = mapper.map(certificate, CertificateDto.class);
+        return certificateDto;
     }
 }
