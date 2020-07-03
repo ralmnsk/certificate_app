@@ -12,4 +12,6 @@ public interface CertificateService<T, E> extends CrudService<T, E> {
     Page<T> getAllByOrderId(E orderId, Pageable pageable);
 
     Optional<T> createCertificateInOrder(E orderId, T certificateDto);
+
+    E getCertIdByTagId(int id);
 }

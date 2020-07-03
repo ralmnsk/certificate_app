@@ -74,4 +74,15 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
                 .collect(Collectors.toList());
         return new PageImpl<UserDto>(dtoList, pageable, dtoList.size());
     }
+
+    @Override
+    public Long getUserIdByOrderId(Long orderId) {
+        Long num = 0L;
+        Optional<User> orderOptional = userRepository.getUserIdByOrderId(orderId);
+        if (orderOptional.isPresent()) {
+            num = orderOptional.get().getId();
+        }
+
+        return num;
+    }
 }

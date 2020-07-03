@@ -118,6 +118,16 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         return certificateDtoOptional;
     }
 
+    @Override
+    public Long getCertIdByTagId(int id) {
+        Long num = 0L;
+        Optional<Certificate> certOptional = certificateRepository.getCertIdByTagId(id);
+        if (certOptional.isPresent()) {
+            num = certOptional.get().getId();
+        }
+
+        return num;
+    }
 
     private void setCorrectTime(Certificate certificate) {
         Instant created = certificate.getCreation();

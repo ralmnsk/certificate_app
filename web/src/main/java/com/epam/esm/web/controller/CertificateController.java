@@ -4,21 +4,23 @@ import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
+import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.tag.TagService;
+import com.epam.esm.web.assembler.CertificateAssembler;
+import com.epam.esm.web.assembler.TagAssembler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.epam.esm.web.controller.ControllerConstants.DEFAULT_PAGE_NUMBER;
-import static com.epam.esm.web.controller.ControllerConstants.DEFAULT_PAGE_SIZE;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static com.epam.esm.web.controller.ControllerConstants.*;
 
 @Slf4j
 @Validated
@@ -39,28 +38,33 @@ public class CertificateController {
     private CertificateService<CertificateDto, Long> certificateService;
     private TagService<TagDto, Integer> tagService;
     private ObjectMapper objectMapper;
+    private CertificateAssembler certificateAssembler;
+    private TagAssembler tagAssembler;
 
-    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper) {
+    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, TagAssembler tagAssembler) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
+        this.certificateAssembler = certificateAssembler;
+        this.tagAssembler = tagAssembler;
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) //ALL
     public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
             size = DEFAULT_PAGE_SIZE) Pageable pageable) {
         List<CertificateDto> certificates = certificateService.getAll(pageable).getContent();
 
-        certificates.stream().forEach(c -> {
-            Link linkSelf = linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel();
-            Link linkCerts = linkTo(methodOn(CertificateController.class).getAll(pageable, c.getId())).withRel("tags");
-            c.add(linkSelf);
-            c.add(linkCerts);
-        });
-        Link linkOrders = linkTo(methodOn(CertificateController.class).getAll(pageable)).withRel("certificates");
-
-        return CollectionModel.of(certificates, linkOrders);
+//        certificates.forEach(c -> {
+//            Link linkSelf = linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel();
+//            Link linkCerts = linkTo(methodOn(CertificateController.class).getAll(pageable, c.getId())).withRel("tags");
+//            c.add(linkSelf);
+//            c.add(linkCerts);
+//        });
+//        Link linkOrders = linkTo(methodOn(CertificateController.class).getAll(pageable)).withRel("certificates");
+//
+//        return CollectionModel.of(certificates, linkOrders);
+        return certificateAssembler.toCollectionModel(PARAM_NOT_USED, certificates, pageable);
     }
 
     @GetMapping("/{certificateId}/tags")
@@ -69,41 +73,42 @@ public class CertificateController {
             size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long certificateId) {
         List<TagDto> tags = tagService.getAllByCertificateId(certificateId, pageable).getContent();
 
-        tags.stream().forEach(t -> {
-            Link selfLink = linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel();
-            t.add(selfLink);
-        });
-
-        Link link = linkTo(methodOn(CertificateController.class).getAll(pageable, certificateId)).withSelfRel();
-
-        return CollectionModel.of(tags, link);
+//        tags.stream().forEach(t -> {
+//            Link selfLink = linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel();
+//            t.add(selfLink);
+//        });
+//
+//        Link link = linkTo(methodOn(CertificateController.class).getAll(pageable, certificateId)).withSelfRel();
+//
+//        return CollectionModel.of(tags, link);
+        return tagAssembler.toCollectionModel(certificateId, tags, pageable);
     }
 
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {
-        return certificateService.get(id).get();
+        CertificateDto certificateDto = certificateService.get(id).orElseThrow(() -> new NotFoundException(id));
+        return certificateAssembler.assemble(id, certificateDto);
     }
 
     @PostMapping
     public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto) {
-        return certificateService.save(certificateDto).get();
+        certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
+        return certificateAssembler.assemble(certificateDto.getId(), certificateDto);
     }
+
 
     @PutMapping("/{id}")
     public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) {
         certificateDto.setId(id);
-        return certificateService.update(certificateDto).get();
+        certificateDto = certificateService.update(certificateDto).orElseThrow(() -> new NotFoundException(id));
+        return certificateAssembler.assemble(id, certificateDto);
     }
 
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id, HttpServletResponse response) {
-
-        if (certificateService.delete(id)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        }
+    public ResponseEntity<?> delete(@PathVariable Long id, HttpServletResponse response) {
+        certificateService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     //https://www.baeldung.com/spring-rest-json-patch
@@ -120,11 +125,12 @@ public class CertificateController {
         }
         certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
 
-        Link linkSelf = linkTo(methodOn(CertificateController.class).get(certificateDto.getId())).withSelfRel();
-        Link linkToAll = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE))).withRel("certificates");
-        certificateDto.add(linkSelf, linkToAll);
-
-        return certificateDto;
+//        Link linkSelf = linkTo(methodOn(CertificateController.class).get(certificateDto.getId())).withSelfRel();
+//        Link linkToAll = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE))).withRel("certificates");
+//        certificateDto.add(linkSelf, linkToAll);
+//
+//        return certificateDto;
+        return certificateAssembler.assemble(id, certificateDto);
     }
 
     private CertificateDto applyPatchToCertificate(JsonPatch patch, CertificateDto certificateDto) throws JsonPatchException, JsonProcessingException {

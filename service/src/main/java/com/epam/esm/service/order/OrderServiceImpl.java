@@ -113,6 +113,16 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
         return orderDtoOptional;
     }
 
+    @Override
+    public Long getOrderByCertificateId(Long certId) {
+        Long num = 0L;
+        Optional<Order> orderOptional = orderRepository.getOrderByCertificateId(certId);
+        if (orderOptional.isPresent()) {
+            num = orderOptional.get().getId();
+        }
+
+        return num;
+    }
 
     private void setCorrectTime(Order order) {
         Instant created = order.getCreated();

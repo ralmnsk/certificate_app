@@ -12,4 +12,6 @@ public interface OrderService<T, E> extends CrudService<T, E> {
 
     Optional<T> createOrderInUser(E userId, T orderDto);
 
+    E getOrderByCertificateId(E e);
+
 }
