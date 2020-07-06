@@ -73,14 +73,6 @@ public class CertificateController {
             size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long certificateId) {
         List<TagDto> tags = tagService.getAllByCertificateId(certificateId, pageable).getContent();
 
-//        tags.stream().forEach(t -> {
-//            Link selfLink = linkTo(methodOn(TagController.class).get(t.getId())).withSelfRel();
-//            t.add(selfLink);
-//        });
-//
-//        Link link = linkTo(methodOn(CertificateController.class).getAll(pageable, certificateId)).withSelfRel();
-//
-//        return CollectionModel.of(tags, link);
         return tagAssembler.toCollectionModel(certificateId, tags, pageable);
     }
 
@@ -127,11 +119,6 @@ public class CertificateController {
         }
         certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
 
-//        Link linkSelf = linkTo(methodOn(CertificateController.class).get(certificateDto.getId())).withSelfRel();
-//        Link linkToAll = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE))).withRel("certificates");
-//        certificateDto.add(linkSelf, linkToAll);
-//
-//        return certificateDto;
         return certificateAssembler.assemble(id, certificateDto);
     }
 

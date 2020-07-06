@@ -2,7 +2,6 @@ package com.epam.esm.service.order;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Order;
-import com.epam.esm.model.User;
 import com.epam.esm.repository.jpa.OrderRepository;
 import com.epam.esm.repository.jpa.UserRepository;
 import com.epam.esm.service.calculator.TotalCostCalculator;
@@ -10,6 +9,7 @@ import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.converter.OrderConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -89,9 +89,12 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
     @Override
     public Optional<OrderDto> get(Long id) {
         Optional<OrderDto> orderDtoOptional = Optional.empty();
-        Order order = orderRepository.getOne(id);
+        Order order = orderRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+
         setCorrectTime(order);
-        orderDtoOptional = Optional.ofNullable(orderConverter.toDto(order));
+        OrderDto orderDto = orderConverter.toDto(order);
+        calculator.calc(orderDto);
+        orderDtoOptional = Optional.ofNullable(orderDto);
 
         return orderDtoOptional;
     }
@@ -104,7 +107,9 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
 
     @Override
     public boolean delete(Long id) {
+        orderRepository.removeFromCertificateRelationByOrderId(id);
         orderRepository.deleteById(id);
+        orderRepository.flush();
         return true;
     }
 
@@ -130,28 +135,12 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
 
     @Override
     public Optional<OrderDto> createOrderInUser(Long userId, OrderDto orderDto) {
-        Optional<OrderDto> orderDtoOptional = Optional.empty();
-        if (orderDto.getId() != null && orderDto.getId() > 0L) {
-            orderDtoOptional = get(orderDto.getId());
-        } else {
-            orderDtoOptional = save(orderDto);
-        }
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException(userId));
+        orderDto = save(orderDto).orElseThrow(() -> new SaveException("Order save exception"));
+        orderRepository.addOrderToUser(userId, orderDto.getId());
+        orderRepository.flush();
 
-        Order order = null;
-        if (orderDtoOptional.isPresent()) {
-            orderDto = orderDtoOptional.get();
-            order = orderConverter.toEntity(orderDto);
-        }
-
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent() && order != null) {
-//            order.setUser(userOptional.get());
-            order = orderRepository.save(order);
-            orderDto = orderConverter.toDto(order);
-            return Optional.ofNullable(orderDto);
-        }
-
-        return orderDtoOptional;
+        return Optional.of(orderDto);
     }
 
     @Override
@@ -167,6 +156,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
 
     private void setCorrectTime(Order order) {
         Instant created = orderRepository.getCreatedByOrderId(order.getId());
-        order.setCreated(Timestamp.from(created).toLocalDateTime().toInstant(ZoneOffset.UTC));
+//        order.setCreated(Timestamp.from(created).toLocalDateTime().toInstant(ZoneOffset.UTC));
+        order.setCreated(created);
     }
 }

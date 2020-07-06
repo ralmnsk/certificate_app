@@ -30,7 +30,7 @@ public class Order extends Identifiable<Long> {
     @Column(columnDefinition = "boolean default false")
     private boolean completed;
 
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(name = "order_certificate",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id"))

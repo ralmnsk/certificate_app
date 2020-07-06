@@ -21,7 +21,6 @@ public class UserConverter implements Converter<UserDto, User> {
     @Override
     public UserDto toDto(User user) {
         UserDto userDto = mapper.map(user, UserDto.class);
-        userDto.getOrders().clear();
         return userDto;
     }
 }

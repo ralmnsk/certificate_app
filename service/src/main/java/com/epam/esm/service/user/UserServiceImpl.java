@@ -4,6 +4,7 @@ import com.epam.esm.model.User;
 import com.epam.esm.repository.jpa.UserRepository;
 import com.epam.esm.service.converter.UserConverter;
 import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
     @Override
     public Optional<UserDto> get(Long id) {
         Optional<UserDto> userDtoOptional = Optional.empty();
-        User user = userRepository.getOne(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
         if (user != null) {
             userDtoOptional = Optional.ofNullable(userConverter.toDto(user));
         }

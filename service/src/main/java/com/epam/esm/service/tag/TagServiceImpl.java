@@ -3,6 +3,7 @@ package com.epam.esm.service.tag;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.jpa.TagRepository;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -70,13 +71,11 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     @Override
     public Optional<TagDto> get(Integer id) {
         Optional<TagDto> tagDtoOptional = Optional.empty();
-        Optional<Tag> tagOptional = tagRepository.findById(id);
-        if (tagOptional.isPresent()) {
-            TagDto tagDto = mapper.map(tagOptional.get(), TagDto.class);
-            return Optional.ofNullable(tagDto);
-        }
+        Tag tag = tagRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+        TagDto tagDto = mapper.map(tag, TagDto.class);
 
-        return tagDtoOptional;
+
+        return Optional.ofNullable(tagDto);
     }
 
     @Override
@@ -86,7 +85,10 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     @Override
     public boolean delete(Integer tagId) {
+        tagRepository.getOne(tagId);
+        tagRepository.removeFromRelationByTagId(tagId);
         tagRepository.deleteById(tagId);
+        tagRepository.flush();
         return true;
     }
 

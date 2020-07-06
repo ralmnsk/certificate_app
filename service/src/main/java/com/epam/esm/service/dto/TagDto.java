@@ -1,8 +1,6 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.service.deserializer.TagDeserializer;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;

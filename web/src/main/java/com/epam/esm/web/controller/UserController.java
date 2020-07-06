@@ -85,7 +85,7 @@ public class UserController {
     @PostMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
     public OrderDto createOrderInUser(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long userId, /*@Valid*/ @RequestBody OrderDto orderDto) {
+            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long userId, @Valid @RequestBody OrderDto orderDto) {
         orderDto = orderService.createOrderInUser(userId, orderDto).orElseThrow(() -> new SaveException("Create Order in User Exception"));
 
         return orderAssembler.assemble(orderDto.getId(), orderDto);

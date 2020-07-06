@@ -1,7 +1,6 @@
 package com.epam.esm.service.dto;
 
 import com.epam.esm.service.deserializer.StringToRoleConverter;
-import com.epam.esm.service.deserializer.UserDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

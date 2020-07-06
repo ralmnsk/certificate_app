@@ -26,131 +26,131 @@ import static org.springframework.http.HttpStatus.*;
 public class AdviceController {
 
 
-//    @ResponseBody
-//    @ExceptionHandler(NotFoundException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ExceptionResponseDto notFoundException(NotFoundException ex) {
-//        return new ExceptionResponseDto("NotFoundException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(UpdateException.class)
-//    @ResponseStatus(NOT_FOUND)
-//    public ExceptionResponseDto certificateUpdateException(UpdateException ex) {
-//        return new ExceptionResponseDto("UpdateException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(SaveException.class)
-//    @ResponseStatus(CONFLICT)
-//    public ExceptionResponseDto certificateSaveException(SaveException ex) {
-//        return new ExceptionResponseDto("SaveException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto incorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex) {
-//        return new ExceptionResponseDto("IncorrectResultSizeDataAccessException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-//        Optional<String> message = ex.getBindingResult().getFieldErrors()
-//                .stream()
-//                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-//                .reduce((a, b) -> a + ", " + b);
-//        return new ExceptionResponseDto("MethodArgumentNotValidException", message.get());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(HttpMessageNotReadableException.class)
-//    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto httpMessageNotReadableException(HttpMessageNotReadableException ex) {
-//        Throwable e = ex;
-//        String message = e.getMessage();
-//        while (e != null) {
-//            message = e.getMessage();
-//            e = e.getCause();
-//        }
-//        return new ExceptionResponseDto("HttpMessageNotReadableException", message);
-//    }
-//
-//
-//    @ResponseBody
-//    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-//        return new ExceptionResponseDto("MethodArgumentTypeMismatchException",
-//                ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(JsonParseException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto jsonParseException(JsonParseException ex) {
-//        return new ExceptionResponseDto("JsonParseException", ex.getMessage());
-//    }
-//
-//
-//    @ResponseBody
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    @ResponseStatus(NOT_FOUND)
-//    public ExceptionResponseDto noHandlerFoundException(NoHandlerFoundException ex) {
-//        return new ExceptionResponseDto("NoHandlerFoundException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(NoHandlerException.class)
-//    @ResponseStatus(NOT_FOUND)
-//    public ExceptionResponseDto noHandlerException(NoHandlerException ex) {
-//        return new ExceptionResponseDto("NoHandlerException", ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
-//        return new ExceptionResponseDto("ConstraintViolationException",
-//                ex.getMessage());
-//    }
-//
-//
-//    @ResponseBody
-//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-//    @ResponseStatus(METHOD_NOT_ALLOWED)
-//    public ExceptionResponseDto httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-//        return new ExceptionResponseDto("HttpRequestMethodNotSupportedException",
-//                ex.getMessage());
-//    }
-//
-//
-//    @ResponseBody
-//    @ExceptionHandler(InconsistencyIdException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto inconsistencyIdException(InconsistencyIdException ex) {
-//        return new ExceptionResponseDto("InconsistencyIdException",
-//                ex.getMessage());
-//    }
-//
-//
-//    @ResponseBody
-//    @ExceptionHandler(NewTagHasIdInCertificateException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto idInNewTagException(NewTagHasIdInCertificateException ex) {
-//        return new ExceptionResponseDto("IdInNewTagException",
-//                ex.getMessage());
-//    }
-//
-//    @ResponseBody
-//    @ExceptionHandler(DataAccessResourceFailureException.class)
-//    @ResponseStatus(NOT_ACCEPTABLE)
-//    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
-//        return new ExceptionResponseDto("DataAccessResourceFailureException",
-//                "Failed to obtain JDBC Connection.");
-//    }
+    @ResponseBody
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ExceptionResponseDto notFoundException(NotFoundException ex) {
+        return new ExceptionResponseDto("NotFoundException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UpdateException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ExceptionResponseDto certificateUpdateException(UpdateException ex) {
+        return new ExceptionResponseDto("UpdateException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(SaveException.class)
+    @ResponseStatus(CONFLICT)
+    public ExceptionResponseDto certificateSaveException(SaveException ex) {
+        return new ExceptionResponseDto("SaveException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ExceptionResponseDto incorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex) {
+        return new ExceptionResponseDto("IncorrectResultSizeDataAccessException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        Optional<String> message = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .reduce((a, b) -> a + ", " + b);
+        return new ExceptionResponseDto("MethodArgumentNotValidException", message.get());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto httpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        Throwable e = ex;
+        String message = e.getMessage();
+        while (e != null) {
+            message = e.getMessage();
+            e = e.getCause();
+        }
+        return new ExceptionResponseDto("HttpMessageNotReadableException", message);
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        return new ExceptionResponseDto("MethodArgumentTypeMismatchException",
+                ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(JsonParseException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto jsonParseException(JsonParseException ex) {
+        return new ExceptionResponseDto("JsonParseException", ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ExceptionResponseDto noHandlerFoundException(NoHandlerFoundException ex) {
+        return new ExceptionResponseDto("NoHandlerFoundException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(NoHandlerException.class)
+    @ResponseStatus(NOT_FOUND)
+    public ExceptionResponseDto noHandlerException(NoHandlerException ex) {
+        return new ExceptionResponseDto("NoHandlerException", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
+        return new ExceptionResponseDto("ConstraintViolationException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(METHOD_NOT_ALLOWED)
+    public ExceptionResponseDto httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ExceptionResponseDto("HttpRequestMethodNotSupportedException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(InconsistencyIdException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto inconsistencyIdException(InconsistencyIdException ex) {
+        return new ExceptionResponseDto("InconsistencyIdException",
+                ex.getMessage());
+    }
+
+
+    @ResponseBody
+    @ExceptionHandler(NewTagHasIdInCertificateException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto idInNewTagException(NewTagHasIdInCertificateException ex) {
+        return new ExceptionResponseDto("IdInNewTagException",
+                ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    @ResponseStatus(NOT_ACCEPTABLE)
+    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+        return new ExceptionResponseDto("DataAccessResourceFailureException",
+                "Failed to obtain JDBC Connection.");
+    }
 //
 //    @ExceptionHandler(JsonDeserializationException.class)
 //    @ResponseStatus(UNPROCESSABLE_ENTITY)

@@ -18,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -85,7 +83,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     @Override
     public Optional<CertificateDto> get(Long id) {
         Optional<CertificateDto> certificateDtoOptional = Optional.empty();
-        Certificate certificate = certificateRepository.getOne(id);
+        Certificate certificate = certificateRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
         setCorrectTime(certificate);
         certificateDtoOptional = Optional.ofNullable(certificateConverter.toDto(certificate));
 
@@ -100,7 +98,10 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     @Override
     public boolean delete(Long certId) {
+        certificateRepository.removeFromOrderRelationByCertificateId(certId);
+        certificateRepository.removeFromTagRelationByCertificateId(certId);
         certificateRepository.deleteById(certId);
+        certificateRepository.flush();
         return true;
     }
 
@@ -130,29 +131,13 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     @Override
     public Optional<CertificateDto> createCertificateInOrder(Long orderId, CertificateDto certificateDto) {
-        Optional<CertificateDto> certificateDtoOptional = Optional.empty();
-        if (certificateDto.getId() != null && certificateDto.getId() > 0L) {
-            certificateDtoOptional = get(certificateDto.getId());
-        } else {
-            certificateDtoOptional = save(certificateDto);
-        }
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(orderId));
+        certificateDto = save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
+        Certificate certificate = certificateConverter.toEntity(certificateDto);
+        order.getCertificates().add(certificate);
+        orderRepository.save(order);
 
-        Certificate certificate = null;
-        if (certificateDtoOptional.isPresent()) {
-            certificateDto = certificateDtoOptional.get();
-            certificate = certificateConverter.toEntity(certificateDto);
-        }
-
-        Optional<Order> orderOptional = orderRepository.findById(orderId);
-        if (orderOptional.isPresent() && certificate != null) {
-            Order order = orderOptional.get();
-            order.getCertificates().add(certificate);
-            order = orderRepository.save(order);
-            certificateDto = certificateConverter.toDto(certificate);
-            return Optional.ofNullable(certificateDto);
-        }
-
-        return certificateDtoOptional;
+        return Optional.of(certificateDto);
     }
 
     @Override
@@ -169,12 +154,14 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     private void setCorrectTime(Certificate certificate) {
         Instant created = certificateRepository.getCreationById(certificate.getId());
         if (created != null) {
-            certificate.setCreation(Timestamp.from(created).toLocalDateTime().toInstant(ZoneOffset.UTC));
+//            certificate.setCreation(Timestamp.from(created).toLocalDateTime().toInstant(ZoneOffset.UTC));
+            certificate.setCreation(created);
         }
         Instant modified = certificateRepository.getModificationById(certificate.getId());
         if (modified != null) {
-            certificate.setModification(Timestamp.from(modified).toLocalDateTime().toInstant(ZoneOffset.UTC));
+//            certificate.setModification(Timestamp.from(modified).toLocalDateTime().toInstant(ZoneOffset.UTC));
         }
+        certificate.setModification(modified);
     }
 
 }

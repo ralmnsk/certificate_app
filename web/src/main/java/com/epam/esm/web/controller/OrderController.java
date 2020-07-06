@@ -70,16 +70,6 @@ public class OrderController {
             size = DEFAULT_PAGE_SIZE) Pageable pageable) {
         List<OrderDto> orders = orderService.getAll(pageable).getContent();
 
-//        orders.forEach(o -> {
-//            Link link = linkTo(methodOn(OrderController.class).get(o.getId())).withSelfRel();
-//            Link linkCerts = linkTo(methodOn(OrderController.class).getAll(pageable, o.getId())).withRel("certificates");
-//            o.add(link);
-//            o.add(linkCerts);
-//        });
-//        Link linkOrders = linkTo(methodOn(OrderController.class).getAll(pageable)).withRel("orders");
-//
-//
-//        return CollectionModel.of(orders, linkOrders);
         return orderAssembler.toCollectionModel(PARAM_NOT_USED, orders, pageable);
     }
 
@@ -89,34 +79,16 @@ public class OrderController {
     public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
             size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long orderId) {
         List<CertificateDto> certificates = certService.getAllByOrderId(orderId, pageable).getContent();
-//        if (!certificates.isEmpty()) {
-//            certificates.forEach(c -> {
-//                Link selfLink = linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel();
-//                c.add(selfLink);
-//            });
-//        }
-//
-//        Link link = linkTo(methodOn(OrderController.class).getAll(pageable, orderId)).withSelfRel();
-//
-//        return CollectionModel.of(certificates, link);
+
         return certificateAssembler.toCollectionModel(orderId, certificates, pageable);
     }
 
     @PostMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto createCertificateInOrder(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long orderId, /*@Valid*/ @RequestBody CertificateDto certificateDto) {
-
+            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long orderId, @Valid @RequestBody CertificateDto certificateDto) {
         certificateDto = certService.createCertificateInOrder(orderId, certificateDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
 
-//        Link selfLink = linkTo(methodOn(CertificateController.class).get(certificateDto.getId())).withSelfRel();
-//        certificateDto.add(selfLink);
-//        Link userLink = linkTo(methodOn(OrderController.class).get(orderId)).withRel("order");
-//        certificateDto.add(userLink);
-//        Link certificatesLink = linkTo(methodOn(CertificateController.class).getAll(pageable, orderId)).withRel("orders");
-//        certificateDto.add(certificatesLink);
-//
-//        return certificateDto;
         return certificateAssembler.assemble(certificateDto.getId(), certificateDto);
     }
 
