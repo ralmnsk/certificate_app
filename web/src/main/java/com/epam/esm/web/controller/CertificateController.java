@@ -120,8 +120,10 @@ public class CertificateController {
             certificateDtoPatched = applyPatchToCertificate(patch, certificateDto);
         } catch (JsonPatchException e) {
             log.warn("Certificate patch exception:", e);
+            throw new UpdateException(id);
         } catch (JsonProcessingException e) {
             log.warn("Certificate patch processing exception:", e);
+            throw new UpdateException(id);
         }
         certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
 

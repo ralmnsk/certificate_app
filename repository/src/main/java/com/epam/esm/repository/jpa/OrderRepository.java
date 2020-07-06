@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -16,4 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select b from Order b join b.certificates u where u.id = :certId")
     Optional<Order> getOrderByCertificateId(@Param("certId") Long certId);
+
+    @Query("select created from Order where id = :orderId")
+    Instant getCreatedByOrderId(@Param("orderId") Long orderId);
 }

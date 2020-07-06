@@ -1,13 +1,15 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.service.deserializer.TagDeserializer;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Data
 //@EqualsAndHashCode(callSuper = false)
@@ -15,10 +17,12 @@ import javax.validation.constraints.Size;
 @JsonRootName("tag")
 @Relation(collectionRelation = "tags")
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-public class TagDto extends RepresentationModel<TagDto> {
+//@JsonDeserialize(using = TagDeserializer.class)
+public class TagDto extends RepresentationModel<TagDto> implements Serializable {
+
     private Integer id;
-    @NotNull
-    @Size(min = 2, max = 128, message
+
+    @Size(max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;
 

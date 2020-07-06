@@ -33,7 +33,7 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     public Optional<TagDto> getByName(String name) {
         try {
             if (name != null) {
-                Optional<Tag> optionalTag = Optional.ofNullable(tagRepository.getByName(name));
+                Optional<Tag> optionalTag = tagRepository.getByName(name);
                 if (optionalTag.isPresent()) {
                     return Optional.ofNullable(mapper.map(optionalTag.get(), TagDto.class));
                 }
@@ -54,12 +54,17 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
         Optional<TagDto> tagDtoOptional = Optional.empty();
-        if (tagDto != null) {
-            Tag tag = mapper.map(tagDto, Tag.class);
-            tagRepository.saveAndFlush(tag);
-            return get(tag.getId());
+        if (tagDto == null) {
+            return Optional.empty();
         }
-        return tagDtoOptional;
+        Tag tag = mapper.map(tagDto, Tag.class);
+        Optional<TagDto> byName = getByName(tagDto.getName());
+        if (byName.isPresent()) {
+            return tagDtoOptional;
+        }
+        tagRepository.saveAndFlush(tag);
+        return get(tag.getId());
+
     }
 
     @Override

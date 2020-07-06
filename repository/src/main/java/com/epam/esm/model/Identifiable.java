@@ -7,7 +7,7 @@ import java.io.Serializable;
 public abstract class Identifiable<T> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false)
     private T id;
 
     public T getId() {

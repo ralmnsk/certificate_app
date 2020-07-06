@@ -47,7 +47,7 @@ public class TagController {
     @PostMapping
     public TagDto
     create(@Valid @RequestBody TagDto tagDto) {
-        tagDto = tagService.save(tagDto).orElseThrow(() -> new SaveException("Certificate save exception"));
+        tagDto = tagService.save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
         int idInt = tagDto.getId();
         return tagAssembler.assemble((long) idInt, tagDto);
     }

@@ -1,11 +1,14 @@
 package com.epam.esm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
 
-//@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @Entity
@@ -13,9 +16,12 @@ import javax.persistence.*;
 @Table(name = "tag")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Tag extends Identifiable<Integer> {
+    @NotNull(message = "name could not be null")
     private String name;
     @Column(unique = true, columnDefinition = "boolean default false")
     private boolean deleted;
+    @ManyToMany(mappedBy = "tags")
+    private Set<Certificate> certificates;
 
     @Override
     public boolean equals(Object o) {

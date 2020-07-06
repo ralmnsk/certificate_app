@@ -105,7 +105,7 @@ public class OrderController {
     @PostMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto createCertificateInOrder(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long orderId, @Valid @RequestBody CertificateDto certificateDto) {
+            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long orderId, /*@Valid*/ @RequestBody CertificateDto certificateDto) {
 
         certificateDto = certService.createCertificateInOrder(orderId, certificateDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
 

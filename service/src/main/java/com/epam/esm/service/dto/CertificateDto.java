@@ -13,6 +13,7 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
@@ -24,8 +25,9 @@ import java.util.Set;
 @JsonRootName("certificate")
 @Relation(collectionRelation = "certificates")
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
-public class CertificateDto extends RepresentationModel<CertificateDto> {
+//@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
+//@JsonDeserialize(using = CertificateDeserializer.class)
+public class CertificateDto extends RepresentationModel<CertificateDto> implements Serializable {
 
     private Long id;
 
@@ -71,8 +73,8 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
         if (!name.equals(that.name)) return false;
         if (!description.equals(that.description)) return false;
         if (!price.equals(that.price)) return false;
-        if (!creation.equals(that.creation)) return false;
-        if (!modification.equals(that.modification)) return false;
+//        if (!creation.equals(that.creation)) return false;
+//        if (!modification.equals(that.modification)) return false;
         return duration.equals(that.duration);
     }
 
@@ -82,7 +84,7 @@ public class CertificateDto extends RepresentationModel<CertificateDto> {
         result = 31 * result + name.hashCode();
         result = 31 * result + description.hashCode();
         result = 31 * result + price.hashCode();
-        result = 31 * result + creation.hashCode();
+//        result = 31 * result + creation.hashCode();
         result = 31 * result + duration.hashCode();
         result = 31 * result + (deleted ? 1 : 0);
         return result;

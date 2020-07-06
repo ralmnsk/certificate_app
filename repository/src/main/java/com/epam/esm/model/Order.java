@@ -1,7 +1,9 @@
 package com.epam.esm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -9,28 +11,26 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-//@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @Entity
-@Cacheable
+//@Cacheable
 @Table(name = "orders")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Order extends Identifiable<Long> {
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     private String description;
     private BigDecimal totalCost;
+    @Column(updatable = false)
+    @CreationTimestamp
     private Instant created;
     @Column(columnDefinition = "boolean default false")
     private boolean deleted;
     @Column(columnDefinition = "boolean default false")
     private boolean completed;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(name = "order_certificate",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id"))

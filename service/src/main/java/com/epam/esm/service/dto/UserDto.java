@@ -1,17 +1,18 @@
 package com.epam.esm.service.dto;
 
 import com.epam.esm.service.deserializer.StringToRoleConverter;
+import com.epam.esm.service.deserializer.UserDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,8 @@ import java.util.Set;
 @Relation(collectionRelation = "users")
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
-public class UserDto extends RepresentationModel<UserDto> {
+//@JsonDeserialize(using = UserDeserializer.class)
+public class UserDto extends RepresentationModel<UserDto> implements Serializable {
     private Long id;
 
     @NotNull(message = "Surname must be not null")
@@ -33,8 +35,8 @@ public class UserDto extends RepresentationModel<UserDto> {
     @Size(min = 2, max = 64, message = "User name must be between 2 and 64 characters")
     private String name;
 
-    @NotNull(message = "Login must be not null")
-    @Size(min = 2, max = 32, message = "Login must be between 2 and 32 characters")
+//    @NotNull(message = "Login must be not null")
+//    @Size(min = 2, max = 32, message = "Login must be between 2 and 32 characters")
     private String login;
 
     @NotNull(message = "Password must be not null")

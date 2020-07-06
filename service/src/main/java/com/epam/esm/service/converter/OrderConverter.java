@@ -18,23 +18,23 @@ public class OrderConverter implements Converter<OrderDto, Order> {
     @Override
     public Order toEntity(OrderDto orderDto) {
         Order order = mapper.map(orderDto, Order.class);
-        UserDto userDto = orderDto.getUserDto();
-        if (userDto != null) {
-            User user = mapper.map(userDto, User.class);
-            order.setUser(user);
-        }
+//        UserDto userDto = orderDto.getUserDto();
+//        if (userDto != null) {
+//            User user = mapper.map(userDto, User.class);
+//            order.setUser(user);
+//        }
         return order;
     }
 
     @Override
     public OrderDto toDto(Order order) {
         OrderDto orderDto = mapper.map(order, OrderDto.class);
-        User user = order.getUser();
-        if (user != null) {
-            UserDto userDto = mapper.map(user, UserDto.class);
-            userDto.getOrders().clear();
-            orderDto.setUserDto(userDto);
-        }
+//        User user = order.getUser();
+//        if (user != null) {
+//            UserDto userDto = mapper.map(user, UserDto.class);
+//            userDto.getOrders().clear();
+//            orderDto.setUserDto(userDto);
+//        }
         return orderDto;
     }
 }

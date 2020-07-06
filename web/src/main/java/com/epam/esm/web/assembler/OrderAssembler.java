@@ -30,9 +30,12 @@ public class OrderAssembler implements Assembler<Long, OrderDto> {
     public OrderDto assemble(Long orderId, OrderDto orderDto) {
         Link linkSelfOrder = linkTo(methodOn(OrderController.class).get(orderDto.getId())).withSelfRel();
         Link linkToCerts = linkTo(methodOn(OrderController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), orderId)).withRel("certificates");
-        Long userId = orderDto.getUserDto().getId();
-        Link linkToAllUserOrders = linkTo(methodOn(UserController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE), userId)).withRel("orders");
-        orderDto.add(linkSelfOrder, linkToCerts, linkToAllUserOrders);
+        orderDto.add(linkSelfOrder, linkToCerts);
+//        if (orderDto.getUserDto() != null) {
+//            Long userId = orderDto.getUserDto().getId();
+//            Link linkToAllUserOrders = linkTo(methodOn(UserController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE), userId)).withRel("orders");
+//            orderDto.add(linkToAllUserOrders);
+//        }
 
         return orderDto;
     }

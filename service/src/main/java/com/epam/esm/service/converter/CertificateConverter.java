@@ -15,7 +15,16 @@ public class CertificateConverter implements Converter<CertificateDto, Certifica
 
     @Override
     public Certificate toEntity(CertificateDto certificateDto) {
+//        Set<Tag> tags = null;
+//        Set<TagDto> tagDtos = certificateDto.getTags();
+//        if (!tagDtos.isEmpty()) {
+//            certificateDto.setTags(null);
+//            tags = tagDtos.stream().map(t -> mapper.map(t, Tag.class)).collect(Collectors.toSet());
+//        }
         Certificate certificate = mapper.map(certificateDto, Certificate.class);
+//        if (tags != null) {
+//            certificate.setTags(tags);
+//        }
         return certificate;
     }
 

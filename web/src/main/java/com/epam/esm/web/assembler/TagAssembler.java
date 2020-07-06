@@ -5,16 +5,14 @@ import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.TagController;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.epam.esm.web.controller.ControllerConstants.*;
+import static com.epam.esm.web.controller.ControllerConstants.PARAM_NOT_USED;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -32,10 +30,10 @@ public class TagAssembler implements Assembler<Long, TagDto> {
         Link linkSelfTag = linkTo(methodOn(TagController.class).get(id)).withSelfRel();
         Long certId = certificateService.getCertIdByTagId(id);
         tagDto.add(linkSelfTag);
-        if (id > 0) {
-            Link linkToAllCertTags = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), certId)).withRel("tags");
-            tagDto.add(linkToAllCertTags);
-        }
+//        if (id > 0) {
+//            Link linkToAllCertTags = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), certId)).withRel("tags");
+//            tagDto.add(linkToAllCertTags);
+//        }
 
         return tagDto;
     }

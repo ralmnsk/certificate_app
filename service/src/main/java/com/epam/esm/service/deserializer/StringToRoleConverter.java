@@ -2,7 +2,9 @@ package com.epam.esm.service.deserializer;
 
 import com.epam.esm.model.Role;
 import com.fasterxml.jackson.databind.util.StdConverter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StringToRoleConverter extends StdConverter<String, Role> {
     private final String USER = "user";
     private final String ADMIN = "admin";

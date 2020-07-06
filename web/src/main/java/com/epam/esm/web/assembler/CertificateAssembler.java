@@ -30,12 +30,12 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto> {
     public CertificateDto assemble(Long certId, CertificateDto certificateDto) {
         Link linkSelfCert = linkTo(methodOn(CertificateController.class).get(certId)).withSelfRel();
         Link linkToTags = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_TAGS)), certId)).withRel("tags");
-        Long orderId = orderService.getOrderByCertificateId(certId);
+//        Long orderId = orderService.getOrderByCertificateId(certId);
         certificateDto.add(linkSelfCert, linkToTags);
-        if (orderId > 0L) {
-            Link linkToAllUserCerts = linkTo(methodOn(OrderController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), orderId)).withRel("certificates");
-            certificateDto.add(linkToAllUserCerts);
-        }
+//        if (orderId > 0L) {
+//            Link linkToAllUserCerts = linkTo(methodOn(OrderController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), orderId)).withRel("certificates");
+//            certificateDto.add(linkToAllUserCerts);
+//        }
 
         return certificateDto;
     }

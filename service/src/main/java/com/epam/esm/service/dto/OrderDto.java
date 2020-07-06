@@ -1,5 +1,6 @@
 package com.epam.esm.service.dto;
 
+import com.epam.esm.service.deserializer.OrderDeserializer;
 import com.epam.esm.service.deserializer.StringToDecimalConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,6 +15,7 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
@@ -25,16 +27,15 @@ import java.util.Set;
 @JsonRootName("order")
 @Relation(collectionRelation = "orders")
 //@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created"})
-public class OrderDto extends RepresentationModel<OrderDto> {
+@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created", "totalCost"})
+//@JsonDeserialize(using = OrderDeserializer.class)
+public class OrderDto extends RepresentationModel<OrderDto> implements Serializable {
     private Long id;
 
-    private UserDto userDto;
-
-    @Size(min = 0, max = 999, message = "Description must be between 0 and 999 characters")
+        @Size(min = 0, max = 999, message = "Description must be between 0 and 999 characters")
     private String description;
 
-    @Digits(integer = 13, fraction = 2, message = "Cost should be numeric, example: 12.34 ")
+        @Digits(integer = 13, fraction = 2, message = "Cost should be numeric, example: 12.34 ")
     @DecimalMin(value = "0.00", message = "Cost should be 0.00 - 1000000000000.00")
     @DecimalMax(value = "1000000000000.00", message = "Cost should be 0.00 - 1000000000000.00")
     @JsonDeserialize(converter = StringToDecimalConverter.class)
