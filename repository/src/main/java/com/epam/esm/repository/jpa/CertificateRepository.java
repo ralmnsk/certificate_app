@@ -13,7 +13,8 @@ import java.util.Optional;
 
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 
-    @Query("select o.certificates from Order o where  o.id = :orderId")
+    //    @Query("select o.certificates from Order o where o.id = :orderId")
+    @Query("select c from Certificate c inner join c.orders as o where o.id=:orderId")
     Page<Certificate> getAllByOrderId(@Param("orderId") Long orderId, Pageable pageable);
 
     @Query("select b from Certificate b join b.tags u where u.id = :tagId")

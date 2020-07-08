@@ -44,7 +44,9 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
         Optional<UserDto> userDtoOptional = Optional.empty();
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
         if (user != null) {
-            userDtoOptional = Optional.ofNullable(userConverter.toDto(user));
+            UserDto userDto = userConverter.toDto(user);
+            userDto.getOrders().clear();
+            userDtoOptional = Optional.ofNullable(userDto);
         }
         return userDtoOptional;
     }
@@ -69,10 +71,11 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
     @Override
     public Page<UserDto> getAll(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
-        List<UserDto> dtoList = users.getContent()
+        List<UserDto> dtoList = users
                 .stream()
                 .map(u -> userConverter.toDto(u))
                 .collect(Collectors.toList());
+        dtoList.forEach(d -> d.getOrders().clear());
         return new PageImpl<UserDto>(dtoList, pageable, dtoList.size());
     }
 

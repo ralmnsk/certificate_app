@@ -11,11 +11,11 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = false)
+//@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @Entity
-//@Cacheable
+@Cacheable
 @Table(name = "orders")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Order extends Identifiable<Long> {
@@ -30,7 +30,7 @@ public class Order extends Identifiable<Long> {
     @Column(columnDefinition = "boolean default false")
     private boolean completed;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST})
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "order_certificate",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id"))

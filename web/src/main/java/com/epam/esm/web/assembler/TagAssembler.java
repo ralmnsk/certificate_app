@@ -28,7 +28,7 @@ public class TagAssembler implements Assembler<Long, TagDto> {
     public TagDto assemble(Long tagId, TagDto tagDto) {
         int id = tagId.intValue();
         Link linkSelfTag = linkTo(methodOn(TagController.class).get(id)).withSelfRel();
-        Long certId = certificateService.getCertIdByTagId(id);
+//        Long certId = certificateService.getCertIdByTagId(id);
         tagDto.add(linkSelfTag);
 //        if (id > 0) {
 //            Link linkToAllCertTags = linkTo(methodOn(CertificateController.class).getAll(PageRequest.of(DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE, Sort.by(DEFAULT_SORT_CERTS)), certId)).withRel("tags");
@@ -47,17 +47,17 @@ public class TagAssembler implements Assembler<Long, TagDto> {
             });
         }
 
-        if ((certId == null || certId.equals(PARAM_NOT_USED)) && !tags.isEmpty()) {
-            Integer tagId = tags.get(0).getId();
-            Long foundId = certificateService.getCertIdByTagId(tagId);
-            if (foundId != null) {
-                certId = foundId;
-            }
-        }
+//        if ((certId == null || certId.equals(PARAM_NOT_USED)) && !tags.isEmpty()) {
+//            Integer tagId = tags.get(0).getId();
+//            Long foundId = certificateService.getCertIdByTagId(tagId);
+//            if (foundId != null) {
+//                certId = foundId;
+//            }
+//        }
 
-        Link link = linkTo(methodOn(CertificateController.class).getAll(pageable, certId)).withSelfRel();
-        Link linkCert = linkTo(methodOn(CertificateController.class).get(certId)).withRel("certificate");
+//        Link link = linkTo(methodOn(CertificateController.class).getAll(pageable, certId)).withSelfRel();
+//        Link linkCert = linkTo(methodOn(CertificateController.class).get(certId)).withRel("certificate");
 
-        return CollectionModel.of(tags, link, linkCert);
+        return CollectionModel.of(tags);
     }
 }

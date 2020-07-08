@@ -13,9 +13,11 @@ import java.util.Optional;
 
 public interface TagRepository extends JpaRepository<Tag, Integer> {
 
-    //    @Query("select t from Tag t join Certificate c where c.id = : certificateId")
-    @Query("select o.tags from Certificate o where  o.id = :certificateId")
-    Page<Tag> getAllByCertificateId(@Param("certificateId") Long certificateId, Pageable pageable);
+//    @Query("select t from Tag t where t.certificates.id = :certificateId")
+////    @Query("select o.tags from Certificate o where  o.id = :certificateId")
+////        @Query("select t from Tag t join Certificate.tags c on t.id= c.id where  c.id = :certificateId")
+////    @Query(value = "select id, deleted, name from tag join cert_tag ct on tag.id = ct.tag_id where  certificate_id = :certificateId", nativeQuery = true)
+//    Page<Tag> getAllByCertificateId(@Param("certificateId") Long certificateId, Pageable pageable);
 
     @Query("select t from Tag t where t.name = :name")
     Optional<Tag> getByName(@Param("name") String name);

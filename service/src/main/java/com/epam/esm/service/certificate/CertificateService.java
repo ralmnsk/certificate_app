@@ -14,4 +14,7 @@ public interface CertificateService<T, E> extends CrudService<T, E> {
     Optional<T> createCertificateInOrder(E orderId, T certificateDto);
 
     E getCertIdByTagId(int id);
+
+
+
 }

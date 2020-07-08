@@ -18,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -94,6 +92,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
         setCorrectTime(order);
         OrderDto orderDto = orderConverter.toDto(order);
         calculator.calc(orderDto);
+        orderDto.getCertificates().clear();
         orderDtoOptional = Optional.ofNullable(orderDto);
 
         return orderDtoOptional;
@@ -120,6 +119,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
                 .stream()
                 .map(o -> orderConverter.toDto(o))
                 .collect(Collectors.toList());
+        dtoList.forEach(d -> d.getCertificates().clear());
         return new PageImpl<OrderDto>(dtoList, pageable, dtoList.size());
     }
 
@@ -130,6 +130,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
                 .stream()
                 .map(o -> orderConverter.toDto(o))
                 .collect(Collectors.toList());
+        dtoList.forEach(d -> d.getCertificates().clear());
         return new PageImpl<OrderDto>(dtoList, pageable, dtoList.size());
     }
 
@@ -143,16 +144,16 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
         return Optional.of(orderDto);
     }
 
-    @Override
-    public Long getOrderByCertificateId(Long certId) {
-        Long num = 0L;
-        Optional<Order> orderOptional = orderRepository.getOrderByCertificateId(certId);
-        if (orderOptional.isPresent()) {
-            num = orderOptional.get().getId();
-        }
-
-        return num;
-    }
+//    @Override
+//    public Long getOrderByCertificateId(Long certId) {
+//        Long num = 0L;
+//        Optional<Order> orderOptional = orderRepository.getOrderByCertificateId(certId);
+//        if (orderOptional.isPresent()) {
+//            num = orderOptional.get().getId();
+//        }
+//
+//        return num;
+//    }
 
     private void setCorrectTime(Order order) {
         Instant created = orderRepository.getCreatedByOrderId(order.getId());

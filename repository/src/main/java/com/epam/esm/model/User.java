@@ -24,7 +24,7 @@ public class User extends Identifiable<Long> {
     @Column(columnDefinition = "boolean default false")
     private Boolean deleted;
 
-    @OneToMany//(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private Set<Order> orders = new HashSet<>();
 

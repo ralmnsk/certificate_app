@@ -40,6 +40,9 @@ public class Certificate extends Identifiable<Long> {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
+    @ManyToMany(mappedBy = "certificates")
+    private Set<Order> orders = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

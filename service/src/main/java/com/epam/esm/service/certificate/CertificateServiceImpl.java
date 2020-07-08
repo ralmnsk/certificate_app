@@ -107,11 +107,12 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     @Override
     public Page<CertificateDto> getAll(Pageable pageable) {
-        Page<Certificate> users = certificateRepository.findAll(pageable);
-        List<CertificateDto> dtoList = users.getContent()
+        Page<Certificate> certificates = certificateRepository.findAll(pageable);
+        List<CertificateDto> dtoList = certificates.getContent()
                 .stream()
                 .map(c -> certificateConverter.toDto(c))
                 .collect(Collectors.toList());
+        dtoList.forEach(d -> d.getTags().clear());
         return new PageImpl<CertificateDto>(dtoList, pageable, dtoList.size());
     }
 

@@ -15,8 +15,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +43,8 @@ public class CertificateController {
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private TagAssembler tagAssembler;
+    @Autowired
+    private PagedResourcesAssembler<CertificateDto> pagedResourcesAssembler;
 
     public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, TagAssembler tagAssembler) {
         this.certificateService = certificateService;
@@ -53,27 +58,20 @@ public class CertificateController {
     @ResponseStatus(HttpStatus.OK) //ALL
     public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
             size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        List<CertificateDto> certificates = certificateService.getAll(pageable).getContent();
+        Page<CertificateDto> page = certificateService.getAll(pageable);
+        List<CertificateDto> certificates = page.getContent();
 
-//        certificates.forEach(c -> {
-//            Link linkSelf = linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel();
-//            Link linkCerts = linkTo(methodOn(CertificateController.class).getAll(pageable, c.getId())).withRel("tags");
-//            c.add(linkSelf);
-//            c.add(linkCerts);
-//        });
-//        Link linkOrders = linkTo(methodOn(CertificateController.class).getAll(pageable)).withRel("certificates");
-//
-//        return CollectionModel.of(certificates, linkOrders);
+
         return certificateAssembler.toCollectionModel(PARAM_NOT_USED, certificates, pageable);
     }
 
-    @GetMapping("/{certificateId}/tags")
+    @PostMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<TagDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long certificateId) {
-        List<TagDto> tags = tagService.getAllByCertificateId(certificateId, pageable).getContent();
+    public TagDto createTagInCertificate(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
+            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long certificateId, @Valid @RequestBody TagDto tagDto) {
+        tagDto = tagService.createTagInOrder(certificateId, tagDto).orElseThrow(() -> new SaveException("Create Tag in Certificate Exception"));
 
-        return tagAssembler.toCollectionModel(certificateId, tags, pageable);
+        return tagAssembler.assemble((long) tagDto.getId(), tagDto);
     }
 
     @GetMapping("/{id}")
