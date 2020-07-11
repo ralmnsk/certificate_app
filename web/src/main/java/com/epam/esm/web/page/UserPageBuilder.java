@@ -13,6 +13,6 @@ public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService<Us
     private final String EMPTY = "";
 
     public UserPageBuilder(UserService<UserDto, Long> service, UserAssembler assembler) {
-        super(new HashSet<>(Arrays.asList("user.surname", "user.name")), service, assembler);
+        super(new HashSet<>(Arrays.asList("surname", "name")), service, assembler);
     }
 }

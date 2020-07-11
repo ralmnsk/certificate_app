@@ -14,10 +14,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -83,7 +82,13 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     public List<CertificateDto> getAll(FilterDto filterDto) {
         Filter filter = mapper.map(filterDto, Filter.class);
         List<Certificate> certificates = certificateRepository.getAll(filter);
-        List<CertificateDto> dtoList = certificates.stream().map(c -> mapper.map(c, CertificateDto.class)).collect(toList());
+        List<CertificateDto> dtoList = new ArrayList<>();
+        for (Certificate c : certificates) {
+            CertificateDto d = mapper.map(c, CertificateDto.class);
+            d.getTags().clear();
+            dtoList.add(d);
+        }
+
         filter = certificateRepository.getFilter();
         this.filterDto = mapper.map(filter, FilterDto.class);
 

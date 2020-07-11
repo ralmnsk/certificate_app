@@ -14,6 +14,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -76,11 +78,23 @@ public class UserController {
             @RequestParam(value = "name", defaultValue = "")
             @Size(max = 16, message = "name should be 0-16 characters") String name,
 
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "1")
+            @Min(1)
+            @Max(100) int size,
+
             @RequestParam(required = false) List<String> sort
     ) {
         FilterDto filterDto = new FilterDto();
-        filterDto.setUserName(name);
         filterDto.setUserSurname(surname);
+        filterDto.setUserName(name);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
 
         return userPageBuilder.build(filterDto);
     }

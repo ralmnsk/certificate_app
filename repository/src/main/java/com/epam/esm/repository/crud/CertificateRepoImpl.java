@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.List;
 
+import static com.epam.esm.repository.crud.Constants.*;
+
 @Repository
 @Getter
 public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> implements CertificateCrudRepository {
@@ -74,8 +76,9 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
     @Override
     public List<Certificate> getAll(Filter filter) {
 
-        String ql = assembleQlString(filter, "select");
+        String ql = assembleQlString(filter, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, Certificate.class);
+        setParameters(filter, query);
         int pageNumber = filter.getPage();
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
@@ -83,7 +86,9 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
         List<Certificate> certificates = query.getResultList();
 
         Query queryTotal = getEntityManager().createNativeQuery
-                (assembleQlString(filter, "count"));
+                (assembleQlString(filter, COUNT));
+        setParameters(filter, queryTotal);
+
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
 
         updateFilter(filter, pageSize, countResult);
@@ -91,16 +96,22 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
         return certificates;
     }
 
+    private void setParameters(Filter filter, Query query) {
+        query.setParameter("certificateName", PERCENT_START + filter.getCertificateName() + PERCENT_END);
+//        query.setParameter("duration", PERCENT_START + filter.getDuration() + PERCENT_END);
+//        query.setParameter("modification", PERCENT_START + filter.getModification() + PERCENT_END);
+//        query.setParameter("creation", PERCENT_START + filter.getCreation() + PERCENT_END);
+        query.setParameter("description", PERCENT_START + filter.getDescription() + PERCENT_END);
+        query.setParameter("tagName", PERCENT_START + filter.getTagName() + PERCENT_END);
+        query.setParameter("surname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
+    }
 
 
     private String assembleQlString(Filter filter, String selecting) {
-        String select = "select certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration," +
+        String select = "select distinct certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration," +
                 "       certificate.modification,certificate.name,certificate.price ";
-        String count = "select count(*) ";
-        if (selecting.equals("count")) {
-            select = count;
+        String count = "select count(*) from (";
 
-        }
         String ql = select + " from certificate " +
                 "    join cert_tag ct on certificate.id = ct.certificate_id " +
                 "    join tag on ct.tag_id = tag.id " +
@@ -108,15 +119,19 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
                 "    join orders on oc.order_id = orders.id " +
                 "    join users on orders.user_id = users.id " +
 
-                "where certificate.name like '%" + filter.getCertificateName() + "%'" +
-                "  and certificate.duration >= " + filter.getDuration() +
-                "  and certificate.modification >= '" + filter.getModification() + "'" +
-                "  and certificate.creation >= '" + filter.getCreation() + "'" +
-                "  and certificate.description like '%" + filter.getDescription() + "%'" +
-                "  and tag.name like '%" + filter.getTagName() + "%'" +
-                "and users.surname like '%" + filter.getUserSurname() + "%'";
+                "where certificate.name like :certificateName " +   //+ filter.getCertificateName() +
+//                "  and certificate.duration >= :duration " +        //+ filter.getDuration() +
+//                "  and certificate.modification >= :modification " +                //'" + filter.getModification() + "'" +
+//                "  and certificate.creation >= :creation " +                     //'" + filter.getCreation() + "'" +
+                "  and certificate.description like :description " + //'%" + filter.getDescription() + "%'" +
+                "  and tag.name like :tagName " + //'%" + filter.getTagName() + "%'" +
+                "and users.surname like :surname ";  //'%" + filter.getUserSurname() + "%'";
 
         ql = addSortToQueryString(filter, selecting, ql);
+        if (selecting.equals(COUNT)) {
+            ql = count + ql + ") c";
+
+        }
 
         return ql;
     }

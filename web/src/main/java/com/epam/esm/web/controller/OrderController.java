@@ -74,13 +74,17 @@ public class OrderController {
     public CustomPageDto<OrderDto> getAll(
             @RequestParam(value = "surname", defaultValue = "")
             @Size(max = 16, message = "Surname should be 0-16 characters") String surname,
+
             @RequestParam(value = "name", defaultValue = "")
             @Size(max = 16, message = "Name should be 0-16 characters") String userName,
+
             @RequestParam(value = "name", defaultValue = "")
             @Size(max = 16, message = "Certificate name should be 0-16 characters") String certificateName,
+
             @RequestParam(value = "page", defaultValue = "0")
             @Min(0)
             @Max(10000000) int page,
+
             @RequestParam(value = "size", defaultValue = "1")
             @Min(1)
             @Max(100) int size,

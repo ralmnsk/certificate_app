@@ -10,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
+import static com.epam.esm.repository.crud.Constants.COUNT;
+
 @Getter
 @Setter
 abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository<T, E> {
@@ -68,14 +70,14 @@ abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository
     }
 
     public String addSortToQueryString(Filter filter, String selecting, String ql) {
-        if (!selecting.equals("count") && filter.getSort() != null && !filter.getSort().getOrders().isEmpty()) {
+        if (!selecting.equals(COUNT) &&filter.getSort() != null && !filter.getSort().getOrders().isEmpty()) {
             String str = filter
                     .getSort()
                     .getOrders()
                     .stream()
                     .map(o -> o.getParameter() + " " + o.getDirection()).reduce("", (a, b) -> " " + a + " " + b + ",");
             str = str.substring(0, str.length() - 1);
-            ql = ql + " order by" + str;
+            ql = ql + " order by" + str ;
         }
         return ql;
     }

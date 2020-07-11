@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +19,9 @@ public class FilterDto {
     private String certificateName;
     private String creation;
     private String modification;
-    private String duration;
+    private Integer duration;
     private String description;
-    private String price;
+    private BigDecimal price;
     private String userSurname;
     private String userName;
     private int page;

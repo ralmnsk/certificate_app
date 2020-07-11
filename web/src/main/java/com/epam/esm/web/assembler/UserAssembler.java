@@ -41,7 +41,7 @@ public class UserAssembler implements Assembler<Long, UserDto> {
         }
 
         Link linkUsers = linkTo(methodOn(UserController.class)
-                .getAll(filter.getUserSurname(), filter.getUserName(), filter.getSortParams())).withRel("users");
+                .getAll(filter.getUserSurname(), filter.getUserName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("users");
 
         return CollectionModel.of(users, linkUsers);
     }

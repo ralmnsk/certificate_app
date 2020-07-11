@@ -19,7 +19,7 @@ public class OrderPageBuilder extends AbstractPageBuilder<OrderDto,OrderService<
 //    private OrderAssembler orderAssembler;
 
     public OrderPageBuilder(OrderService<OrderDto, Long> service, OrderAssembler assembler, OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler) {
-        super(new HashSet<>(Arrays.asList("users.surname","users.name","certificate.name")), service, assembler);
+        super(new HashSet<>(Arrays.asList("certificate.name")), service, assembler);
     }
 
 

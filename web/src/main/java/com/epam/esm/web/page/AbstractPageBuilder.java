@@ -9,6 +9,8 @@ import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.web.assembler.Assembler;
 import org.springframework.hateoas.CollectionModel;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,19 +70,19 @@ public class AbstractPageBuilder<T, S extends CrudService, A extends Assembler> 
             filter.setUserSurname(EMPTY);
         }
         if (filter.getCreation() == null) {
-            filter.setCreation("1970-01-01");
+            filter.setCreation("1970-01-01 00:00:00");
         }
         if (filter.getModification() == null) {
-            filter.setModification("1970-01-01");
+            filter.setModification("1970-01-01 00:00:00");
         }
         if (filter.getDescription() == null) {
             filter.setDescription(EMPTY);
         }
         if (filter.getPrice() == null) {
-            filter.setPrice(EMPTY);
+            filter.setPrice(new BigDecimal(0.00));
         }
         if (filter.getDuration() == null) {
-            filter.setDuration("0");
+            filter.setDuration(0);
         }
         if (filter.getUserSurname() == null) {
             filter.setUserSurname(EMPTY);
@@ -113,6 +115,7 @@ public class AbstractPageBuilder<T, S extends CrudService, A extends Assembler> 
                 if (param.contains("+")) {
                     direction = Direction.ASC;
                     param = param.replace("+", "");
+                }else{
                     param = param.replace("-", "");
                 }
                 if (fieldSet.contains(param)) {

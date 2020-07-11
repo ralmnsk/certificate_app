@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.List;
 
+import static com.epam.esm.repository.crud.Constants.PERCENT_END;
+import static com.epam.esm.repository.crud.Constants.PERCENT_START;
+
 @Repository
 @Getter
 public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements OrderCrudRepository {
@@ -55,6 +58,7 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
     public List<Order> getAll(Filter filter) {
         String ql = assembleQlString(filter, "select");
         Query query = getEntityManager().createNativeQuery(ql, Order.class);
+        querySetParameters(filter, query);
         int pageNumber = filter.getPage();
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
@@ -63,6 +67,8 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
 
         Query queryTotal = getEntityManager().createNativeQuery
                 (assembleQlString(filter, "count"));
+        querySetParameters(filter, queryTotal);
+
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
         int i = (int) countResult;
 
@@ -71,16 +77,21 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
         return orders;
     }
 
+    private void querySetParameters(Filter filter, Query query) {
+        query.setParameter("userSurname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
+        query.setParameter("userName", PERCENT_START + filter.getUserName() + PERCENT_END);
+        query.setParameter("certificateName", PERCENT_START + filter.getCertificateName() + PERCENT_END);
+    }
+
     private String assembleQlString(Filter filter, String selecting) {
-        String select = "select o.id,o.completed,o.created,o.deleted,o.description,o.total_cost ";
-        String count = "select count(*) ";
+        String select = "select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost,certificate.name ";
+        String count = "select distinct count(*) ";
         if (selecting.equals("count")) {
             select = count;
 
         }
-        String ql = select + "from orders o join order_certificate oc on o.id = oc.order_id join certificate c on oc.certificate_id = c.id join users u on o.user_id = u.id " +
-                "where u.surname like '%" + filter.getUserSurname() + "%' and u.name like '%" + filter.getUserName()
-                + "%' and c.name like '%" + filter.getCertificateName() + "%' ";
+        String ql = select + "from orders o join order_certificate oc on o.id = oc.order_id join certificate certificate on oc.certificate_id = certificate.id join users u on o.user_id = u.id " +
+                "where u.surname like :userSurname and u.name like :userName and certificate.name like :certificateName";
 
         ql = addSortToQueryString(filter, selecting, ql);
 

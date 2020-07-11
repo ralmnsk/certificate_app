@@ -13,6 +13,6 @@ public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, 
     private final String EMPTY = "";
 
     public CertificatePageBuilder(CertificateService<CertificateDto, Long> service, CertificateAssembler certificateAssembler) {
-        super(new HashSet<>(Arrays.asList("tag.name", "certificate.name", "creation", "duration", "price")), service, certificateAssembler);
+        super(new HashSet<>(Arrays.asList("tag.name", "certificate.name", "creation", "modification", "duration", "price")), service, certificateAssembler);
     }
 }
