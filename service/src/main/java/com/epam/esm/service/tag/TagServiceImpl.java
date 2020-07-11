@@ -1,37 +1,39 @@
 package com.epam.esm.service.tag;
 
-import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Filter;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.jpa.CertificateRepository;
-import com.epam.esm.repository.jpa.TagRepository;
+import com.epam.esm.repository.crud.TagCrudRepository;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.exception.SaveException;
+import com.epam.esm.service.exception.UpdateException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
+@Getter
 @Service
 @Transactional
 public class TagServiceImpl implements TagService<TagDto, Integer> {
-    private TagRepository tagRepository;
+    private FilterDto filterDto;
+    private TagCrudRepository tagRepository;
     private ModelMapper mapper;
-    private CertificateRepository certificateRepository;
+//    private CertificateCrudRepository certificateRepository;
 
-    public TagServiceImpl(TagRepository tagRepository, ModelMapper mapper, CertificateRepository certificateRepository) {
+
+    public TagServiceImpl(TagCrudRepository tagRepository, ModelMapper mapper) {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
-        this.certificateRepository = certificateRepository;
     }
 
     @Override
@@ -50,44 +52,46 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     }
 
     @Override
-    public Page<TagDto> getAll(Pageable pageable) {
-        Page<Tag> page = tagRepository.findAll(pageable);
-        List<TagDto> dtoList = page.getContent().stream().map(t -> mapper.map(t, TagDto.class)).collect(Collectors.toList());
-        return new PageImpl<TagDto>(dtoList, pageable, dtoList.size());
+    public List<TagDto> getAll(FilterDto filterDto) {
+        Filter filter = mapper.map(filterDto, Filter.class);
+        List<Tag> all = tagRepository.getAll(filter);
+        List<TagDto> collect = all.stream().map(t -> mapper.map(t, TagDto.class)).collect(toList());
+        if (tagRepository.getFilter() != null) {
+            filterDto = mapper.map(tagRepository.getFilter(), FilterDto.class);
+            this.filterDto = filterDto;
+        }
+
+        return collect;
     }
+
 
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
-        Optional<TagDto> tagDtoOptional = Optional.empty();
-        Tag tag = null;
-        if (tagDto == null) {
-            return Optional.empty();
-        }
-        if (tagDto.getId() != null && tagDto.getId() > 0) {
-            Optional<Tag> byId = tagRepository.findById(tagDto.getId());
-            if (byId.isPresent()) {
-                tag = byId.get();
-                return Optional.ofNullable(mapper.map(tag, TagDto.class));
-            }
-        }
-        if (tagDto.getName() != null) {
-            Optional<TagDto> byName = getByName(tagDto.getName());
+        Tag tag = mapper.map(tagDto, Tag.class);
+        try {
+            Optional<Tag> byName = tagRepository.getByName(tagDto.getName());
             if (byName.isPresent()) {
-                return byName;
+                tagDto = mapper.map(byName.get(), TagDto.class);
+                return Optional.ofNullable(tagDto);
             }
-            tag = mapper.map(tagDto, Tag.class);
-            tag = tagRepository.saveAndFlush(tag);
-            return Optional.ofNullable(mapper.map(tag, TagDto.class));
-
+        } catch (IncorrectResultSizeDataAccessException e) {
+            log.warn("Tag not found");
         }
-        return tagDtoOptional;
+        tag.setId(null);
+        Optional<Tag> save = tagRepository.save(tag);
+        if (save.isPresent()) {
+            tagDto = mapper.map(save.get(), TagDto.class);
+            return Optional.ofNullable(tagDto);
+        }
+
+        return Optional.empty();
 
     }
 
     @Override
     public Optional<TagDto> get(Integer id) {
         Optional<TagDto> tagDtoOptional = Optional.empty();
-        Tag tag = tagRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
+        Tag tag = tagRepository.get(id).orElseThrow(() -> new NotFoundException(id));
         TagDto tagDto = mapper.map(tag, TagDto.class);
 
 
@@ -101,25 +105,24 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     @Override
     public boolean delete(Integer tagId) {
-        tagRepository.getOne(tagId);
-        tagRepository.removeFromRelationByTagId(tagId);
-        tagRepository.deleteById(tagId);
-        tagRepository.flush();
+        Tag tag = tagRepository.get(tagId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + tagId));
+        tag.setDeleted(true);
+        tagRepository.update(tag).orElseThrow(() -> new UpdateException("Certificate update in delete operation exception"));
         return true;
     }
 
-    @Override
-    public Optional<TagDto> createTagInOrder(Long certificateId, TagDto tagDto) {
-        tagDto = save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
-        Certificate certificate = certificateRepository.findById(certificateId).orElseThrow(() -> new NotFoundException(certificateId));
-        Tag tag = mapper.map(tagDto, Tag.class);
-        certificate.getTags().add(tag);
-        certificateRepository.save(certificate);
+//    @Override
+//    public Optional<TagDto> createTagInOrder(Long certificateId, TagDto tagDto) {
+//        tagDto = save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
+//        Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException(certificateId));
+//        Tag tag = mapper.map(tagDto, Tag.class);
+//        certificate.getTags().add(tag);
+//        certificateRepository.save(certificate);
+//
+//        return Optional.of(tagDto);
+//    }
 
-        return Optional.of(tagDto);
-    }
-
-    //    @Override
+//        @Override
 //    public Page<TagDto> getAllByCertificateId(Long certificateId, Pageable pageable) {
 //        Page<Tag> certificates = tagRepository.getAllByCertificateId(certificateId, pageable);
 //        List<TagDto> dtoList = certificates.getContent()

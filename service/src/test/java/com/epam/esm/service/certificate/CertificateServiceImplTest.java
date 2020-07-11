@@ -2,8 +2,6 @@ package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.jpa.CertificateRepository;
-import com.epam.esm.repository.jpa.TagRepository;
 import com.epam.esm.service.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

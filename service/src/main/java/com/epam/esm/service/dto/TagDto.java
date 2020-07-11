@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ public class TagDto extends RepresentationModel<TagDto> implements Serializable 
 
     private Integer id;
 
+    @NotNull(message = "Name has to be not null")
     @Size(max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;

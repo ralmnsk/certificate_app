@@ -1,168 +1,119 @@
 package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Order;
-import com.epam.esm.repository.jpa.CertificateRepository;
-import com.epam.esm.repository.jpa.OrderRepository;
-import com.epam.esm.service.converter.CertificateConverter;
+import com.epam.esm.model.Filter;
+import com.epam.esm.repository.crud.CertificateCrudRepository;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.exception.InconsistencyIdException;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.tag.TagService;
+import com.epam.esm.service.exception.UpdateException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
 @Transactional
+@Getter
 public class CertificateServiceImpl implements CertificateService<CertificateDto, Long> {
+    private FilterDto filterDto;
 
-    private CertificateRepository certificateRepository;
-    private OrderRepository orderRepository;
-    private CertificateConverter certificateConverter;
-    private TagService<TagDto, Integer> tagService;
+    private CertificateCrudRepository certificateRepository;
+    private ModelMapper mapper;
 
-    public CertificateServiceImpl(CertificateRepository certificateRepository, OrderRepository orderRepository, CertificateConverter certificateConverter, TagService<TagDto, Integer> tagService) {
+    public CertificateServiceImpl(CertificateCrudRepository certificateRepository, ModelMapper mapper) {
         this.certificateRepository = certificateRepository;
-        this.orderRepository = orderRepository;
-        this.certificateConverter = certificateConverter;
-        this.tagService = tagService;
+        this.mapper = mapper;
     }
 
-    @Override
+    @Override //save without tags
     public Optional<CertificateDto> save(CertificateDto certificateDto) {
-        checkTagsForConsistency(certificateDto);
-        Certificate certificate = certificateConverter.toEntity(certificateDto);
-        certificate = certificateRepository.save(certificate);
-        certificateRepository.flush();
-        Optional<CertificateDto> certificateDtoOptional = get(certificate.getId());
-
-        return certificateDtoOptional;
-    }
-
-    private void checkTagsForConsistency(CertificateDto certificateDto) {
-        Set<TagDto> tags = certificateDto.getTags();
-        tags
-                .stream() //id:yes name:yes/not
-                .filter(t -> t.getId() != null && t.getId() != 0L)
-                .forEach(t -> {
-                    TagDto tagDto = tagService.get(t.getId()).orElseThrow(() -> new NotFoundException(t.getId()));
-                    if (t.getName() != null && !t.getName().equals(tagDto.getName())) {
-                        throw new InconsistencyIdException("InconsistencyException id:" + t.getId() + " and name:" + tagDto.getName());
-                    } else if (t.getName() == null) {
-                        t.setName(tagDto.getName());
-                    }
-                });
-        tags
-                .stream()
-                .filter(t -> t.getId() == null)
-                .forEach(t -> {
-                    Optional<TagDto> byName = tagService.getByName(t.getName());
-                    if (byName.isPresent()) {
-                        Integer id = byName.get().getId();
-                        t.setId(id);
-                    } else {
-                        TagDto tagDto = tagService.save(t).orElseThrow(() -> new SaveException("tag save exception"));
-                        t.setId(tagDto.getId());
-                    }
-                });
+        certificateDto.getTags().clear();
+        certificateDto.setId(null); //or detached entity passes to persistent and happens exception
+        Certificate certificate = mapper.map(certificateDto, Certificate.class);
+        certificate = certificateRepository.save(certificate).orElseThrow(() -> new SaveException("Certificate save exception"));
+        return get(certificate.getId());
     }
 
     @Override
     public Optional<CertificateDto> get(Long id) {
         Optional<CertificateDto> certificateDtoOptional = Optional.empty();
-        Certificate certificate = certificateRepository.findById(id).orElseThrow(() -> new NotFoundException(id));
-        setCorrectTime(certificate);
-        certificateDtoOptional = Optional.ofNullable(certificateConverter.toDto(certificate));
+        Certificate certificate = certificateRepository.get(id).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
+//        setCorrectTime(certificate);
+        certificateDtoOptional = Optional.ofNullable(mapper.map(certificate, CertificateDto.class));
 
         return certificateDtoOptional;
     }
 
     @Override
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
-        certificateRepository.findById(certificateDto.getId()).orElseThrow(() -> new NotFoundException(certificateDto.getId()));
-        return save(certificateDto);
+        long id = certificateDto.getId();
+        Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
+
+        found.setName(certificateDto.getName());
+        found.setCreation(certificateDto.getCreation());
+        found.setModification(certificateDto.getModification());
+        found.setPrice(certificateDto.getPrice());
+        found.setDescription(certificateDto.getDescription());
+        found.setDuration(certificateDto.getDuration());
+
+        Certificate certificate = certificateRepository.update(found).orElseThrow(() -> new SaveException("Certificate save exception"));
+        CertificateDto dto = mapper.map(certificate, CertificateDto.class);
+
+        return Optional.ofNullable(dto);
     }
 
     @Override
     public boolean delete(Long certId) {
-        certificateRepository.removeFromOrderRelationByCertificateId(certId);
-        certificateRepository.removeFromTagRelationByCertificateId(certId);
-        certificateRepository.deleteById(certId);
-        certificateRepository.flush();
+        Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
+        certificate.setDeleted(true);
+        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Certificate update in delete operation exception"));
         return true;
     }
 
     @Override
-    public Page<CertificateDto> getAll(Pageable pageable) {
-        Page<Certificate> certificates = certificateRepository.findAll(pageable);
-        List<CertificateDto> dtoList = certificates.getContent()
-                .stream()
-                .map(c -> certificateConverter.toDto(c))
-                .collect(Collectors.toList());
-        dtoList.forEach(d -> d.getTags().clear());
-        return new PageImpl<CertificateDto>(dtoList, pageable, dtoList.size());
+    public List<CertificateDto> getAll(FilterDto filterDto) {
+        Filter filter = mapper.map(filterDto, Filter.class);
+        List<Certificate> certificates = certificateRepository.getAll(filter);
+        List<CertificateDto> dtoList = certificates.stream().map(c -> mapper.map(c, CertificateDto.class)).collect(toList());
+        filter = certificateRepository.getFilter();
+        this.filterDto = mapper.map(filter, FilterDto.class);
+
+        return dtoList;
     }
 
-    @Override
-    public Page<CertificateDto> getAllByOrderId(Long orderId, Pageable pageable) {
-        Page<Certificate> certificates = certificateRepository.getAllByOrderId(orderId, pageable);
-        if (certificates.getContent().isEmpty()) {
-            return new PageImpl<>(null, pageable, 0);
-        }
+//    @Override
+//    public Page<CertificateDto> getAllByOrderId(Long orderId, Pageable pageable) {
+//        Page<Certificate> certificates = certificateRepository.getAllByOrderId(orderId, pageable);
+//        if (certificates.getContent().isEmpty()) {
+//            return new PageImpl<>(null, pageable, 0);
+//        }
+//
+//        List<CertificateDto> dtoList = certificates.getContent()
+//                .stream()
+//                .map(o -> certificateConverter.toDto(o))
+//                .collect(Collectors.toList());
+//        return new PageImpl<CertificateDto>(dtoList, pageable, dtoList.size());
+//    }
 
-        List<CertificateDto> dtoList = certificates.getContent()
-                .stream()
-                .map(o -> certificateConverter.toDto(o))
-                .collect(Collectors.toList());
-        return new PageImpl<CertificateDto>(dtoList, pageable, dtoList.size());
-    }
-
-    @Override
-    public Optional<CertificateDto> createCertificateInOrder(Long orderId, CertificateDto certificateDto) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(orderId));
-        certificateDto = save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
-        Certificate certificate = certificateConverter.toEntity(certificateDto);
-        order.getCertificates().add(certificate);
-        orderRepository.save(order);
-
-        return Optional.of(certificateDto);
-    }
-
-    @Override
-    public Long getCertIdByTagId(int id) {
-        Long num = 0L;
-        Optional<Certificate> certOptional = certificateRepository.getCertIdByTagId(id);
-        if (certOptional.isPresent()) {
-            num = certOptional.get().getId();
-        }
-
-        return num;
-    }
-
-    private void setCorrectTime(Certificate certificate) {
-        Instant created = certificateRepository.getCreationById(certificate.getId());
-        if (created != null) {
-//            certificate.setCreation(Timestamp.from(created).toLocalDateTime().toInstant(ZoneOffset.UTC));
-            certificate.setCreation(created);
-        }
-        Instant modified = certificateRepository.getModificationById(certificate.getId());
-        if (modified != null) {
-//            certificate.setModification(Timestamp.from(modified).toLocalDateTime().toInstant(ZoneOffset.UTC));
-        }
-        certificate.setModification(modified);
-    }
+//    private void setCorrectTime(Certificate certificate) {
+//        Instant created = certificateRepository.getCreationById(certificate.getId());
+//        if (created != null) {
+//            certificate.setCreation(created);
+//            certificate.setModification(created);
+//        }
+//        Instant modified = certificateRepository.getModificationById(certificate.getId());
+//        if (modified != null) {
+//            certificate.setModification(modified);
+//        }
+//    }
 
 }

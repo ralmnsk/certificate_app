@@ -1,41 +1,72 @@
 package com.epam.esm.web.controller;
 
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.TagAssembler;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.hateoas.CollectionModel;
+import com.epam.esm.web.page.TagPageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
 
-import static com.epam.esm.web.controller.ControllerConstants.*;
-
+@Validated
 @RestController
 @RequestMapping("/tags")
 public class TagController {
     private final TagService<TagDto, Integer> tagService;
     private TagAssembler tagAssembler;
+    private TagPageBuilder pageBuilder;
 
-    public TagController(TagService<TagDto, Integer> tagService, TagAssembler tagAssembler) {
+    //
+    public TagController(TagService<TagDto, Integer> tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
         this.tagService = tagService;
         this.tagAssembler = tagAssembler;
+        this.pageBuilder = pageBuilder;
     }
+
+    //    @GetMapping
+//    @ResponseStatus(HttpStatus.OK)
+//    public CollectionModel<TagDto> tags(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
+//            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+//        List<TagDto> tags = tagService.getAll(pageable).getContent();
+//        return tagAssembler.toCollectionModel(PARAM_NOT_USED, tags, pageable);
+//    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<TagDto> tags(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        List<TagDto> tags = tagService.getAll(pageable).getContent();
-        return tagAssembler.toCollectionModel(PARAM_NOT_USED, tags, pageable);
+    public CustomPageDto<TagDto> getAll(
+            @RequestParam(value = "tagName", defaultValue = "")
+            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "1")
+            @Min(1)
+            @Max(100) int size,
+
+            @RequestParam(required = false) List<String> sort
+    ) {
+        FilterDto filterDto = new FilterDto();
+        filterDto.setTagName(tagName);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        return pageBuilder.build(filterDto);
     }
+
 
     @GetMapping("/{id}")
     public TagDto get(@PathVariable Integer id) {
@@ -52,10 +83,12 @@ public class TagController {
         return tagAssembler.assemble((long) idInt, tagDto);
     }
 
-
     @DeleteMapping("/{id}")
+
     public ResponseEntity<?> delete(@PathVariable Integer id, HttpServletResponse response) {
-        tagService.delete(id);
-        return ResponseEntity.noContent().build();
+        if (tagService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

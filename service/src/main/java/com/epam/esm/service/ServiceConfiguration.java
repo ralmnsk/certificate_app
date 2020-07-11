@@ -2,7 +2,6 @@ package com.epam.esm.service;
 
 import com.epam.esm.repository.RepositoryConfiguration;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

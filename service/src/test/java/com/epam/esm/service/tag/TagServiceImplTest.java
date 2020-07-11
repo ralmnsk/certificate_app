@@ -2,8 +2,7 @@ package com.epam.esm.service.tag;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.jpa.CertificateRepository;
-import com.epam.esm.repository.jpa.TagRepository;
+import com.epam.esm.service.converter.CertificateConverter;
 import com.epam.esm.service.dto.CertificateDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ class TagServiceImplTest {
     @Mock
     private CertificateConverter certificateConverter;
     @Mock
-    private TagConverter tagConverter;
+    private ModelMapper tagConverter;
 
     @InjectMocks
     private TagServiceImpl service;

@@ -16,18 +16,15 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-//@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @JsonRootName("order")
 @Relation(collectionRelation = "orders")
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created", "totalCost"})
-//@JsonDeserialize(using = OrderDeserializer.class)
 public class OrderDto extends RepresentationModel<OrderDto> implements Serializable {
     private Long id;
 
@@ -41,7 +38,7 @@ public class OrderDto extends RepresentationModel<OrderDto> implements Serializa
     private BigDecimal totalCost;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
-    private Instant created;
+    private Timestamp created;
 
     private boolean deleted;
 
@@ -57,7 +54,6 @@ public class OrderDto extends RepresentationModel<OrderDto> implements Serializa
 
         if (deleted != orderDto.deleted) return false;
         if (!description.equals(orderDto.description)) return false;
-        if (!totalCost.equals(orderDto.totalCost)) return false;
         return created.equals(orderDto.created);
     }
 
@@ -65,7 +61,6 @@ public class OrderDto extends RepresentationModel<OrderDto> implements Serializa
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + description.hashCode();
-        result = 31 * result + totalCost.hashCode();
         result = 31 * result + created.hashCode();
         result = 31 * result + (deleted ? 1 : 0);
         return result;

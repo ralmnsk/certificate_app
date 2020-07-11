@@ -2,15 +2,16 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.assembler.OrderAssembler;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.hateoas.CollectionModel;
+import com.epam.esm.web.page.CertificatePageBuilder;
+import com.epam.esm.web.page.OrderPageBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,9 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
-
-import static com.epam.esm.web.controller.ControllerConstants.*;
 
 @Validated
 @RestController
@@ -31,12 +33,15 @@ public class OrderController {
     private CertificateService<CertificateDto, Long> certService;
     private OrderAssembler orderAssembler;
     private CertificateAssembler certificateAssembler;
+    private OrderPageBuilder orderPageBuilder;
+    private CertificatePageBuilder certificatePageBuilder;
 
-    public OrderController(OrderService<OrderDto, Long> orderService, CertificateService<CertificateDto, Long> certService, OrderAssembler orderAssembler, CertificateAssembler certificateAssembler) {
+    public OrderController(OrderService<OrderDto, Long> orderService, CertificateService<CertificateDto, Long> certService, OrderAssembler orderAssembler, CertificateAssembler certificateAssembler, OrderPageBuilder orderPageBuilder) {
         this.orderService = orderService;
         this.certService = certService;
         this.orderAssembler = orderAssembler;
         this.certificateAssembler = certificateAssembler;
+        this.orderPageBuilder = orderPageBuilder;
     }
 
     @PostMapping
@@ -66,30 +71,70 @@ public class OrderController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<OrderDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        List<OrderDto> orders = orderService.getAll(pageable).getContent();
+    public CustomPageDto<OrderDto> getAll(
+            @RequestParam(value = "surname", defaultValue = "")
+            @Size(max = 16, message = "Surname should be 0-16 characters") String surname,
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "Name should be 0-16 characters") String userName,
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "Certificate name should be 0-16 characters") String certificateName,
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+            @RequestParam(value = "size", defaultValue = "1")
+            @Min(1)
+            @Max(100) int size,
+            @RequestParam(required = false) List<String> sort
+    ) {
+        FilterDto filterDto = new FilterDto();
+        filterDto.setUserSurname(surname);
+        filterDto.setUserName(userName);
+        filterDto.setCertificateName(certificateName);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        CustomPageDto<OrderDto> build = orderPageBuilder.build(filterDto);
 
-        return orderAssembler.toCollectionModel(PARAM_NOT_USED, orders, pageable);
+        return build;
     }
 
 
-    @GetMapping("/{orderId}/certificates")
-    @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long orderId) {
-        List<CertificateDto> certificates = certService.getAllByOrderId(orderId, pageable).getContent();
+//    @GetMapping("/{orderId}/certificates")
+//    @ResponseStatus(HttpStatus.OK)
+//    public CollectionModel<CertificateDto> getAll(@PathVariable Long orderId,
+//    @RequestParam(value = "page", defaultValue = "0")
+//    @Min(0)
+//    @Max(10000000) int page,
+//    @RequestParam(value = "size", defaultValue = "5")
+//    @Min(1)
+//    @Max(100) int size,
+//    @RequestParam(required = false) List<String> sort
+//    ) {
+//        FilterDto filterDto = new FilterDto();
+//        filterDto.setPage(page);
+//        filterDto.setSize(size);
+//        filterDto.setSortParams(sort);
+//
+////        List<CertificateDto> certificates = certService.getAllByOrderId(orderId, ).getContent();
+////
+////        return certificateAssembler.toCollectionModel(orderId, certificates, pageable);
+//        return certificatePageBuilder.build(filterDto);
+//    }
+//
+//    @PostMapping("/{orderId}/certificates")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderDto addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> listIdDto) {
+//        OrderDto orderDto = orderService.addCertificateToOrder(orderId, listIdDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
+//
+//        return orderAssembler.assemble(orderDto.getId(), orderDto);
+//    }
 
-        return certificateAssembler.toCollectionModel(orderId, certificates, pageable);
-    }
-
-    @PostMapping("/{orderId}/certificates")
-    @ResponseStatus(HttpStatus.OK)
-    public CertificateDto createCertificateInOrder(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long orderId, @Valid @RequestBody CertificateDto certificateDto) {
-        certificateDto = certService.createCertificateInOrder(orderId, certificateDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
-
-        return certificateAssembler.assemble(certificateDto.getId(), certificateDto);
-    }
+//    @PutMapping("/{orderId}/certificates")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderDto removeCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> listIdDto) {
+//        OrderDto orderDto = orderService.removeCertificateFromOrder(orderId, listIdDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
+//
+//        return orderAssembler.assemble(orderDto.getId(), orderDto);
+//    }
 
 }

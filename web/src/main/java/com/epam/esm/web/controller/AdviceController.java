@@ -69,13 +69,7 @@ public class AdviceController {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(value = UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto httpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        Throwable e = ex;
-        String message = e.getMessage();
-        while (e != null) {
-            message = e.getMessage();
-            e = e.getCause();
-        }
-        return new ExceptionResponseDto("HttpMessageNotReadableException", message);
+        return new ExceptionResponseDto("HttpMessageNotReadableException", ex.getMessage());
     }
 
 

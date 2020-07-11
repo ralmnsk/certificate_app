@@ -1,45 +1,44 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.OrderDto;
-import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.*;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.service.user.UserService;
-import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.assembler.UserAssembler;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.hateoas.CollectionModel;
+import com.epam.esm.web.page.UserPageBuilder;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Size;
 import java.util.List;
-
-import static com.epam.esm.web.controller.ControllerConstants.*;
 
 @Validated
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService<UserDto, Long> userService;
     private OrderService<OrderDto, Long> orderService;
+    private UserService<UserDto, Long> userService;
     private UserAssembler userAssembler;
-    private OrderAssembler orderAssembler;
+    private UserPageBuilder userPageBuilder;
+    private ModelMapper mapper;
 
-    public UserController(UserService<UserDto, Long> userService, OrderService<OrderDto, Long> orderService, UserAssembler userAssembler, OrderAssembler orderAssembler) {
-        this.userService = userService;
+    public UserController(OrderService<OrderDto, Long> orderService, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper) {
         this.orderService = orderService;
+        this.userService = userService;
         this.userAssembler = userAssembler;
-        this.orderAssembler = orderAssembler;
+        this.userPageBuilder = userPageBuilder;
+        this.mapper = mapper;
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
+    public UserDto create(@Valid @RequestBody UserDtoSave userDtoSave) {
+        UserDto userDto = mapper.map(userDtoSave, UserDto.class);
         userDto = userService.save(userDto).orElseThrow(() -> new SaveException("User save exception"));
         return userAssembler.assemble(userDto.getId(), userDto);
     }
@@ -52,44 +51,81 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long id) {
-        userDto.setId(id);
+    public UserDto update(@Valid @RequestBody UserDtoSave userDtoSave, @PathVariable Long id) {
+        userDtoSave.setId(id);
+        UserDto userDto = mapper.map(userDtoSave, UserDto.class);
         userDto = userService.update(userDto).orElseThrow(() -> new NotFoundException(id));
         return userAssembler.assemble(id, userDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
+        if (userService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<UserDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        List<UserDto> users = userService.getAll(pageable).getContent();
+    public CustomPageDto<UserDto> getAll(
 
-        return userAssembler.toCollectionModel(PARAM_NOT_USED, users, pageable);
+            @RequestParam(value = "surname", defaultValue = "")
+            @Size(max = 16, message = "surname should be 0-16 characters") String surname,
+
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "name should be 0-16 characters") String name,
+
+            @RequestParam(required = false) List<String> sort
+    ) {
+        FilterDto filterDto = new FilterDto();
+        filterDto.setUserName(name);
+        filterDto.setUserSurname(surname);
+
+        return userPageBuilder.build(filterDto);
     }
 
-    @GetMapping("/{userId}/orders")
-    @ResponseStatus(HttpStatus.OK)
-    public CollectionModel<OrderDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable, @PathVariable Long userId) {
-        List<OrderDto> orders = orderService.getAllByUserId(userId, pageable).getContent();
-
-        return orderAssembler.toCollectionModel(userId, orders, pageable);
-    }
-
-    @PostMapping("/{userId}/orders")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderDto createOrderInUser(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long userId, @Valid @RequestBody OrderDto orderDto) {
-        orderDto = orderService.createOrderInUser(userId, orderDto).orElseThrow(() -> new SaveException("Create Order in User Exception"));
-
-        return orderAssembler.assemble(orderDto.getId(), orderDto);
-    }
+//    @GetMapping("/{userId}/orders")
+//    @ResponseStatus(HttpStatus.OK)
+//    public CustomPageDto<OrderDto, Long> getAllOrdersByUserId(
+//            @RequestParam(value = "tagName", defaultValue = "")
+//            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
+//
+//            @RequestParam(value = "name", defaultValue = "")
+//            @Size(max = 16, message = "name should be 0-16 characters") String name,
+//
+//            @RequestParam(value = "page", defaultValue = "0")
+//            @Min(0)
+//            @Max(10000000) int page,
+//
+//            @RequestParam(value = "size", defaultValue = "1")
+//            @Min(1)
+//            @Max(100) int size,
+//
+//            @RequestParam(required = false) List<String> sort,
+//            @PathVariable Long userId) {
+//
+//        FilterDto filterDto = new FilterDto();
+//        filterDto.setUserId(userId);
+//        filterDto.setTagName(tagName);
+//        filterDto.setName(name);
+//        filterDto.setPage(page);
+//        filterDto.setSize(size);
+//        filterDto.setSortParams(sort);
+//        CustomPageDto<OrderDto, Long> build = orderPageBuilder.build(filterDto);
+////        List<OrderDto> orders = orderService.getAllByUserId(userId, filterDto).getContent();
+////
+////        return orderAssembler.toCollectionModel(userId, orders, pageable);
+//        return build;
+//    }
+//
+//    @PostMapping("/{userId}/orders")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderDto createOrderInUser(@PathVariable Long userId, @Valid @RequestBody OrderDto orderDto) {
+//        orderDto = orderService.createOrderInUser(userId, orderDto).orElseThrow(() -> new SaveException("Create Order in User Exception"));
+//
+//        return orderAssembler.assemble(orderDto.getId(), orderDto);
+//    }
 
 
 }

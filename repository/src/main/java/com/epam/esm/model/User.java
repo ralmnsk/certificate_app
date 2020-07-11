@@ -18,6 +18,7 @@ public class User extends Identifiable<Long> {
 
     private String surname;
     private String name;
+    @Column(unique = true)
     private String login;
     private String password;
     private Enum role;

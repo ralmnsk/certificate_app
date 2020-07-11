@@ -2,6 +2,8 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
@@ -9,18 +11,13 @@ import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.assembler.TagAssembler;
+import com.epam.esm.web.page.CertificatePageBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.List;
-
-import static com.epam.esm.web.controller.ControllerConstants.*;
 
 @Slf4j
 @Validated
@@ -43,36 +41,64 @@ public class CertificateController {
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private TagAssembler tagAssembler;
-    @Autowired
-    private PagedResourcesAssembler<CertificateDto> pagedResourcesAssembler;
+    private CertificatePageBuilder certificatePageBuilder;
 
-    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, TagAssembler tagAssembler) {
+    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, TagAssembler tagAssembler, CertificatePageBuilder certificatePageBuilder) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
         this.tagAssembler = tagAssembler;
+        this.certificatePageBuilder = certificatePageBuilder;
     }
+
+//    @GetMapping
+//    @ResponseStatus(HttpStatus.OK) //ALL
+//    public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
+//            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
+//        Page<CertificateDto> page = certificateService.getAll(pageable);
+//        List<CertificateDto> certificates = page.getContent();
+//
+//
+//        return certificateAssembler.toCollectionModel(PARAM_NOT_USED, certificates, pageable);
+//    }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK) //ALL
-    public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-        Page<CertificateDto> page = certificateService.getAll(pageable);
-        List<CertificateDto> certificates = page.getContent();
-
-
-        return certificateAssembler.toCollectionModel(PARAM_NOT_USED, certificates, pageable);
-    }
-
-    @PostMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public TagDto createTagInCertificate(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long certificateId, @Valid @RequestBody TagDto tagDto) {
-        tagDto = tagService.createTagInOrder(certificateId, tagDto).orElseThrow(() -> new SaveException("Create Tag in Certificate Exception"));
+    public CustomPageDto<CertificateDto> getAll(
+            @RequestParam(value = "tagName", defaultValue = "")
+            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 
-        return tagAssembler.assemble((long) tagDto.getId(), tagDto);
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "name should be 0-16 characters") String name,
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "1")
+            @Min(1)
+            @Max(100) int size,
+
+            @RequestParam(required = false) List<String> sort
+    ) {
+        FilterDto filterDto = new FilterDto();
+        filterDto.setTagName(tagName);
+        filterDto.setCertificateName(name);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        return certificatePageBuilder.build(filterDto);
     }
+//
+//    @PostMapping("/{certificateId}/tags")
+//    @ResponseStatus(HttpStatus.OK)
+//    public TagDto createTagInCertificate(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
+//            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long certificateId, @Valid @RequestBody TagDto tagDto) {
+//        tagDto = tagService.createTagInOrder(certificateId, tagDto).orElseThrow(() -> new SaveException("Create Tag in Certificate Exception"));
+//
+//        return tagAssembler.assemble((long) tagDto.getId(), tagDto);
+//    }
 
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {

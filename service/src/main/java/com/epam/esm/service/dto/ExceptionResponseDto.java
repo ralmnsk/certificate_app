@@ -5,57 +5,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
-/**
- * The type Exception response.
- * The pojo class to keep an exception name and message.
- */
 public class ExceptionResponseDto implements Serializable {
     private String exception;
     private String message;
 
-    /**
-     * Instantiates a new Exception response.
-     *
-     * @param exception the exception
-     * @param message   the message
-     */
     public ExceptionResponseDto(String exception, String message) {
         this.exception = exception;
         this.message = message;
     }
 
-    /**
-     * Gets exception.
-     *
-     * @return the exception
-     */
     public String getException() {
         return exception;
     }
 
-    /**
-     * Sets exception.
-     *
-     * @param exception the exception
-     */
     public void setException(String exception) {
         this.exception = exception;
     }
 
-    /**
-     * Gets message.
-     *
-     * @return the message
-     */
     public String getMessage() {
         return message;
     }
 
-    /**
-     * Sets message.
-     *
-     * @param message the message
-     */
     public void setMessage(String message) {
         this.message = message;
     }

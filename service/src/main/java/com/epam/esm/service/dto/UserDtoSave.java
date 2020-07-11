@@ -12,8 +12,6 @@ import org.springframework.hateoas.server.core.Relation;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 //@EqualsAndHashCode(callSuper = false)
@@ -23,7 +21,7 @@ import java.util.Set;
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
 //@JsonDeserialize(using = UserDeserializer.class)
-public class UserDto extends RepresentationModel<UserDto> implements Serializable {
+public class UserDtoSave extends RepresentationModel<UserDtoSave> implements Serializable {
     private Long id;
 
     @NotNull(message = "Surname must be not null")
@@ -48,15 +46,13 @@ public class UserDto extends RepresentationModel<UserDto> implements Serializabl
 
     private boolean deleted;
 
-    private Set<OrderDto> orders = new HashSet<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
 
-        UserDto userDto = (UserDto) o;
+        UserDtoSave userDto = (UserDtoSave) o;
 
         if (deleted != userDto.deleted) return false;
         if (!surname.equals(userDto.surname)) return false;
