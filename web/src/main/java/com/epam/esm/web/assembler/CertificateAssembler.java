@@ -4,6 +4,7 @@ import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.web.controller.CertificateController;
+import com.epam.esm.web.controller.OrderController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -40,17 +41,60 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto> {
             });
         }
 
-        Link link = linkTo(methodOn(CertificateController.class)
-                .getAll(filter.getTagName(), filter.getCertificateName(), filter.getPage(), filter.getSize(),
-                        filter.getSortParams())).withRel("certificates");
-        CollectionModel<CertificateDto> collectionModel = CollectionModel.of(certificates, link);
-
-//        if (filter.getOrderId() != null && filter.getOrderId() > 0L) {
-//            Link linkOrder = linkTo(methodOn(OrderController.class).get(orderId)).withRel("order");
-//            collectionModel.add(linkOrder);
-//        }
+        CollectionModel<CertificateDto> collectionModel = CollectionModel.of(certificates);
+        if (filter.getOrderId() != null && filter.getOrderId() > 0) {
+            Link link = linkTo(methodOn(OrderController.class)
+                    .getAllCertificatesByOrderId(
+                            filter.getCertificateName(),
+                            filter.getPage(),
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            filter.getOrderId())
+            ).withRel("order id:" + filter.getOrderId() + " certificates");
+            collectionModel.add(link);
+            filter = certificateService.getFilterDto();
+            addNextPrevious(collectionModel, filter);
+        } else {
+            Link link = linkTo(methodOn(CertificateController.class)
+                    .getAll(
+                            filter.getTagName(),
+                            filter.getCertificateName(),
+                            filter.getPage(),
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("certificates");
+            collectionModel.add(link);
+        }
 
         return collectionModel;
+    }
+
+    private void addNextPrevious(CollectionModel<CertificateDto> collectionModel, FilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(OrderController.class)
+                    .getAllCertificatesByOrderId(
+                            filter.getCertificateName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            filter.getOrderId()
+                    )).withRel("order id:" + filter.getOrderId() + " certificates previous page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(OrderController.class)
+                    .getAllCertificatesByOrderId(
+                            filter.getCertificateName(),
+                            filter.getPage() + 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            filter.getOrderId()
+                    )).withRel("order id:" + filter.getOrderId() + " certificates next page");
+            collectionModel.add(link);
+        }
     }
 
 }

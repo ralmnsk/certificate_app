@@ -4,6 +4,7 @@ import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.controller.OrderController;
+import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
@@ -36,10 +37,50 @@ public class OrderAssembler implements Assembler<Long, OrderDto> {
             o.add(selfLink);
         });
 
-        Link link = linkTo(methodOn(OrderController.class)
-                .getAll(filter.getUserSurname(), filter.getUserName(), filter.getCertificateName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("orders");
-        CollectionModel<OrderDto> collectionModel = CollectionModel.of(orders, link);
+        CollectionModel<OrderDto> collectionModel = CollectionModel.of(orders);
+        if (filter.getUserId() != null && filter.getUserId() > 0) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAllOrdersByUserId(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage(), filter.getSize(), filter.getSortParams(),
+                            filter.getUserId())).withRel("user id:" + filter.getUserId() + " orders");
+            collectionModel.add(link);
+            filter = orderService.getFilterDto();
+            addNextPrevious(collectionModel, filter);
+        } else {
+            Link link = linkTo(methodOn(OrderController.class)
+                    .getAll(filter.getUserSurname(), filter.getUserName(), filter.getCertificateName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("orders");
+            collectionModel.add(link);
+        }
 
         return collectionModel;
+    }
+
+    private void addNextPrevious(CollectionModel<OrderDto> collectionModel, FilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAllOrdersByUserId(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            filter.getUserId()
+                    )).withRel("user id:" + filter.getUserId() + " orders previous page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAllOrdersByUserId(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() + 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            filter.getUserId()
+                    )).withRel("user id:" + filter.getUserId() + " orders next page");
+            collectionModel.add(link);
+        }
     }
 }

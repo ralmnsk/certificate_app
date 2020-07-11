@@ -1,6 +1,5 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.CustomPageDto;
 import com.epam.esm.service.dto.FilterDto;
@@ -8,7 +7,6 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
-import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
@@ -30,18 +28,15 @@ import java.util.List;
 public class OrderController {
 
     private OrderService<OrderDto, Long> orderService;
-    private CertificateService<CertificateDto, Long> certService;
     private OrderAssembler orderAssembler;
-    private CertificateAssembler certificateAssembler;
     private OrderPageBuilder orderPageBuilder;
     private CertificatePageBuilder certificatePageBuilder;
 
-    public OrderController(OrderService<OrderDto, Long> orderService, CertificateService<CertificateDto, Long> certService, OrderAssembler orderAssembler, CertificateAssembler certificateAssembler, OrderPageBuilder orderPageBuilder) {
+    public OrderController(OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder) {
         this.orderService = orderService;
-        this.certService = certService;
         this.orderAssembler = orderAssembler;
-        this.certificateAssembler = certificateAssembler;
         this.orderPageBuilder = orderPageBuilder;
+        this.certificatePageBuilder = certificatePageBuilder;
     }
 
     @PostMapping
@@ -85,7 +80,7 @@ public class OrderController {
             @Min(0)
             @Max(10000000) int page,
 
-            @RequestParam(value = "size", defaultValue = "1")
+            @RequestParam(value = "size", defaultValue = "5")
             @Min(1)
             @Max(100) int size,
             @RequestParam(required = false) List<String> sort
@@ -103,27 +98,33 @@ public class OrderController {
     }
 
 
-//    @GetMapping("/{orderId}/certificates")
-//    @ResponseStatus(HttpStatus.OK)
-//    public CollectionModel<CertificateDto> getAll(@PathVariable Long orderId,
-//    @RequestParam(value = "page", defaultValue = "0")
-//    @Min(0)
-//    @Max(10000000) int page,
-//    @RequestParam(value = "size", defaultValue = "5")
-//    @Min(1)
-//    @Max(100) int size,
-//    @RequestParam(required = false) List<String> sort
-//    ) {
-//        FilterDto filterDto = new FilterDto();
-//        filterDto.setPage(page);
-//        filterDto.setSize(size);
-//        filterDto.setSortParams(sort);
-//
-////        List<CertificateDto> certificates = certService.getAllByOrderId(orderId, ).getContent();
-////
-////        return certificateAssembler.toCollectionModel(orderId, certificates, pageable);
-//        return certificatePageBuilder.build(filterDto);
-//    }
+    @GetMapping("/{orderId}/certificates")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<CertificateDto> getAllCertificatesByOrderId(
+            @RequestParam(value = "certificateName", defaultValue = "")
+            @Size(max = 16, message = "certificate name should be 0-16 characters") String certificateName,
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "5")
+            @Min(1)
+            @Max(100) int size,
+
+            @RequestParam(required = false) List<String> sort,
+
+            @PathVariable Long orderId
+    ) {
+        FilterDto filterDto = new FilterDto();
+        filterDto.setCertificateName(certificateName);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        filterDto.setOrderId(orderId);
+
+        return certificatePageBuilder.build(filterDto);
+    }
 //
 //    @PostMapping("/{orderId}/certificates")
 //    @ResponseStatus(HttpStatus.OK)

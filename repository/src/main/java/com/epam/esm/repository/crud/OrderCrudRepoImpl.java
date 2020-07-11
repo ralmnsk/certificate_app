@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.List;
 
-import static com.epam.esm.repository.crud.Constants.PERCENT_END;
-import static com.epam.esm.repository.crud.Constants.PERCENT_START;
+import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
 @Getter
@@ -81,19 +80,29 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
         query.setParameter("userSurname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
         query.setParameter("userName", PERCENT_START + filter.getUserName() + PERCENT_END);
         query.setParameter("certificateName", PERCENT_START + filter.getCertificateName() + PERCENT_END);
+        if (filter.getUserId() != null && filter.getUserId() > 0) {
+            query.setParameter("userId", filter.getUserId());
+        }
     }
 
     private String assembleQlString(Filter filter, String selecting) {
-        String select = "select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost,certificate.name ";
-        String count = "select distinct count(*) ";
-        if (selecting.equals("count")) {
+        String select = "select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost ,certificate.name ";
+        String count = "select distinct count(*) from(select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost,certificate.name ";
+        if (selecting.equals(COUNT)) {
             select = count;
-
         }
         String ql = select + "from orders o join order_certificate oc on o.id = oc.order_id join certificate certificate on oc.certificate_id = certificate.id join users u on o.user_id = u.id " +
-                "where u.surname like :userSurname and u.name like :userName and certificate.name like :certificateName";
+                "where u.surname like :userSurname and u.name like :userName and certificate.name like :certificateName ";
+        if (filter.getUserId() != null && filter.getUserId() > 0) {
+            ql = ql + "and u.id = :userId";
+            ql = ql.replace(",certificate.name", "");
+        }
 
         ql = addSortToQueryString(filter, selecting, ql);
+
+        if (selecting.equals(COUNT)) {
+            ql = ql + ") c";
+        }
 
         return ql;
     }

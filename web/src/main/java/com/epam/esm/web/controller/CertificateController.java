@@ -70,13 +70,13 @@ public class CertificateController {
             @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 
             @RequestParam(value = "name", defaultValue = "")
-            @Size(max = 16, message = "name should be 0-16 characters") String name,
+            @Size(max = 16, message = "name should be 0-16 characters") String certificateName,
 
             @RequestParam(value = "page", defaultValue = "0")
             @Min(0)
             @Max(10000000) int page,
 
-            @RequestParam(value = "size", defaultValue = "1")
+            @RequestParam(value = "size", defaultValue = "5")
             @Min(1)
             @Max(100) int size,
 
@@ -84,7 +84,7 @@ public class CertificateController {
     ) {
         FilterDto filterDto = new FilterDto();
         filterDto.setTagName(tagName);
-        filterDto.setCertificateName(name);
+        filterDto.setCertificateName(certificateName);
         filterDto.setPage(page);
         filterDto.setSize(size);
         filterDto.setSortParams(sort);

@@ -98,12 +98,12 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
 
     private void setParameters(Filter filter, Query query) {
         query.setParameter("certificateName", PERCENT_START + filter.getCertificateName() + PERCENT_END);
-//        query.setParameter("duration", PERCENT_START + filter.getDuration() + PERCENT_END);
-//        query.setParameter("modification", PERCENT_START + filter.getModification() + PERCENT_END);
-//        query.setParameter("creation", PERCENT_START + filter.getCreation() + PERCENT_END);
         query.setParameter("description", PERCENT_START + filter.getDescription() + PERCENT_END);
         query.setParameter("tagName", PERCENT_START + filter.getTagName() + PERCENT_END);
         query.setParameter("surname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
+        if (filter.getOrderId() != null && filter.getOrderId() > 0) {
+            query.setParameter("orderId", filter.getOrderId());
+        }
     }
 
 
@@ -120,12 +120,12 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
                 "    join users on orders.user_id = users.id " +
 
                 "where certificate.name like :certificateName " +   //+ filter.getCertificateName() +
-//                "  and certificate.duration >= :duration " +        //+ filter.getDuration() +
-//                "  and certificate.modification >= :modification " +                //'" + filter.getModification() + "'" +
-//                "  and certificate.creation >= :creation " +                     //'" + filter.getCreation() + "'" +
                 "  and certificate.description like :description " + //'%" + filter.getDescription() + "%'" +
                 "  and tag.name like :tagName " + //'%" + filter.getTagName() + "%'" +
                 "and users.surname like :surname ";  //'%" + filter.getUserSurname() + "%'";
+        if (filter.getOrderId() != null && filter.getOrderId() > 0) {
+            ql = ql + " and orders.id = :orderId";
+        }
 
         ql = addSortToQueryString(filter, selecting, ql);
         if (selecting.equals(COUNT)) {

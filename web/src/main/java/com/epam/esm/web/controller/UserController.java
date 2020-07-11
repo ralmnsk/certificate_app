@@ -3,9 +3,9 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.*;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.order.OrderService;
 import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
+import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -24,14 +24,14 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private OrderService<OrderDto, Long> orderService;
+    private OrderPageBuilder orderPageBuilder;
     private UserService<UserDto, Long> userService;
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
     private ModelMapper mapper;
 
-    public UserController(OrderService<OrderDto, Long> orderService, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper) {
-        this.orderService = orderService;
+    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper) {
+        this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
         this.userPageBuilder = userPageBuilder;
@@ -99,39 +99,40 @@ public class UserController {
         return userPageBuilder.build(filterDto);
     }
 
-//    @GetMapping("/{userId}/orders")
-//    @ResponseStatus(HttpStatus.OK)
-//    public CustomPageDto<OrderDto, Long> getAllOrdersByUserId(
-//            @RequestParam(value = "tagName", defaultValue = "")
-//            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
-//
-//            @RequestParam(value = "name", defaultValue = "")
-//            @Size(max = 16, message = "name should be 0-16 characters") String name,
-//
-//            @RequestParam(value = "page", defaultValue = "0")
-//            @Min(0)
-//            @Max(10000000) int page,
-//
-//            @RequestParam(value = "size", defaultValue = "1")
-//            @Min(1)
-//            @Max(100) int size,
-//
-//            @RequestParam(required = false) List<String> sort,
-//            @PathVariable Long userId) {
-//
-//        FilterDto filterDto = new FilterDto();
-//        filterDto.setUserId(userId);
-//        filterDto.setTagName(tagName);
-//        filterDto.setName(name);
-//        filterDto.setPage(page);
-//        filterDto.setSize(size);
-//        filterDto.setSortParams(sort);
-//        CustomPageDto<OrderDto, Long> build = orderPageBuilder.build(filterDto);
-////        List<OrderDto> orders = orderService.getAllByUserId(userId, filterDto).getContent();
-////
-////        return orderAssembler.toCollectionModel(userId, orders, pageable);
-//        return build;
-//    }
+    @GetMapping("/{userId}/orders")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<OrderDto> getAllOrdersByUserId(
+            @RequestParam(value = "surname", defaultValue = "")
+            @Size(max = 16, message = "surname should be 0-16 characters") String surname,
+
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "name should be 0-16 characters") String name,
+
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "5")
+            @Min(1)
+            @Max(100) int size,
+
+            @RequestParam(required = false) List<String> sort,
+
+            @PathVariable Long userId) {
+
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setUserSurname(surname);
+        filterDto.setUserName(name);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        filterDto.setUserId(userId);
+
+        return orderPageBuilder.build(filterDto);
+
+    }
 //
 //    @PostMapping("/{userId}/orders")
 //    @ResponseStatus(HttpStatus.OK)
