@@ -28,20 +28,12 @@ public class TagController {
     private TagAssembler tagAssembler;
     private TagPageBuilder pageBuilder;
 
-    //
     public TagController(TagService<TagDto, Integer> tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
         this.tagService = tagService;
         this.tagAssembler = tagAssembler;
         this.pageBuilder = pageBuilder;
     }
 
-    //    @GetMapping
-//    @ResponseStatus(HttpStatus.OK)
-//    public CollectionModel<TagDto> tags(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-//            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-//        List<TagDto> tags = tagService.getAll(pageable).getContent();
-//        return tagAssembler.toCollectionModel(PARAM_NOT_USED, tags, pageable);
-//    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -91,4 +83,6 @@ public class TagController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
 }

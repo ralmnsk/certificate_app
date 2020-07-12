@@ -2,16 +2,13 @@ package com.epam.esm.service.order;
 
 
 import com.epam.esm.service.CrudService;
+import com.epam.esm.service.dto.IdDto;
+
+import java.util.List;
 
 public interface OrderService<T, E> extends CrudService<T, E> {
-//    CustomPage<OrderDto, Long> getAllByUserId(E userId, FilterDto filterDto);
+    void addOrderToUser(Long userId, List<IdDto> list);
 
-//    Optional<T> createOrderInUser(E userId, T orderDto);
-//
-//    Optional<T> addCertificateToOrder(E orderId, List<IdDto> list);
-//
-//    Optional<T> removeCertificateFromOrder(E orderId, List<IdDto> list);
-
-//    CustomPageDto<OrderDto, Long> getAll(FilterDto filterDto);
+    void deleteOrderFromUser(Long userId, List<IdDto> list);
 
 }

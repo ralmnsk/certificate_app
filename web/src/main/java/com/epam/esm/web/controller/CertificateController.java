@@ -1,17 +1,14 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.FilterDto;
-import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.*;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
-import com.epam.esm.web.assembler.TagAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
+import com.epam.esm.web.page.TagPageBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,28 +37,17 @@ public class CertificateController {
     private TagService<TagDto, Integer> tagService;
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
-    private TagAssembler tagAssembler;
     private CertificatePageBuilder certificatePageBuilder;
+    private TagPageBuilder tagPageBuilder;
 
-    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, TagAssembler tagAssembler, CertificatePageBuilder certificatePageBuilder) {
+    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, CertificatePageBuilder certificatePageBuilder, TagPageBuilder tagPageBuilder) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
-        this.tagAssembler = tagAssembler;
         this.certificatePageBuilder = certificatePageBuilder;
+        this.tagPageBuilder = tagPageBuilder;
     }
-
-//    @GetMapping
-//    @ResponseStatus(HttpStatus.OK) //ALL
-//    public CollectionModel<CertificateDto> getAll(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-//            size = DEFAULT_PAGE_SIZE) Pageable pageable) {
-//        Page<CertificateDto> page = certificateService.getAll(pageable);
-//        List<CertificateDto> certificates = page.getContent();
-//
-//
-//        return certificateAssembler.toCollectionModel(PARAM_NOT_USED, certificates, pageable);
-//    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -90,15 +76,7 @@ public class CertificateController {
         filterDto.setSortParams(sort);
         return certificatePageBuilder.build(filterDto);
     }
-//
-//    @PostMapping("/{certificateId}/tags")
-//    @ResponseStatus(HttpStatus.OK)
-//    public TagDto createTagInCertificate(@PageableDefault(page = DEFAULT_PAGE_NUMBER,
-//            size = DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_ORDERS) Pageable pageable, @PathVariable Long certificateId, @Valid @RequestBody TagDto tagDto) {
-//        tagDto = tagService.createTagInOrder(certificateId, tagDto).orElseThrow(() -> new SaveException("Create Tag in Certificate Exception"));
-//
-//        return tagAssembler.assemble((long) tagDto.getId(), tagDto);
-//    }
+
 
     @GetMapping("/{id}")
     public CertificateDto get(@PathVariable Long id) {
@@ -144,6 +122,28 @@ public class CertificateController {
         certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
 
         return certificateAssembler.assemble(id, certificateDto);
+    }
+
+    @PutMapping("/{certificateId}/tags")
+    @ResponseStatus(HttpStatus.OK)
+    public CertificateDto addTagToCertificate(@PathVariable Long certificateId, @Valid @RequestBody List<IdDto> list) {
+        tagService.addTagToCertificate(certificateId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setCertificateId(certificateId);
+        CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
+        return certificateAssembler.assemble(certificateId, certificateDto);
+    }
+
+    @DeleteMapping("/{certificateId}/tags")
+    @ResponseStatus(HttpStatus.OK)
+    public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId, @Valid @RequestBody List<IdDto> list) {
+        tagService.deleteTagFromCertificate(certificateId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setCertificateId(certificateId);
+        CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
+        return certificateAssembler.assemble(certificateId, certificateDto);
     }
 
     private CertificateDto applyPatchToCertificate(JsonPatch patch, CertificateDto certificateDto) throws JsonPatchException, JsonProcessingException {

@@ -10,7 +10,6 @@ import com.epam.esm.web.assembler.Assembler;
 import org.springframework.hateoas.CollectionModel;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -115,7 +114,7 @@ public class AbstractPageBuilder<T, S extends CrudService, A extends Assembler> 
                 if (param.contains("+")) {
                     direction = Direction.ASC;
                     param = param.replace("+", "");
-                }else{
+                } else {
                     param = param.replace("-", "");
                 }
                 if (fieldSet.contains(param)) {

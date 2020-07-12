@@ -1,9 +1,12 @@
 package com.epam.esm.service.tag;
 
+import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Filter;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.crud.CertificateCrudRepository;
 import com.epam.esm.repository.crud.TagCrudRepository;
 import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.IdDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
@@ -26,14 +29,16 @@ import static java.util.stream.Collectors.toList;
 @Transactional
 public class TagServiceImpl implements TagService<TagDto, Integer> {
     private FilterDto filterDto;
+
     private TagCrudRepository tagRepository;
     private ModelMapper mapper;
-//    private CertificateCrudRepository certificateRepository;
+    private CertificateCrudRepository certificateRepository;
 
 
-    public TagServiceImpl(TagCrudRepository tagRepository, ModelMapper mapper) {
+    public TagServiceImpl(TagCrudRepository tagRepository, ModelMapper mapper, CertificateCrudRepository certificateRepository) {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
+        this.certificateRepository = certificateRepository;
     }
 
     @Override
@@ -111,24 +116,24 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
         return true;
     }
 
-//    @Override
-//    public Optional<TagDto> createTagInOrder(Long certificateId, TagDto tagDto) {
-//        tagDto = save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
-//        Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException(certificateId));
-//        Tag tag = mapper.map(tagDto, Tag.class);
-//        certificate.getTags().add(tag);
-//        certificateRepository.save(certificate);
-//
-//        return Optional.of(tagDto);
-//    }
+    @Override
+    public void addTagToCertificate(Long certificateId, List<IdDto> list) {
+        Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Certificate not found: id:" + certificateId));
+        list
+                .stream()
+                .map(idDto -> tagRepository.get((int) (long) idDto.getId()).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto.getId())))
+                .forEach(tag -> certificate.getTags().add(tag));
+        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Add Tag to Certificate: Tag update exception"));
+    }
 
-//        @Override
-//    public Page<TagDto> getAllByCertificateId(Long certificateId, Pageable pageable) {
-//        Page<Tag> certificates = tagRepository.getAllByCertificateId(certificateId, pageable);
-//        List<TagDto> dtoList = certificates.getContent()
-//                .stream()
-//                .map(t -> mapper.map(t, TagDto.class))
-//                .collect(Collectors.toList());
-//        return new PageImpl<TagDto>(dtoList, pageable, dtoList.size());
-//    }
+    @Override
+    public void deleteTagFromCertificate(Long certificateId, List<IdDto> list) {
+        Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Delete Tag from Certificate: Tag not found: id:" + certificateId));
+        list
+                .stream()
+                .map(idDto -> tagRepository.get((int) (long) idDto.getId()).orElseThrow(() -> new NotFoundException("Delete Tag to Certificate: Tag not found: id:" + idDto.getId())))
+                .forEach(tag -> certificate.getTags().remove(tag));
+        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Delete Tag to Certificate: Tag update exception"));
+    }
+
 }

@@ -145,26 +145,26 @@ public class AdviceController {
         return new ExceptionResponseDto("DataAccessResourceFailureException",
                 "Failed to obtain JDBC Connection.");
     }
-//
-//    @ExceptionHandler(JsonDeserializationException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto exception(JsonDeserializationException ex) {
-//        return new ExceptionResponseDto("JsonDeserializationException",
-//                ex.getMessage());
-//    }
+
+    @ExceptionHandler(JsonDeserializationException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto exception(JsonDeserializationException ex) {
+        return new ExceptionResponseDto("JsonDeserializationException",
+                ex.getMessage());
+    }
 
 
-//    @ResponseBody
-//    @ExceptionHandler(Throwable.class)
-//    @ResponseStatus(BAD_REQUEST)
-//    public ExceptionResponseDto throwable(Throwable ex) {
-//        Throwable e = ex;
-//        String message = e.getMessage();
-//        while (e != null) {
-//            message = e.getMessage();
-//            e = e.getCause();
-//        }
-//        return new ExceptionResponseDto("Exception",
-//                "Exception happened:" + message);
-//    }
+    @ResponseBody
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponseDto throwable(Throwable ex) {
+        Throwable e = ex;
+        String message = e.getMessage();
+        while (e != null) {
+            message = e.getMessage();
+            e = e.getCause();
+        }
+        return new ExceptionResponseDto("Exception",
+                "Exception happened:" + message);
+    }
 }

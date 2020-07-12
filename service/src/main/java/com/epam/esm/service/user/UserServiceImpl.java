@@ -25,6 +25,7 @@ import java.util.Optional;
 @Getter
 public class UserServiceImpl implements UserService<UserDto, Long> {
     private FilterDto filterDto;
+
     private UserCrudRepository userRepository;
     private ModelMapper mapper;
 
@@ -50,6 +51,7 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
     public Optional<UserDto> get(Long id) {
         User user = userRepository.get(id).orElseThrow(() -> new NotFoundException(id));
         UserDto userDto = mapper.map(user, UserDto.class);
+        userDto.getOrders().clear();
         return Optional.ofNullable(userDto);
     }
 
@@ -93,14 +95,5 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
         return dtoList;
     }
 
-//    @Override
-//    public Long getUserIdByOrderId(Long orderId) {
-//        Long num = 0L;
-//        Optional<User> orderOptional = userRepository.getUserIdByOrderId(orderId);
-//        if (orderOptional.isPresent()) {
-//            num = orderOptional.get().getId();
-//        }
-//
-//        return num;
-//    }
+
 }

@@ -15,9 +15,11 @@ import static com.epam.esm.repository.crud.Constants.*;
 @Repository
 @Getter
 public class TagRepoImpl extends AbstractRepo<Tag, Integer> implements TagCrudRepository {
+    private QueryBuilder queryBuilder;
 
-    public TagRepoImpl() {
+    public TagRepoImpl(QueryBuilder queryBuilder) {
         super(Tag.class);
+        this.queryBuilder = queryBuilder;
     }
 
     @Override
@@ -43,6 +45,7 @@ public class TagRepoImpl extends AbstractRepo<Tag, Integer> implements TagCrudRe
 
     @Override
     public List<Tag> getAll(Filter filter) {
+
         Query query = getEntityManager().createQuery("select distinct t from Tag t where t.name like :name order by t.name", Tag.class);
         query.setParameter(NAME, PERCENT_START + filter.getTagName() + PERCENT_END);
         int pageNumber = filter.getPage();
@@ -56,7 +59,8 @@ public class TagRepoImpl extends AbstractRepo<Tag, Integer> implements TagCrudRe
         queryTotal.setParameter(NAME, PERCENT_START + filter.getTagName() + PERCENT_END);
         long countResult = (long) queryTotal.getSingleResult();
 
-        updateFilter(filter, pageSize, countResult);
+        filter = queryBuilder.updateFilter(filter, pageSize, countResult);
+        setFilter(filter);
 
         return tags;
     }

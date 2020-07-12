@@ -2,9 +2,12 @@ package com.epam.esm.service.order;
 
 import com.epam.esm.model.Filter;
 import com.epam.esm.model.Order;
+import com.epam.esm.model.User;
 import com.epam.esm.repository.crud.OrderCrudRepository;
+import com.epam.esm.repository.crud.UserCrudRepository;
 import com.epam.esm.service.calculator.TotalCostCalculator;
 import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.IdDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
@@ -25,14 +28,17 @@ import java.util.stream.Collectors;
 @Transactional
 public class OrderServiceImpl implements OrderService<OrderDto, Long> {
     private FilterDto filterDto;
+
     private OrderCrudRepository orderRepository;
     private ModelMapper mapper;
     private TotalCostCalculator calculator;
+    private UserCrudRepository userRepository;
 
-    public OrderServiceImpl(OrderCrudRepository orderRepository, ModelMapper mapper, TotalCostCalculator calculator) {
+    public OrderServiceImpl(OrderCrudRepository orderRepository, ModelMapper mapper, TotalCostCalculator calculator, UserCrudRepository userRepository) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.calculator = calculator;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -95,64 +101,24 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
         return dtoList;
     }
 
-//    @Override
-//    public Page<OrderDto> getAllByUserId(Long userId, Pageable pageable) {
-//        Page<Order> orders = orderRepository.getAllByUserId(userId, pageable);
-//        List<OrderDto> dtoList = orders.getContent()
-//                .stream()
-//                .map(o -> mapper.map(o, OrderDto.class))
-//                .collect(Collectors.toList());
-//        dtoList.forEach(d -> d.getCertificates().clear());
-//        return new PageImpl<OrderDto>(dtoList, pageable, dtoList.size());
-//    }
+    @Override
+    public void addOrderToUser(Long userId, List<IdDto> list) {
+        User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
+        list
+                .stream()
+                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto.getId())))
+                .forEach(order -> user.getOrders().add(order));
+        userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
+    }
 
-//    @Override
-//    public Optional<OrderDto> createOrderInUser(Long userId, OrderDto orderDto) {
-//        userRepository.get(userId).orElseThrow(() -> new NotFoundException(userId));
-//        orderDto = save(orderDto).orElseThrow(() -> new SaveException("Order save exception"));
-//        orderRepository.addOrderToUser(userId, orderDto.getId());
-//
-//        return Optional.of(orderDto);
-//    }
-//
-//
-//    @Override
-//    public Optional<OrderDto> addCertificateToOrder(Long orderId, List<IdDto> listIdDto) {
-//        Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException(orderId));
-//
-//        if (listIdDto != null && !listIdDto.isEmpty()) {
-//            List<Certificate> certificates = new ArrayList<>();
-//            CertificateCrudRepository certificateCrudRepository = certificateRepository;
-//            for (IdDto idDto : listIdDto) {
-//                Long id = idDto.getId();
-//                Optional<Certificate> certificate = certificateCrudRepository.get(id);
-//                if (certificate.isPresent()) {
-//                    Certificate certificate1 = certificate.get();
-//                    certificates.add(certificate1);
-//                }
-//            }
-//            order.getCertificates().addAll(certificates);
-//        }
-//        calculator.calc(order);
-//        orderRepository.save(order);
-//        return Optional.ofNullable(mapper.map(order, OrderDto.class));
-//    }
-
-//    @Override
-//    public Optional<OrderDto> removeCertificateFromOrder(Long orderId, List<IdDto> listIdDto) {
-//        Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException(orderId));
-//
-//        if (listIdDto != null && !listIdDto.isEmpty() && !order.getCertificates().isEmpty()) {
-//            Set<Certificate> certificates = new HashSet<>(order.getCertificates());
-//            listIdDto.stream()
-//                    .map(IdDto::getId)
-//                    .forEach(i -> certificates.stream()
-//                            .filter(c -> c.getId().equals(i))
-//                            .forEach(c -> order.getCertificates().remove(c)));
-//        }
-//        calculator.calc(order);
-//        orderRepository.save(order);
-//        return Optional.ofNullable(mapper.map(order, OrderDto.class));
-//    }
+    @Override
+    public void deleteOrderFromUser(Long userId, List<IdDto> list) {
+        User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
+        list
+                .stream()
+                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto.getId())))
+                .forEach(order -> user.getOrders().remove(order));
+        userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
+    }
 
 }

@@ -42,7 +42,37 @@ public class UserAssembler implements Assembler<Long, UserDto> {
 
         Link linkUsers = linkTo(methodOn(UserController.class)
                 .getAll(filter.getUserSurname(), filter.getUserName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("users");
+        CollectionModel<UserDto> collectionModel = CollectionModel.of(users, linkUsers);
+        addNextPrevious(collectionModel, filter);
 
-        return CollectionModel.of(users, linkUsers);
+        return collectionModel;
+    }
+
+    private void addNextPrevious(CollectionModel<UserDto> collectionModel, FilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAll(
+                            filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("users previous page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAll(
+                            filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() + 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("users next page");
+            collectionModel.add(link);
+        }
     }
 }

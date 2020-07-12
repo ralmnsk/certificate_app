@@ -1,9 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.FilterDto;
-import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.certificate.CertificateService;
+import com.epam.esm.service.dto.*;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
@@ -31,12 +29,14 @@ public class OrderController {
     private OrderAssembler orderAssembler;
     private OrderPageBuilder orderPageBuilder;
     private CertificatePageBuilder certificatePageBuilder;
+    private CertificateService<CertificateDto, Long> certificateService;
 
-    public OrderController(OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder) {
+    public OrderController(OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long> certificateService) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
         this.certificatePageBuilder = certificatePageBuilder;
+        this.certificateService = certificateService;
     }
 
     @PostMapping
@@ -125,21 +125,28 @@ public class OrderController {
 
         return certificatePageBuilder.build(filterDto);
     }
-//
-//    @PostMapping("/{orderId}/certificates")
-//    @ResponseStatus(HttpStatus.OK)
-//    public OrderDto addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> listIdDto) {
-//        OrderDto orderDto = orderService.addCertificateToOrder(orderId, listIdDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
-//
-//        return orderAssembler.assemble(orderDto.getId(), orderDto);
-//    }
 
-//    @PutMapping("/{orderId}/certificates")
-//    @ResponseStatus(HttpStatus.OK)
-//    public OrderDto removeCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> listIdDto) {
-//        OrderDto orderDto = orderService.removeCertificateFromOrder(orderId, listIdDto).orElseThrow(() -> new SaveException("Create Certificate in Order Exception"));
-//
-//        return orderAssembler.assemble(orderDto.getId(), orderDto);
-//    }
+    @PutMapping("/{orderId}/certificates")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> list) {
+        certificateService.addCertificateToOrder(orderId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setOrderId(orderId);
+
+
+        return certificatePageBuilder.build(filterDto);
+    }
+
+    @DeleteMapping("/{orderId}/certificates")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> list) {
+        certificateService.deleteCertificateFromOrder(orderId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setOrderId(orderId);
+
+        return certificatePageBuilder.build(filterDto);
+    }
 
 }

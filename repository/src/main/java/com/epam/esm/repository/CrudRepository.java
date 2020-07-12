@@ -18,5 +18,6 @@ public interface CrudRepository<T, E> {
     List<T> getAll(Filter filter);
 
     Filter getFilter();
+    void setFilter(Filter filer);
 
 }

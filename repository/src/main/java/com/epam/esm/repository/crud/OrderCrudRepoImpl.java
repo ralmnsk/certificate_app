@@ -13,9 +13,11 @@ import static com.epam.esm.repository.crud.Constants.*;
 @Repository
 @Getter
 public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements OrderCrudRepository {
+    private QueryBuilder builder;
 
-    public OrderCrudRepoImpl() {
+    public OrderCrudRepoImpl(QueryBuilder builder) {
         super(Order.class);
+        this.builder = builder;
     }
 
 //    @Override
@@ -71,7 +73,8 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
         int i = (int) countResult;
 
-        updateFilter(filter, pageSize, countResult);
+        filter = builder.updateFilter(filter, pageSize, countResult);
+        setFilter(filter);
 
         return orders;
     }
@@ -79,26 +82,24 @@ public class OrderCrudRepoImpl extends AbstractRepo<Order, Long> implements Orde
     private void querySetParameters(Filter filter, Query query) {
         query.setParameter("userSurname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
         query.setParameter("userName", PERCENT_START + filter.getUserName() + PERCENT_END);
-        query.setParameter("certificateName", PERCENT_START + filter.getCertificateName() + PERCENT_END);
         if (filter.getUserId() != null && filter.getUserId() > 0) {
             query.setParameter("userId", filter.getUserId());
         }
     }
 
     private String assembleQlString(Filter filter, String selecting) {
-        String select = "select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost ,certificate.name ";
-        String count = "select distinct count(*) from(select distinct o.id,o.completed,o.created,o.deleted,o.description,o.total_cost,certificate.name ";
+        String select = "select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost  ";
+        String count = "select distinct count(*) from(select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
         if (selecting.equals(COUNT)) {
             select = count;
         }
-        String ql = select + "from orders o join order_certificate oc on o.id = oc.order_id join certificate certificate on oc.certificate_id = certificate.id join users u on o.user_id = u.id " +
-                "where u.surname like :userSurname and u.name like :userName and certificate.name like :certificateName ";
+        String ql = select + "from orders orders join users users on orders.user_id = users.id " +
+                "where users.surname like :userSurname and users.name like :userName ";
         if (filter.getUserId() != null && filter.getUserId() > 0) {
-            ql = ql + "and u.id = :userId";
-            ql = ql.replace(",certificate.name", "");
+            ql = ql + "and users.id = :userId";
         }
 
-        ql = addSortToQueryString(filter, selecting, ql);
+        ql = builder.addSortToQueryString(filter, selecting, ql);
 
         if (selecting.equals(COUNT)) {
             ql = ql + ") c";

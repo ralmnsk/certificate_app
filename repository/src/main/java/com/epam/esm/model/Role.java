@@ -9,11 +9,11 @@ public enum Role {
 
     private final String role;
 
-    private Role(final String role) {
+    Role(final String role) {
         this.role = role;
     }
 
-    private Role() {
+    Role() {
         this.role = this.name();
     }
 

@@ -13,8 +13,11 @@ import static com.epam.esm.repository.crud.Constants.*;
 @Repository
 @Getter
 public class UserCrudRepoImpl extends AbstractRepo<User, Long> implements UserCrudRepository {
-    public UserCrudRepoImpl() {
+    private QueryBuilder builder;
+
+    public UserCrudRepoImpl(QueryBuilder builder) {
         super(User.class);
+        this.builder = builder;
     }
 
 //    @Override
@@ -44,7 +47,8 @@ public class UserCrudRepoImpl extends AbstractRepo<User, Long> implements UserCr
         queryCount.setParameter("surname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
         long countResult = Long.valueOf(queryCount.getSingleResult().toString());
 
-        updateFilter(filter, pageSize, countResult);
+        filter = builder.updateFilter(filter, pageSize, countResult);
+        setFilter(filter);
 
         return users;
     }
@@ -54,7 +58,7 @@ public class UserCrudRepoImpl extends AbstractRepo<User, Long> implements UserCr
         String count = "select count(*) from (";
         String ql = select + " from users where surname like :surname and name like :name ";
 
-        ql = addSortToQueryString(filter, selecting, ql);
+        ql = builder.addSortToQueryString(filter, selecting, ql);
         if (selecting.equals(COUNT)) {
             ql = count + ql + ") c";
 

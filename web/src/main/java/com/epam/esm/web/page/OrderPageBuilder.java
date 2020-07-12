@@ -13,6 +13,6 @@ public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService
     private final String EMPTY = "";
 
     public OrderPageBuilder(OrderService<OrderDto, Long> service, OrderAssembler assembler, OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler) {
-        super(new HashSet<>(Arrays.asList("certificate.name")), service, assembler);
+        super(new HashSet<>(Arrays.asList("orders.id")), service, assembler);
     }
 }

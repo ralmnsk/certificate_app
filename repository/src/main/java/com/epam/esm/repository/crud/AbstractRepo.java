@@ -10,11 +10,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
-import static com.epam.esm.repository.crud.Constants.COUNT;
-
 @Getter
 @Setter
-abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository<T, E> {
+public abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository<T, E> {
+
+
     private Filter filter;
 
     @PersistenceContext
@@ -60,26 +60,5 @@ abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository
         return false;
     }
 
-    public void updateFilter(Filter filter, int pageSize, long countResult) {
-        filter.setTotalPages((countResult / pageSize));
-        if (countResult % pageSize != 0) {
-            filter.setTotalPages(((int) countResult / pageSize) + 1);
-        }
-        filter.setTotalElements(countResult);
-        setFilter(filter);
-    }
-
-    public String addSortToQueryString(Filter filter, String selecting, String ql) {
-        if (!selecting.equals(COUNT) &&filter.getSort() != null && !filter.getSort().getOrders().isEmpty()) {
-            String str = filter
-                    .getSort()
-                    .getOrders()
-                    .stream()
-                    .map(o -> o.getParameter() + " " + o.getDirection()).reduce("", (a, b) -> " " + a + " " + b + ",");
-            str = str.substring(0, str.length() - 1);
-            ql = ql + " order by" + str ;
-        }
-        return ql;
-    }
 
 }

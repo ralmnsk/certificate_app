@@ -2,9 +2,12 @@ package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Filter;
+import com.epam.esm.model.Order;
 import com.epam.esm.repository.crud.CertificateCrudRepository;
+import com.epam.esm.repository.crud.OrderCrudRepository;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.IdDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -27,10 +30,12 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
 
     private CertificateCrudRepository certificateRepository;
     private ModelMapper mapper;
+    private OrderCrudRepository orderRepository;
 
-    public CertificateServiceImpl(CertificateCrudRepository certificateRepository, ModelMapper mapper) {
+    public CertificateServiceImpl(CertificateCrudRepository certificateRepository, ModelMapper mapper, OrderCrudRepository orderCrudRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
+        this.orderRepository = orderCrudRepository;
     }
 
     @Override //save without tags
@@ -46,7 +51,6 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     public Optional<CertificateDto> get(Long id) {
         Optional<CertificateDto> certificateDtoOptional = Optional.empty();
         Certificate certificate = certificateRepository.get(id).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
-//        setCorrectTime(certificate);
         certificateDtoOptional = Optional.ofNullable(mapper.map(certificate, CertificateDto.class));
 
         return certificateDtoOptional;
@@ -95,30 +99,23 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
         return dtoList;
     }
 
-//    @Override
-//    public Page<CertificateDto> getAllByOrderId(Long orderId, Pageable pageable) {
-//        Page<Certificate> certificates = certificateRepository.getAllByOrderId(orderId, pageable);
-//        if (certificates.getContent().isEmpty()) {
-//            return new PageImpl<>(null, pageable, 0);
-//        }
-//
-//        List<CertificateDto> dtoList = certificates.getContent()
-//                .stream()
-//                .map(o -> certificateConverter.toDto(o))
-//                .collect(Collectors.toList());
-//        return new PageImpl<CertificateDto>(dtoList, pageable, dtoList.size());
-//    }
+    @Override
+    public void addCertificateToOrder(Long orderId, List<IdDto> list) {
+        Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
+        list
+                .stream()
+                .map(idDto -> certificateRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto.getId())))
+                .forEach(certificate -> order.getCertificates().add(certificate));
+        orderRepository.update(order).orElseThrow(() -> new UpdateException("Add Certificate to Order: Certificate update exception"));
+    }
 
-//    private void setCorrectTime(Certificate certificate) {
-//        Instant created = certificateRepository.getCreationById(certificate.getId());
-//        if (created != null) {
-//            certificate.setCreation(created);
-//            certificate.setModification(created);
-//        }
-//        Instant modified = certificateRepository.getModificationById(certificate.getId());
-//        if (modified != null) {
-//            certificate.setModification(modified);
-//        }
-//    }
-
+    @Override
+    public void deleteCertificateFromOrder(Long orderId, List<IdDto> list) {
+        Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
+        list
+                .stream()
+                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto.getId())))
+                .forEach(certificate -> order.getCertificates().remove(certificate));
+        orderRepository.update(order).orElseThrow(() -> new UpdateException("Delete Certificate to Order: Certificate update exception"));
+    }
 }

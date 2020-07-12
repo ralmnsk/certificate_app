@@ -3,7 +3,9 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.*;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
+import com.epam.esm.service.order.OrderService;
 import com.epam.esm.service.user.UserService;
+import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
@@ -29,13 +31,17 @@ public class UserController {
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
     private ModelMapper mapper;
+    private OrderService<OrderDto, Long> orderService;
+    private OrderAssembler orderAssembler;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper) {
+    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
         this.userPageBuilder = userPageBuilder;
         this.mapper = mapper;
+        this.orderService = orderService;
+        this.orderAssembler = orderAssembler;
     }
 
     @PostMapping
@@ -83,7 +89,7 @@ public class UserController {
             @Min(0)
             @Max(10000000) int page,
 
-            @RequestParam(value = "size", defaultValue = "1")
+            @RequestParam(value = "size", defaultValue = "5")
             @Min(1)
             @Max(100) int size,
 
@@ -105,8 +111,8 @@ public class UserController {
             @RequestParam(value = "surname", defaultValue = "")
             @Size(max = 16, message = "surname should be 0-16 characters") String surname,
 
-            @RequestParam(value = "name", defaultValue = "")
-            @Size(max = 16, message = "name should be 0-16 characters") String name,
+            @RequestParam(value = "userName", defaultValue = "")
+            @Size(max = 16, message = "Username should be 0-16 characters") String userName,
 
 
             @RequestParam(value = "page", defaultValue = "0")
@@ -124,7 +130,7 @@ public class UserController {
 
         FilterDto filterDto = new FilterDto();
         filterDto.setUserSurname(surname);
-        filterDto.setUserName(name);
+        filterDto.setUserName(userName);
         filterDto.setPage(page);
         filterDto.setSize(size);
         filterDto.setSortParams(sort);
@@ -133,14 +139,26 @@ public class UserController {
         return orderPageBuilder.build(filterDto);
 
     }
-//
-//    @PostMapping("/{userId}/orders")
-//    @ResponseStatus(HttpStatus.OK)
-//    public OrderDto createOrderInUser(@PathVariable Long userId, @Valid @RequestBody OrderDto orderDto) {
-//        orderDto = orderService.createOrderInUser(userId, orderDto).orElseThrow(() -> new SaveException("Create Order in User Exception"));
-//
-//        return orderAssembler.assemble(orderDto.getId(), orderDto);
-//    }
+
+    @PutMapping("/{userId}/orders")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody List<IdDto> list) {
+        orderService.addOrderToUser(userId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setUserId(userId);
+        return orderPageBuilder.build(filterDto);
+    }
+
+    @DeleteMapping("/{userId}/orders")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody List<IdDto> list) {
+        orderService.deleteOrderFromUser(userId, list);
+
+        FilterDto filterDto = new FilterDto();
+        filterDto.setUserId(userId);
+        return orderPageBuilder.build(filterDto);
+    }
 
 
 }

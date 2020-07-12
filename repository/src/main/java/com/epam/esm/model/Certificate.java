@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +13,6 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @Entity
-//@Cacheable
 @Table(name = "certificate")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Certificate extends Identifiable<Long> {
