@@ -1,10 +1,12 @@
 package com.epam.esm.service.user;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
-import com.epam.esm.repository.crud.UserCrudRepository;
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.repository.crud.UserRepository;
+import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -23,13 +25,12 @@ import java.util.Optional;
 @Service
 @Transactional
 @Getter
-public class UserServiceImpl implements UserService<UserDto, Long> {
-    private FilterDto filterDto;
+public class UserServiceImpl implements UserService<UserDto, Long, UserFilterDto> {
 
-    private UserCrudRepository userRepository;
+    private UserRepository<User, Long, UserFilter> userRepository;
     private ModelMapper mapper;
 
-    public UserServiceImpl(UserCrudRepository userRepository, ModelMapper mapper) {
+    public UserServiceImpl(UserRepository<User, Long, UserFilter> userRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
         this.mapper = mapper;
     }
@@ -79,21 +80,32 @@ public class UserServiceImpl implements UserService<UserDto, Long> {
     }
 
     @Override
-    public List<UserDto> getAll(FilterDto filterDto) {
-        Filter filter = mapper.map(filterDto, Filter.class);
-        List<User> users = userRepository.getAll(filter);
+    public ListWrapperDto<UserDto, UserFilterDto> getAll(UserFilterDto userFilterDto) {
+        UserFilter userFilter = mapper.map(userFilterDto, UserFilter.class);
+        ListWrapper<User, UserFilter> wrapper = userRepository.getAll(userFilter);
         List<UserDto> dtoList = new ArrayList<>();
+        List<User> users = wrapper.getList();
         for (User c : users) {
             UserDto d = mapper.map(c, UserDto.class);
             d.getOrders().clear();
             dtoList.add(d);
         }
 
-        filter = userRepository.getFilter();
-        this.filterDto = mapper.map(filter, FilterDto.class);
+        ListWrapperDto<UserDto, UserFilterDto> wrapperDto = new ListWrapperDto<>();
+        wrapperDto.setList(dtoList);
+        UserFilter filter = wrapper.getFilter();
+        wrapperDto.setFilterDto(mapper.map(filter, UserFilterDto.class));
 
-        return dtoList;
+        return wrapperDto;
     }
 
+    @Override
+    public UserDto findByLogin(String login) {
+        User user = userRepository.findByLogin(login);
+        if (user == null) {
+            throw new NotFoundException("User login not found exception:");
+        }
 
+        return mapper.map(user, UserDto.class);
+    }
 }

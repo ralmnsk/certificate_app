@@ -1,13 +1,15 @@
 package com.epam.esm.service.tag;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Tag;
-import com.epam.esm.repository.crud.CertificateCrudRepository;
-import com.epam.esm.repository.crud.TagCrudRepository;
-import com.epam.esm.service.dto.FilterDto;
-import com.epam.esm.service.dto.IdDto;
+import com.epam.esm.model.filter.CertificateFilter;
+import com.epam.esm.model.filter.TagFilter;
+import com.epam.esm.repository.crud.CertificateRepository;
+import com.epam.esm.repository.crud.TagRepository;
+import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import lombok.Getter;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,15 +30,16 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @Service
 @Transactional
-public class TagServiceImpl implements TagService<TagDto, Integer> {
-    private FilterDto filterDto;
+public class TagServiceImpl implements TagService<TagDto, Integer, TagFilterDto> {
 
-    private TagCrudRepository tagRepository;
+    private TagRepository<Tag, Integer, TagFilter> tagRepository;
     private ModelMapper mapper;
-    private CertificateCrudRepository certificateRepository;
+    private CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository;
 
 
-    public TagServiceImpl(TagCrudRepository tagRepository, ModelMapper mapper, CertificateCrudRepository certificateRepository) {
+    public TagServiceImpl(TagRepository<Tag, Integer,
+            TagFilter> tagRepository, ModelMapper mapper,
+                          CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository) {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
         this.certificateRepository = certificateRepository;
@@ -57,16 +61,17 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     }
 
     @Override
-    public List<TagDto> getAll(FilterDto filterDto) {
-        Filter filter = mapper.map(filterDto, Filter.class);
-        List<Tag> all = tagRepository.getAll(filter);
-        List<TagDto> collect = all.stream().map(t -> mapper.map(t, TagDto.class)).collect(toList());
-        if (tagRepository.getFilter() != null) {
-            filterDto = mapper.map(tagRepository.getFilter(), FilterDto.class);
-            this.filterDto = filterDto;
-        }
+    public ListWrapperDto<TagDto, TagFilterDto> getAll(TagFilterDto tagFilterDto) {
+        TagFilter tagFilter = mapper.map(tagFilterDto, TagFilter.class);
+        ListWrapper<Tag, TagFilter> wrapper = tagRepository.getAll(tagFilter);
+        List<TagDto> tagDtoList = wrapper.getList().stream().map(t -> mapper.map(t, TagDto.class)).collect(toList());
 
-        return collect;
+        ListWrapperDto<TagDto, TagFilterDto> wrapperDto = new ListWrapperDto<>();
+        wrapperDto.setList(tagDtoList);
+        TagFilter filter = wrapper.getFilter();
+        wrapperDto.setFilterDto(mapper.map(filter, TagFilterDto.class));
+
+        return wrapperDto;
     }
 
 
@@ -93,10 +98,11 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
 
     }
 
+
     @Override
     public Optional<TagDto> get(Integer id) {
         Optional<TagDto> tagDtoOptional = Optional.empty();
-        Tag tag = tagRepository.get(id).orElseThrow(() -> new NotFoundException(id));
+        Tag tag = tagRepository.get(id).orElseThrow(() -> new NotFoundException("Tag not found exception"));
         TagDto tagDto = mapper.map(tag, TagDto.class);
 
 
@@ -117,21 +123,21 @@ public class TagServiceImpl implements TagService<TagDto, Integer> {
     }
 
     @Override
-    public void addTagToCertificate(Long certificateId, List<IdDto> list) {
+    public void addTagToCertificate(Long certificateId, Set<Long> list) {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Certificate not found: id:" + certificateId));
         list
                 .stream()
-                .map(idDto -> tagRepository.get((int) (long) idDto.getId()).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto.getId())))
+                .map(idDto -> tagRepository.get((int) (long) idDto).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto)))
                 .forEach(tag -> certificate.getTags().add(tag));
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Add Tag to Certificate: Tag update exception"));
     }
 
     @Override
-    public void deleteTagFromCertificate(Long certificateId, List<IdDto> list) {
+    public void deleteTagFromCertificate(Long certificateId, Set<Long> list) {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Delete Tag from Certificate: Tag not found: id:" + certificateId));
         list
                 .stream()
-                .map(idDto -> tagRepository.get((int) (long) idDto.getId()).orElseThrow(() -> new NotFoundException("Delete Tag to Certificate: Tag not found: id:" + idDto.getId())))
+                .map(idDto -> tagRepository.get((int) (long) idDto).orElseThrow(() -> new NotFoundException("Delete Tag to Certificate: Tag not found: id:" + idDto)))
                 .forEach(tag -> certificate.getTags().remove(tag));
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Delete Tag to Certificate: Tag update exception"));
     }

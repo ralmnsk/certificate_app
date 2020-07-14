@@ -1,7 +1,11 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.*;
+import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.filter.CertificateFilterDto;
+import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -27,20 +31,24 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/certificates")
 public class CertificateController {
-    private CertificateService<CertificateDto, Long> certificateService;
-    private TagService<TagDto, Integer> tagService;
+    private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
+    private TagService<TagDto, Integer, TagFilterDto> tagService;
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private CertificatePageBuilder certificatePageBuilder;
     private TagPageBuilder tagPageBuilder;
 
-    public CertificateController(CertificateService<CertificateDto, Long> certificateService, TagService<TagDto, Integer> tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, CertificatePageBuilder certificatePageBuilder, TagPageBuilder tagPageBuilder) {
+    public CertificateController(CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService,
+                                 TagService<TagDto, Integer, TagFilterDto> tagService,
+                                 ObjectMapper objectMapper, CertificateAssembler certificateAssembler,
+                                 CertificatePageBuilder certificatePageBuilder, TagPageBuilder tagPageBuilder) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
@@ -68,7 +76,7 @@ public class CertificateController {
 
             @RequestParam(required = false) List<String> sort
     ) {
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setTagName(tagName);
         filterDto.setCertificateName(certificateName);
         filterDto.setPage(page);
@@ -126,10 +134,10 @@ public class CertificateController {
 
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public CertificateDto addTagToCertificate(@PathVariable Long certificateId, @Valid @RequestBody List<IdDto> list) {
-        tagService.addTagToCertificate(certificateId, list);
+    public CertificateDto addTagToCertificate(@PathVariable Long certificateId, @Valid @RequestBody Set<Long> set) {
+        tagService.addTagToCertificate(certificateId, set);
 
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);
         CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
         return certificateAssembler.assemble(certificateId, certificateDto);
@@ -137,10 +145,10 @@ public class CertificateController {
 
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId, @Valid @RequestBody List<IdDto> list) {
-        tagService.deleteTagFromCertificate(certificateId, list);
+    public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId, @Valid @RequestBody Set<Long> set) {
+        tagService.deleteTagFromCertificate(certificateId, set);
 
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);
         CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
         return certificateAssembler.assemble(certificateId, certificateDto);

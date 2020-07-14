@@ -1,8 +1,8 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
+import com.epam.esm.model.filter.AbstractFilter;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CrudRepository<T, E> {
@@ -15,9 +15,6 @@ public interface CrudRepository<T, E> {
 
     boolean delete(E id);
 
-    List<T> getAll(Filter filter);
 
-    Filter getFilter();
-    void setFilter(Filter filer);
 
 }

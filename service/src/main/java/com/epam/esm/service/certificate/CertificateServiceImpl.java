@@ -1,13 +1,15 @@
 package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Order;
-import com.epam.esm.repository.crud.CertificateCrudRepository;
-import com.epam.esm.repository.crud.OrderCrudRepository;
+import com.epam.esm.model.filter.CertificateFilter;
+import com.epam.esm.model.filter.OrderFilter;
+import com.epam.esm.repository.crud.CertificateRepository;
+import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.FilterDto;
-import com.epam.esm.service.dto.IdDto;
+import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.filter.CertificateFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -20,22 +22,24 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
 @Transactional
 @Getter
-public class CertificateServiceImpl implements CertificateService<CertificateDto, Long> {
-    private FilterDto filterDto;
+public class CertificateServiceImpl implements CertificateService<CertificateDto, Long, CertificateFilterDto> {
 
-    private CertificateCrudRepository certificateRepository;
+    private CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository;
     private ModelMapper mapper;
-    private OrderCrudRepository orderRepository;
+    private OrderRepository<Order, Long, OrderFilter> orderRepository;
 
-    public CertificateServiceImpl(CertificateCrudRepository certificateRepository, ModelMapper mapper, OrderCrudRepository orderCrudRepository) {
+    public CertificateServiceImpl(CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository,
+                                  ModelMapper mapper,
+                                  OrderRepository<Order, Long, OrderFilter> orderRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
-        this.orderRepository = orderCrudRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override //save without tags
@@ -83,9 +87,10 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public List<CertificateDto> getAll(FilterDto filterDto) {
-        Filter filter = mapper.map(filterDto, Filter.class);
-        List<Certificate> certificates = certificateRepository.getAll(filter);
+    public ListWrapperDto<CertificateDto, CertificateFilterDto> getAll(CertificateFilterDto filterDto) {
+        CertificateFilter filter = mapper.map(filterDto, CertificateFilter.class);
+        ListWrapper<Certificate, CertificateFilter> wrapper = certificateRepository.getAll(filter);
+        List<Certificate> certificates = wrapper.getList();
         List<CertificateDto> dtoList = new ArrayList<>();
         for (Certificate c : certificates) {
             CertificateDto d = mapper.map(c, CertificateDto.class);
@@ -93,28 +98,30 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
             dtoList.add(d);
         }
 
-        filter = certificateRepository.getFilter();
-        this.filterDto = mapper.map(filter, FilterDto.class);
+        ListWrapperDto<CertificateDto, CertificateFilterDto> wrapperDto = new ListWrapperDto<>();
+        wrapperDto.setList(dtoList);
+        filter = wrapper.getFilter();
+        wrapperDto.setFilterDto(mapper.map(filter, CertificateFilterDto.class));
 
-        return dtoList;
+        return wrapperDto;
     }
 
     @Override
-    public void addCertificateToOrder(Long orderId, List<IdDto> list) {
+    public void addCertificateToOrder(Long orderId, Set<Long> list) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
         list
                 .stream()
-                .map(idDto -> certificateRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto.getId())))
+                .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().add(certificate));
         orderRepository.update(order).orElseThrow(() -> new UpdateException("Add Certificate to Order: Certificate update exception"));
     }
 
     @Override
-    public void deleteCertificateFromOrder(Long orderId, List<IdDto> list) {
+    public void deleteCertificateFromOrder(Long orderId, Set<Long> list) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
         list
                 .stream()
-                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto.getId())))
+                .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().remove(certificate));
         orderRepository.update(order).orElseThrow(() -> new UpdateException("Delete Certificate to Order: Certificate update exception"));
     }

@@ -1,7 +1,11 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.*;
+import com.epam.esm.service.dto.CertificateDto;
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.filter.CertificateFilterDto;
+import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
@@ -19,19 +23,20 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @Validated
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
 
-    private OrderService<OrderDto, Long> orderService;
+    private OrderService<OrderDto, Long, OrderFilterDto> orderService;
     private OrderAssembler orderAssembler;
     private OrderPageBuilder orderPageBuilder;
     private CertificatePageBuilder certificatePageBuilder;
-    private CertificateService<CertificateDto, Long> certificateService;
+    private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
 
-    public OrderController(OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long> certificateService) {
+    public OrderController(OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
@@ -85,14 +90,14 @@ public class OrderController {
             @Max(100) int size,
             @RequestParam(required = false) List<String> sort
     ) {
-        FilterDto filterDto = new FilterDto();
-        filterDto.setUserSurname(surname);
-        filterDto.setUserName(userName);
-        filterDto.setCertificateName(certificateName);
-        filterDto.setPage(page);
-        filterDto.setSize(size);
-        filterDto.setSortParams(sort);
-        CustomPageDto<OrderDto> build = orderPageBuilder.build(filterDto);
+        OrderFilterDto filter = new OrderFilterDto();
+        filter.setUserSurname(surname);
+        filter.setUserName(userName);
+        filter.setCertificateName(certificateName);
+        filter.setPage(page);
+        filter.setSize(size);
+        filter.setSortParams(sort);
+        CustomPageDto<OrderDto> build = orderPageBuilder.build(filter);
 
         return build;
     }
@@ -116,7 +121,7 @@ public class OrderController {
 
             @PathVariable Long orderId
     ) {
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateName(certificateName);
         filterDto.setPage(page);
         filterDto.setSize(size);
@@ -128,10 +133,10 @@ public class OrderController {
 
     @PutMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> list) {
-        certificateService.addCertificateToOrder(orderId, list);
+    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set) {
+        certificateService.addCertificateToOrder(orderId, set);
 
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setOrderId(orderId);
 
 
@@ -140,11 +145,12 @@ public class OrderController {
 
     @DeleteMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody List<IdDto> list) {
-        certificateService.deleteCertificateFromOrder(orderId, list);
+    public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set) {
+        certificateService.deleteCertificateFromOrder(orderId, set);
 
-        FilterDto filterDto = new FilterDto();
+        CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setOrderId(orderId);
+
 
         return certificatePageBuilder.build(filterDto);
     }

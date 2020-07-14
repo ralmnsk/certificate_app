@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order {
-    private Direction direction;
+public class FilterOrder {
+    private FilterDirection filterDirection;
     private String parameter;
 }

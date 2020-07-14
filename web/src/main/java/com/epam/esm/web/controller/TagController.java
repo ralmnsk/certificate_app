@@ -1,8 +1,8 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.FilterDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.tag.TagService;
@@ -24,16 +24,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/tags")
 public class TagController {
-    private final TagService<TagDto, Integer> tagService;
+    private final TagService<TagDto, Integer, TagFilterDto> tagService;
     private TagAssembler tagAssembler;
     private TagPageBuilder pageBuilder;
 
-    public TagController(TagService<TagDto, Integer> tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
+    public TagController(TagService<TagDto, Integer, TagFilterDto> tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
         this.tagService = tagService;
         this.tagAssembler = tagAssembler;
         this.pageBuilder = pageBuilder;
     }
-
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -51,7 +50,7 @@ public class TagController {
 
             @RequestParam(required = false) List<String> sort
     ) {
-        FilterDto filterDto = new FilterDto();
+        TagFilterDto filterDto = new TagFilterDto();
         filterDto.setTagName(tagName);
         filterDto.setPage(page);
         filterDto.setSize(size);

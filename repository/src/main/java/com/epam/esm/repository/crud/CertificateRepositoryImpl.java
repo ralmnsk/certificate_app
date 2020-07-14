@@ -1,7 +1,8 @@
 package com.epam.esm.repository.crud;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
+import com.epam.esm.model.filter.CertificateFilter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Repository;
@@ -13,19 +14,17 @@ import static com.epam.esm.repository.crud.Constants.COUNT;
 import static com.epam.esm.repository.crud.Constants.SELECT;
 
 @Repository
-@Getter
-@Setter
-public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> implements CertificateCrudRepository {
+public class CertificateRepositoryImpl extends AbstractRepository<Certificate, Long> implements CertificateRepository<Certificate,Long,CertificateFilter> {
     private final String EMPTY = "";
-    private QueryBuilder builder;
+    private QueryBuilder<CertificateFilter> builder;
 
-    public CertificateRepoImpl(QueryBuilder builder) {
+    public CertificateRepositoryImpl(QueryBuilder builder) {
         super(Certificate.class);
         this.builder = builder;
     }
 
     @Override
-    public List<Certificate> getAll(Filter filter) {
+    public ListWrapper<Certificate, CertificateFilter> getAll(CertificateFilter filter) {
 
         String ql = builder.assembleQlString(filter, Certificate.class, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, Certificate.class);
@@ -43,9 +42,12 @@ public class CertificateRepoImpl extends AbstractRepo<Certificate, Long> impleme
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
 
         filter = builder.updateFilter(filter, pageSize, countResult);
-        setFilter(filter);
 
-        return certificates;
+        ListWrapper<Certificate, CertificateFilter> wrapper = new ListWrapper<>();
+        wrapper.setList(certificates);
+        wrapper.setFilter(filter);
+
+        return wrapper;
     }
 
 

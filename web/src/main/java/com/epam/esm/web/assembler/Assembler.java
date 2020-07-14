@@ -1,10 +1,10 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import org.springframework.hateoas.CollectionModel;
 
-public interface Assembler<N, D> {
+public interface Assembler<N, D, F extends AbstractFilterDto> {
     D assemble(N number, D dto);
 
-    CollectionModel<D> toCollectionModel(FilterDto f);
+    CollectionModel<D> toCollectionModel(F f);
 }

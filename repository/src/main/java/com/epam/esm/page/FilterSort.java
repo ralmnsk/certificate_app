@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class Sort {
-    private List<Order> orders;
+public class FilterSort {
+    private List<FilterOrder> filterOrders;
 }

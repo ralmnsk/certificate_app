@@ -1,11 +1,11 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Tag;
+import com.epam.esm.model.filter.TagFilter;
 import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +13,10 @@ import java.util.Optional;
 import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
-@Getter
-public class TagRepoImpl extends AbstractRepo<Tag, Integer> implements TagCrudRepository {
-    private QueryBuilder queryBuilder;
+public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implements TagRepository<Tag, Integer, TagFilter> {
+    private QueryBuilder<TagFilter> queryBuilder;
 
-    public TagRepoImpl(QueryBuilder queryBuilder) {
+    public TagRepositoryImpl(QueryBuilder queryBuilder) {
         super(Tag.class);
         this.queryBuilder = queryBuilder;
     }
@@ -35,34 +34,27 @@ public class TagRepoImpl extends AbstractRepo<Tag, Integer> implements TagCrudRe
     }
 
     @Override
-    public void removeFromRelationByTagId(Integer tagId) {
-        EntityManager entityManager;
-        Query query = getEntityManager()
-                .createNativeQuery("delete from cert_tag where tag_id = :tagId")
-                .setParameter(TAG_ID, tagId);
-        query.executeUpdate();
-    }
-
-    @Override
-    public List<Tag> getAll(Filter filter) {
+    public ListWrapper<Tag, TagFilter> getAll(TagFilter tagFilter) {
 
         Query query = getEntityManager().createQuery("select distinct t from Tag t where t.name like :name order by t.name", Tag.class);
-        query.setParameter(NAME, PERCENT_START + filter.getTagName() + PERCENT_END);
-        int pageNumber = filter.getPage();
-        int pageSize = filter.getSize();
+        query.setParameter(NAME, PERCENT_START + tagFilter.getTagName() + PERCENT_END);
+        int pageNumber = tagFilter.getPage();
+        int pageSize = tagFilter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
         List<Tag> tags = query.getResultList();
 
         Query queryTotal = getEntityManager().createQuery
                 ("select distinct count(f.id) From Tag f where f.name like :name");
-        queryTotal.setParameter(NAME, PERCENT_START + filter.getTagName() + PERCENT_END);
+        queryTotal.setParameter(NAME, PERCENT_START + tagFilter.getTagName() + PERCENT_END);
         long countResult = (long) queryTotal.getSingleResult();
 
-        filter = queryBuilder.updateFilter(filter, pageSize, countResult);
-        setFilter(filter);
+        tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult);
+        ListWrapper<Tag, TagFilter> listWrapper = new ListWrapper<>();
+        listWrapper.setList(tags);
+        listWrapper.setFilter(tagFilter);
 
-        return tags;
+        return listWrapper;
     }
 
 }

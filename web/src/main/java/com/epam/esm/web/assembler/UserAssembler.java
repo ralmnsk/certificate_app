@@ -1,7 +1,9 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
+import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
@@ -14,10 +16,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class UserAssembler implements Assembler<Long, UserDto> {
-    private UserService<UserDto, Long> userService;
+public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
+    private UserService<UserDto, Long, UserFilterDto> userService;
 
-    public UserAssembler(UserService<UserDto, Long> userService) {
+    public UserAssembler(UserService<UserDto, Long, UserFilterDto> userService) {
         this.userService = userService;
     }
 
@@ -28,9 +30,10 @@ public class UserAssembler implements Assembler<Long, UserDto> {
         return userDto;
     }
 
-    public CollectionModel<UserDto> toCollectionModel(FilterDto filter) {
-        List<UserDto> users = userService.getAll(filter);
-        filter = userService.getFilterDto();
+    public CollectionModel<UserDto> toCollectionModel(UserFilterDto filter) {
+        ListWrapperDto<UserDto, UserFilterDto> wrapper = userService.getAll(filter);
+        List<UserDto> users = wrapper.getList();
+        filter = wrapper.getFilterDto();
 
         if (!users.isEmpty()) {
             users
@@ -48,7 +51,7 @@ public class UserAssembler implements Assembler<Long, UserDto> {
         return collectionModel;
     }
 
-    private void addNextPrevious(CollectionModel<UserDto> collectionModel, FilterDto filter) {
+    private void addNextPrevious(CollectionModel<UserDto> collectionModel, AbstractFilterDto filter) {
         int page = filter.getPage();
 
         if (page > 0 && page <= filter.getTotalPages()) {

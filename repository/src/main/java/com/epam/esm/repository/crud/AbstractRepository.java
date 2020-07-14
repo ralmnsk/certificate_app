@@ -1,27 +1,21 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.Filter;
 import com.epam.esm.model.Identifiable;
+import com.epam.esm.model.filter.AbstractFilter;
 import com.epam.esm.repository.CrudRepository;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
-@Getter
-@Setter
-public abstract class AbstractRepo<T extends Identifiable, E> implements CrudRepository<T, E> {
+public abstract class AbstractRepository<T extends Identifiable, E> implements CrudRepository<T, E> {
 
-
-    private Filter filter;
 
     @PersistenceContext
     private EntityManager entityManager;
     private Class<T> entity;
 
-    public AbstractRepo(Class<T> entity) {
+    public AbstractRepository(Class<T> entity) {
         this.entity = entity;
     }
 

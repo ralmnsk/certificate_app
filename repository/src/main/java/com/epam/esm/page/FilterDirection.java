@@ -1,6 +1,6 @@
 package com.epam.esm.page;
 
-public enum Direction {
+public enum FilterDirection {
     ASC,
     DESC
 }

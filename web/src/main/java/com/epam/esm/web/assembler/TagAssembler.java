@@ -1,7 +1,9 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.TagDto;
+import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.controller.TagController;
 import org.springframework.hateoas.CollectionModel;
@@ -14,10 +16,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class TagAssembler implements Assembler<Long, TagDto> {
-    private TagService<TagDto, Integer> tagService;
+public class TagAssembler implements Assembler<Long, TagDto,TagFilterDto> {
+    private TagService tagService;
 
-    public TagAssembler(TagService<TagDto, Integer> tagService) {
+    public TagAssembler(TagService tagService) {
         this.tagService = tagService;
     }
 
@@ -31,9 +33,10 @@ public class TagAssembler implements Assembler<Long, TagDto> {
     }
 
     @Override
-    public CollectionModel<TagDto> toCollectionModel(FilterDto filter) {
-        List<TagDto> tags = tagService.getAll(filter);
-        filter = tagService.getFilterDto();
+    public CollectionModel<TagDto> toCollectionModel(TagFilterDto filter) {
+        ListWrapperDto<TagDto, TagFilterDto> wrapperDto = tagService.getAll(filter);
+        List<TagDto> tags = wrapperDto.getList();
+        filter = wrapperDto.getFilterDto();
 
         if (!tags.isEmpty()) {
             tags.forEach(c -> {

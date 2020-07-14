@@ -1,7 +1,9 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.controller.OrderController;
 import com.epam.esm.web.controller.UserController;
@@ -15,10 +17,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OrderAssembler implements Assembler<Long, OrderDto> {
-    private OrderService<OrderDto, Long> orderService;
+public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto> {
+    private OrderService<OrderDto, Long,OrderFilterDto> orderService;
 
-    public OrderAssembler(OrderService<OrderDto, Long> orderService) {
+    public OrderAssembler(OrderService<OrderDto, Long,OrderFilterDto> orderService) {
         this.orderService = orderService;
     }
 
@@ -30,8 +32,10 @@ public class OrderAssembler implements Assembler<Long, OrderDto> {
     }
 
 
-    public CollectionModel<OrderDto> toCollectionModel(FilterDto filter) {
-        List<OrderDto> orders = orderService.getAll(filter);
+    public CollectionModel<OrderDto> toCollectionModel(OrderFilterDto filter) {
+        ListWrapperDto<OrderDto, OrderFilterDto> wrapper = orderService.getAll(filter);
+        List<OrderDto> orders = wrapper.getList();
+        filter = wrapper.getFilterDto();
         orders.forEach(o -> {
             Link selfLink = linkTo(methodOn(OrderController.class).get(o.getId())).withSelfRel();
             o.add(selfLink);
@@ -45,7 +49,6 @@ public class OrderAssembler implements Assembler<Long, OrderDto> {
                             filter.getPage(), filter.getSize(), filter.getSortParams(),
                             filter.getUserId())).withRel("user id:" + filter.getUserId() + " orders");
             collectionModel.add(link);
-            filter = orderService.getFilterDto();
             addNextPrevious(collectionModel, filter);
         } else {
             Link link = linkTo(methodOn(OrderController.class)
@@ -56,7 +59,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto> {
         return collectionModel;
     }
 
-    private void addNextPrevious(CollectionModel<OrderDto> collectionModel, FilterDto filter) {
+    private void addNextPrevious(CollectionModel<OrderDto> collectionModel, AbstractFilterDto filter) {
         int page = filter.getPage();
 
         if (page > 0 && page <= filter.getTotalPages()) {

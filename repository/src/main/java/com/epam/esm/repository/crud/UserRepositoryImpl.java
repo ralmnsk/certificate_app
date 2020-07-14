@@ -1,7 +1,8 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
+import com.epam.esm.model.filter.UserFilter;
 import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
@@ -11,27 +12,23 @@ import java.util.List;
 import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
-@Getter
-public class UserCrudRepoImpl extends AbstractRepo<User, Long> implements UserCrudRepository {
-    private QueryBuilder builder;
+public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository<User, Long, UserFilter> {
+    private QueryBuilder<UserFilter> builder;
 
-    public UserCrudRepoImpl(QueryBuilder builder) {
+    public UserRepositoryImpl(QueryBuilder builder) {
         super(User.class);
         this.builder = builder;
     }
 
-//    @Override
-//    public Optional<User> getUserIdByOrderId(Long orderId) {
-//
-//        Query query = getEntityManager().createQuery("select b from User b join b.orders u where u.id = :orderId", User.class);
-//        query.setParameter("orderId", orderId);
-//        User user = (User) query.getSingleResult();
-//
-//        return Optional.ofNullable(user);
-//    }
+    @Override
+    public User findByLogin(String login) {
+        Query query = getEntityManager().createNativeQuery("select * from users where users.login = :login", User.class);
+        query.setParameter("login", login);
+        return (User) query.getSingleResult();
+    }
 
     @Override
-    public List<User> getAll(Filter filter) {
+    public ListWrapper<User, UserFilter> getAll(UserFilter filter) {
         String ql = assembleQlString(filter, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, User.class);
         query.setParameter("name", PERCENT_START + filter.getUserName() + PERCENT_END);
@@ -48,12 +45,14 @@ public class UserCrudRepoImpl extends AbstractRepo<User, Long> implements UserCr
         long countResult = Long.valueOf(queryCount.getSingleResult().toString());
 
         filter = builder.updateFilter(filter, pageSize, countResult);
-        setFilter(filter);
+        ListWrapper<User, UserFilter> listWrapper = new ListWrapper<>();
+        listWrapper.setList(users);
+        listWrapper.setFilter(filter);
 
-        return users;
+        return listWrapper;
     }
 
-    private String assembleQlString(Filter filter, String selecting) {
+    private String assembleQlString(UserFilter filter, String selecting) {
         String select = "select distinct * ";
         String count = "select count(*) from (";
         String ql = select + " from users where surname like :surname and name like :name ";

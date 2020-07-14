@@ -1,6 +1,11 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.*;
+import com.epam.esm.service.dto.CustomPageDto;
+import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UserDtoSave;
+import com.epam.esm.service.dto.filter.OrderFilterDto;
+import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
@@ -20,6 +25,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 
 @Validated
 @RestController
@@ -27,14 +33,14 @@ import java.util.List;
 public class UserController {
 
     private OrderPageBuilder orderPageBuilder;
-    private UserService<UserDto, Long> userService;
+    private UserService<UserDto, Long, UserFilterDto> userService;
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
     private ModelMapper mapper;
-    private OrderService<OrderDto, Long> orderService;
+    private OrderService<OrderDto, Long, OrderFilterDto> orderService;
     private OrderAssembler orderAssembler;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long> orderService, OrderAssembler orderAssembler) {
+    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long, UserFilterDto> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
@@ -95,7 +101,7 @@ public class UserController {
 
             @RequestParam(required = false) List<String> sort
     ) {
-        FilterDto filterDto = new FilterDto();
+        UserFilterDto filterDto = new UserFilterDto();
         filterDto.setUserSurname(surname);
         filterDto.setUserName(name);
         filterDto.setPage(page);
@@ -128,7 +134,7 @@ public class UserController {
             @PathVariable Long userId) {
 
 
-        FilterDto filterDto = new FilterDto();
+        OrderFilterDto filterDto = new OrderFilterDto();
         filterDto.setUserSurname(surname);
         filterDto.setUserName(userName);
         filterDto.setPage(page);
@@ -142,20 +148,20 @@ public class UserController {
 
     @PutMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody List<IdDto> list) {
-        orderService.addOrderToUser(userId, list);
+    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set) {
+        orderService.addOrderToUser(userId, set);
 
-        FilterDto filterDto = new FilterDto();
+        OrderFilterDto filterDto = new OrderFilterDto();
         filterDto.setUserId(userId);
         return orderPageBuilder.build(filterDto);
     }
 
     @DeleteMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody List<IdDto> list) {
-        orderService.deleteOrderFromUser(userId, list);
+    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set) {
+        orderService.deleteOrderFromUser(userId, set);
 
-        FilterDto filterDto = new FilterDto();
+        OrderFilterDto filterDto = new OrderFilterDto();
         filterDto.setUserId(userId);
         return orderPageBuilder.build(filterDto);
     }

@@ -1,14 +1,20 @@
 package com.epam.esm.web.page;
 
-import com.epam.esm.page.Direction;
-import com.epam.esm.page.Order;
-import com.epam.esm.page.Sort;
+import com.epam.esm.page.FilterDirection;
+import com.epam.esm.page.FilterOrder;
+import com.epam.esm.page.FilterSort;
 import com.epam.esm.service.CrudService;
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.FilterDto;
+import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
+import com.epam.esm.service.dto.filter.UserFilterDto;
+import com.epam.esm.service.user.UserService;
+import com.epam.esm.service.user.UserServiceImpl;
 import com.epam.esm.web.assembler.Assembler;
 import org.springframework.hateoas.CollectionModel;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class AbstractPageBuilder<T, S extends CrudService, A extends Assembler> {
+public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
     private final String EMPTY = "";
     private Set<String> fieldSet;
     private S service;
@@ -28,103 +34,95 @@ public class AbstractPageBuilder<T, S extends CrudService, A extends Assembler> 
         this.assembler = assembler;
     }
 
-    public CustomPageDto<T> build(FilterDto filterDto) {
-        CustomPageDto<T> page = new CustomPageDto<>();
-        filterDto = validateFilter(filterDto);
-
-        filterDto = setSort(filterDto);
-        service.getAll(filterDto);
-        CollectionModel<T> collectionModel = getCollectionModel(filterDto);
-
-        filterDto = service.getFilterDto();
-        page.setSize(filterDto.getSize());
-        page.setTotalElements(filterDto.getTotalElements());
-        page.setPage(filterDto.getPage());
-        page.setElements(collectionModel);
-        page.setTotalPage(filterDto.getTotalPages());
-
-        return page;
+    public S getService() {
+        return service;
     }
 
-    private CollectionModel<T> getCollectionModel(FilterDto filterDto) {
+    public void setService(S service) {
+        this.service = service;
+    }
+
+    public abstract CustomPageDto<T> build(F filterDto);
+
+    public CollectionModel<T> getCollectionModel(F filterDto) {
         return assembler.toCollectionModel(filterDto);
     }
 
-    public FilterDto setSort(FilterDto filterDto) {
+    public F setSort(F filterDto) {
         List<String> paramsNonFiltered = filterDto.getSortParams();
         List<String> params = paramsNonFiltered.stream().filter(Objects::nonNull).collect(Collectors.toList());
-        Sort sort = getSort(params);
-        filterDto.setSort(sort);
+        FilterSort filterSort = getSort(params);
+        filterDto.setFilterSort(filterSort);
         return filterDto;
     }
 
-    public FilterDto validateFilter(FilterDto filter) {
-        if (filter.getTagName() == null) {
-            filter.setTagName(EMPTY);
+    public F validateFilter(F filterDto) {
+        if (filterDto.getTagName() == null) {
+            filterDto.setTagName(EMPTY);
         }
-        if (filter.getCertificateName() == null) {
-            filter.setCertificateName(EMPTY);
+        if (filterDto.getCertificateName() == null) {
+            filterDto.setCertificateName(EMPTY);
         }
-        if (filter.getUserSurname() == null) {
-            filter.setUserSurname(EMPTY);
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
         }
-        if (filter.getCreation() == null) {
-            filter.setCreation("1970-01-01 00:00:00");
+        if (filterDto.getCreation() == null) {
+            filterDto.setCreation("1970-01-01 00:00:00");
         }
-        if (filter.getModification() == null) {
-            filter.setModification("1970-01-01 00:00:00");
+        if (filterDto.getModification() == null) {
+            filterDto.setModification("1970-01-01 00:00:00");
         }
-        if (filter.getDescription() == null) {
-            filter.setDescription(EMPTY);
+        if (filterDto.getDescription() == null) {
+            filterDto.setDescription(EMPTY);
         }
-        if (filter.getPrice() == null) {
-            filter.setPrice(new BigDecimal(0.00));
+        if (filterDto.getPrice() == null) {
+            filterDto.setPrice(new BigDecimal(0.00));
         }
-        if (filter.getDuration() == null) {
-            filter.setDuration(0);
+        if (filterDto.getDuration() == null) {
+            filterDto.setDuration(0);
         }
-        if (filter.getUserSurname() == null) {
-            filter.setUserSurname(EMPTY);
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
         }
-        if (filter.getUserName() == null) {
-            filter.setUserName(EMPTY);
+        if (filterDto.getUserName() == null) {
+            filterDto.setUserName(EMPTY);
         }
-        if (filter.getSize() == 0) {
-            filter.setSize(5);
+        if (filterDto.getSize() == 0) {
+            filterDto.setSize(5);
         }
-        if (filter.getPage() == 0) {
-            filter.setPage(0);
+        if (filterDto.getPage() == 0) {
+            filterDto.setPage(0);
         }
-        if (filter.getSortParams() == null) {
+        if (filterDto.getSortParams() == null) {
             List<String> params = new ArrayList<>();
             params.add("name+");
-            filter.setSortParams(params);
+            filterDto.setSortParams(params);
         }
 
-        return filter;
+        return filterDto;
     }
 
 
-    public Sort getSort(List<String> params) {
-        List<Order> orders = new ArrayList<>();
+    public FilterSort getSort(List<String> params) {
+        List<FilterOrder> filterOrders = new ArrayList<>();
         for (String param : params) {
             if (param.matches("[a-z.]{0,20}(([+]{0,1})|([-]{0,1}))")) {
-                com.epam.esm.page.Direction direction = com.epam.esm.page.Direction.DESC;
+                FilterDirection filterDirection = FilterDirection.DESC;
                 param = param.trim();
                 if (param.contains("+")) {
-                    direction = Direction.ASC;
+                    filterDirection = FilterDirection.ASC;
                     param = param.replace("+", "");
                 } else {
                     param = param.replace("-", "");
                 }
                 if (fieldSet.contains(param)) {
-                    Order order = new Order(direction, param);
-                    orders.add(order);
+                    FilterOrder filterOrder = new FilterOrder(filterDirection, param);
+                    filterOrders.add(filterOrder);
                 }
             }
         }
-        Sort sort = new Sort();
-        sort.setOrders(orders);
-        return sort;
+        FilterSort filterSort = new FilterSort();
+        filterSort.setFilterOrders(filterOrders);
+        return filterSort;
     }
 }

@@ -1,18 +1,19 @@
 package com.epam.esm.service.order;
 
-import com.epam.esm.model.Filter;
+import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
-import com.epam.esm.repository.crud.OrderCrudRepository;
-import com.epam.esm.repository.crud.UserCrudRepository;
+import com.epam.esm.model.filter.OrderFilter;
+import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.repository.crud.OrderRepository;
+import com.epam.esm.repository.crud.UserRepository;
 import com.epam.esm.service.calculator.TotalCostCalculator;
-import com.epam.esm.service.dto.FilterDto;
-import com.epam.esm.service.dto.IdDto;
+import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -20,21 +21,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Getter
 @Transactional
-public class OrderServiceImpl implements OrderService<OrderDto, Long> {
-    private FilterDto filterDto;
+public class OrderServiceImpl implements OrderService<OrderDto, Long, OrderFilterDto> {
 
-    private OrderCrudRepository orderRepository;
+    private OrderRepository<Order, Long, OrderFilter> orderRepository;
     private ModelMapper mapper;
     private TotalCostCalculator calculator;
-    private UserCrudRepository userRepository;
+    private UserRepository<User, Long, UserFilter> userRepository;
 
-    public OrderServiceImpl(OrderCrudRepository orderRepository, ModelMapper mapper, TotalCostCalculator calculator, UserCrudRepository userRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper mapper, TotalCostCalculator calculator,
+                            UserRepository<User, Long, UserFilter> userRepository) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.calculator = calculator;
@@ -86,37 +87,40 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long> {
     }
 
     @Override
-    public List<OrderDto> getAll(FilterDto filterDto) {
-        Filter filter = mapper.map(filterDto, Filter.class);
-        List<Order> orders = orderRepository.getAll(filter);
+    public ListWrapperDto<OrderDto, OrderFilterDto> getAll(OrderFilterDto filterDto) {
+        OrderFilter filter = mapper.map(filterDto, OrderFilter.class);
+        ListWrapper<Order, OrderFilter> wrapper = orderRepository.getAll(filter);
+        List<Order> orders = wrapper.getList();
         List<OrderDto> dtoList = orders
                 .stream()
                 .map(o -> mapper.map(o, OrderDto.class))
                 .collect(Collectors.toList());
         dtoList.forEach(d -> d.getCertificates().clear());
 
-        filter = orderRepository.getFilter();
-        this.filterDto = mapper.map(filter, FilterDto.class);
+        ListWrapperDto<OrderDto, OrderFilterDto> wrapperDto = new ListWrapperDto<>();
+        wrapperDto.setList(dtoList);
+        filter = wrapper.getFilter();
+        wrapperDto.setFilterDto(mapper.map(filter, OrderFilterDto.class));
 
-        return dtoList;
+        return wrapperDto;
     }
 
     @Override
-    public void addOrderToUser(Long userId, List<IdDto> list) {
+    public void addOrderToUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
         list
                 .stream()
-                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto.getId())))
+                .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
                 .forEach(order -> user.getOrders().add(order));
         userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
     }
 
     @Override
-    public void deleteOrderFromUser(Long userId, List<IdDto> list) {
+    public void deleteOrderFromUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
         list
                 .stream()
-                .map(idDto -> orderRepository.get(idDto.getId()).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto.getId())))
+                .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
                 .forEach(order -> user.getOrders().remove(order));
         userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
     }
