@@ -6,11 +6,9 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Range;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.*;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -21,9 +19,7 @@ import java.util.Set;
 @JsonRootName("certificate")
 @Relation(collectionRelation = "certificates")
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
-public class CertificateDto extends RepresentationModel<CertificateDto> implements Serializable {
-
-    private Long id;
+public class CertificateDto extends IdentifiableDto<Long> {
 
     @NotNull(message = "Name must be not null")
     @Size(min = 2, max = 256, message

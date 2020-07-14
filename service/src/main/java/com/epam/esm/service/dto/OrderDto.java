@@ -25,8 +25,7 @@ import java.util.Set;
 @JsonRootName("order")
 @Relation(collectionRelation = "orders")
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created", "totalCost"})
-public class OrderDto extends RepresentationModel<OrderDto> implements Serializable {
-    private Long id;
+public class OrderDto extends IdentifiableDto<Long> {
 
     @Size(min = 0, max = 999, message = "Description must be between 0 and 999 characters")
     private String description;

@@ -32,10 +32,10 @@ public class RegistrationService {
         userDto.setPassword(passwordEncoder.encode(registrationUser.getPassword()));
         userDto.setRole(Role.USER);
 
-        userDto = userService.save(userDto).orElseThrow(() -> new SaveException("Registration User save exception"));
+        userDto = userService.save(userDto).orElseThrow(() -> new SaveException("Registration User save exception, may be user already exists"));
         registrationUser = modelMapper.map(userDto, UserRegistrationDto.class);
         log.info("IN register - user: {} successfully registered", registrationUser);
-
+        registrationUser.setPassword("[protected]");
         return registrationUser;
     }
 

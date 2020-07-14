@@ -107,9 +107,9 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public void addCertificateToOrder(Long orderId, Set<Long> list) {
+    public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
-        list
+        set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().add(certificate));
@@ -117,11 +117,11 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public void deleteCertificateFromOrder(Long orderId, Set<Long> list) {
+    public void deleteCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
-        list
+        set
                 .stream()
-                .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))
+                .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().remove(certificate));
         orderRepository.update(order).orElseThrow(() -> new UpdateException("Delete Certificate to Order: Certificate update exception"));
     }

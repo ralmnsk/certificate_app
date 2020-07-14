@@ -3,7 +3,6 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.CustomPageDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.UserDtoSave;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
@@ -51,8 +50,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody UserDtoSave userDtoSave) {
-        UserDto userDto = mapper.map(userDtoSave, UserDto.class);
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
         userDto = userService.save(userDto).orElseThrow(() -> new SaveException("User save exception"));
         return userAssembler.assemble(userDto.getId(), userDto);
     }
@@ -65,9 +63,8 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserDtoSave userDtoSave, @PathVariable Long id) {
-        userDtoSave.setId(id);
-        UserDto userDto = mapper.map(userDtoSave, UserDto.class);
+    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long id) {
+        userDto.setId(id);
         userDto = userService.update(userDto).orElseThrow(() -> new NotFoundException(id));
         return userAssembler.assemble(id, userDto);
     }

@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String LOGIN = "/login";
+    private static final String REGISTER = "/register";
     private static final String TAGS = "/tags/**";
     private static final String CERTIFICATES = "/certificates/**";
     private static final String USERS = "/users/**";
@@ -55,21 +56,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-                .authorizeRequests()
-                .antMatchers("/**").permitAll()
-
 //                .authorizeRequests()
-//                .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
-//                .antMatchers(HttpMethod.POST, USERS).permitAll()
-//                .antMatchers(LOGIN).permitAll()
-//                .antMatchers(HttpMethod.GET, TAGS).hasRole (USER)
-//                .antMatchers(HttpMethod.GET, USERS).hasRole(USER)
-//                .antMatchers(HttpMethod.PUT, USERS).hasRole(USER)
-//                .antMatchers(HttpMethod.POST, ORDERS).hasRole(USER)
-//                .antMatchers(HttpMethod.GET, ORDERS).hasRole(USER)
-//                .antMatchers(HttpMethod.PUT, ORDERS).hasRole(USER)
-//                .antMatchers(HttpMethod.DELETE, ORDERS).hasRole(USER)
-//                .anyRequest().hasRole(ADMIN)
+//                .antMatchers("/**").permitAll()
+
+                .authorizeRequests()
+                .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
+                .antMatchers(LOGIN).permitAll()
+                .antMatchers(REGISTER).permitAll()
+
+                .antMatchers(HttpMethod.POST, ORDERS).hasRole(USER)
+                .antMatchers(HttpMethod.PUT, ORDERS).hasRole(USER)
+                .antMatchers(HttpMethod.GET, ORDERS).hasRole(USER)
+                .antMatchers(HttpMethod.GET, TAGS).hasRole(USER)
+                .antMatchers(HttpMethod.GET, USERS).hasRole(USER)
+
+                .antMatchers(HttpMethod.PUT, USERS).hasRole(USER)
+                .antMatchers(HttpMethod.DELETE, ORDERS).hasRole(USER)
+                .anyRequest().hasRole(ADMIN)
 
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

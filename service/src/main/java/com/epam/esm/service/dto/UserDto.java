@@ -6,25 +6,19 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-//@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @JsonRootName("user")
 @Relation(collectionRelation = "users")
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"creation", "modification"})
-//@JsonDeserialize(using = UserDeserializer.class)
-public class UserDto extends RepresentationModel<UserDto> implements Serializable {
-    private Long id;
+public class UserDto extends IdentifiableDto<Long> {
 
     @NotNull(message = "Surname must be not null")
     @Size(min = 2, max = 64, message = "User surname must be between 2 and 64 characters")

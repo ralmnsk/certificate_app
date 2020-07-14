@@ -2,6 +2,7 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.ExceptionResponseDto;
 import com.epam.esm.service.exception.*;
+import com.epam.esm.web.security.jwt.JwtAuthenticationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -154,17 +155,24 @@ public class AdviceController {
     }
 
 
-//    @ResponseBody
-//    @ExceptionHandler(Throwable.class)
-//    @ResponseStatus(BAD_REQUEST)
-//    public ExceptionResponseDto throwable(Throwable ex) {
-//        Throwable e = ex;
-//        String message = e.getMessage();
-//        while (e != null) {
-//            message = e.getMessage();
-//            e = e.getCause();
-//        }
-//        return new ExceptionResponseDto("Exception",
-//                "Exception happened:" + message);
-//    }
+    @ExceptionHandler(JwtAuthenticationException.class)
+    @ResponseStatus(FORBIDDEN)
+    public ExceptionResponseDto exception(JwtAuthenticationException ex) {
+        return new ExceptionResponseDto("JwtAuthenticationException",
+                ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponseDto throwable(Throwable ex) {
+        Throwable e = ex;
+        String message = e.getMessage();
+        while (e != null) {
+            message = e.getMessage();
+            e = e.getCause();
+        }
+        return new ExceptionResponseDto("Exception",
+                "Exception happened:" + message);
+    }
 }
