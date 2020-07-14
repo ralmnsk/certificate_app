@@ -13,6 +13,7 @@ import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
+import com.epam.esm.web.security.config.WebSecurity;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +40,9 @@ public class UserController {
     private ModelMapper mapper;
     private OrderService<OrderDto, Long, OrderFilterDto> orderService;
     private OrderAssembler orderAssembler;
+    private WebSecurity webSecurity;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long, UserFilterDto> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler) {
+    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long, UserFilterDto> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, WebSecurity webSecurity) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
@@ -47,6 +50,7 @@ public class UserController {
         this.mapper = mapper;
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
+        this.webSecurity = webSecurity;
     }
 
     @PostMapping
@@ -56,21 +60,24 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto get(@PathVariable Long id) {
+    public UserDto get(@PathVariable Long id, Principal principal) {
+        webSecurity.checkUserId(principal, id);
         UserDto userDto = userService.get(id).orElseThrow(() -> new NotFoundException(id));
         return userAssembler.assemble(id, userDto);
     }
 
 
     @PutMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long id) {
+    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long id, Principal principal) {
+        webSecurity.checkUserId(principal, id);
         userDto.setId(id);
         userDto = userService.update(userDto).orElseThrow(() -> new NotFoundException(id));
         return userAssembler.assemble(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id, Principal principal) {
+        webSecurity.checkUserId(principal, id);
         if (userService.delete(id)) {
             return ResponseEntity.noContent().build();
         }
@@ -128,8 +135,11 @@ public class UserController {
 
             @RequestParam(required = false) List<String> sort,
 
-            @PathVariable Long userId) {
+            @PathVariable Long userId,
 
+            Principal principal
+    ) {
+        webSecurity.checkUserId(principal, userId);
 
         OrderFilterDto filterDto = new OrderFilterDto();
         filterDto.setUserSurname(surname);
@@ -145,7 +155,9 @@ public class UserController {
 
     @PutMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set) {
+    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
+                                                  Principal principal) {
+        webSecurity.checkUserId(principal, userId);
         orderService.addOrderToUser(userId, set);
 
         OrderFilterDto filterDto = new OrderFilterDto();
@@ -155,7 +167,9 @@ public class UserController {
 
     @DeleteMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set) {
+    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
+                                                       Principal principal) {
+        webSecurity.checkUserId(principal, userId);
         orderService.deleteOrderFromUser(userId, set);
 
         OrderFilterDto filterDto = new OrderFilterDto();

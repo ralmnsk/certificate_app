@@ -1,19 +1,16 @@
 package com.epam.esm.web.security.controller;
 
 import com.epam.esm.web.security.dto.LoginDto;
-import com.epam.esm.web.security.dto.UserRegistrationDto;
+import com.epam.esm.web.security.dto.RegistrationDto;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import com.epam.esm.web.security.service.OAuthService;
 import com.epam.esm.web.security.service.RegistrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +45,7 @@ public class GateController {
         try {
             String login = loginDto.getLogin();
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, userRegistrationDto.getPassword()));
-            UserRegistrationDto userDetails = oAuthService.getUserDetails(login);
+            RegistrationDto userDetails = oAuthService.getUserDetails(login);
 
             if (userDetails == null) {
                 throw new UsernameNotFoundException("User with username: " + login + " not found");
@@ -74,8 +71,8 @@ public class GateController {
     }
 
     @PostMapping("/register")
-    public UserRegistrationDto register(@Valid @RequestBody UserRegistrationDto userRegistrationDto){
-        UserRegistrationDto registeredUser = registrationService.register(userRegistrationDto);
+    public RegistrationDto register(@Valid @RequestBody RegistrationDto registrationDto){
+        RegistrationDto registeredUser = registrationService.register(registrationDto);
         return registeredUser;
     }
 }

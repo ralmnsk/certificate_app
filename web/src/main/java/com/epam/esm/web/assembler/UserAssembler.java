@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -24,7 +25,13 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
     }
 
     public UserDto assemble(Long id, UserDto userDto) {
-        Link linkSelf = linkTo(methodOn(UserController.class).get(userDto.getId())).withSelfRel();
+        Link linkSelf = linkTo(methodOn(UserController.class).get(userDto.getId(),
+                new Principal() {
+                    @Override
+                    public String getName() {
+                        return null;
+                    }
+                })).withSelfRel();
         userDto.add(linkSelf);
 
         return userDto;
@@ -38,7 +45,12 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         if (!users.isEmpty()) {
             users
                     .forEach(u -> {
-                        Link link = linkTo(methodOn(UserController.class).get(u.getId())).withSelfRel();
+                        Link link = linkTo(methodOn(UserController.class).get(u.getId(), new Principal() {
+                            @Override
+                            public String getName() {
+                                return null;
+                            }
+                        })).withSelfRel();
                         u.add(link);
                     });
         }

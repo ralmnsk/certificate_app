@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -52,7 +53,14 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getPage(),
                             filter.getSize(),
                             filter.getSortParams(),
-                            filter.getOrderId())
+                            filter.getOrderId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
+                    )
             ).withRel("order id:" + filter.getOrderId() + " certificates");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
@@ -81,7 +89,13 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getPage() - 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            filter.getOrderId()
+                            filter.getOrderId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
                     )).withRel("order id:" + filter.getOrderId() + " certificates previous page");
             collectionModel.add(link);
         }
@@ -93,7 +107,13 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getPage() + 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            filter.getOrderId()
+                            filter.getOrderId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
                     )).withRel("order id:" + filter.getOrderId() + " certificates next page");
             collectionModel.add(link);
         }

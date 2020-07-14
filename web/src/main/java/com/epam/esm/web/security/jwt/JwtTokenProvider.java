@@ -1,5 +1,6 @@
 package com.epam.esm.web.security.jwt;
 
+import com.epam.esm.service.exception.JwtUserAuthenticationException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,8 +70,8 @@ public class JwtTokenProvider {
                 return false;
             }
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+        } catch (JwtException | IllegalArgumentException  e) {
+            throw new JwtUserAuthenticationException("JWT token is expired or invalid");
         }
     }
 

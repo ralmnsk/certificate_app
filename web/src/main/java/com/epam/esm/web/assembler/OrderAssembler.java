@@ -1,8 +1,8 @@
 package com.epam.esm.web.assembler;
 
 import com.epam.esm.service.dto.ListWrapperDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.controller.OrderController;
@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,7 +26,14 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
     }
 
     public OrderDto assemble(Long orderId, OrderDto orderDto) {
-        Link linkSelfOrder = linkTo(methodOn(OrderController.class).get(orderDto.getId())).withSelfRel();
+        Link linkSelfOrder = linkTo(methodOn(OrderController.class).get(orderDto.getId(),
+                new Principal() {
+                    @Override
+                    public String getName() {
+                        return null;
+                    }
+                }
+        )).withSelfRel();
         orderDto.add(linkSelfOrder);
 
         return orderDto;
@@ -37,7 +45,14 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
         List<OrderDto> orders = wrapper.getList();
         filter = wrapper.getFilterDto();
         orders.forEach(o -> {
-            Link selfLink = linkTo(methodOn(OrderController.class).get(o.getId())).withSelfRel();
+            Link selfLink = linkTo(methodOn(OrderController.class).get(o.getId(),
+                    new Principal() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
+                    }
+            )).withSelfRel();
             o.add(selfLink);
         });
 
@@ -47,7 +62,14 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                     .getAllOrdersByUserId(filter.getUserSurname(),
                             filter.getUserName(),
                             filter.getPage(), filter.getSize(), filter.getSortParams(),
-                            filter.getUserId())).withRel("user id:" + filter.getUserId() + " orders");
+                            filter.getUserId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
+                    )).withRel("user id:" + filter.getUserId() + " orders");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
         } else {
@@ -69,7 +91,13 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getPage() - 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            filter.getUserId()
+                            filter.getUserId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
                     )).withRel("user id:" + filter.getUserId() + " orders previous page");
             collectionModel.add(link);
         }
@@ -81,7 +109,13 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getPage() + 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            filter.getUserId()
+                            filter.getUserId(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
                     )).withRel("user id:" + filter.getUserId() + " orders next page");
             collectionModel.add(link);
         }

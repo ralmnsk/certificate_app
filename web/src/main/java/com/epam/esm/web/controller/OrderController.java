@@ -12,16 +12,16 @@ import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
+import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -35,13 +35,15 @@ public class OrderController {
     private OrderPageBuilder orderPageBuilder;
     private CertificatePageBuilder certificatePageBuilder;
     private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
+    private WebSecurity webSecurity;
 
-    public OrderController(OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService) {
+    public OrderController(OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService, WebSecurity webSecurity) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
         this.certificatePageBuilder = certificatePageBuilder;
         this.certificateService = certificateService;
+        this.webSecurity = webSecurity;
     }
 
     @PostMapping
@@ -51,22 +53,25 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public OrderDto get(@PathVariable Long id) {
+    public OrderDto get(@PathVariable Long id, Principal principal) {
+        webSecurity.checkOrderId(principal, id);
         OrderDto orderDto = orderService.get(id).orElseThrow(() -> new NotFoundException(id));
         return orderAssembler.assemble(id, orderDto);
     }
 
     @PutMapping("/{id}")
-    public OrderDto update(@Valid @RequestBody OrderDto orderDto, @PathVariable Long id) {
+    public OrderDto update(@Valid @RequestBody OrderDto orderDto, @PathVariable Long id, Principal principal) {
+        webSecurity.checkOrderId(principal, id);
         orderDto.setId(id);
         orderDto = orderService.update(orderDto).orElseThrow(() -> new NotFoundException(id));
         return orderAssembler.assemble(id, orderDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, HttpServletResponse response) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id, Principal principal) {
+        webSecurity.checkOrderId(principal, id);
         orderService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -119,8 +124,10 @@ public class OrderController {
 
             @RequestParam(required = false) List<String> sort,
 
-            @PathVariable Long orderId
+            @PathVariable Long orderId,
+            Principal principal
     ) {
+        webSecurity.checkOrderId(principal, orderId);
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateName(certificateName);
         filterDto.setPage(page);
@@ -133,7 +140,9 @@ public class OrderController {
 
     @PutMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set) {
+    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
+                                                               Principal principal) {
+        webSecurity.checkOrderId(principal, orderId);
         certificateService.addCertificateToOrder(orderId, set);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
@@ -145,7 +154,9 @@ public class OrderController {
 
     @DeleteMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set) {
+    public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
+                                                                    Principal principal) {
+        webSecurity.checkOrderId(principal, orderId);
         certificateService.deleteCertificateFromOrder(orderId, set);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();

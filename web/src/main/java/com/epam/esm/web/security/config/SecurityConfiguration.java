@@ -22,10 +22,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String REGISTER = "/register";
     private static final String TAGS = "/tags/**";
     private static final String CERTIFICATES = "/certificates/**";
-    private static final String USERS = "/users/**";
     private static final String ORDERS = "/orders/**";
+    private static final String USERS = "/users/**";
+
     private static final String ADMIN = "ADMIN";
     private static final String USER = "USER";
+
     private static final String GUEST = "GUEST";
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -72,6 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.PUT, USERS).hasRole(USER)
                 .antMatchers(HttpMethod.DELETE, ORDERS).hasRole(USER)
+
                 .anyRequest().hasRole(ADMIN)
 
                 .and()

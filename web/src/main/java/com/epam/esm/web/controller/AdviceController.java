@@ -2,7 +2,6 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.ExceptionResponseDto;
 import com.epam.esm.service.exception.*;
-import com.epam.esm.web.security.jwt.JwtAuthenticationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -147,6 +146,7 @@ public class AdviceController {
                 "Failed to obtain JDBC Connection.");
     }
 
+    @ResponseBody
     @ExceptionHandler(JsonDeserializationException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto exception(JsonDeserializationException ex) {
@@ -154,11 +154,19 @@ public class AdviceController {
                 ex.getMessage());
     }
 
-
-    @ExceptionHandler(JwtAuthenticationException.class)
+    @ResponseBody
+    @ExceptionHandler(JwtUserAuthenticationException.class)
     @ResponseStatus(FORBIDDEN)
-    public ExceptionResponseDto exception(JwtAuthenticationException ex) {
-        return new ExceptionResponseDto("JwtAuthenticationException",
+    public ExceptionResponseDto exception(JwtUserAuthenticationException ex) {
+        return new ExceptionResponseDto("JwtUserAuthenticationException",
+                ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(AccessException.class)
+    @ResponseStatus(FORBIDDEN)
+    public ExceptionResponseDto exception(AccessException ex) {
+        return new ExceptionResponseDto("AccessException",
                 ex.getMessage());
     }
 

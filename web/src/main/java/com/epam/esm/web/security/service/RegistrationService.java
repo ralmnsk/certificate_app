@@ -5,7 +5,7 @@ import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.user.UserService;
-import com.epam.esm.web.security.dto.UserRegistrationDto;
+import com.epam.esm.web.security.dto.RegistrationDto;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,7 +24,7 @@ public class RegistrationService {
         this.modelMapper = modelMapper;
     }
 
-    public UserRegistrationDto register(UserRegistrationDto registrationUser) {
+    public RegistrationDto register(RegistrationDto registrationUser) {
         UserDto userDto = new UserDto();
         userDto.setSurname(registrationUser.getSurname());
         userDto.setName(registrationUser.getName());
@@ -33,7 +33,7 @@ public class RegistrationService {
         userDto.setRole(Role.USER);
 
         userDto = userService.save(userDto).orElseThrow(() -> new SaveException("Registration User save exception, may be user already exists"));
-        registrationUser = modelMapper.map(userDto, UserRegistrationDto.class);
+        registrationUser = modelMapper.map(userDto, RegistrationDto.class);
         log.info("IN register - user: {} successfully registered", registrationUser);
         registrationUser.setPassword("[protected]");
         return registrationUser;

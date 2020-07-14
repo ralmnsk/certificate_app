@@ -12,7 +12,7 @@ import java.util.Collection;
 
 @Data
 @NoArgsConstructor
-public class UserRegistrationDto {
+public class RegistrationDto {
 
     @NotNull(message = "Login must be not null")
     @Size(min = 2, max = 32, message = "Login must be between 2 and 32 characters")

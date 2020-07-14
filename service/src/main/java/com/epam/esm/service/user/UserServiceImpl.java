@@ -100,6 +100,18 @@ public class UserServiceImpl implements UserService<UserDto, Long, UserFilterDto
     }
 
     @Override
+    public Optional<UserDto> getUserByOrderId(Long orderId) {
+        Optional<User> userByOrderId = userRepository.getUserByOrderId(orderId);
+        if (userByOrderId.isPresent()) {
+            User user = userByOrderId.get();
+            UserDto userDto = mapper.map(user, UserDto.class);
+
+            return Optional.ofNullable(userDto);
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public UserDto findByLogin(String login) {
         User user = userRepository.findByLogin(login);
         if (user == null) {

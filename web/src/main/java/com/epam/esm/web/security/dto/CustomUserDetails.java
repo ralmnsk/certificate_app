@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.User;
 
 @Getter
 @Setter
-public class CustomUser extends User {
+public class CustomUserDetails extends User {
     private static final long serialVersionUID = 1L;
 
-    public CustomUser(UserRegistrationDto user) {
+    public CustomUserDetails(RegistrationDto user) {
         super(user.getLogin(), user.getPassword(), user.getGrantedAuthoritiesList());
     }
 }

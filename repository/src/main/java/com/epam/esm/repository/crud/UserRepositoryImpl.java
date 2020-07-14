@@ -3,11 +3,11 @@ package com.epam.esm.repository.crud;
 import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
-import lombok.Getter;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 import static com.epam.esm.repository.crud.Constants.*;
 
@@ -50,6 +50,16 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
         listWrapper.setFilter(filter);
 
         return listWrapper;
+    }
+
+    @Override
+    public Optional<User> getUserByOrderId(Long orderId) {
+        Query query = getEntityManager().createNativeQuery("select users.id,users.surname,users.name,users.login, users.password, users.deleted, users.role from users join orders o on users.id = o.user_id " +
+                "where o.id = :orderId", User.class);
+        query.setParameter("orderId", orderId);
+        User user = (User) query.getSingleResult();
+
+        return Optional.ofNullable(user);
     }
 
     private String assembleQlString(UserFilter filter, String selecting) {
