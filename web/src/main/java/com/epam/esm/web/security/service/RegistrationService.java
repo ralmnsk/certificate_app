@@ -2,7 +2,6 @@ package com.epam.esm.web.security.service;
 
 import com.epam.esm.model.Role;
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.security.dto.RegistrationDto;
@@ -15,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class RegistrationService {
     private final BCryptPasswordEncoder passwordEncoder;
-    private UserService<UserDto, Long, UserFilterDto> userService;
+    private UserService userService;
     private ModelMapper modelMapper;
 
-    public RegistrationService(UserService<UserDto, Long, UserFilterDto> userService, BCryptPasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public RegistrationService(UserService userService, BCryptPasswordEncoder passwordEncoder, ModelMapper modelMapper) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;

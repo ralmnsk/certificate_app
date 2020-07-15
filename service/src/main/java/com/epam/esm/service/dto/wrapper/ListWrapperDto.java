@@ -1,4 +1,4 @@
-package com.epam.esm.service.dto;
+package com.epam.esm.service.dto.wrapper;
 
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import lombok.Data;

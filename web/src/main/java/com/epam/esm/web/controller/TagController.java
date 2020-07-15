@@ -9,7 +9,6 @@ import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.TagAssembler;
 import com.epam.esm.web.page.TagPageBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +23,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/tags")
 public class TagController {
-    private final TagService<TagDto, Integer, TagFilterDto> tagService;
+    private final TagService tagService;
     private TagAssembler tagAssembler;
     private TagPageBuilder pageBuilder;
 
-    public TagController(TagService<TagDto, Integer, TagFilterDto> tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
+    public TagController(TagService tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
         this.tagService = tagService;
         this.tagAssembler = tagAssembler;
         this.pageBuilder = pageBuilder;
@@ -75,12 +74,9 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
-
-    public ResponseEntity<?> delete(@PathVariable Integer id, HttpServletResponse response) {
-        if (tagService.delete(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Integer id, HttpServletResponse response) {
+        tagService.delete(id);
     }
 
 

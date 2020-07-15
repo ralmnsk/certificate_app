@@ -1,6 +1,6 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
@@ -19,9 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto> {
-    private OrderService<OrderDto, Long,OrderFilterDto> orderService;
+    private OrderService orderService;
 
-    public OrderAssembler(OrderService<OrderDto, Long,OrderFilterDto> orderService) {
+    public OrderAssembler(OrderService orderService) {
         this.orderService = orderService;
     }
 

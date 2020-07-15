@@ -14,25 +14,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class AbstractFilter {
-    private String tagName;
 
-    private String certificateName;
-    private String creation;
-    private String modification;
-    private Integer duration;
-    private String description;
-    private BigDecimal price;
-
-    private String userSurname;
-    private String userName;
     private int page;
-
-
-    private Long userId;
-    private Long orderId;
-    private Long certificateId;
-    private Long tagId;
-
     private int size;
     private FilterSort filterSort;
     private long totalPages;

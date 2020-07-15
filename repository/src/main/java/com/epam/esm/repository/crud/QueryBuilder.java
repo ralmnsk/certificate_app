@@ -5,13 +5,12 @@ import com.epam.esm.model.Order;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.AbstractFilter;
-import com.epam.esm.model.filter.TagFilter;
+import com.epam.esm.model.filter.CertificateFilter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Filter;
 
 import static com.epam.esm.repository.crud.Constants.*;
 
@@ -62,8 +61,8 @@ public class QueryBuilder<F extends AbstractFilter> {
 
     private F filter;
 
-    public String assembleQlString(AbstractFilter abstractFilter, Class clazz, String selecting) {//for class
-        getEntityNameSet(abstractFilter);
+    public String assembleQlString(CertificateFilter certificateFilter, Class clazz, String selecting) {//for class
+        getEntityNameSet(certificateFilter);
         String tag_cert = entityNameSet.contains(TAG_TABLE) ? TAG_JOIN_CERTIFICATE : EMPTY;
         String cert_order = entityNameSet.contains(ORDER_TABLE) ? CERTIFICATE_JOIN_ORDER : EMPTY;
         String order_user = entityNameSet.contains(USER_TABLE) ? ORDER_JOIN_USER : EMPTY;
@@ -80,9 +79,9 @@ public class QueryBuilder<F extends AbstractFilter> {
                 CERTIFICATE_NAME +
                 user_name;
 
-        ql = addObjectId(abstractFilter, ql);
+        ql = addObjectId(certificateFilter, ql);
 
-        ql = addSortToQueryString(abstractFilter, selecting, ql);
+        ql = addSortToQueryString(certificateFilter, selecting, ql);
 
         if (selecting.equals(COUNT)) {
             ql = SELECT_COUNT + ql + SELECT_COUNT_END;
@@ -92,30 +91,30 @@ public class QueryBuilder<F extends AbstractFilter> {
         return ql;
     }
 
-    private Set<String> getEntityNameSet(AbstractFilter abstractFilter) {
+    private Set<String> getEntityNameSet(CertificateFilter certificateFilter) {
         entityNameSet = new HashSet<>();
-        if (abstractFilter.getTagId() != null && abstractFilter.getTagId() > 0) {
+        if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {
             entityNameSet.add(TAG_TABLE);
         }
-        if (abstractFilter.getCertificateId() != null && abstractFilter.getCertificateId() > 0) {
+        if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
             entityNameSet.add(CERTIFICATE_TABLE);
         }
-        if (abstractFilter.getOrderId() != null && abstractFilter.getOrderId() > 0) {
+        if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
             entityNameSet.add(ORDER_TABLE);
         }
-        if (abstractFilter.getUserId() != null && abstractFilter.getUserId() > 0) {
+        if (certificateFilter.getUserId() != null && certificateFilter.getUserId() > 0) {
             entityNameSet.add(USER_TABLE);
         }
-        if (abstractFilter.getCertificateName() != null && !abstractFilter.getCertificateName().isEmpty()) {
+        if (certificateFilter.getCertificateName() != null && !certificateFilter.getCertificateName().isEmpty()) {
             entityNameSet.add(CERTIFICATE_TABLE);
         }
-        if (abstractFilter.getTagName() != null && !abstractFilter.getTagName().isEmpty()) {
+        if (certificateFilter.getTagName() != null && !certificateFilter.getTagName().isEmpty()) {
             entityNameSet.add(TAG_TABLE);
         }
-        if (abstractFilter.getUserSurname() != null && !abstractFilter.getUserSurname().isEmpty()) {
+        if (certificateFilter.getUserSurname() != null && !certificateFilter.getUserSurname().isEmpty()) {
             entityNameSet.add(USER_TABLE);
         }
-        if (abstractFilter.getUserName() != null && !abstractFilter.getUserName().isEmpty()) {
+        if (certificateFilter.getUserName() != null && !certificateFilter.getUserName().isEmpty()) {
             entityNameSet.add(USER_TABLE);
         }
 
@@ -123,17 +122,17 @@ public class QueryBuilder<F extends AbstractFilter> {
         return this.entityNameSet;
     }
 
-    private String addObjectId(AbstractFilter abstractFilter, String ql) {
-        if (abstractFilter.getTagId() != null && abstractFilter.getTagId() > 0) {
+    private String addObjectId(CertificateFilter certificateFilter, String ql) {
+        if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {
             ql = ql + AND + TAG_ID;
         }
-        if (abstractFilter.getCertificateId() != null && abstractFilter.getCertificateId() > 0) {
+        if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
             ql = ql + AND + CERTIFICATE_ID;
         }
-        if (abstractFilter.getOrderId() != null && abstractFilter.getOrderId() > 0) {
+        if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
             ql = ql + AND + ORDER_ID;
         }
-        if (abstractFilter.getUserId() != null && abstractFilter.getUserId() > 0) {
+        if (certificateFilter.getUserId() != null && certificateFilter.getUserId() > 0) {
             ql = ql + AND + USER_ID;
         }
         return ql;
@@ -195,33 +194,33 @@ public class QueryBuilder<F extends AbstractFilter> {
         return ql;
     }
 
-    public void setParameters(AbstractFilter abstractFilter, Query query) {
-        query.setParameter("certificateName", PERCENT_START + abstractFilter.getCertificateName() + PERCENT_END);
+    public void setParameters(CertificateFilter certificateFilter, Query query) {
+        query.setParameter("certificateName", PERCENT_START + certificateFilter.getCertificateName() + PERCENT_END);
 //        if (entityNameSet.contains(CERTIFICATE_TABLE)) {
 //        }
         if (entityNameSet.contains(TAG_TABLE)) {
-            query.setParameter("tagName", PERCENT_START + abstractFilter.getTagName() + PERCENT_END);
+            query.setParameter("tagName", PERCENT_START + certificateFilter.getTagName() + PERCENT_END);
         }
         if (entityNameSet.contains(USER_TABLE)) {
-            query.setParameter("surname", PERCENT_START + abstractFilter.getUserSurname() + PERCENT_END);
-            query.setParameter("userName", PERCENT_START + abstractFilter.getUserName() + PERCENT_END);
+            query.setParameter("surname", PERCENT_START + certificateFilter.getUserSurname() + PERCENT_END);
+            query.setParameter("userName", PERCENT_START + certificateFilter.getUserName() + PERCENT_END);
         }
 
-        if (abstractFilter.getTagId() != null && abstractFilter.getTagId() > 0) {
-            query.setParameter("tagId", abstractFilter.getTagId());
+        if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {
+            query.setParameter("tagId", certificateFilter.getTagId());
         }
 
-        if (abstractFilter.getCertificateId() != null && abstractFilter.getCertificateId() > 0) {
-            query.setParameter("certificateId", abstractFilter.getCertificateId());
+        if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
+            query.setParameter("certificateId", certificateFilter.getCertificateId());
         }
 
 
-        if (abstractFilter.getOrderId() != null && abstractFilter.getOrderId() > 0) {
-            query.setParameter("orderId", abstractFilter.getOrderId());
+        if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
+            query.setParameter("orderId", certificateFilter.getOrderId());
         }
 
-        if (abstractFilter.getUserId() != null && abstractFilter.getUserId() > 0) {
-            query.setParameter("userId", abstractFilter.getUserId());
+        if (certificateFilter.getUserId() != null && certificateFilter.getUserId() > 0) {
+            query.setParameter("userId", certificateFilter.getUserId());
         }
     }
 

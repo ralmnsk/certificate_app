@@ -1,9 +1,9 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
-import lombok.Getter;
+import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.TagListWrapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -13,10 +13,10 @@ import java.util.Optional;
 import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
-public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implements TagRepository<Tag, Integer, TagFilter> {
+public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implements TagRepository{
     private QueryBuilder<TagFilter> queryBuilder;
 
-    public TagRepositoryImpl(QueryBuilder queryBuilder) {
+    public TagRepositoryImpl(QueryBuilder<TagFilter> queryBuilder) {
         super(Tag.class);
         this.queryBuilder = queryBuilder;
     }
@@ -34,7 +34,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
     }
 
     @Override
-    public ListWrapper<Tag, TagFilter> getAll(TagFilter tagFilter) {
+    public TagListWrapper getAll(TagFilter tagFilter) {
 
         Query query = getEntityManager().createQuery("select distinct t from Tag t where t.name like :name order by t.name", Tag.class);
         query.setParameter(NAME, PERCENT_START + tagFilter.getTagName() + PERCENT_END);
@@ -50,7 +50,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         long countResult = (long) queryTotal.getSingleResult();
 
         tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult);
-        ListWrapper<Tag, TagFilter> listWrapper = new ListWrapper<>();
+        TagListWrapper listWrapper = new TagListWrapper();
         listWrapper.setList(tags);
         listWrapper.setFilter(tagFilter);
 

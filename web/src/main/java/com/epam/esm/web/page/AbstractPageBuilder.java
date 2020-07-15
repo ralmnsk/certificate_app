@@ -5,16 +5,10 @@ import com.epam.esm.page.FilterOrder;
 import com.epam.esm.page.FilterSort;
 import com.epam.esm.service.CrudService;
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.ListWrapperDto;
-import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
-import com.epam.esm.service.user.UserService;
-import com.epam.esm.service.user.UserServiceImpl;
 import com.epam.esm.web.assembler.Assembler;
 import org.springframework.hateoas.CollectionModel;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

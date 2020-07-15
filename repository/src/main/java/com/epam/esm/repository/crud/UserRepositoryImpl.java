@@ -1,8 +1,9 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.UserListWrapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -12,10 +13,10 @@ import java.util.Optional;
 import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
-public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository<User, Long, UserFilter> {
+public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository {
     private QueryBuilder<UserFilter> builder;
 
-    public UserRepositoryImpl(QueryBuilder builder) {
+    public UserRepositoryImpl(QueryBuilder<UserFilter> builder) {
         super(User.class);
         this.builder = builder;
     }
@@ -28,7 +29,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     }
 
     @Override
-    public ListWrapper<User, UserFilter> getAll(UserFilter filter) {
+    public UserListWrapper getAll(UserFilter filter) {
         String ql = assembleQlString(filter, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, User.class);
         query.setParameter("name", PERCENT_START + filter.getUserName() + PERCENT_END);
@@ -45,7 +46,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
         long countResult = Long.valueOf(queryCount.getSingleResult().toString());
 
         filter = builder.updateFilter(filter, pageSize, countResult);
-        ListWrapper<User, UserFilter> listWrapper = new ListWrapper<>();
+        UserListWrapper listWrapper = new UserListWrapper();
         listWrapper.setList(users);
         listWrapper.setFilter(filter);
 

@@ -1,7 +1,7 @@
 package com.epam.esm.web.page;
 
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.order.OrderService;
@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Component
-public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService<OrderDto, Long, OrderFilterDto>, OrderAssembler,OrderFilterDto> {
+public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService, OrderAssembler,OrderFilterDto> {
     private final String EMPTY = "";
 
-    public OrderPageBuilder(OrderService<OrderDto, Long,OrderFilterDto> service, OrderAssembler assembler) {
+    public OrderPageBuilder(OrderService service, OrderAssembler assembler) {
         super(new HashSet<>(Arrays.asList("orders.id")), service, assembler);
     }
 

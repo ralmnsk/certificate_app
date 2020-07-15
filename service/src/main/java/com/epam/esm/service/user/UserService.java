@@ -2,17 +2,17 @@ package com.epam.esm.service.user;
 
 
 import com.epam.esm.service.CrudService;
-import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
+import com.epam.esm.service.dto.filter.UserFilterDto;
+import com.epam.esm.service.dto.wrapper.UserListWrapperDto;
 
 import java.util.Optional;
 
-public interface UserService<T, E, F extends AbstractFilterDto> extends CrudService<T, E> {
+public interface UserService extends CrudService<UserDto, Long> {
 
     UserDto findByLogin(String login);
 
-    ListWrapperDto<T, F> getAll(F filterDto);
+    UserListWrapperDto getAll(UserFilterDto filterDto);
 
-    Optional<T> getUserByOrderId(E orderId);
+    Optional<UserDto> getUserByOrderId(Long orderId);
 }

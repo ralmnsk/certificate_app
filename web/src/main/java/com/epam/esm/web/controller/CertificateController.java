@@ -3,16 +3,13 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.CertificateFilterDto;
-import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
-import com.epam.esm.web.page.TagPageBuilder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +18,6 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,23 +34,21 @@ import java.util.Set;
 @RestController
 @RequestMapping("/certificates")
 public class CertificateController {
-    private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
-    private TagService<TagDto, Integer, TagFilterDto> tagService;
+    private CertificateService certificateService;
+    private TagService tagService;
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private CertificatePageBuilder certificatePageBuilder;
-    private TagPageBuilder tagPageBuilder;
 
-    public CertificateController(CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService,
-                                 TagService<TagDto, Integer, TagFilterDto> tagService,
+    public CertificateController(CertificateService certificateService,
+                                 TagService tagService,
                                  ObjectMapper objectMapper, CertificateAssembler certificateAssembler,
-                                 CertificatePageBuilder certificatePageBuilder, TagPageBuilder tagPageBuilder) {
+                                 CertificatePageBuilder certificatePageBuilder) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
         this.certificatePageBuilder = certificatePageBuilder;
-        this.tagPageBuilder = tagPageBuilder;
     }
 
     @GetMapping
@@ -108,9 +102,9 @@ public class CertificateController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, HttpServletResponse response) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id, HttpServletResponse response) {
         certificateService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 
     //https://www.baeldung.com/spring-rest-json-patch

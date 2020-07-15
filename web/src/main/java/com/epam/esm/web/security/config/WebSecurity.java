@@ -13,9 +13,9 @@ import java.security.Principal;
 
 @Component
 public class WebSecurity {
-    private UserService<UserDto, Long, UserFilterDto> userService;
+    private UserService userService;
 
-    public WebSecurity(UserService<UserDto, Long, UserFilterDto> userService) {
+    public WebSecurity(UserService userService) {
         this.userService = userService;
     }
 

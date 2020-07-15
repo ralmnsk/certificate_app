@@ -3,7 +3,7 @@ package com.epam.esm.web.page;
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.filter.CertificateFilterDto;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Component
-public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, CertificateService<CertificateDto, Long, CertificateFilterDto>, CertificateAssembler, CertificateFilterDto> {
+public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, CertificateService, CertificateAssembler, CertificateFilterDto> {
     private final String EMPTY = "";
 
-    public CertificatePageBuilder(CertificateService<CertificateDto, Long, CertificateFilterDto> service, CertificateAssembler certificateAssembler) {
+    public CertificatePageBuilder(CertificateService service, CertificateAssembler certificateAssembler) {
         super(new HashSet<>(Arrays.asList("tag.name", "certificate.name", "price")), service, certificateAssembler);
     }
 

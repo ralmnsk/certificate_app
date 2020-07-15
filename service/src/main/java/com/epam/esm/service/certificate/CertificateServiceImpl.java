@@ -1,15 +1,14 @@
 package com.epam.esm.service.certificate;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.CertificateFilter;
-import com.epam.esm.model.filter.OrderFilter;
+import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.repository.crud.CertificateRepository;
 import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.filter.CertificateFilterDto;
+import com.epam.esm.service.dto.wrapper.CertificateListWrapperDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -28,15 +27,15 @@ import java.util.Set;
 @Service
 @Transactional
 @Getter
-public class CertificateServiceImpl implements CertificateService<CertificateDto, Long, CertificateFilterDto> {
+public class CertificateServiceImpl implements CertificateService {
 
-    private CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository;
+    private CertificateRepository certificateRepository;
     private ModelMapper mapper;
-    private OrderRepository<Order, Long, OrderFilter> orderRepository;
+    private OrderRepository orderRepository;
 
-    public CertificateServiceImpl(CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository,
+    public CertificateServiceImpl(CertificateRepository certificateRepository,
                                   ModelMapper mapper,
-                                  OrderRepository<Order, Long, OrderFilter> orderRepository) {
+                                  OrderRepository orderRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.orderRepository = orderRepository;
@@ -87,7 +86,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
     }
 
     @Override
-    public ListWrapperDto<CertificateDto, CertificateFilterDto> getAll(CertificateFilterDto filterDto) {
+    public CertificateListWrapperDto getAll(CertificateFilterDto filterDto) {
         CertificateFilter filter = mapper.map(filterDto, CertificateFilter.class);
         ListWrapper<Certificate, CertificateFilter> wrapper = certificateRepository.getAll(filter);
         List<Certificate> certificates = wrapper.getList();
@@ -98,7 +97,7 @@ public class CertificateServiceImpl implements CertificateService<CertificateDto
             dtoList.add(d);
         }
 
-        ListWrapperDto<CertificateDto, CertificateFilterDto> wrapperDto = new ListWrapperDto<>();
+        CertificateListWrapperDto wrapperDto = new CertificateListWrapperDto();
         wrapperDto.setList(dtoList);
         filter = wrapper.getFilter();
         wrapperDto.setFilterDto(mapper.map(filter, CertificateFilterDto.class));

@@ -1,7 +1,7 @@
 package com.epam.esm.web.page;
 
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.tag.TagService;
@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Component
-public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService<TagDto, Integer, TagFilterDto>, TagAssembler, TagFilterDto> {
+public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService, TagAssembler, TagFilterDto> {
     private final String EMPTY = "";
 
-    public TagPageBuilder(TagService<TagDto, Integer, TagFilterDto> service, TagAssembler certificateAssembler) {
+    public TagPageBuilder(TagService service, TagAssembler certificateAssembler) {
         super(new HashSet<>(Arrays.asList("tagName")), service, certificateAssembler);
     }
 

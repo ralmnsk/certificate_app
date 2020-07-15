@@ -30,14 +30,17 @@ import java.util.Set;
 @RequestMapping("/orders")
 public class OrderController {
 
-    private OrderService<OrderDto, Long, OrderFilterDto> orderService;
+    private OrderService orderService;
     private OrderAssembler orderAssembler;
     private OrderPageBuilder orderPageBuilder;
     private CertificatePageBuilder certificatePageBuilder;
-    private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
+    private CertificateService certificateService;
     private WebSecurity webSecurity;
 
-    public OrderController(OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService, WebSecurity webSecurity) {
+    public OrderController(OrderService orderService, OrderAssembler orderAssembler,
+                           OrderPageBuilder orderPageBuilder,
+                           CertificatePageBuilder certificatePageBuilder,
+                           CertificateService certificateService, WebSecurity webSecurity) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;

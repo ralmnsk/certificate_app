@@ -1,5 +1,6 @@
-package com.epam.esm.web.security.controller;
+package com.epam.esm.web.controller;
 
+import com.epam.esm.service.exception.AccessException;
 import com.epam.esm.web.security.dto.LoginDto;
 import com.epam.esm.web.security.dto.RegistrationDto;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
@@ -28,7 +29,6 @@ import java.util.Map;
 public class GateController {
 
     private JwtTokenProvider jwtTokenProvider;
-//    private AuthenticationManager authenticationManager;
     private OAuthService oAuthService;
     private BCryptPasswordEncoder passwordEncoder;
     private RegistrationService registrationService;
@@ -44,34 +44,34 @@ public class GateController {
     public ResponseEntity login(@Valid @RequestBody LoginDto loginDto) {
         try {
             String login = loginDto.getLogin();
-//            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, userRegistrationDto.getPassword()));
             RegistrationDto userDetails = oAuthService.getUserDetails(login);
 
             if (userDetails == null) {
                 throw new UsernameNotFoundException("User with username: " + login + " not found");
             }
-            if(passwordEncoder.matches(loginDto.getPassword(),userDetails.getPassword())){
+            if (passwordEncoder.matches(loginDto.getPassword(), userDetails.getPassword())) {
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(new UsernamePasswordAuthenticationToken(userDetails.getLogin(),
-                                userDetails.getPassword(),userDetails.getGrantedAuthoritiesList()));//GOLDEN CODE
-            String token = jwtTokenProvider.createToken(login, loginDto.getPassword());
+                                userDetails.getPassword(), userDetails.getGrantedAuthoritiesList()));//GOLDEN CODE
+                String token = jwtTokenProvider.createToken(login, loginDto.getPassword());
 
-            Map<Object, Object> response = new HashMap<>();
-            response.put("username", login);
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+                Map<Object, Object> response = new HashMap<>();
+                response.put("username", login);
+                response.put("token", token);
+                return ResponseEntity.ok(response);
             }
 
         } catch (Exception ex) {
-            log.info("invalid username/password");
+            log.info("invalid username/password," + ex.getMessage());
+            throw new AccessException("Invalid username or password");
         }
         return ResponseEntity.notFound().build();
 
     }
 
     @PostMapping("/register")
-    public RegistrationDto register(@Valid @RequestBody RegistrationDto registrationDto){
+    public RegistrationDto register(@Valid @RequestBody RegistrationDto registrationDto) {
         RegistrationDto registeredUser = registrationService.register(registrationDto);
         return registeredUser;
     }

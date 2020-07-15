@@ -1,9 +1,9 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.OrderFilter;
-import lombok.Getter;
+import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.OrderListWrapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
@@ -12,17 +12,17 @@ import java.util.List;
 import static com.epam.esm.repository.crud.Constants.*;
 
 @Repository
-public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository<Order, Long, OrderFilter> {
+public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
     private QueryBuilder<OrderFilter> builder;
 
-    public OrderRepositoryImpl(QueryBuilder builder) {
+    public OrderRepositoryImpl(QueryBuilder<OrderFilter> builder) {
         super(Order.class);
         this.builder = builder;
     }
 
 
     @Override
-    public ListWrapper<Order, OrderFilter> getAll(OrderFilter filter) {
+    public OrderListWrapper getAll(OrderFilter filter) {
         String ql = assembleQlString(filter, "select");
         Query query = getEntityManager().createNativeQuery(ql, Order.class);
         querySetParameters(filter, query);
@@ -40,7 +40,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         int i = (int) countResult;
 
         filter = builder.updateFilter(filter, pageSize, countResult);
-        ListWrapper<Order, OrderFilter> listWrapper = new ListWrapper<>();
+        OrderListWrapper listWrapper = new OrderListWrapper();
         listWrapper.setList(orders);
         listWrapper.setFilter(filter);
 

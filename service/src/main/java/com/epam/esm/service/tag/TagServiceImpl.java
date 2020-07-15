@@ -1,15 +1,14 @@
 package com.epam.esm.service.tag;
 
 import com.epam.esm.model.Certificate;
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Tag;
-import com.epam.esm.model.filter.CertificateFilter;
 import com.epam.esm.model.filter.TagFilter;
+import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.repository.crud.CertificateRepository;
 import com.epam.esm.repository.crud.TagRepository;
-import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.TagFilterDto;
+import com.epam.esm.service.dto.wrapper.TagListWrapperDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.UpdateException;
 import lombok.Getter;
@@ -30,16 +29,15 @@ import static java.util.stream.Collectors.toList;
 @Getter
 @Service
 @Transactional
-public class TagServiceImpl implements TagService<TagDto, Integer, TagFilterDto> {
+public class TagServiceImpl implements TagService {
 
-    private TagRepository<Tag, Integer, TagFilter> tagRepository;
+    private TagRepository tagRepository;
     private ModelMapper mapper;
-    private CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository;
+    private CertificateRepository certificateRepository;
 
 
-    public TagServiceImpl(TagRepository<Tag, Integer,
-            TagFilter> tagRepository, ModelMapper mapper,
-                          CertificateRepository<Certificate, Long, CertificateFilter> certificateRepository) {
+    public TagServiceImpl(TagRepository tagRepository, ModelMapper mapper,
+                          CertificateRepository certificateRepository) {
         this.tagRepository = tagRepository;
         this.mapper = mapper;
         this.certificateRepository = certificateRepository;
@@ -61,12 +59,12 @@ public class TagServiceImpl implements TagService<TagDto, Integer, TagFilterDto>
     }
 
     @Override
-    public ListWrapperDto<TagDto, TagFilterDto> getAll(TagFilterDto tagFilterDto) {
+    public TagListWrapperDto getAll(TagFilterDto tagFilterDto) {
         TagFilter tagFilter = mapper.map(tagFilterDto, TagFilter.class);
         ListWrapper<Tag, TagFilter> wrapper = tagRepository.getAll(tagFilter);
         List<TagDto> tagDtoList = wrapper.getList().stream().map(t -> mapper.map(t, TagDto.class)).collect(toList());
 
-        ListWrapperDto<TagDto, TagFilterDto> wrapperDto = new ListWrapperDto<>();
+        TagListWrapperDto wrapperDto = new TagListWrapperDto();
         wrapperDto.setList(tagDtoList);
         TagFilter filter = wrapper.getFilter();
         wrapperDto.setFilterDto(mapper.map(filter, TagFilterDto.class));

@@ -1,7 +1,6 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.ListWrapperDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.tag.TagService;

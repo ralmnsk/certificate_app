@@ -1,12 +1,12 @@
 package com.epam.esm.service.user;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.repository.crud.UserRepository;
-import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
+import com.epam.esm.service.dto.wrapper.UserListWrapperDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -25,12 +25,12 @@ import java.util.Optional;
 @Service
 @Transactional
 @Getter
-public class UserServiceImpl implements UserService<UserDto, Long, UserFilterDto> {
+public class UserServiceImpl implements UserService {
 
-    private UserRepository<User, Long, UserFilter> userRepository;
+    private UserRepository userRepository;
     private ModelMapper mapper;
 
-    public UserServiceImpl(UserRepository<User, Long, UserFilter> userRepository, ModelMapper mapper) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper) {
         this.userRepository = userRepository;
         this.mapper = mapper;
     }
@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService<UserDto, Long, UserFilterDto
     }
 
     @Override
-    public ListWrapperDto<UserDto, UserFilterDto> getAll(UserFilterDto userFilterDto) {
+    public UserListWrapperDto getAll(UserFilterDto userFilterDto) {
         UserFilter userFilter = mapper.map(userFilterDto, UserFilter.class);
         ListWrapper<User, UserFilter> wrapper = userRepository.getAll(userFilter);
         List<UserDto> dtoList = new ArrayList<>();
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService<UserDto, Long, UserFilterDto
             dtoList.add(d);
         }
 
-        ListWrapperDto<UserDto, UserFilterDto> wrapperDto = new ListWrapperDto<>();
+        UserListWrapperDto wrapperDto = new UserListWrapperDto();
         wrapperDto.setList(dtoList);
         UserFilter filter = wrapper.getFilter();
         wrapperDto.setFilterDto(mapper.map(filter, UserFilterDto.class));

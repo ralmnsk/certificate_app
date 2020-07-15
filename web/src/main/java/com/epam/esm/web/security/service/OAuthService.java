@@ -16,9 +16,9 @@ import java.util.Collection;
 @Service
 public class OAuthService {
 
-    private UserService<UserDto, Long, UserFilterDto> userService;
+    private UserService userService;
 
-    public OAuthService(UserService<UserDto, Long, UserFilterDto> userService) {
+    public OAuthService(UserService userService) {
         this.userService = userService;
     }
 

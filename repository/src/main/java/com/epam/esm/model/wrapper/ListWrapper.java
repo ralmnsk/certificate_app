@@ -1,4 +1,4 @@
-package com.epam.esm.model;
+package com.epam.esm.model.wrapper;
 
 import com.epam.esm.model.filter.AbstractFilter;
 import lombok.Data;

@@ -1,7 +1,6 @@
 package com.epam.esm.repository.crud;
 
 import com.epam.esm.model.Identifiable;
-import com.epam.esm.model.filter.AbstractFilter;
 import com.epam.esm.repository.CrudRepository;
 
 import javax.persistence.EntityManager;

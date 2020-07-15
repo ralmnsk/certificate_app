@@ -1,6 +1,6 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
@@ -18,9 +18,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
-    private UserService<UserDto, Long, UserFilterDto> userService;
+    private UserService userService;
 
-    public UserAssembler(UserService<UserDto, Long, UserFilterDto> userService) {
+    public UserAssembler(UserService userService) {
         this.userService = userService;
     }
 

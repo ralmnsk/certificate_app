@@ -1,18 +1,17 @@
 package com.epam.esm.repository.crud;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.User;
-import com.epam.esm.model.filter.AbstractFilter;
 import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.model.wrapper.UserListWrapper;
 import com.epam.esm.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface UserRepository<T,E,F extends AbstractFilter> extends CrudRepository<T,E> {
-    T findByLogin(String login);
+public interface UserRepository extends CrudRepository<User, Long> {
+    User findByLogin(String login);
 
-    ListWrapper<T,F> getAll(F filter);
+    UserListWrapper getAll(UserFilter filter);
 
-    Optional<T> getUserByOrderId(E orderId);
+    Optional<User> getUserByOrderId(Long orderId);
 
 }

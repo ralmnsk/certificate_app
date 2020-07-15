@@ -1,16 +1,15 @@
 package com.epam.esm.service.order;
 
-import com.epam.esm.model.ListWrapper;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.OrderFilter;
-import com.epam.esm.model.filter.UserFilter;
+import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.repository.crud.UserRepository;
 import com.epam.esm.service.calculator.TotalCostCalculator;
-import com.epam.esm.service.dto.ListWrapperDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
+import com.epam.esm.service.dto.wrapper.OrderListWrapperDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.exception.UpdateException;
@@ -27,15 +26,15 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional
-public class OrderServiceImpl implements OrderService<OrderDto, Long, OrderFilterDto> {
+public class OrderServiceImpl implements OrderService {
 
-    private OrderRepository<Order, Long, OrderFilter> orderRepository;
+    private OrderRepository orderRepository;
     private ModelMapper mapper;
     private TotalCostCalculator calculator;
-    private UserRepository<User, Long, UserFilter> userRepository;
+    private UserRepository userRepository;
 
     public OrderServiceImpl(OrderRepository orderRepository, ModelMapper mapper, TotalCostCalculator calculator,
-                            UserRepository<User, Long, UserFilter> userRepository) {
+                            UserRepository userRepository) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
         this.calculator = calculator;
@@ -87,7 +86,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long, OrderFilte
     }
 
     @Override
-    public ListWrapperDto<OrderDto, OrderFilterDto> getAll(OrderFilterDto filterDto) {
+    public OrderListWrapperDto getAll(OrderFilterDto filterDto) {
         OrderFilter filter = mapper.map(filterDto, OrderFilter.class);
         ListWrapper<Order, OrderFilter> wrapper = orderRepository.getAll(filter);
         List<Order> orders = wrapper.getList();
@@ -97,7 +96,7 @@ public class OrderServiceImpl implements OrderService<OrderDto, Long, OrderFilte
                 .collect(Collectors.toList());
         dtoList.forEach(d -> d.getCertificates().clear());
 
-        ListWrapperDto<OrderDto, OrderFilterDto> wrapperDto = new ListWrapperDto<>();
+        OrderListWrapperDto wrapperDto = new OrderListWrapperDto();
         wrapperDto.setList(dtoList);
         filter = wrapper.getFilter();
         wrapperDto.setFilterDto(mapper.map(filter, OrderFilterDto.class));

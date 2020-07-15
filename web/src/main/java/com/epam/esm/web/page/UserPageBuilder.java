@@ -1,7 +1,7 @@
 package com.epam.esm.web.page;
 
 import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.user.UserService;
@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Component
-public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService<UserDto, Long, UserFilterDto>, UserAssembler, UserFilterDto> {
+public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, UserAssembler, UserFilterDto> {
     private final String EMPTY = "";
 
-    public UserPageBuilder(UserService<UserDto, Long, UserFilterDto> service, UserAssembler assembler) {
+    public UserPageBuilder(UserService service, UserAssembler assembler) {
         super(new HashSet<>(Arrays.asList("surname", "name")), service, assembler);
     }
 

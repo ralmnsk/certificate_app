@@ -2,7 +2,7 @@ package com.epam.esm.web.assembler;
 
 import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.ListWrapperDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.CertificateFilterDto;
 import com.epam.esm.web.controller.CertificateController;
@@ -19,9 +19,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class CertificateAssembler implements Assembler<Long, CertificateDto, CertificateFilterDto> {
-    private CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService;
+    private CertificateService certificateService;
 
-    public CertificateAssembler(CertificateService<CertificateDto, Long, CertificateFilterDto> certificateService) {
+    public CertificateAssembler(CertificateService certificateService) {
         this.certificateService = certificateService;
     }
 

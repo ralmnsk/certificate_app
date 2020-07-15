@@ -9,12 +9,10 @@ import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.service.user.UserService;
-import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -34,22 +32,20 @@ import java.util.Set;
 public class UserController {
 
     private OrderPageBuilder orderPageBuilder;
-    private UserService<UserDto, Long, UserFilterDto> userService;
+    private UserService userService;
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
-    private ModelMapper mapper;
-    private OrderService<OrderDto, Long, OrderFilterDto> orderService;
-    private OrderAssembler orderAssembler;
+    private OrderService orderService;
     private WebSecurity webSecurity;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService<UserDto, Long, UserFilterDto> userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, ModelMapper mapper, OrderService<OrderDto, Long, OrderFilterDto> orderService, OrderAssembler orderAssembler, WebSecurity webSecurity) {
+    public UserController(OrderPageBuilder orderPageBuilder, UserService userService,
+                          UserAssembler userAssembler, UserPageBuilder userPageBuilder,
+                          OrderService orderService, WebSecurity webSecurity) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
         this.userPageBuilder = userPageBuilder;
-        this.mapper = mapper;
         this.orderService = orderService;
-        this.orderAssembler = orderAssembler;
         this.webSecurity = webSecurity;
     }
 

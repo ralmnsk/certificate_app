@@ -1,8 +1,5 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.model.ListWrapper;
-import com.epam.esm.model.filter.AbstractFilter;
-
 import java.util.Optional;
 
 public interface CrudRepository<T, E> {
