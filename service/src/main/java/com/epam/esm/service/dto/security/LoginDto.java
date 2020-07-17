@@ -1,14 +1,10 @@
-package com.epam.esm.web.security.dto;
+package com.epam.esm.service.dto.security;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Data
 @NoArgsConstructor

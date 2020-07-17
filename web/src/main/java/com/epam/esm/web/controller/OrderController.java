@@ -4,11 +4,13 @@ import com.epam.esm.service.certificate.CertificateService;
 import com.epam.esm.service.dto.CertificateDto;
 import com.epam.esm.service.dto.CustomPageDto;
 import com.epam.esm.service.dto.OrderDto;
+import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.CertificateFilterDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.order.OrderService;
+import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
@@ -22,6 +24,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,22 +39,36 @@ public class OrderController {
     private CertificatePageBuilder certificatePageBuilder;
     private CertificateService certificateService;
     private WebSecurity webSecurity;
+    private UserService userService;
 
     public OrderController(OrderService orderService, OrderAssembler orderAssembler,
                            OrderPageBuilder orderPageBuilder,
                            CertificatePageBuilder certificatePageBuilder,
-                           CertificateService certificateService, WebSecurity webSecurity) {
+                           CertificateService certificateService, WebSecurity webSecurity,
+                           UserService userService) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
         this.certificatePageBuilder = certificatePageBuilder;
         this.certificateService = certificateService;
         this.webSecurity = webSecurity;
+        this.userService = userService;
     }
 
     @PostMapping
-    public OrderDto create(@Valid @RequestBody OrderDto orderDto) {
+    public OrderDto create(@Valid @RequestBody OrderDto orderDto, Principal principal) {
+        String login = principal.getName();
+        if (login == null) {
+            throw new SaveException("you have no right to create order");
+        }
+        UserDto user = userService.findByLogin(login);
+        if (user == null) {
+            throw new NotFoundException("Create order: user not found exception");
+        }
         orderDto = orderService.save(orderDto).orElseThrow(() -> new SaveException("Order save exception"));
+        Set<Long> set = new HashSet<>();
+        set.add(orderDto.getId());
+        orderService.addOrderToUser(user.getId(), set);
         return orderAssembler.assemble(orderDto.getId(), orderDto);
     }
 
@@ -83,10 +100,10 @@ public class OrderController {
             @RequestParam(value = "surname", defaultValue = "")
             @Size(max = 16, message = "Surname should be 0-16 characters") String surname,
 
-            @RequestParam(value = "name", defaultValue = "")
+            @RequestParam(value = "userName", defaultValue = "")
             @Size(max = 16, message = "Name should be 0-16 characters") String userName,
 
-            @RequestParam(value = "name", defaultValue = "")
+            @RequestParam(value = "certificateName", defaultValue = "")
             @Size(max = 16, message = "Certificate name should be 0-16 characters") String certificateName,
 
             @RequestParam(value = "page", defaultValue = "0")
@@ -96,8 +113,10 @@ public class OrderController {
             @RequestParam(value = "size", defaultValue = "5")
             @Min(1)
             @Max(100) int size,
-            @RequestParam(required = false) List<String> sort
+            @RequestParam(required = false) List<String> sort,
+            Principal principal
     ) {
+        webSecurity.checkOperationAccess(principal);
         OrderFilterDto filter = new OrderFilterDto();
         filter.setUserSurname(surname);
         filter.setUserName(userName);

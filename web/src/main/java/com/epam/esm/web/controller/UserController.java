@@ -3,6 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.service.dto.CustomPageDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.UserDto;
+import com.epam.esm.service.dto.UserUpdateDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.NotFoundException;
@@ -64,9 +65,14 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserDto userDto, @PathVariable Long id, Principal principal) {
+    public UserDto update(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id, Principal principal) {
         webSecurity.checkUserId(principal, id);
+        UserDto userDto = new UserDto();
         userDto.setId(id);
+        userDto.setSurname(userUpdateDto.getSurname());
+        userDto.setName(userUpdateDto.getName());
+        userDto.setPassword(userUpdateDto.getPassword());
+
         userDto = userService.update(userDto).orElseThrow(() -> new NotFoundException(id));
         return userAssembler.assemble(id, userDto);
     }
@@ -99,11 +105,17 @@ public class UserController {
             @Min(1)
             @Max(100) int size,
 
-            @RequestParam(required = false) List<String> sort
+            @RequestParam(required = false) List<String> sort,
+            Principal principal
     ) {
         UserFilterDto filterDto = new UserFilterDto();
         filterDto.setUserSurname(surname);
         filterDto.setUserName(name);
+        String login = principal.getName();
+        UserDto byLogin = userService.findByLogin(login);
+        if (byLogin != null) {
+            filterDto.setUserId(byLogin.getId());
+        }
         filterDto.setPage(page);
         filterDto.setSize(size);
         filterDto.setSortParams(sort);
@@ -149,17 +161,17 @@ public class UserController {
 
     }
 
-    @PutMapping("/{userId}/orders")
-    @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
-                                                  Principal principal) {
-        webSecurity.checkUserId(principal, userId);
-        orderService.addOrderToUser(userId, set);
-
-        OrderFilterDto filterDto = new OrderFilterDto();
-        filterDto.setUserId(userId);
-        return orderPageBuilder.build(filterDto);
-    }
+//    @PutMapping("/{userId}/orders") //order controller: save
+//    @ResponseStatus(HttpStatus.OK)
+//    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
+//                                                  Principal principal) {
+//        webSecurity.checkUserId(principal, userId);
+//        orderService.addOrderToUser(userId, set);
+//
+//        OrderFilterDto filterDto = new OrderFilterDto();
+//        filterDto.setUserId(userId);
+//        return orderPageBuilder.build(filterDto);
+//    }
 
     @DeleteMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)

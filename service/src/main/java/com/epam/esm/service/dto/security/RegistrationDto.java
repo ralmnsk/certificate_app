@@ -1,4 +1,4 @@
-package com.epam.esm.web.security.dto;
+package com.epam.esm.service.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

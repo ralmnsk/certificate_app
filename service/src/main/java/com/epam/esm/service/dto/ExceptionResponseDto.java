@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 
 public class ExceptionResponseDto implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String exception;
     private String message;
 

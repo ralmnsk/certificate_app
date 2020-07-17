@@ -10,6 +10,7 @@ import com.epam.esm.service.exception.UpdateException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
+import com.epam.esm.web.security.config.WebSecurity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +22,11 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -39,16 +40,18 @@ public class CertificateController {
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private CertificatePageBuilder certificatePageBuilder;
+    private WebSecurity webSecurity;
 
     public CertificateController(CertificateService certificateService,
-                                 TagService tagService,
-                                 ObjectMapper objectMapper, CertificateAssembler certificateAssembler,
-                                 CertificatePageBuilder certificatePageBuilder) {
+                                 TagService tagService, ObjectMapper objectMapper,
+                                 CertificateAssembler certificateAssembler,
+                                 CertificatePageBuilder certificatePageBuilder, WebSecurity webSecurity) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
         this.certificatePageBuilder = certificatePageBuilder;
+        this.webSecurity = webSecurity;
     }
 
     @GetMapping
@@ -87,14 +90,16 @@ public class CertificateController {
     }
 
     @PostMapping
-    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto) {
+    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
         return certificateAssembler.assemble(certificateDto.getId(), certificateDto);
     }
 
 
     @PutMapping("/{id}")
-    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id) {
+    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         certificateDto.setId(id);
         certificateDto = certificateService.update(certificateDto).orElseThrow(() -> new NotFoundException(id));
         return certificateAssembler.assemble(id, certificateDto);
@@ -103,13 +108,15 @@ public class CertificateController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id, HttpServletResponse response) {
+    public void delete(@PathVariable Long id, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         certificateService.delete(id);
     }
 
     //https://www.baeldung.com/spring-rest-json-patch
     @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch) {
+    public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         CertificateDto certificateDto = certificateService.get(id).orElseThrow(() -> new NotFoundException(id));
         CertificateDto certificateDtoPatched = null;
         try {
@@ -128,7 +135,9 @@ public class CertificateController {
 
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public CertificateDto addTagToCertificate(@PathVariable Long certificateId, @Valid @RequestBody Set<Long> set) {
+    public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
+                                              @Valid @RequestBody Set<Long> set, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         tagService.addTagToCertificate(certificateId, set);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
@@ -139,7 +148,9 @@ public class CertificateController {
 
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
-    public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId, @Valid @RequestBody Set<Long> set) {
+    public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
+                                                   @Valid @RequestBody Set<Long> set, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         tagService.deleteTagFromCertificate(certificateId, set);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();

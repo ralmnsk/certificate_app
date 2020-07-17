@@ -54,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> get(Long id) {
         Optional<OrderDto> orderDtoOptional = Optional.empty();
         Order order = orderRepository.get(id).orElseThrow(() -> new NotFoundException("OrderService: Order get exception" + id));
+        if (order.isDeleted()) {
+            throw new NotFoundException("OrderService: Order get exception" + id);
+        }
         calculator.calc(order);
         order = orderRepository.update(order).orElseThrow(() -> new UpdateException("OrderService: update in get operation exception"));
 
@@ -69,6 +72,9 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> update(OrderDto orderDto) {
         long id = orderDto.getId();
         Order found = orderRepository.get(orderDto.getId()).orElseThrow(() -> new NotFoundException("OrderService: get in update operation exception" + id));
+        if (found.isDeleted()) {
+            throw new NotFoundException("OrderService: Order get exception" + id);
+        }
 
         found.setDescription(orderDto.getDescription());
         Order order = orderRepository.update(found).orElseThrow(() -> new SaveException("OrderService:Order save exception"));
@@ -107,6 +113,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void addOrderToUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
+        if (user.getDeleted()) {
+            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
+        }
         list
                 .stream()
                 .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
@@ -117,6 +126,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrderFromUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
+        if (user.getDeleted()) {
+            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
+        }
         list
                 .stream()
                 .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))

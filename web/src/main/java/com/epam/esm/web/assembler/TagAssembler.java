@@ -1,9 +1,10 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.TagFilterDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.tag.TagService;
+import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.TagController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -15,7 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class TagAssembler implements Assembler<Long, TagDto,TagFilterDto> {
+public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
     private TagService tagService;
 
     public TagAssembler(TagService tagService) {
@@ -44,7 +45,36 @@ public class TagAssembler implements Assembler<Long, TagDto,TagFilterDto> {
             });
         }
         CollectionModel<TagDto> collection = CollectionModel.of(tags);
+        addNextPrevious(collection, filter);
 
         return collection;
+    }
+
+    private void addNextPrevious(CollectionModel<TagDto> collectionModel, TagFilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(CertificateController.class)
+                    .getAll(
+                            filter.getTagName(),
+                            filter.getCertificateName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("order id:" + filter.getOrderId() + " certificates previous page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(CertificateController.class)
+                    .getAll(
+                            filter.getTagName(),
+                            filter.getCertificateName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("order id:" + filter.getOrderId() + " certificates next page");
+            collectionModel.add(link);
+        }
     }
 }

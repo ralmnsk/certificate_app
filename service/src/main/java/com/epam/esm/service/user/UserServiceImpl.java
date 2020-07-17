@@ -3,6 +3,7 @@ package com.epam.esm.service.user;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
 import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.repository.crud.UserRepository;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +31,12 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
     private ModelMapper mapper;
+    private OrderRepository orderRepository;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, OrderRepository orderRepository) {
         this.userRepository = userRepository;
         this.mapper = mapper;
+        this.orderRepository = orderRepository;
     }
 
     @Override
@@ -51,6 +55,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDto> get(Long id) {
         User user = userRepository.get(id).orElseThrow(() -> new NotFoundException(id));
+        if (user.getDeleted()) {
+            return Optional.empty();
+        }
         UserDto userDto = mapper.map(user, UserDto.class);
         userDto.getOrders().clear();
         return Optional.ofNullable(userDto);
@@ -59,12 +66,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDto> update(UserDto userDto) {//update user without orders
         long id = userDto.getId();
-        User found = userRepository.get(userDto.getId()).orElseThrow(() -> new NotFoundException("UserService: user get in update operation exception, id:" + id));
-
+        User found = userRepository.get(userDto.getId()).orElseThrow(() -> new NotFoundException("UserService: user not found in update operation exception, id:" + id));
+        if (found.getDeleted()) {
+            throw new NotFoundException("UserService: user not found in update operation exception, id:" + id);
+        }
         found.setSurname(userDto.getSurname());
         found.setName(userDto.getName());
-        found.setPassword(userDto.getPassword());
-        found.setRole(userDto.getRole());
+        found.setPassword((new BCryptPasswordEncoder()).encode(userDto.getPassword()));
+//        found.setRole(userDto.getRole()); //to delete
+
         User user = userRepository.update(found).orElseThrow(() -> new UpdateException("UserService update: User update exception"));
         UserDto dto = mapper.map(user, UserDto.class);
 
@@ -75,6 +85,10 @@ public class UserServiceImpl implements UserService {
     public boolean delete(Long id) {
         User user = userRepository.get(id).orElseThrow(() -> new NotFoundException("User delete: not found exception, id:" + id));
         user.setDeleted(true);
+        user.getOrders().forEach(order -> {
+            order.setDeleted(true);
+            orderRepository.update(order);
+        });
         userRepository.update(user).orElseThrow(() -> new UpdateException("Certificate update in delete operation exception"));
         return true;
     }
@@ -120,4 +134,6 @@ public class UserServiceImpl implements UserService {
 
         return mapper.map(user, UserDto.class);
     }
+
+
 }

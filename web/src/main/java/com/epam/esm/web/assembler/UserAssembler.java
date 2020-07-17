@@ -1,9 +1,9 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.UserFilterDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
@@ -56,8 +56,19 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         }
 
         Link linkUsers = linkTo(methodOn(UserController.class)
-                .getAll(filter.getUserSurname(), filter.getUserName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("users");
+                .getAll(
+                        filter.getUserSurname(),
+                        filter.getUserName(),
+                        filter.getPage(),
+                        filter.getSize(),
+                        filter.getSortParams(),
+                        null
+                )).withRel("users");
         CollectionModel<UserDto> collectionModel = CollectionModel.of(users, linkUsers);
+        if (filter.getUserId() != null && filter.getUserId() > 0) {
+            Link myAccountLink = linkTo(methodOn(UserController.class).get(filter.getUserId(), null)).withRel("My account");
+            collectionModel.add(myAccountLink);
+        }
         addNextPrevious(collectionModel, filter);
 
         return collectionModel;
@@ -73,7 +84,8 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                             filter.getUserName(),
                             filter.getPage() - 1,
                             filter.getSize(),
-                            filter.getSortParams()
+                            filter.getSortParams(),
+                            null
                     )).withRel("users previous page");
             collectionModel.add(link);
         }
@@ -85,7 +97,8 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                             filter.getUserName(),
                             filter.getPage() + 1,
                             filter.getSize(),
-                            filter.getSortParams()
+                            filter.getSortParams(),
+                            null
                     )).withRel("users next page");
             collectionModel.add(link);
         }

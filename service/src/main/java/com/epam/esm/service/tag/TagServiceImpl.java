@@ -140,4 +140,9 @@ public class TagServiceImpl implements TagService {
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Delete Tag to Certificate: Tag update exception"));
     }
 
+    @Override
+    public List<String> findFrequentTag() {
+        List<String> list = tagRepository.findFrequentTag();
+        return list;
+    }
 }

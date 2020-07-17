@@ -6,6 +6,7 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.dto.filter.TagFilterDto;
 import com.epam.esm.service.dto.wrapper.TagListWrapperDto;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -19,5 +20,6 @@ public interface TagService extends CrudService<TagDto, Integer> {
 
     TagListWrapperDto getAll(TagFilterDto filterDto);
 
+    List<String> findFrequentTag();
 
 }

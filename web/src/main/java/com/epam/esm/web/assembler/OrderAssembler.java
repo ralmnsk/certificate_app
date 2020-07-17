@@ -1,9 +1,9 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.dto.filter.AbstractFilterDto;
 import com.epam.esm.service.dto.filter.OrderFilterDto;
+import com.epam.esm.service.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.order.OrderService;
 import com.epam.esm.web.controller.OrderController;
 import com.epam.esm.web.controller.UserController;
@@ -74,7 +74,14 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
             addNextPrevious(collectionModel, filter);
         } else {
             Link link = linkTo(methodOn(OrderController.class)
-                    .getAll(filter.getUserSurname(), filter.getUserName(), filter.getCertificateName(), filter.getPage(), filter.getSize(), filter.getSortParams())).withRel("orders");
+                    .getAll(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getCertificateName(),
+                            filter.getPage(),
+                            filter.getSize(),
+                            filter.getSortParams()
+                            , null
+                    )).withRel("orders");
             collectionModel.add(link);
         }
 

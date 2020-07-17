@@ -1,7 +1,7 @@
-package com.epam.esm.web.security.service;
+package com.epam.esm.service.security;
 
-import com.epam.esm.web.security.dto.CustomUserDetails;
-import com.epam.esm.web.security.dto.RegistrationDto;
+import com.epam.esm.service.dto.security.CustomUserDetails;
+import com.epam.esm.service.dto.security.RegistrationDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

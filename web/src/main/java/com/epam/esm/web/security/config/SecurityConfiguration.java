@@ -1,5 +1,6 @@
 package com.epam.esm.web.security.config;
 
+import com.epam.esm.service.user.UserService;
 import com.epam.esm.web.security.jwt.JwtConfigurer;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +30,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String USER = "USER";
 
     private static final String GUEST = "GUEST";
+
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
 
-
-    public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
+    public SecurityConfiguration(JwtTokenProvider jwtTokenProvider,
+                                 UserService userService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userService = userService;
     }
 
     @Bean
@@ -58,26 +62,47 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
-//                .authorizeRequests()
-//                .antMatchers("/**").permitAll()
 
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(REGISTER).permitAll()
 
-                .antMatchers(HttpMethod.POST, ORDERS).hasRole(USER)
-                .antMatchers(HttpMethod.PUT, ORDERS).hasRole(USER)
-                .antMatchers(HttpMethod.GET, ORDERS).hasRole(USER)
-                .antMatchers(HttpMethod.GET, TAGS).hasRole(USER)
-                .antMatchers(HttpMethod.GET, USERS).hasRole(USER)
+                .antMatchers(HttpMethod.GET, TAGS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.POST, TAGS).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PUT, TAGS).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PATCH, TAGS).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, TAGS).hasAnyRole(ADMIN)
 
-                .antMatchers(HttpMethod.PUT, USERS).hasRole(USER)
-                .antMatchers(HttpMethod.DELETE, ORDERS).hasRole(USER)
 
-                .anyRequest().hasRole(ADMIN)
+                .antMatchers(HttpMethod.GET, CERTIFICATES).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.POST, CERTIFICATES).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PUT, CERTIFICATES).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PATCH, CERTIFICATES).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, CERTIFICATES).hasAnyRole(ADMIN)
+
+
+                .antMatchers(HttpMethod.GET, ORDERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.POST, ORDERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.PUT, ORDERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.PATCH, ORDERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.DELETE, ORDERS).hasAnyRole(USER, ADMIN)
+
+
+                .antMatchers(HttpMethod.GET, USERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.GET, "/users").hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.POST, USERS).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.PUT, USERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.PATCH, USERS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.DELETE, USERS).hasAnyRole(ADMIN)
+
 
                 .and()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+//                .exceptionHandling().accessDeniedHandler(new DeniedHandler())
+//                .and()
+//                .oauth2Login()
+//                .successHandler(new SuccessHandler(jwtTokenProvider, userService))
+//                .and()
+                .apply(new JwtConfigurer(jwtTokenProvider))
+        ;
     }
 }

@@ -33,9 +33,9 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String login, String password) {
+    public String createToken(String login, String name) {
         Claims claims = Jwts.claims().setSubject(login);
-        claims.put("password", password);
+        claims.put("name", name);
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
         return Jwts.builder()
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
 
     public Authentication authentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUserLogin(token));
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(),userDetails.getPassword(), userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(),"", userDetails.getAuthorities());
     }
 
     public String getUserLogin(String token) {
@@ -70,7 +70,7 @@ public class JwtTokenProvider {
                 return false;
             }
             return true;
-        } catch (JwtException | IllegalArgumentException  e) {
+        } catch (JwtException | IllegalArgumentException e) {
             throw new JwtUserAuthenticationException("JWT token is expired or invalid");
         }
     }

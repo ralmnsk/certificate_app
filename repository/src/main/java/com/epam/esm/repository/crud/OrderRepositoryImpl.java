@@ -2,12 +2,12 @@ package com.epam.esm.repository.crud;
 
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.OrderFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.model.wrapper.OrderListWrapper;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.epam.esm.repository.crud.Constants.*;
 
@@ -31,6 +31,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
         List<Order> orders = query.getResultList();
+        orders = orders.stream().filter(order -> !order.isDeleted()).collect(Collectors.toList());
 
         Query queryTotal = getEntityManager().createNativeQuery
                 (assembleQlString(filter, "count"));
@@ -63,7 +64,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
             select = count;
         }
         String ql = select + "from orders orders join users users on orders.user_id = users.id " +
-                "where users.surname like :userSurname and users.name like :userName ";
+                "where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
         if (filter.getUserId() != null && filter.getUserId() > 0) {
             ql = ql + "and users.id = :userId";
         }

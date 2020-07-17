@@ -8,15 +8,16 @@ import com.epam.esm.service.exception.SaveException;
 import com.epam.esm.service.tag.TagService;
 import com.epam.esm.web.assembler.TagAssembler;
 import com.epam.esm.web.page.TagPageBuilder;
+import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.security.Principal;
 import java.util.List;
 
 @Validated
@@ -26,11 +27,15 @@ public class TagController {
     private final TagService tagService;
     private TagAssembler tagAssembler;
     private TagPageBuilder pageBuilder;
+    private WebSecurity webSecurity;
 
-    public TagController(TagService tagService, TagAssembler tagAssembler, TagPageBuilder pageBuilder) {
+    public TagController(TagService tagService,
+                         TagAssembler tagAssembler,
+                         TagPageBuilder pageBuilder, WebSecurity webSecurity) {
         this.tagService = tagService;
         this.tagAssembler = tagAssembler;
         this.pageBuilder = pageBuilder;
+        this.webSecurity = webSecurity;
     }
 
     @GetMapping
@@ -67,7 +72,8 @@ public class TagController {
 
     @PostMapping
     public TagDto
-    create(@Valid @RequestBody TagDto tagDto) {
+    create(@Valid @RequestBody TagDto tagDto, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         tagDto = tagService.save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
         int idInt = tagDto.getId();
         return tagAssembler.assemble((long) idInt, tagDto);
@@ -75,8 +81,15 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer id, HttpServletResponse response) {
+    public void delete(@PathVariable Integer id, Principal principal) {
+        webSecurity.checkOperationAccess(principal);
         tagService.delete(id);
+    }
+
+    @GetMapping("/find")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> findFrequentTag() {
+        return tagService.findFrequentTag();
     }
 
 

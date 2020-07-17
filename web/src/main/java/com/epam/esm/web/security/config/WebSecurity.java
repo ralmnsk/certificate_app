@@ -2,7 +2,6 @@ package com.epam.esm.web.security.config;
 
 import com.epam.esm.model.Role;
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.exception.AccessException;
 import com.epam.esm.service.exception.NotFoundException;
 import com.epam.esm.service.user.UserService;
@@ -42,6 +41,18 @@ public class WebSecurity {
             return true;
         }
         if (userDto.getLogin().equals(login)) {
+            return true;
+        }
+        throw new AccessException("Access denied");
+    }
+
+    public boolean checkOperationAccess(Principal principal) {
+        String login = principal.getName();
+        UserDto userDto = userService.findByLogin(login);
+        if (userDto == null) {
+            throw new NotFoundException("User with principal login: " + login + " not found exception");
+        }
+        if (userDto.getRole().equals(Role.ADMIN)) {
             return true;
         }
         throw new AccessException("Access denied");

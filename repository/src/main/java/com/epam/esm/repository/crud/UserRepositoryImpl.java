@@ -2,7 +2,6 @@ package com.epam.esm.repository.crud;
 
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
 import com.epam.esm.model.wrapper.UserListWrapper;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.epam.esm.repository.crud.Constants.*;
+import static java.util.stream.Collectors.toList;
 
 @Repository
 public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository {
@@ -25,7 +25,12 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     public User findByLogin(String login) {
         Query query = getEntityManager().createNativeQuery("select * from users where users.login = :login", User.class);
         query.setParameter("login", login);
-        return (User) query.getSingleResult();
+        User user = (User) query.getSingleResult();
+        if (user != null && user.getDeleted()) {
+            return null;
+        }
+
+        return user;
     }
 
     @Override
@@ -39,6 +44,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
         List<User> users = query.getResultList();
+        users = users.stream().filter(user -> !user.getDeleted()).collect(toList());
 
         Query queryCount = getEntityManager().createNativeQuery(assembleQlString(filter, COUNT));
         queryCount.setParameter("name", PERCENT_START + filter.getUserName() + PERCENT_END);
@@ -59,6 +65,9 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
                 "where o.id = :orderId", User.class);
         query.setParameter("orderId", orderId);
         User user = (User) query.getSingleResult();
+        if (user.getDeleted()) {
+            return Optional.empty();
+        }
 
         return Optional.ofNullable(user);
     }
@@ -66,7 +75,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     private String assembleQlString(UserFilter filter, String selecting) {
         String select = "select distinct * ";
         String count = "select count(*) from (";
-        String ql = select + " from users where surname like :surname and name like :name ";
+        String ql = select + " from users where surname like :surname and name like :name and users.deleted = false ";
 
         ql = builder.addSortToQueryString(filter, selecting, ql);
         if (selecting.equals(COUNT)) {

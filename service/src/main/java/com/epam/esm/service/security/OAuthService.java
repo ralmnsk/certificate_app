@@ -1,10 +1,9 @@
-package com.epam.esm.web.security.service;
+package com.epam.esm.service.security;
 
 import com.epam.esm.model.Role;
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
 import com.epam.esm.service.user.UserService;
-import com.epam.esm.web.security.dto.RegistrationDto;
+import com.epam.esm.service.dto.security.RegistrationDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
