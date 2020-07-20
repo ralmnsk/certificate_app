@@ -2,7 +2,7 @@ package com.epam.esm.service.user;
 
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.UserListWrapper;
 import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.repository.crud.UserRepository;
 import com.epam.esm.service.dto.UserDto;
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserListWrapperDto getAll(UserFilterDto userFilterDto) {
         UserFilter userFilter = mapper.map(userFilterDto, UserFilter.class);
-        ListWrapper<User, UserFilter> wrapper = userRepository.getAll(userFilter);
+        UserListWrapper wrapper = userRepository.getAll(userFilter);
         List<UserDto> dtoList = new ArrayList<>();
         List<User> users = wrapper.getList();
         for (User c : users) {

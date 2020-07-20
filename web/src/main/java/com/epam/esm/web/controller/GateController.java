@@ -1,13 +1,13 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.exception.AccessException;
-import com.epam.esm.service.user.UserService;
 import com.epam.esm.service.dto.security.LoginDto;
 import com.epam.esm.service.dto.security.RegistrationDto;
-import com.epam.esm.web.security.jwt.JwtTokenProvider;
+import com.epam.esm.service.exception.AccessException;
 import com.epam.esm.service.security.OAuthService;
 import com.epam.esm.service.security.RegistrationService;
+import com.epam.esm.service.user.UserService;
+import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,11 +15,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +50,7 @@ public class GateController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
         try {
             String login = loginDto.getLogin();
             RegistrationDto userDetails = oAuthService.getUserDetails(login);
@@ -63,7 +67,8 @@ public class GateController {
 
                 Map<Object, Object> response = new HashMap<>();
                 response.put("username", login);
-                response.put("token", token);
+                response.put("token", "Bearer " + token);
+                response.put("user link:", getURLBase(request) + "/users/" + userDto.getId());
                 return ResponseEntity.ok(response);
             }
 
@@ -81,9 +86,11 @@ public class GateController {
         return registeredUser;
     }
 
-//    @GetMapping("/login/oauth2/code/google")
-//    public void getInfo(HttpServletRequest req, HttpServletResponse resp){
-//        System.out.println(req);
-//        System.out.println(resp);
-//    }
+    public String getURLBase(HttpServletRequest request) throws MalformedURLException {
+        URL requestURL = new URL(request.getRequestURL().toString());
+        String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
+        return requestURL.getProtocol() + "://" + requestURL.getHost() + port;
+
+    }
+
 }

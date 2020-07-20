@@ -1,6 +1,8 @@
 package com.epam.esm.web.security.config;
 
 import com.epam.esm.service.user.UserService;
+import com.epam.esm.web.security.handler.DeniedHandler;
+import com.epam.esm.web.security.handler.SuccessHandler;
 import com.epam.esm.web.security.jwt.JwtConfigurer;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -66,15 +68,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(REGISTER).permitAll()
+                .antMatchers("/login/oauth2/code/google").permitAll()
+                .antMatchers("/login/oauth2/code/google*").permitAll()
+                .antMatchers("/login/oauth2/code/google/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, TAGS).hasAnyRole(USER, ADMIN)
+                .antMatchers(HttpMethod.GET, TAGS).permitAll()
+                .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
+
+
                 .antMatchers(HttpMethod.POST, TAGS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PUT, TAGS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PATCH, TAGS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.DELETE, TAGS).hasAnyRole(ADMIN)
 
 
-                .antMatchers(HttpMethod.GET, CERTIFICATES).hasAnyRole(USER, ADMIN)
                 .antMatchers(HttpMethod.POST, CERTIFICATES).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PUT, CERTIFICATES).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PATCH, CERTIFICATES).hasAnyRole(ADMIN)
@@ -97,11 +104,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
                 .and()
-//                .exceptionHandling().accessDeniedHandler(new DeniedHandler())
-//                .and()
-//                .oauth2Login()
-//                .successHandler(new SuccessHandler(jwtTokenProvider, userService))
-//                .and()
+                .exceptionHandling().accessDeniedHandler(new DeniedHandler())
+                .and()
+                .oauth2Login()
+                .successHandler(new SuccessHandler(jwtTokenProvider, userService))
+                .and()
                 .apply(new JwtConfigurer(jwtTokenProvider))
         ;
     }

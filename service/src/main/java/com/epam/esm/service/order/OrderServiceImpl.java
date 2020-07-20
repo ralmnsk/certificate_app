@@ -3,7 +3,7 @@ package com.epam.esm.service.order;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.OrderFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.OrderListWrapper;
 import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.repository.crud.UserRepository;
 import com.epam.esm.service.calculator.TotalCostCalculator;
@@ -94,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderListWrapperDto getAll(OrderFilterDto filterDto) {
         OrderFilter filter = mapper.map(filterDto, OrderFilter.class);
-        ListWrapper<Order, OrderFilter> wrapper = orderRepository.getAll(filter);
+        OrderListWrapper wrapper = orderRepository.getAll(filter);
         List<Order> orders = wrapper.getList();
         List<OrderDto> dtoList = orders
                 .stream()

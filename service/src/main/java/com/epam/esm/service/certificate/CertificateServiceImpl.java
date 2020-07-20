@@ -3,7 +3,7 @@ package com.epam.esm.service.certificate;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.CertificateFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.CertificateListWrapper;
 import com.epam.esm.repository.crud.CertificateRepository;
 import com.epam.esm.repository.crud.OrderRepository;
 import com.epam.esm.service.dto.CertificateDto;
@@ -88,7 +88,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public CertificateListWrapperDto getAll(CertificateFilterDto filterDto) {
         CertificateFilter filter = mapper.map(filterDto, CertificateFilter.class);
-        ListWrapper<Certificate, CertificateFilter> wrapper = certificateRepository.getAll(filter);
+        CertificateListWrapper wrapper = certificateRepository.getAll(filter);
         List<Certificate> certificates = wrapper.getList();
         List<CertificateDto> dtoList = new ArrayList<>();
         for (Certificate c : certificates) {

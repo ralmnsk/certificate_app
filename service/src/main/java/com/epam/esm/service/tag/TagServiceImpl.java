@@ -3,7 +3,7 @@ package com.epam.esm.service.tag;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
-import com.epam.esm.model.wrapper.ListWrapper;
+import com.epam.esm.model.wrapper.TagListWrapper;
 import com.epam.esm.repository.crud.CertificateRepository;
 import com.epam.esm.repository.crud.TagRepository;
 import com.epam.esm.service.dto.TagDto;
@@ -61,7 +61,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagListWrapperDto getAll(TagFilterDto tagFilterDto) {
         TagFilter tagFilter = mapper.map(tagFilterDto, TagFilter.class);
-        ListWrapper<Tag, TagFilter> wrapper = tagRepository.getAll(tagFilter);
+        TagListWrapper wrapper = tagRepository.getAll(tagFilter);
         List<TagDto> tagDtoList = wrapper.getList().stream().map(t -> mapper.map(t, TagDto.class)).collect(toList());
 
         TagListWrapperDto wrapperDto = new TagListWrapperDto();
