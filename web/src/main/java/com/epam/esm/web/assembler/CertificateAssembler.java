@@ -1,10 +1,10 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.CertificateService;
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.service.CertificateService;
 import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.OrderController;
 import org.springframework.hateoas.CollectionModel;
@@ -61,7 +61,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                                 }
                             }
                     )
-            ).withRel("order id:" + filter.getOrderId() + " certificates");
+            ).withRel("order_id_" + filter.getOrderId() + "_certificates");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
         } else {
@@ -96,7 +96,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                                     return null;
                                 }
                             }
-                    )).withRel("order id:" + filter.getOrderId() + " certificates previous page");
+                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_previous_page");
             collectionModel.add(link);
         }
 
@@ -114,7 +114,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                                     return null;
                                 }
                             }
-                    )).withRel("order id:" + filter.getOrderId() + " certificates next page");
+                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_next_page");
             collectionModel.add(link);
         }
     }

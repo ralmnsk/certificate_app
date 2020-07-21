@@ -14,7 +14,6 @@ import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,12 +48,6 @@ public class UserController {
         this.webSecurity = webSecurity;
     }
 
-//    @PostMapping
-//    public UserDto create(@Valid @RequestBody UserDto userDto) {
-//        userDto = userService.save(userDto).orElseThrow(() -> new SaveException("User save exception"));
-//        return userAssembler.assemble(userDto.getId(), userDto);
-//    }
-
     @GetMapping("/{id}")
     public UserDto get(@PathVariable Long id, Principal principal) {
         webSecurity.checkUserId(principal, id);
@@ -77,12 +70,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id, Principal principal) {
+    public void delete(@PathVariable Long id, Principal principal) {
         webSecurity.checkUserId(principal, id);
-        if (userService.delete(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        userService.delete(id);
     }
 
     @GetMapping
@@ -162,18 +152,6 @@ public class UserController {
 
     }
 
-//    @PutMapping("/{userId}/orders") //order controller: save
-//    @ResponseStatus(HttpStatus.OK)
-//    public CustomPageDto<OrderDto> addOrderToUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
-//                                                  Principal principal) {
-//        webSecurity.checkUserId(principal, userId);
-//        orderService.addOrderToUser(userId, set);
-//
-//        OrderFilterDto filterDto = new OrderFilterDto();
-//        filterDto.setUserId(userId);
-//        return orderPageBuilder.build(filterDto);
-//    }
-
     @DeleteMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
     public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> orderIds,
@@ -185,6 +163,5 @@ public class UserController {
         filterDto.setUserId(userId);
         return orderPageBuilder.build(filterDto);
     }
-
 
 }

@@ -1,9 +1,9 @@
 package com.epam.esm.calculator;
 
-import com.epam.esm.model.Certificate;
-import com.epam.esm.model.Order;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.model.Certificate;
+import com.epam.esm.model.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +22,10 @@ public class TotalCostCalculator {
 
     public Order calc(Order order) {
         Set<Certificate> certificates = order.getCertificates();
+        return getOrder(order, certificates);
+    }
+
+    private Order getOrder(Order order, Set<Certificate> certificates) {
         if (certificates.isEmpty()) {
             return order;
         }
@@ -42,6 +46,10 @@ public class TotalCostCalculator {
 
     public OrderDto calc(OrderDto order) {
         Set<CertificateDto> certificates = order.getCertificates();
+        return getOrderDto(order, certificates);
+    }
+
+    private OrderDto getOrderDto(OrderDto order, Set<CertificateDto> certificates) {
         if (certificates.isEmpty()) {
             return order;
         }

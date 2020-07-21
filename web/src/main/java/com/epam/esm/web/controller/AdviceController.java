@@ -120,38 +120,12 @@ public class AdviceController {
                 ex.getMessage());
     }
 
-
-    @ResponseBody
-    @ExceptionHandler(InconsistencyIdException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto inconsistencyIdException(InconsistencyIdException ex) {
-        return new ExceptionResponseDto("InconsistencyIdException",
-                ex.getMessage());
-    }
-
-
-    @ResponseBody
-    @ExceptionHandler(NewTagHasIdInCertificateException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto idInNewTagException(NewTagHasIdInCertificateException ex) {
-        return new ExceptionResponseDto("IdInNewTagException",
-                ex.getMessage());
-    }
-
     @ResponseBody
     @ExceptionHandler(DataAccessResourceFailureException.class)
     @ResponseStatus(NOT_ACCEPTABLE)
     public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
         return new ExceptionResponseDto("DataAccessResourceFailureException",
                 "Failed to obtain JDBC Connection.");
-    }
-
-    @ResponseBody
-    @ExceptionHandler(JsonDeserializationException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto exception(JsonDeserializationException ex) {
-        return new ExceptionResponseDto("JsonDeserializationException",
-                ex.getMessage());
     }
 
     @ResponseBody

@@ -1,9 +1,9 @@
 package com.epam.esm.service.security;
 
-import com.epam.esm.model.Role;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.service.UserService;
 import com.epam.esm.dto.security.RegistrationDto;
+import com.epam.esm.model.Role;
+import com.epam.esm.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,10 @@ import java.util.Collection;
 
 @Service
 public class OAuthService {
+
+    private final String ROLE_USER = "ROLE_USER";
+    private final String ROLE_ADMIN = "ROLE_ADMIN";
+    private final String ROLE_GUEST = "ROLE_GUEST";
 
     private UserService userService;
 
@@ -34,11 +38,11 @@ public class OAuthService {
             registrationDto.setSurname(userDto.getSurname());
             registrationDto.setName(userDto.getName());
 
-            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_GUEST");
+            GrantedAuthority authority = new SimpleGrantedAuthority(ROLE_GUEST);
             if (userDto.getRole().equals(Role.USER)) {
-                authority = new SimpleGrantedAuthority("ROLE_USER");
+                authority = new SimpleGrantedAuthority(ROLE_USER);
             } else if (userDto.getRole().equals(Role.ADMIN)) {
-                authority = new SimpleGrantedAuthority("ROLE_ADMIN");
+                authority = new SimpleGrantedAuthority(ROLE_ADMIN);
             }
             registrationDto.setGrantedAuthoritiesList(Arrays.asList(authority));
 

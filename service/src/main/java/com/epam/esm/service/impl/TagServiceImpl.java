@@ -1,5 +1,10 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.filter.TagFilterDto;
+import com.epam.esm.dto.wrapper.TagListWrapperDto;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.exception.UpdateException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
@@ -7,11 +12,6 @@ import com.epam.esm.model.wrapper.TagListWrapper;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
-import com.epam.esm.dto.TagDto;
-import com.epam.esm.dto.filter.TagFilterDto;
-import com.epam.esm.dto.wrapper.TagListWrapperDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.UpdateException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -142,8 +142,8 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public List<String> findFrequentTag() {
-        List<String> list = tagRepository.findFrequentTag();
+    public List<String> findTopTag() {
+        List<String> list = tagRepository.findTopTag();
         return list;
     }
 }

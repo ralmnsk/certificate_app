@@ -10,10 +10,15 @@ import javax.persistence.Query;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.esm.repository.impl.Constants.*;
-
 @Repository
 public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
+    public final static String PERCENT = "%";
+    private final String SELECT = "select";
+    private final String COUNT = "count";
+    private final String USER_SURNAME = "userSurname";
+    private final String USER_NAME = "userName";
+    private final String USER_ID = "userId";
+
     private QueryBuilder<OrderFilter> builder;
 
     public OrderRepositoryImpl(QueryBuilder<OrderFilter> builder) {
@@ -24,7 +29,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
 
     @Override
     public OrderListWrapper getAll(OrderFilter filter) {
-        String ql = assembleQlString(filter, "select");
+        String ql = assembleQlString(filter, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, Order.class);
         querySetParameters(filter, query);
         int pageNumber = filter.getPage();
@@ -35,7 +40,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         orders = orders.stream().filter(order -> !order.isDeleted()).collect(Collectors.toList());
 
         Query queryTotal = getEntityManager().createNativeQuery
-                (assembleQlString(filter, "count"));
+                (assembleQlString(filter, COUNT));
         querySetParameters(filter, queryTotal);
 
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
@@ -51,10 +56,10 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     }
 
     private void querySetParameters(OrderFilter filter, Query query) {
-        query.setParameter("userSurname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
-        query.setParameter("userName", PERCENT_START + filter.getUserName() + PERCENT_END);
+        query.setParameter(USER_SURNAME, PERCENT + filter.getUserSurname() + PERCENT);
+        query.setParameter(USER_NAME, PERCENT + filter.getUserName() + PERCENT);
         if (filter.getUserId() != null && filter.getUserId() > 0) {
-            query.setParameter("userId", filter.getUserId());
+            query.setParameter(USER_ID, filter.getUserId());
         }
     }
 

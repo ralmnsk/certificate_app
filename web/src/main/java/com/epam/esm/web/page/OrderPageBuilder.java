@@ -1,9 +1,9 @@
 package com.epam.esm.web.page;
 
 import com.epam.esm.dto.CustomPageDto;
-import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.web.assembler.OrderAssembler;
 import org.springframework.hateoas.CollectionModel;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Component
-public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService, OrderAssembler,OrderFilterDto> {
+public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService, OrderAssembler, OrderFilterDto> {
     private final String EMPTY = "";
 
     public OrderPageBuilder(OrderService service, OrderAssembler assembler) {

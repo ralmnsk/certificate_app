@@ -10,11 +10,14 @@ import javax.persistence.Query;
 import java.util.List;
 import java.util.Optional;
 
-import static com.epam.esm.repository.impl.Constants.*;
 import static java.util.stream.Collectors.toList;
 
 @Repository
 public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository {
+    private final String PERCENT = "%";
+    private final String SELECT = "select";
+    private final String COUNT = "count";
+
     private QueryBuilder<UserFilter> builder;
 
     public UserRepositoryImpl(QueryBuilder<UserFilter> builder) {
@@ -38,8 +41,8 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     public UserListWrapper getAll(UserFilter filter) {
         String ql = assembleQlString(filter, SELECT);
         Query query = getEntityManager().createNativeQuery(ql, User.class);
-        query.setParameter("name", PERCENT_START + filter.getUserName() + PERCENT_END);
-        query.setParameter("surname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
+        query.setParameter("name", PERCENT + filter.getUserName() + PERCENT);
+        query.setParameter("surname", PERCENT + filter.getUserSurname() + PERCENT);
         int pageNumber = filter.getPage();
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
@@ -48,8 +51,8 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
         users = users.stream().filter(user -> !user.getDeleted()).collect(toList());
 
         Query queryCount = getEntityManager().createNativeQuery(assembleQlString(filter, COUNT));
-        queryCount.setParameter("name", PERCENT_START + filter.getUserName() + PERCENT_END);
-        queryCount.setParameter("surname", PERCENT_START + filter.getUserSurname() + PERCENT_END);
+        queryCount.setParameter("name", PERCENT + filter.getUserName() + PERCENT);
+        queryCount.setParameter("surname", PERCENT + filter.getUserSurname() + PERCENT);
         long countResult = Long.valueOf(queryCount.getSingleResult().toString());
 
         filter = builder.updateFilter(filter, pageSize, countResult);

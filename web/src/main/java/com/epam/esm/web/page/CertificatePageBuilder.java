@@ -1,10 +1,10 @@
 package com.epam.esm.web.page;
 
-import com.epam.esm.service.CertificateService;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.CustomPageDto;
-import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.service.CertificateService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;

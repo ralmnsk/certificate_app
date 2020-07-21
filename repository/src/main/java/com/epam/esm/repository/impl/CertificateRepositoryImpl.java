@@ -9,12 +9,10 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.List;
 
-import static com.epam.esm.repository.impl.Constants.COUNT;
-import static com.epam.esm.repository.impl.Constants.SELECT;
-
 @Repository
 public class CertificateRepositoryImpl extends AbstractRepository<Certificate, Long> implements CertificateRepository {
-    private final String EMPTY = "";
+    public final static String SELECT = "select";
+    public final static String COUNT = "count";
     private QueryBuilder<CertificateFilter> builder;
 
     public CertificateRepositoryImpl(QueryBuilder<CertificateFilter> builder) {

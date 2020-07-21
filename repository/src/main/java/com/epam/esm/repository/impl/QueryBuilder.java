@@ -12,8 +12,6 @@ import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.epam.esm.repository.impl.Constants.*;
-
 @Component
 public class QueryBuilder<F extends AbstractFilter> {
 
@@ -56,6 +54,8 @@ public class QueryBuilder<F extends AbstractFilter> {
     private final String SELECT_COUNT = "select count(*) from (";
     private final String SELECT_COUNT_END = " ) c ";
     private final String EMPTY = "";
+    private final String COUNT = "count";
+    private final String PERCENT = "%";
 
     private HashSet<String> entityNameSet;
 
@@ -195,15 +195,15 @@ public class QueryBuilder<F extends AbstractFilter> {
     }
 
     public void setParameters(CertificateFilter certificateFilter, Query query) {
-        query.setParameter("certificateName", PERCENT_START + certificateFilter.getCertificateName() + PERCENT_END);
+        query.setParameter("certificateName", PERCENT + certificateFilter.getCertificateName() + PERCENT);
 //        if (entityNameSet.contains(CERTIFICATE_TABLE)) {
 //        }
         if (entityNameSet.contains(TAG_TABLE)) {
-            query.setParameter("tagName", PERCENT_START + certificateFilter.getTagName() + PERCENT_END);
+            query.setParameter("tagName", PERCENT + certificateFilter.getTagName() + PERCENT);
         }
         if (entityNameSet.contains(USER_TABLE)) {
-            query.setParameter("surname", PERCENT_START + certificateFilter.getUserSurname() + PERCENT_END);
-            query.setParameter("userName", PERCENT_START + certificateFilter.getUserName() + PERCENT_END);
+            query.setParameter("surname", PERCENT + certificateFilter.getUserSurname() + PERCENT);
+            query.setParameter("userName", PERCENT + certificateFilter.getUserName() + PERCENT);
         }
 
         if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {

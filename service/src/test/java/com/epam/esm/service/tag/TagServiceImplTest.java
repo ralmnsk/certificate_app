@@ -147,7 +147,7 @@ class TagServiceImplTest {
 
     @Test
     void findFrequentTag() {
-        tagService.findFrequentTag();
-        verify(tagRepository).findFrequentTag();
+        tagService.findTopTag();
+        verify(tagRepository).findTopTag();
     }
 }

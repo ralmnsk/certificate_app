@@ -37,7 +37,8 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
         )).withSelfRel();
         orderDto.add(linkSelfOrder);
         Link linkCertificates = linkTo(methodOn(OrderController.class)
-                .getAllCertificatesByOrderId(null, 0, 5, Arrays.asList(""), orderId, null))
+                .getAllCertificatesByOrderId(null, 0, 5,
+                        Arrays.asList(""), orderId, null))
                 .withRel("certificates");
         orderDto.add(linkCertificates);
 
@@ -74,7 +75,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                                     return null;
                                 }
                             }
-                    )).withRel("user id:" + filter.getUserId() + " orders");
+                    )).withRel("user_id_" + filter.getUserId() + "_orders");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
         } else {
@@ -110,7 +111,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                                     return null;
                                 }
                             }
-                    )).withRel("user id:" + filter.getUserId() + " orders previous page");
+                    )).withRel("user_id_" + filter.getUserId() + "_orders_previous_page");
             collectionModel.add(link);
         }
 
@@ -128,7 +129,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                                     return null;
                                 }
                             }
-                    )).withRel("user id:" + filter.getUserId() + " orders next page");
+                    )).withRel("user_id_" + filter.getUserId() + "_orders_next_page");
             collectionModel.add(link);
         }
     }

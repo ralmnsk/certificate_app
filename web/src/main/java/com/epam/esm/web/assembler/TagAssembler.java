@@ -61,7 +61,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                             filter.getPage() - 1,
                             filter.getSize(),
                             filter.getSortParams()
-                    )).withRel("order id:" + filter.getOrderId() + " certificates previous page");
+                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_previous_page");
             collectionModel.add(link);
         }
 
@@ -73,7 +73,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                             filter.getPage() - 1,
                             filter.getSize(),
                             filter.getSortParams()
-                    )).withRel("order id:" + filter.getOrderId() + " certificates next page");
+                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_next_page");
             collectionModel.add(link);
         }
     }

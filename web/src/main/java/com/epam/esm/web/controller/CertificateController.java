@@ -113,7 +113,7 @@ public class CertificateController {
         certificateService.delete(id);
     }
 
-    //https://www.baeldung.com/spring-rest-json-patch
+
     @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Principal principal) {
         webSecurity.checkOperationAccess(principal);

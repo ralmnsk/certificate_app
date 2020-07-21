@@ -2,10 +2,12 @@ package com.epam.esm.service.security;
 
 import com.epam.esm.dto.security.CustomUserDetails;
 import com.epam.esm.dto.security.RegistrationDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service("uds")
 public class JwtUserDetailsService implements UserDetailsService {
 
@@ -23,7 +25,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             CustomUserDetails customUserDetails = new CustomUserDetails(registrationDto);
             return customUserDetails;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn(e.getMessage());
             throw new UsernameNotFoundException("User " + username + " was not found in the database");
         }
     }

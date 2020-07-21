@@ -1,11 +1,11 @@
 package com.epam.esm.web.page;
 
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.page.FilterDirection;
 import com.epam.esm.page.FilterOrder;
 import com.epam.esm.page.FilterSort;
 import com.epam.esm.service.CrudService;
-import com.epam.esm.dto.CustomPageDto;
-import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.web.assembler.Assembler;
 import org.springframework.hateoas.CollectionModel;
 

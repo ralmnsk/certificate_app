@@ -31,8 +31,9 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         userDto.add(linkSelf);
 
         Link linkOrders = linkTo(methodOn(UserController.class)
-                .getAllOrdersByUserId(null, null, 0, 5, Arrays.asList(""), id, null))
-                .withRel("user: " + userDto.getSurname() + " " + userDto.getName() + " orders");
+                .getAllOrdersByUserId(null, null, 0, 5, Arrays.asList(""),
+                        id, null))
+                .withRel("user_id_" + userDto.getId() + "_orders");
         userDto.add(linkOrders);
         return userDto;
     }
@@ -66,7 +67,8 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                 )).withRel("users");
         CollectionModel<UserDto> collectionModel = CollectionModel.of(users, linkUsers);
         if (filter.getUserId() != null && filter.getUserId() > 0) {
-            Link myAccountLink = linkTo(methodOn(UserController.class).get(filter.getUserId(), null)).withRel("My account");
+            Link myAccountLink = linkTo(methodOn(UserController.class)
+                    .get(filter.getUserId(), null)).withRel("my_account");
             collectionModel.add(myAccountLink);
         }
         addNextPrevious(collectionModel, filter);
@@ -86,7 +88,7 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                             filter.getSize(),
                             filter.getSortParams(),
                             null
-                    )).withRel("users previous page");
+                    )).withRel("users_previous_page");
             collectionModel.add(link);
         }
 
@@ -99,7 +101,7 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                             filter.getSize(),
                             filter.getSortParams(),
                             null
-                    )).withRel("users next page");
+                    )).withRel("users_next_page");
             collectionModel.add(link);
         }
     }
