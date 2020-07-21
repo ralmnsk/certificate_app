@@ -1,10 +1,10 @@
 package com.epam.esm.web.page;
 
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
-import com.epam.esm.service.dto.TagDto;
-import com.epam.esm.service.dto.filter.TagFilterDto;
-import com.epam.esm.service.tag.TagService;
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.filter.TagFilterDto;
+import com.epam.esm.service.TagService;
 import com.epam.esm.web.assembler.TagAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;

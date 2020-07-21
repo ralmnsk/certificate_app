@@ -1,10 +1,10 @@
 package com.epam.esm.web.security.config;
 
 import com.epam.esm.model.Role;
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.exception.AccessException;
-import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.AccessException;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.service.UserService;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -36,8 +36,9 @@ public class WebSecurity {
 
     public boolean checkOrderId(Principal principal, Long orderId) {
         String login = principal.getName();
+        UserDto userFromLogin = userService.findByLogin(login);
         UserDto userDto = userService.getUserByOrderId(orderId).orElseThrow(() -> new NotFoundException("User with principal login: " + login + " not found exception"));
-        if (userDto.getRole().equals(Role.ADMIN)) {
+        if (userFromLogin.getRole().equals(Role.ADMIN)) {
             return true;
         }
         if (userDto.getLogin().equals(login)) {

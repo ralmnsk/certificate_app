@@ -1,6 +1,6 @@
 package com.epam.esm.web.config;
 
-import com.epam.esm.service.ServiceConfiguration;
+import com.epam.esm.ServiceConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -14,5 +14,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = {"com.epam.esm.web"})
 @Import({ServiceConfiguration.class})
 public class AppConfig implements WebMvcConfigurer {
+
 }
 

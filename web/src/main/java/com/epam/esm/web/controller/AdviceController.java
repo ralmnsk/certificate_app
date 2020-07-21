@@ -1,7 +1,7 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.ExceptionResponseDto;
-import com.epam.esm.service.exception.*;
+import com.epam.esm.dto.ExceptionResponseDto;
+import com.epam.esm.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessResourceFailureException;
@@ -169,6 +169,7 @@ public class AdviceController {
         return new ExceptionResponseDto("AccessException",
                 ex.getMessage());
     }
+
 
     @ResponseBody
     @ExceptionHandler(Throwable.class)

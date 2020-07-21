@@ -1,16 +1,16 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.OrderDto;
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.CertificateFilterDto;
-import com.epam.esm.service.dto.filter.OrderFilterDto;
-import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.order.OrderService;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.filter.CertificateFilterDto;
+import com.epam.esm.dto.filter.OrderFilterDto;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.exception.SaveException;
+import com.epam.esm.service.CertificateService;
+import com.epam.esm.service.OrderService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
@@ -162,10 +162,10 @@ public class OrderController {
 
     @PutMapping("/{orderId}/certificates")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
+    public CustomPageDto<CertificateDto> addCertificateToOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> certificateIds,
                                                                Principal principal) {
         webSecurity.checkOrderId(principal, orderId);
-        certificateService.addCertificateToOrder(orderId, set);
+        certificateService.addCertificateToOrder(orderId, certificateIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setOrderId(orderId);
@@ -183,7 +183,6 @@ public class OrderController {
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setOrderId(orderId);
-
 
         return certificatePageBuilder.build(filterDto);
     }

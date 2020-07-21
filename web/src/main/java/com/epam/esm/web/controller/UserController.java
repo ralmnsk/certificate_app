@@ -1,15 +1,14 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.OrderDto;
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.UserUpdateDto;
-import com.epam.esm.service.dto.filter.OrderFilterDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
-import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.order.OrderService;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserUpdateDto;
+import com.epam.esm.dto.filter.OrderFilterDto;
+import com.epam.esm.dto.filter.UserFilterDto;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.service.OrderService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
@@ -50,11 +49,11 @@ public class UserController {
         this.webSecurity = webSecurity;
     }
 
-    @PostMapping
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
-        userDto = userService.save(userDto).orElseThrow(() -> new SaveException("User save exception"));
-        return userAssembler.assemble(userDto.getId(), userDto);
-    }
+//    @PostMapping
+//    public UserDto create(@Valid @RequestBody UserDto userDto) {
+//        userDto = userService.save(userDto).orElseThrow(() -> new SaveException("User save exception"));
+//        return userAssembler.assemble(userDto.getId(), userDto);
+//    }
 
     @GetMapping("/{id}")
     public UserDto get(@PathVariable Long id, Principal principal) {
@@ -115,6 +114,7 @@ public class UserController {
         UserDto byLogin = userService.findByLogin(login);
         if (byLogin != null) {
             filterDto.setUserId(byLogin.getId());
+
         }
         filterDto.setPage(page);
         filterDto.setSize(size);
@@ -157,6 +157,7 @@ public class UserController {
         filterDto.setSortParams(sort);
         filterDto.setUserId(userId);
 
+
         return orderPageBuilder.build(filterDto);
 
     }
@@ -175,10 +176,10 @@ public class UserController {
 
     @DeleteMapping("/{userId}/orders")
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> set,
+    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> orderIds,
                                                        Principal principal) {
         webSecurity.checkUserId(principal, userId);
-        orderService.deleteOrderFromUser(userId, set);
+        orderService.deleteOrderFromUser(userId, orderIds);
 
         OrderFilterDto filterDto = new OrderFilterDto();
         filterDto.setUserId(userId);

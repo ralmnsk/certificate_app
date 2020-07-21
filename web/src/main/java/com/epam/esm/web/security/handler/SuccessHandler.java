@@ -1,9 +1,9 @@
 package com.epam.esm.web.security.handler;
 
 import com.epam.esm.model.Role;
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.exception.SaveException;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

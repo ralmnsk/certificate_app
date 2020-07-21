@@ -1,10 +1,10 @@
 package com.epam.esm.web.page;
 
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.filter.UserFilterDto;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;

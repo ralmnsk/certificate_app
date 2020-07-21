@@ -1,6 +1,6 @@
 package com.epam.esm.web.config;
 
-import com.epam.esm.service.exception.NoHandlerException;
+import com.epam.esm.exception.NoHandlerException;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;

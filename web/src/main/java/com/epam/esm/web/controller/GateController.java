@@ -1,12 +1,12 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.security.LoginDto;
-import com.epam.esm.service.dto.security.RegistrationDto;
-import com.epam.esm.service.exception.AccessException;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.security.LoginDto;
+import com.epam.esm.dto.security.RegistrationDto;
+import com.epam.esm.exception.AccessException;
 import com.epam.esm.service.security.OAuthService;
 import com.epam.esm.service.security.RegistrationService;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -66,8 +66,7 @@ public class GateController {
                 String token = jwtTokenProvider.createToken(login, userDto.getName());
 
                 Map<Object, Object> response = new HashMap<>();
-                response.put("username", login);
-                response.put("token", "Bearer " + token);
+                response.put("token", "Bearer_" + token);
                 response.put("user link:", getURLBase(request) + "/users/" + userDto.getId());
                 return ResponseEntity.ok(response);
             }

@@ -88,7 +88,7 @@ org.springframework.dao.EmptyResultDataAccessException: Incorrect result size: e
 2020-06-05 10:57:22 INFO  DispatcherServlet:547 - Completed initialization in 85 ms
 2020-06-26 15:50:55 INFO  Main:38 - configuring app with basedir: C:\Users\iland\Downloads\certificate_app\.\.
 2020-06-26 15:51:16 INFO  ContextLoader:271 - Root WebApplicationContext: initialization started
-2020-06-26 15:51:19 INFO  PostProcessorRegistrationDelegate$BeanPostProcessorChecker:335 - Bean 'com.epam.esm.service.ServiceConfiguration' of type [com.epam.esm.service.ServiceConfiguration$$EnhancerBySpringCGLIB$$1f5301b5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-26 15:51:19 INFO  PostProcessorRegistrationDelegate$BeanPostProcessorChecker:335 - Bean 'com.epam.esm.ServiceConfiguration' of type [com.epam.esm.ServiceConfiguration$$EnhancerBySpringCGLIB$$1f5301b5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
 2020-06-26 15:51:19 INFO  Version:21 - HV000001: Hibernate Validator 6.1.5.Final
 2020-06-26 15:51:23 INFO  ContextLoader:307 - Root WebApplicationContext initialized in 7394 ms
 2020-06-26 15:51:23 INFO  SpringAppConfig$1:525 - Initializing Servlet 'dispatcher'
@@ -110,8 +110,8 @@ org.springframework.dao.DuplicateKeyException: PreparedStatementCallback; SQL [i
 	at org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.java:753)
 	at com.epam.esm.repository.tag.TagRepositoryImpl.save(TagRepositoryImpl.java:64)
 	at com.epam.esm.repository.tag.TagRepositoryImpl.save(TagRepositoryImpl.java:23)
-	at com.epam.esm.service.tag.TagServiceImpl.save(TagServiceImpl.java:78)
-	at com.epam.esm.service.tag.TagServiceImpl.save(TagServiceImpl.java:28)
+	at com.epam.esm.service.impl.TagServiceImpl.save(TagServiceImpl.java:78)
+	at com.epam.esm.service.impl.TagServiceImpl.save(TagServiceImpl.java:28)
 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -177,7 +177,7 @@ Caused by: org.postgresql.util.PSQLException: ОШИБКА: повторяюще
 2020-06-26 16:02:39 WARN  HikariPool:787 - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=9m38s294ms159µs200ns).
 2020-06-26 16:05:40 INFO  Main:38 - configuring app with basedir: C:\Users\iland\Downloads\certificate_app\.\.
 2020-06-26 16:05:54 INFO  ContextLoader:271 - Root WebApplicationContext: initialization started
-2020-06-26 16:05:57 INFO  PostProcessorRegistrationDelegate$BeanPostProcessorChecker:335 - Bean 'com.epam.esm.service.ServiceConfiguration' of type [com.epam.esm.service.ServiceConfiguration$$EnhancerBySpringCGLIB$$e63f968c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2020-06-26 16:05:57 INFO  PostProcessorRegistrationDelegate$BeanPostProcessorChecker:335 - Bean 'com.epam.esm.ServiceConfiguration' of type [com.epam.esm.ServiceConfiguration$$EnhancerBySpringCGLIB$$e63f968c] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
 2020-06-26 16:05:57 INFO  Version:21 - HV000001: Hibernate Validator 6.1.5.Final
 2020-06-26 16:06:01 INFO  ContextLoader:307 - Root WebApplicationContext initialized in 7218 ms
 2020-06-26 16:06:01 INFO  SpringAppConfig$1:525 - Initializing Servlet 'dispatcher'

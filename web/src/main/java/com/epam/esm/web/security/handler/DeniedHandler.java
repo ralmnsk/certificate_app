@@ -1,6 +1,6 @@
 package com.epam.esm.web.security.handler;
 
-import com.epam.esm.service.dto.ExceptionResponseDto;
+import com.epam.esm.dto.ExceptionResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

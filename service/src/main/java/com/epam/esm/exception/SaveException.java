@@ -1,0 +1,28 @@
+package com.epam.esm.exception;
+
+import com.epam.esm.dto.CertificateDto;
+
+/**
+ * The type Save exception.
+ * Thrown to indicate that exception happened during entity the saving process.
+ */
+public class SaveException extends GeneralException {
+    /**
+     * Instantiates a new Save exception.
+     * Constructor with the specified detail message.
+     *
+     * @param certificateDto the certificate dto
+     */
+    public SaveException(CertificateDto certificateDto) {
+        super("Entity save exception: " + certificateDto);
+    }
+
+    /**
+     * Instantiates a new Save exception.
+     *
+     * @param message the message
+     */
+    public SaveException(String message) {
+        super("Entity save exception: " + message);
+    }
+}

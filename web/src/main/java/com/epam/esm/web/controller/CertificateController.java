@@ -1,13 +1,13 @@
 package com.epam.esm.web.controller;
 
-import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.CustomPageDto;
-import com.epam.esm.service.dto.filter.CertificateFilterDto;
-import com.epam.esm.service.exception.NotFoundException;
-import com.epam.esm.service.exception.SaveException;
-import com.epam.esm.service.exception.UpdateException;
-import com.epam.esm.service.tag.TagService;
+import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.filter.CertificateFilterDto;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.exception.SaveException;
+import com.epam.esm.exception.UpdateException;
+import com.epam.esm.service.CertificateService;
+import com.epam.esm.service.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
@@ -136,9 +136,9 @@ public class CertificateController {
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
-                                              @Valid @RequestBody Set<Long> set, Principal principal) {
+                                              @Valid @RequestBody Set<Long> tagIds, Principal principal) {
         webSecurity.checkOperationAccess(principal);
-        tagService.addTagToCertificate(certificateId, set);
+        tagService.addTagToCertificate(certificateId, tagIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);
@@ -149,9 +149,9 @@ public class CertificateController {
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
-                                                   @Valid @RequestBody Set<Long> set, Principal principal) {
+                                                   @Valid @RequestBody Set<Long> tagIds, Principal principal) {
         webSecurity.checkOperationAccess(principal);
-        tagService.deleteTagFromCertificate(certificateId, set);
+        tagService.deleteTagFromCertificate(certificateId, tagIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);

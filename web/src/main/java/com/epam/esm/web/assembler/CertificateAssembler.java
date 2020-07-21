@@ -1,10 +1,10 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.certificate.CertificateService;
-import com.epam.esm.service.dto.CertificateDto;
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
-import com.epam.esm.service.dto.filter.CertificateFilterDto;
+import com.epam.esm.service.CertificateService;
+import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.dto.filter.AbstractFilterDto;
+import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.OrderController;
 import org.springframework.hateoas.CollectionModel;

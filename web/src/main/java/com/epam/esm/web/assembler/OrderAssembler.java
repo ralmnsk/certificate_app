@@ -1,10 +1,10 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.OrderDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
-import com.epam.esm.service.dto.filter.OrderFilterDto;
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
-import com.epam.esm.service.order.OrderService;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.filter.AbstractFilterDto;
+import com.epam.esm.dto.filter.OrderFilterDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.service.OrderService;
 import com.epam.esm.web.controller.OrderController;
 import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
@@ -12,6 +12,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -35,6 +36,10 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                 }
         )).withSelfRel();
         orderDto.add(linkSelfOrder);
+        Link linkCertificates = linkTo(methodOn(OrderController.class)
+                .getAllCertificatesByOrderId(null, 0, 5, Arrays.asList(""), orderId, null))
+                .withRel("certificates");
+        orderDto.add(linkCertificates);
 
         return orderDto;
     }

@@ -1,6 +1,6 @@
 package com.epam.esm.web.security.config;
 
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.security.handler.DeniedHandler;
 import com.epam.esm.web.security.handler.SuccessHandler;
 import com.epam.esm.web.security.jwt.JwtConfigurer;
@@ -100,7 +100,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, USERS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PUT, USERS).hasAnyRole(USER, ADMIN)
                 .antMatchers(HttpMethod.PATCH, USERS).hasAnyRole(USER, ADMIN)
-                .antMatchers(HttpMethod.DELETE, USERS).hasAnyRole(ADMIN)
+                .antMatchers(HttpMethod.DELETE, USERS).hasAnyRole(ADMIN, USER)
 
 
                 .and()

@@ -1,14 +1,14 @@
 //package com.epam.esm.web.generator;
 //
 //import com.epam.esm.repository.crud.OrderCrudRepository;
-//import com.epam.esm.service.certificate.CertificateService;
-//import com.epam.esm.service.dto.CertificateDto;
-//import com.epam.esm.service.dto.OrderDto;
-//import com.epam.esm.service.dto.TagDto;
-//import com.epam.esm.service.dto.UserDto;
-//import com.epam.esm.service.order.OrderService;
-//import com.epam.esm.service.tag.TagService;
-//import com.epam.esm.service.user.UserService;
+//import com.epam.esm.service.CertificateService;
+//import com.epam.esm.dto.CertificateDto;
+//import com.epam.esm.dto.OrderDto;
+//import com.epam.esm.dto.TagDto;
+//import com.epam.esm.dto.UserDto;
+//import com.epam.esm.service.OrderService;
+//import com.epam.esm.service.TagService;
+//import com.epam.esm.service.UserService;
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RestController;
 //

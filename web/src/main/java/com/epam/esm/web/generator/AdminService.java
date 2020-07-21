@@ -1,8 +1,8 @@
 //package com.epam.esm.web.generator;
 //
 //import com.epam.esm.model.Role;
-//import com.epam.esm.service.dto.UserDto;
-//import com.epam.esm.service.user.UserService;
+//import com.epam.esm.dto.UserDto;
+//import com.epam.esm.service.UserService;
 //import org.springframework.web.bind.annotation.GetMapping;
 //import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.RestController;

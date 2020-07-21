@@ -1,16 +1,17 @@
 package com.epam.esm.web.assembler;
 
-import com.epam.esm.service.dto.UserDto;
-import com.epam.esm.service.dto.filter.AbstractFilterDto;
-import com.epam.esm.service.dto.filter.UserFilterDto;
-import com.epam.esm.service.dto.wrapper.ListWrapperDto;
-import com.epam.esm.service.user.UserService;
+import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.filter.AbstractFilterDto;
+import com.epam.esm.dto.filter.UserFilterDto;
+import com.epam.esm.dto.wrapper.ListWrapperDto;
+import com.epam.esm.service.UserService;
 import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,14 +27,13 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
 
     public UserDto assemble(Long id, UserDto userDto) {
         Link linkSelf = linkTo(methodOn(UserController.class).get(userDto.getId(),
-                new Principal() {
-                    @Override
-                    public String getName() {
-                        return null;
-                    }
-                })).withSelfRel();
+                null)).withSelfRel();
         userDto.add(linkSelf);
 
+        Link linkOrders = linkTo(methodOn(UserController.class)
+                .getAllOrdersByUserId(null, null, 0, 5, Arrays.asList(""), id, null))
+                .withRel("user: " + userDto.getSurname() + " " + userDto.getName() + " orders");
+        userDto.add(linkOrders);
         return userDto;
     }
 
