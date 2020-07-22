@@ -27,7 +27,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class SuccessHandler implements AuthenticationSuccessHandler {
-    private static final String LOGIN = "login";
+    private static final String EMAIL = "email";
     private static final String NAME = "name";
     private static final String SURNAME = "family_name";
     private static final String NO_ENOUGH_INFORMATION = "Provider can't provide need information for login";
@@ -47,7 +47,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
         Map<String, Object> attr = ((DefaultOAuth2User) authentication.getPrincipal()).getAttributes();
 
-        String login = (String) attr.get(LOGIN);
+        String login = (String) attr.get(EMAIL);
         String name = (String) attr.get(NAME);
         String surname = (String) attr.get(SURNAME);
 

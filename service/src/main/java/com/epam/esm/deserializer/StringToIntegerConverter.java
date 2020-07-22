@@ -14,7 +14,7 @@ public class StringToIntegerConverter extends StdConverter<String, Integer> {
         try {
             num = Integer.parseInt(value.trim());
         } catch (NumberFormatException nfe) {
-            throw new RuntimeException("String '" + value + "' to integer converting exception.");
+            throw new RuntimeException("String '" + value + "' to integer converting exception. Range 0 - 100000");
         }
         return num;
 

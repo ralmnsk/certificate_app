@@ -1,5 +1,11 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.dto.filter.CertificateFilterDto;
+import com.epam.esm.dto.wrapper.CertificateListWrapperDto;
+import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.exception.SaveException;
+import com.epam.esm.exception.UpdateException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.CertificateFilter;
@@ -7,12 +13,6 @@ import com.epam.esm.model.wrapper.CertificateListWrapper;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.service.CertificateService;
-import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.dto.filter.CertificateFilterDto;
-import com.epam.esm.dto.wrapper.CertificateListWrapperDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.SaveException;
-import com.epam.esm.exception.UpdateException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -34,9 +34,8 @@ public class CertificateServiceImpl implements CertificateService {
     private ModelMapper mapper;
     private OrderRepository orderRepository;
 
-    public CertificateServiceImpl(CertificateRepository certificateRepository,
-                                  ModelMapper mapper,
-                                  OrderRepository orderRepository) {
+
+    public CertificateServiceImpl(CertificateRepository certificateRepository, ModelMapper mapper, OrderRepository orderRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.orderRepository = orderRepository;

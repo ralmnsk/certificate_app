@@ -2,7 +2,6 @@ package com.epam.esm.dto;
 
 import com.epam.esm.deserializer.StringToDecimalConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -23,7 +22,7 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonRootName("order")
 @Relation(collectionRelation = "orders")
-@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created", "totalCost"})
+@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"created", "totalCost", "deleted", "certificates"})
 public class OrderDto extends IdentifiableDto<Long> {
 
     @Size(min = 0, max = 999, message = "Description must be between 0 and 999 characters")
@@ -37,9 +36,9 @@ public class OrderDto extends IdentifiableDto<Long> {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp created;
-    @JsonIgnore
+
     private boolean deleted;
-    @JsonIgnore
+
     private Set<CertificateDto> certificates = new HashSet<>();
 
     @Override

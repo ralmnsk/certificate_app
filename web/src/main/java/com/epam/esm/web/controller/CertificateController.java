@@ -20,10 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
@@ -32,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@Validated
+//@Validated
 @RestController
 @RequestMapping("/certificates")
 public class CertificateController {
@@ -91,7 +89,7 @@ public class CertificateController {
     }
 
     @PostMapping
-    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto, Authentication authentication) {
+    public CertificateDto create(/*@Valid*/ @RequestBody CertificateDto certificateDto, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
@@ -100,8 +98,8 @@ public class CertificateController {
 
 
     @PutMapping("/{id}")
-    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id,
-                                 Authentication authentication) {
+    public CertificateDto update(/*@Valid*/ @RequestBody CertificateDto certificateDto, @PathVariable Long id,
+                                            Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         certificateDto.setId(id);
@@ -141,7 +139,7 @@ public class CertificateController {
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
-                                              @Valid @RequestBody Set<Long> tagIds, Authentication authentication) {
+            /*@Valid*/ @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagService.addTagToCertificate(certificateId, tagIds);
@@ -155,7 +153,7 @@ public class CertificateController {
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
-                                                   @Valid @RequestBody Set<Long> tagIds, Authentication authentication) {
+            /*@Valid*/ @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagService.deleteTagFromCertificate(certificateId, tagIds);
