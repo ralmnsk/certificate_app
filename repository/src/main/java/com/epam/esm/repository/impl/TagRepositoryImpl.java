@@ -7,6 +7,9 @@ import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,66 +62,111 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
     }
 
     public List<String> findTopTag() {
-        String sql = "select name\n" +
-                "from (select count(id) as cnt, name\n" +
-                "      from (select tag.id, tag.name\n" +
-                "            from tag\n" +
-                "                     join cert_tag ct on tag.id = ct.tag_id\n" +
-                "                     join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-                "                     join orders o on oc.order_id = o.id\n" +
-                "                     join users u on o.user_id = u.id\n" +
-                "            where u.id =\n" +
-
-                "                  (select uid\n" +
-                "                   from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-                "                         from orders o\n" +
-                "                                  join users u on o.user_id = u.id\n" +
-                "                         where o.deleted = false\n" +
-                "                           and u.deleted = false\n" +
-                "                         group by o.user_Id) as uid_summa\n" +
-                "                   where summa =\n" +
-                "                         (select max(summa)\n" +
-                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-                "                                from orders o\n" +
-                "                                         join users u on o.user_id = u.id\n" +
-                "                                where o.deleted = false\n" +
-                "                                  and u.deleted = false\n" +
-                "                                group by o.user_Id) s))\n" +
-
-                "           ) as tg\n" +
-                "      group by name) as t\n" +
-                "where cnt =\n" +
-                "      (select max(cnt)\n" +
-                "       from (select count(id) as cnt, name\n" +
-                "             from (select tag.id, tag.name\n" +
-                "                   from tag\n" +
-                "                            join cert_tag ct on tag.id = ct.tag_id\n" +
-                "                            join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-                "                            join orders o on oc.order_id = o.id\n" +
-                "                            join users u on o.user_id = u.id\n" +
-                "                   where u.id =\n" +
-
-                "                         (select uid\n" +
-                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-                "                                from orders o\n" +
-                "                                         join users u on o.user_id = u.id\n" +
-                "                                where o.deleted = false\n" +
-                "                                  and u.deleted = false\n" +
-                "                                group by o.user_Id) as uid_summa\n" +
-                "                          where summa =\n" +
-                "                                (select max(summa)\n" +
-                "                                 from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-                "                                       from orders o\n" +
-                "                                                join users u on o.user_id = u.id\n" +
-                "                                       where o.deleted = false\n" +
-                "                                         and u.deleted = false\n" +
-                "                                       group by o.user_Id) s))\n" +
-
-                "                  ) as tg\n" +
-                "             group by name) as t)";
-
-        Query query = getEntityManager().createNativeQuery(sql);
-        List<String> resultList = query.getResultList();
+//        String sql =
+//        "select name\n" +
+//                "from (select count(id) as cnt, name\n" +
+//                "      from (select tag.id, tag.name\n" +
+//                "            from tag\n" +
+//                "                     join cert_tag ct on tag.id = ct.tag_id\n" +
+//                "                     join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
+//                "                     join orders o on oc.order_id = o.id\n" +
+//                "                     join users u on o.user_id = u.id\n" +
+//                "            where u.id =\n" +
+//
+//                "                  (select uid\n" +
+//                "                   from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
+//                "                         from orders o\n" +
+//                "                                  join users u on o.user_id = u.id\n" +
+//                "                         where o.deleted = false\n" +
+//                "                           and u.deleted = false\n" +
+//                "                         group by o.user_Id) as uid_summa\n" +
+//                "                   where summa =\n" +
+//                "                         (select max(summa)\n" +
+//                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
+//                "                                from orders o\n" +
+//                "                                         join users u on o.user_id = u.id\n" +
+//                "                                where o.deleted = false\n" +
+//                "                                  and u.deleted = false\n" +
+//                "                                group by o.user_Id) s))\n" +
+//
+//                "           ) as tg\n" +
+//                "      group by name) as t\n" +
+//                "where cnt =\n" +
+//                "      (select max(cnt)\n" +
+//                "       from (select count(id) as cnt, name\n" +
+//                "             from (select tag.id, tag.name\n" +
+//                "                   from tag\n" +
+//                "                            join cert_tag ct on tag.id = ct.tag_id\n" +
+//                "                            join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
+//                "                            join orders o on oc.order_id = o.id\n" +
+//                "                            join users u on o.user_id = u.id\n" +
+//                "                   where u.id =\n" +
+//
+//                "                         (select uid\n" +
+//                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
+//                "                                from orders o\n" +
+//                "                                         join users u on o.user_id = u.id\n" +
+//                "                                where o.deleted = false\n" +
+//                "                                  and u.deleted = false\n" +
+//                "                                group by o.user_Id) as uid_summa\n" +
+//                "                          where summa =\n" +
+//                "                                (select max(summa)\n" +
+//                "                                 from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
+//                "                                       from orders o\n" +
+//                "                                                join users u on o.user_id = u.id\n" +
+//                "                                       where o.deleted = false\n" +
+//                "                                         and u.deleted = false\n" +
+//                "                                       group by o.user_Id) s))\n" +
+//
+//                "                  ) as tg\n" +
+//                "             group by name) as t)";
+        String sumString = "select max(summa) from (select sum(o.total_cost) as summa, o.user_Id as uid " +
+                " from orders o join users u on o.user_id = u.id " +
+                " where o.deleted = false and u.deleted = false group by o.user_Id) s";
+//        Query query = getEntityManager().createNativeQuery(sql);
+        Query sumQuery = getEntityManager().createNativeQuery(sumString);
+//        List<String> resultList = query.getResultList();
+        BigDecimal summa = (BigDecimal) sumQuery.getSingleResult();
+        String uidString = "select uid from (select sum(o.total_cost) as summa, o.user_Id as uid " +
+                " from orders o join users u on o.user_id = u.id " +
+                "                                where o.deleted = false " +
+                "                                  and u.deleted = false " +
+                "                                group by o.user_Id) as uid_summa " +
+                "                          where summa = :summa";
+        Query uidQuery = getEntityManager().createNativeQuery(uidString);
+        uidQuery.setParameter("summa", summa);
+        List<BigInteger> uids = uidQuery.getResultList();
+        String sql =
+                "select name\n" +
+                        "from (select count(id) as cnt, name\n" +
+                        "      from (select tag.id, tag.name\n" +
+                        "            from tag\n" +
+                        "                     join cert_tag ct on tag.id = ct.tag_id\n" +
+                        "                     join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
+                        "                     join orders o on oc.order_id = o.id\n" +
+                        "                     join users u on o.user_id = u.id\n" +
+                        "            where u.id =  :uid\n" +
+                        "           ) as tg\n" +
+                        "      group by name) as t\n" +
+                        "where cnt =\n" +
+                        "      (select max(cnt)\n" +
+                        "       from (select count(id) as cnt, name\n" +
+                        "             from (select tag.id, tag.name\n" +
+                        "                   from tag\n" +
+                        "                            join cert_tag ct on tag.id = ct.tag_id\n" +
+                        "                            join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
+                        "                            join orders o on oc.order_id = o.id\n" +
+                        "                            join users u on o.user_id = u.id\n" +
+                        "                   where u.id = :uid\n" +
+                        "                  ) as tg\n" +
+                        "             group by name) as t)";
+        List<String> resultList = new ArrayList<>();
+        uids.forEach(id -> {
+            Query query = getEntityManager().createNativeQuery(sql);
+            query.setParameter("uid", id);
+            List<String> result = query.getResultList();
+            result.forEach(r -> resultList.add(r));
+        });
 
         return resultList;
     }
