@@ -14,6 +14,7 @@ import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,16 +50,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto get(@PathVariable Long id, Principal principal) {
-        webSecurity.checkUserId(principal, id);
+    public UserDto get(@PathVariable Long id, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkUserId(login, id);
         UserDto userDto = userService.get(id).orElseThrow(() -> new NotFoundException(id));
-        return userAssembler.assemble(id, userDto);
+        return userAssembler.assemble(id, userDto, authentication);
     }
 
 
     @PutMapping("/{id}")
-    public UserDto update(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id, Principal principal) {
-        webSecurity.checkUserId(principal, id);
+    public UserDto update(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id,
+                          Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkUserId(login, id);
         UserDto userDto = new UserDto();
         userDto.setId(id);
         userDto.setSurname(userUpdateDto.getSurname());
@@ -66,9 +70,10 @@ public class UserController {
         userDto.setPassword(userUpdateDto.getPassword());
 
         userDto = userService.update(userDto).orElseThrow(() -> new NotFoundException(id));
-        return userAssembler.assemble(id, userDto);
+        return userAssembler.assemble(id, userDto, authentication);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id, Principal principal) {
         webSecurity.checkUserId(principal, id);
@@ -152,16 +157,16 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/{userId}/orders")
-    @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> orderIds,
-                                                       Principal principal) {
-        webSecurity.checkUserId(principal, userId);
-        orderService.deleteOrderFromUser(userId, orderIds);
-
-        OrderFilterDto filterDto = new OrderFilterDto();
-        filterDto.setUserId(userId);
-        return orderPageBuilder.build(filterDto);
-    }
+//    @PutMapping("/{userId}/orders")
+//    @ResponseStatus(HttpStatus.OK)
+//    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> orderIds,
+//                                                       Principal principal) {
+//        webSecurity.checkUserId(principal, userId);
+//        orderService.deleteOrderFromUser(userId, orderIds);
+//
+//        OrderFilterDto filterDto = new OrderFilterDto();
+//        filterDto.setUserId(userId);
+//        return orderPageBuilder.build(filterDto);
+//    }
 
 }

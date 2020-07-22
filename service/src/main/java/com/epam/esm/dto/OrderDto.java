@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.epam.esm.deserializer.StringToDecimalConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -36,9 +37,9 @@ public class OrderDto extends IdentifiableDto<Long> {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp created;
-
+    @JsonIgnore
     private boolean deleted;
-
+    @JsonIgnore
     private Set<CertificateDto> certificates = new HashSet<>();
 
     @Override

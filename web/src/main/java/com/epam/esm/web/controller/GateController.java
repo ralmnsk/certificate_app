@@ -15,10 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -49,6 +46,19 @@ public class GateController {
         this.userService = userService;
     }
 
+    @GetMapping
+    public ResponseEntity index(HttpServletRequest request) {
+        Map<Object, Object> response = new HashMap<>();
+        try {
+            response.put("login", getURLBase(request) + "/login");
+            response.put("register", getURLBase(request) + "/register");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.ok("Hello at the index page");
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody LoginDto loginDto, HttpServletRequest request) {
         try {
@@ -67,7 +77,7 @@ public class GateController {
 
                 Map<Object, Object> response = new HashMap<>();
                 response.put("token", "Bearer_" + token);
-                response.put("user link:", getURLBase(request) + "/users/" + userDto.getId());
+                response.put("user_link:", getURLBase(request) + "/users/" + userDto.getId());
                 return ResponseEntity.ok(response);
             }
 

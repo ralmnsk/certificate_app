@@ -10,6 +10,7 @@ import com.epam.esm.web.assembler.TagAssembler;
 import com.epam.esm.web.page.TagPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,19 +65,20 @@ public class TagController {
 
 
     @GetMapping("/{id}")
-    public TagDto get(@PathVariable Integer id) {
+    public TagDto get(@PathVariable Integer id, Authentication authentication) {
         TagDto tagDto = tagService.get(id).orElseThrow(() -> new NotFoundException(id));
         int idInt = id;
-        return tagAssembler.assemble((long) idInt, tagDto);
+        return tagAssembler.assemble((long) idInt, tagDto, authentication);
     }
 
     @PostMapping
     public TagDto
-    create(@Valid @RequestBody TagDto tagDto, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+    create(@Valid @RequestBody TagDto tagDto, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         tagDto = tagService.save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
         int idInt = tagDto.getId();
-        return tagAssembler.assemble((long) idInt, tagDto);
+        return tagAssembler.assemble((long) idInt, tagDto, authentication);
     }
 
     @DeleteMapping("/{id}")

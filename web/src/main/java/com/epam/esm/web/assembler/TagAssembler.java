@@ -8,6 +8,7 @@ import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.TagController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,12 +25,22 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
     }
 
     @Override
-    public TagDto assemble(Long tagId, TagDto tagDto) {
+    public TagDto assemble(Long tagId, TagDto tagDto, Authentication authentication) {
         int id = tagId.intValue();
-        Link linkSelfTag = linkTo(methodOn(TagController.class).get(id)).withSelfRel();
-        tagDto.add(linkSelfTag);
+        Link linkSelf = linkTo(methodOn(TagController.class).get(id, authentication)).withSelfRel();
+        tagDto.add(linkSelf);
+        if (isAuthenticationAdmin(authentication)) {
+            Link linkCreate = linkTo(methodOn(TagController.class).create(tagDto, authentication)).withRel("post_create_tag");
+            Link linkDelete = linkTo(TagController.class).slash(tagDto.getId()).withRel("delete_tag");
+            tagDto.add(linkCreate, linkDelete);
+        }
 
         return tagDto;
+    }
+
+    @Override
+    public TagDto assemble(Long number, TagDto dto) {
+        return assemble(number, dto, null);
     }
 
     @Override
@@ -40,7 +51,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
 
         if (!tags.isEmpty()) {
             tags.forEach(c -> {
-                Link selfLink = linkTo(methodOn(TagController.class).get(c.getId())).withSelfRel();
+                Link selfLink = linkTo(methodOn(TagController.class).get(c.getId(), null)).withSelfRel();
                 c.add(selfLink);
             });
         }

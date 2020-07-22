@@ -18,8 +18,8 @@ public class WebSecurity {
         this.userService = userService;
     }
 
-    public boolean checkUserId(Principal principal, Long userId) {
-        String login = principal.getName();
+    public boolean checkUserId(String login, Long userId) {
+
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
             throw new AccessException("Access denied");
@@ -34,8 +34,13 @@ public class WebSecurity {
         throw new AccessException("Access denied");
     }
 
-    public boolean checkOrderId(Principal principal, Long orderId) {
+    public boolean checkUserId(Principal principal, Long userId) {
         String login = principal.getName();
+        return checkUserId(login, userId);
+    }
+
+    public boolean checkOrderId(String login, Long orderId) {
+
         UserDto userFromLogin = userService.findByLogin(login);
         UserDto userDto = userService.getUserByOrderId(orderId).orElseThrow(() -> new NotFoundException("User with principal login: " + login + " not found exception"));
         if (userFromLogin.getRole().equals(Role.ADMIN)) {
@@ -47,8 +52,13 @@ public class WebSecurity {
         throw new AccessException("Access denied");
     }
 
-    public boolean checkOperationAccess(Principal principal) {
+    public boolean checkOrderId(Principal principal, Long orderId) {
         String login = principal.getName();
+        return checkOrderId(login, orderId);
+    }
+
+    public boolean checkOperationAccess(String login) {
+
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
             throw new NotFoundException("User with principal login: " + login + " not found exception");
@@ -57,5 +67,10 @@ public class WebSecurity {
             return true;
         }
         throw new AccessException("Access denied");
+    }
+
+    public boolean checkOperationAccess(Principal principal) {
+        String login = principal.getName();
+        return checkOperationAccess(login);
     }
 }

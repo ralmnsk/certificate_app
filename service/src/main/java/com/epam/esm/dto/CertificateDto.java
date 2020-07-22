@@ -1,6 +1,7 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
@@ -46,9 +47,9 @@ public class CertificateDto extends IdentifiableDto<Long> {
     @NotNull(message = "duration has to be not null")
     @Range(min = 0, max = 100000, message = "duration range: 0 - 100000")
     private Integer duration;
-
+    @JsonIgnore
     private boolean deleted;
-
+    @JsonIgnore
     private Set<TagDto> tags = new HashSet<>();
 
     @Override

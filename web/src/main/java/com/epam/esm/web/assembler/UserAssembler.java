@@ -1,16 +1,19 @@
 package com.epam.esm.web.assembler;
 
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.dto.UserUpdateDto;
 import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.dto.filter.UserFilterDto;
+import com.epam.esm.dto.security.RegistrationDto;
 import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.UserService;
+import com.epam.esm.web.controller.GateController;
 import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,10 +28,14 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         this.userService = userService;
     }
 
-    public UserDto assemble(Long id, UserDto userDto) {
+    public UserDto assemble(Long id, UserDto userDto, Authentication authentication) {
         Link linkSelf = linkTo(methodOn(UserController.class).get(userDto.getId(),
-                null)).withSelfRel();
-        userDto.add(linkSelf);
+                authentication)).withSelfRel();
+        Link linkRegister = linkTo(methodOn(GateController.class).register(new RegistrationDto())).withRel("post_registration_user");
+        Link linkUpdate = linkTo(methodOn(UserController.class).update(new UserUpdateDto(), id, authentication)).withRel("put_update_user");
+        Link linkDelete = linkTo(UserController.class).slash(userDto.getId()).withRel("delete_user");
+        userDto.add(linkSelf, linkRegister, linkUpdate, linkDelete);
+
 
         Link linkOrders = linkTo(methodOn(UserController.class)
                 .getAllOrdersByUserId(null, null, 0, 5, Arrays.asList(""),
@@ -36,6 +43,11 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
                 .withRel("user_id_" + userDto.getId() + "_orders");
         userDto.add(linkOrders);
         return userDto;
+    }
+
+    @Override
+    public UserDto assemble(Long number, UserDto dto) {
+        return assemble(number, dto, null);
     }
 
     public CollectionModel<UserDto> toCollectionModel(UserFilterDto filter) {
@@ -46,12 +58,8 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         if (!users.isEmpty()) {
             users
                     .forEach(u -> {
-                        Link link = linkTo(methodOn(UserController.class).get(u.getId(), new Principal() {
-                            @Override
-                            public String getName() {
-                                return null;
-                            }
-                        })).withSelfRel();
+                        Link link = linkTo(methodOn(UserController.class).get(u.getId(),
+                                null)).withSelfRel();
                         u.add(link);
                     });
         }

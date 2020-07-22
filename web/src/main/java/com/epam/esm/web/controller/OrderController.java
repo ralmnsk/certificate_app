@@ -16,6 +16,7 @@ import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,8 +57,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDto create(@Valid @RequestBody OrderDto orderDto, Principal principal) {
-        String login = principal.getName();
+    public OrderDto create(@Valid @RequestBody OrderDto orderDto, Authentication authentication) {
+
+        String login = authentication.getName();
         if (login == null) {
             throw new SaveException("you have no right to create order");
         }
@@ -69,22 +71,24 @@ public class OrderController {
         Set<Long> set = new HashSet<>();
         set.add(orderDto.getId());
         orderService.addOrderToUser(user.getId(), set);
-        return orderAssembler.assemble(orderDto.getId(), orderDto);
+        return orderAssembler.assemble(orderDto.getId(), orderDto, authentication);
     }
 
     @GetMapping("/{id}")
-    public OrderDto get(@PathVariable Long id, Principal principal) {
-        webSecurity.checkOrderId(principal, id);
+    public OrderDto get(@PathVariable Long id, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOrderId(login, id);
         OrderDto orderDto = orderService.get(id).orElseThrow(() -> new NotFoundException(id));
-        return orderAssembler.assemble(id, orderDto);
+        return orderAssembler.assemble(id, orderDto, authentication);
     }
 
     @PutMapping("/{id}")
-    public OrderDto update(@Valid @RequestBody OrderDto orderDto, @PathVariable Long id, Principal principal) {
-        webSecurity.checkOrderId(principal, id);
+    public OrderDto update(@Valid @RequestBody OrderDto orderDto, @PathVariable Long id, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOrderId(login, id);
         orderDto.setId(id);
         orderDto = orderService.update(orderDto).orElseThrow(() -> new NotFoundException(id));
-        return orderAssembler.assemble(id, orderDto);
+        return orderAssembler.assemble(id, orderDto, authentication);
     }
 
     @DeleteMapping("/{id}")

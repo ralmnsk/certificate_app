@@ -9,9 +9,11 @@ import com.epam.esm.web.controller.CertificateController;
 import com.epam.esm.web.controller.OrderController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -26,11 +28,31 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
     }
 
     @Override
-    public CertificateDto assemble(Long certId, CertificateDto certificateDto) {
-        Link linkSelfCert = linkTo(methodOn(CertificateController.class).get(certId)).withSelfRel();
-        certificateDto.add(linkSelfCert);
+    public CertificateDto assemble(Long certId, CertificateDto certificateDto, Authentication authentication) {
+        Link linkSelf = linkTo(methodOn(CertificateController.class).get(certId, authentication)).withSelfRel();
+        certificateDto.add(linkSelf);
+        if (isAuthenticationAdmin(authentication)) {
+            Link linkCreate = linkTo(methodOn(CertificateController.class)
+                    .create(certificateDto, authentication)).withRel("post_create_certificate");
+            Link linkUpdate = linkTo(methodOn(CertificateController.class)
+                    .update(certificateDto, certId, authentication)).withRel("put_update_certificate");
+            Link linkPatch = linkTo(methodOn(CertificateController.class)
+                    .update(certId, null, authentication)).withRel("patch_update_certificate");
+            Link linkDelete = linkTo(CertificateController.class).slash(certificateDto.getId()).withRel("delete_certificate");
+            Link linkAddTags = linkTo(methodOn(CertificateController.class)
+                    .addTagToCertificate(certId, new HashSet<Long>(), authentication)).withRel("put_add_tags_to_certificate");
+            Link linkDeleteTags = linkTo(methodOn(CertificateController.class)
+                    .deleteTagFromCertificate(certId, new HashSet<Long>(), authentication)).withRel("put_remove_tags_from_certificate");
+            certificateDto.add(linkCreate, linkUpdate, linkDelete, linkAddTags, linkDeleteTags);
+        }
 
         return certificateDto;
+    }
+
+
+    @Override
+    public CertificateDto assemble(Long number, CertificateDto dto) {
+        return assemble(number, dto, null);
     }
 
     @Override
@@ -40,7 +62,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
         filter = wrapperDto.getFilterDto();
         if (!certificates.isEmpty()) {
             certificates.forEach(c -> {
-                Link selfLink = linkTo(methodOn(CertificateController.class).get(c.getId())).withSelfRel();
+                Link selfLink = linkTo(methodOn(CertificateController.class).get(c.getId(), null)).withSelfRel();
                 c.add(selfLink);
             });
         }

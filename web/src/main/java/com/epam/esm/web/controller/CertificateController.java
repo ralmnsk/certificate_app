@@ -19,6 +19,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,25 +85,28 @@ public class CertificateController {
 
 
     @GetMapping("/{id}")
-    public CertificateDto get(@PathVariable Long id) {
+    public CertificateDto get(@PathVariable Long id, Authentication authentication) {
         CertificateDto certificateDto = certificateService.get(id).orElseThrow(() -> new NotFoundException(id));
-        return certificateAssembler.assemble(id, certificateDto);
+        return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
     @PostMapping
-    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+    public CertificateDto create(@Valid @RequestBody CertificateDto certificateDto, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
-        return certificateAssembler.assemble(certificateDto.getId(), certificateDto);
+        return certificateAssembler.assemble(certificateDto.getId(), certificateDto, authentication);
     }
 
 
     @PutMapping("/{id}")
-    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+    public CertificateDto update(@Valid @RequestBody CertificateDto certificateDto, @PathVariable Long id,
+                                 Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         certificateDto.setId(id);
         certificateDto = certificateService.update(certificateDto).orElseThrow(() -> new NotFoundException(id));
-        return certificateAssembler.assemble(id, certificateDto);
+        return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
 
@@ -115,8 +119,9 @@ public class CertificateController {
 
 
     @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+    public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         CertificateDto certificateDto = certificateService.get(id).orElseThrow(() -> new NotFoundException(id));
         CertificateDto certificateDtoPatched = null;
         try {
@@ -130,33 +135,35 @@ public class CertificateController {
         }
         certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
 
-        return certificateAssembler.assemble(id, certificateDto);
+        return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
-                                              @Valid @RequestBody Set<Long> tagIds, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+                                              @Valid @RequestBody Set<Long> tagIds, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         tagService.addTagToCertificate(certificateId, tagIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);
         CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
-        return certificateAssembler.assemble(certificateId, certificateDto);
+        return certificateAssembler.assemble(certificateId, certificateDto, authentication);
     }
 
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
-                                                   @Valid @RequestBody Set<Long> tagIds, Principal principal) {
-        webSecurity.checkOperationAccess(principal);
+                                                   @Valid @RequestBody Set<Long> tagIds, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkOperationAccess(login);
         tagService.deleteTagFromCertificate(certificateId, tagIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);
         CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
-        return certificateAssembler.assemble(certificateId, certificateDto);
+        return certificateAssembler.assemble(certificateId, certificateDto, authentication);
     }
 
     private CertificateDto applyPatchToCertificate(JsonPatch patch, CertificateDto certificateDto) throws JsonPatchException, JsonProcessingException {

@@ -9,10 +9,10 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-//@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @Entity
+@Cacheable
 @Table(name = "certificate")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Certificate extends Identifiable<Long> {

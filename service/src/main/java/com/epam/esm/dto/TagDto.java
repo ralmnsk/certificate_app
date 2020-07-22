@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class TagDto extends IdentifiableDto<Integer> {
     @Size(max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;
-
+    @JsonIgnore
     private boolean deleted;
 
     public String getName() {
