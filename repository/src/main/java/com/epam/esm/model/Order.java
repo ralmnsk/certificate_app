@@ -21,8 +21,7 @@ public class Order extends Identifiable<Long> {
     private BigDecimal totalCost;
     @Column(updatable = false)
     private Timestamp created;
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
+
     @Column(columnDefinition = "boolean default false")
     private boolean completed;
 
@@ -39,7 +38,7 @@ public class Order extends Identifiable<Long> {
 
         Order order = (Order) o;
 
-        if (deleted != order.deleted) return false;
+        if (isDeleted() != order.isDeleted()) return false;
         if (completed != order.completed) return false;
         if (!description.equals(order.description)) return false;
         return created.equals(order.created);
@@ -49,7 +48,7 @@ public class Order extends Identifiable<Long> {
     public int hashCode() {
         int result = description.hashCode();
         result = 31 * result + created.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         result = 31 * result + (completed ? 1 : 0);
         return result;
     }

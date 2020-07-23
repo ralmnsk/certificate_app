@@ -26,7 +26,8 @@ public class JwtUserDetailsService implements UserDetailsService {
             return customUserDetails;
         } catch (Exception e) {
             log.warn(e.getMessage());
-            throw new UsernameNotFoundException("User " + username + " was not found in the database");
+//            throw new UsernameNotFoundException("User " + username + " was not found in the database");
+            return null;
         }
     }
 }

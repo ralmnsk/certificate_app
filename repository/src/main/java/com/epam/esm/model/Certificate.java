@@ -24,10 +24,9 @@ public class Certificate extends Identifiable<Long> {
     private Timestamp creation;
     private Timestamp modification;
     private Integer duration;
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "cert_tag",
             joinColumns = @JoinColumn(name = "certificate_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
@@ -40,7 +39,7 @@ public class Certificate extends Identifiable<Long> {
 
         Certificate that = (Certificate) o;
 
-        if (deleted != that.deleted) return false;
+        if (isDeleted() != that.isDeleted()) return false;
         if (!name.equals(that.name)) return false;
         if (!description.equals(that.description)) return false;
         if (!price.equals(that.price)) return false;
@@ -53,7 +52,7 @@ public class Certificate extends Identifiable<Long> {
         result = 31 * result + description.hashCode();
         result = 31 * result + price.hashCode();
         result = 31 * result + duration.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

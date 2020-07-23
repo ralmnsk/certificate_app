@@ -1,5 +1,7 @@
 package com.epam.esm.exception;
 
+import com.epam.esm.repository.exception.GeneralException;
+
 /**
  * The type No handler exception.
  * Thrown to indicate that an application hasn't such handler.

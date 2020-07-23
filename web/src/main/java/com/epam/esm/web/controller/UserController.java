@@ -6,7 +6,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserUpdateDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
 import com.epam.esm.dto.filter.UserFilterDto;
-import com.epam.esm.exception.NotFoundException;
+import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
@@ -24,7 +24,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.security.Principal;
 import java.util.List;
-import java.util.Set;
 
 @Validated
 @RestController

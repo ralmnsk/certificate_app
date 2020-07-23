@@ -3,17 +3,16 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.dto.wrapper.CertificateListWrapperDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.SaveException;
-import com.epam.esm.exception.UpdateException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.filter.CertificateFilter;
 import com.epam.esm.model.wrapper.CertificateListWrapper;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.CertificateService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -26,8 +25,6 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Transactional
-@Getter
 public class CertificateServiceImpl implements CertificateService {
 
     private CertificateRepository certificateRepository;
@@ -41,6 +38,7 @@ public class CertificateServiceImpl implements CertificateService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional
     @Override //save without tags
     public Optional<CertificateDto> save(CertificateDto certificateDto) {
         certificateDto.getTags().clear();
@@ -50,6 +48,7 @@ public class CertificateServiceImpl implements CertificateService {
         return get(certificate.getId());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<CertificateDto> get(Long id) {
         Optional<CertificateDto> certificateDtoOptional = Optional.empty();
@@ -59,6 +58,7 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateDtoOptional;
     }
 
+    @Transactional
     @Override
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
         long id = certificateDto.getId();
@@ -77,25 +77,25 @@ public class CertificateServiceImpl implements CertificateService {
         return Optional.ofNullable(dto);
     }
 
+    @Transactional
     @Override
     public boolean delete(Long certId) {
         Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
-        certificate.setDeleted(true);
-        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Certificate update in delete operation exception"));
+        certificateRepository.delete(certId);
         return true;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CertificateListWrapperDto getAll(CertificateFilterDto filterDto) {
         CertificateFilter filter = mapper.map(filterDto, CertificateFilter.class);
         CertificateListWrapper wrapper = certificateRepository.getAll(filter);
         List<Certificate> certificates = wrapper.getList();
         List<CertificateDto> dtoList = new ArrayList<>();
-        for (Certificate c : certificates) {
-            CertificateDto d = mapper.map(c, CertificateDto.class);
+        certificates.stream().map(c -> mapper.map(c, CertificateDto.class)).forEachOrdered(d -> {
             d.getTags().clear();
             dtoList.add(d);
-        }
+        });
 
         CertificateListWrapperDto wrapperDto = new CertificateListWrapperDto();
         wrapperDto.setList(dtoList);
@@ -105,6 +105,7 @@ public class CertificateServiceImpl implements CertificateService {
         return wrapperDto;
     }
 
+    @Transactional
     @Override
     public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
@@ -118,6 +119,7 @@ public class CertificateServiceImpl implements CertificateService {
         orderRepository.update(order).orElseThrow(() -> new UpdateException("Add Certificate to Order: Certificate update exception"));
     }
 
+    @Transactional
     @Override
     public void deleteCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));

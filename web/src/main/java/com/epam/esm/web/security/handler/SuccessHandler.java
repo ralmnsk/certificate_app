@@ -1,7 +1,7 @@
 package com.epam.esm.web.security.handler;
 
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.exception.SaveException;
+import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.model.Role;
 import com.epam.esm.service.UserService;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;

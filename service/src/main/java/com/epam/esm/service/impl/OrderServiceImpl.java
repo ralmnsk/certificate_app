@@ -4,9 +4,9 @@ import com.epam.esm.calculator.TotalCostCalculator;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
 import com.epam.esm.dto.wrapper.OrderListWrapperDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.SaveException;
-import com.epam.esm.exception.UpdateException;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.OrderFilter;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Transactional
 public class OrderServiceImpl implements OrderService {
 
     private OrderRepository orderRepository;
@@ -42,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public Optional<OrderDto> save(OrderDto orderDto) {
         orderDto.getCertificates().clear();
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
         return get(order.getId());
     }
 
-
+    @Transactional
     @Override
     public Optional<OrderDto> get(Long id) {
         Optional<OrderDto> orderDtoOptional = Optional.empty();
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
         return orderDtoOptional;
     }
 
-
+    @Transactional
     @Override
     public Optional<OrderDto> update(OrderDto orderDto) {
         long id = orderDto.getId();
@@ -85,14 +85,15 @@ public class OrderServiceImpl implements OrderService {
         return Optional.ofNullable(dto);
     }
 
+    @Transactional
     @Override
     public boolean delete(Long id) {
         Order order = orderRepository.get(id).orElseThrow(() -> new NotFoundException("Order delete: not found exception, id:" + id));
-        order.setDeleted(true);
-        orderRepository.update(order).orElseThrow(() -> new UpdateException("Order update in delete operation exception"));
+        orderRepository.delete(id);
         return true;
     }
 
+    @Transactional
     @Override
     public OrderListWrapperDto getAll(OrderFilterDto filterDto) {
         OrderFilter filter = mapper.map(filterDto, OrderFilter.class);
@@ -112,12 +113,13 @@ public class OrderServiceImpl implements OrderService {
         return wrapperDto;
     }
 
+    @Transactional
     @Override
     public void addOrderToUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
-        if (user.getDeleted()) {
-            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
-        }
+//        if (user.getDeleted()) {
+//            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
+//        }
         list
                 .stream()
                 .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
@@ -131,12 +133,13 @@ public class OrderServiceImpl implements OrderService {
         userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
     }
 
+    @Transactional
     @Override
     public void deleteOrderFromUser(Long userId, Set<Long> list) {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
-        if (user.getDeleted()) {
-            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
-        }
+//        if (user.getDeleted()) {
+//            throw new NotFoundException("Add Order to User: user not found: id:" + userId);
+//        }
         list
                 .stream()
                 .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))

@@ -43,8 +43,6 @@ public class UserDto extends IdentifiableDto<Long> {
     private Enum role;
 
     @JsonIgnore
-    private boolean deleted;
-    @JsonIgnore
     private Set<OrderDto> orders = new HashSet<>();
 
     @Override
@@ -55,7 +53,7 @@ public class UserDto extends IdentifiableDto<Long> {
 
         UserDto userDto = (UserDto) o;
 
-        if (deleted != userDto.deleted) return false;
+        if (isDeleted() != userDto.isDeleted()) return false;
         if (!surname.equals(userDto.surname)) return false;
         if (!name.equals(userDto.name)) return false;
         if (!login.equals(userDto.login)) return false;
@@ -71,7 +69,7 @@ public class UserDto extends IdentifiableDto<Long> {
         result = 31 * result + login.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + role.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

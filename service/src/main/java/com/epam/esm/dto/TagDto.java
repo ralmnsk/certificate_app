@@ -19,8 +19,6 @@ public class TagDto extends IdentifiableDto<Integer> {
     @Size(max = 128, message
             = "Name must be between 2 and 128 characters")
     private String name;
-    @JsonIgnore
-    private boolean deleted;
 
     public String getName() {
         return name;
@@ -38,7 +36,7 @@ public class TagDto extends IdentifiableDto<Integer> {
 
         TagDto tagDto = (TagDto) o;
 
-        if (deleted != tagDto.deleted) return false;
+        if (isDeleted() != tagDto.isDeleted()) return false;
         return name.equals(tagDto.name);
     }
 
@@ -46,7 +44,7 @@ public class TagDto extends IdentifiableDto<Integer> {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

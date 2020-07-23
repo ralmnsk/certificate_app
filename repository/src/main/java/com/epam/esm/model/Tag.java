@@ -15,8 +15,6 @@ import javax.validation.constraints.NotNull;
 public class Tag extends Identifiable<Integer> {
     @NotNull(message = "name could not be null")
     private String name;
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
 
     @Override
     public boolean equals(Object o) {
@@ -25,14 +23,14 @@ public class Tag extends Identifiable<Integer> {
 
         Tag tag = (Tag) o;
 
-        if (deleted != tag.deleted) return false;
+        if (isDeleted() != tag.isDeleted()) return false;
         return name.equals(tag.name);
     }
 
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

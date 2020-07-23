@@ -17,7 +17,18 @@ import java.util.Optional;
 @Repository
 public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implements TagRepository {
     public final static String PERCENT = "%";
-    private final String NAME = "name";
+    private final static String NAME = "name";
+    private final static String SELECT_BY_NAME = " select * from tag where tag.name = :name ";
+    private final static String SELECT_FROM_TAG = "select distinct tag.id,tag.name,tag.deleted from tag ";
+    private final static String JOIN_CERT_TAG = " join cert_tag on tag.id = cert_tag.tag_id ";
+    private final static String WHERE_TAG_NAME = " where tag.name like :name and tag.deleted = false";
+
+    private final static String CERTIFICATE_ID = " and cert_tag.certificate_id = :certificateId ";
+    private final static String ORDER_BY = " order by tag.name ";
+    private final static String SELECT_COUNT = " select distinct count(tag.id) from tag ";
+    private final static String UID = "uid";
+    private final static String CERTIFICATE_ID_PARAM = "certificateId";
+
     private QueryBuilder<TagFilter> queryBuilder;
 
     public TagRepositoryImpl(QueryBuilder<TagFilter> queryBuilder) {
@@ -28,7 +39,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
     @Override
     public Optional<Tag> getByName(String name) {
         Query query = getEntityManager()
-                .createNativeQuery("select * from tag where tag.name = :name", Tag.class)
+                .createNativeQuery(SELECT_BY_NAME, Tag.class)
                 .setParameter(NAME, name);
         Tag tag = (Tag) query.getSingleResult();
         if (tag != null) {
@@ -39,21 +50,43 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
 
     @Override
     public TagListWrapper getAll(TagFilter tagFilter) {
-
-        Query query = getEntityManager().createQuery("select distinct t from Tag t where t.name like :name order by t.name", Tag.class);
+        StringBuilder sql = new StringBuilder(SELECT_FROM_TAG);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sql.append(JOIN_CERT_TAG);
+        }
+        sql.append(WHERE_TAG_NAME);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sql.append(CERTIFICATE_ID);
+        }
+        sql.append(ORDER_BY);
+        Query query = getEntityManager().createNativeQuery(sql.toString(), Tag.class);
         query.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            query.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
+        }
         int pageNumber = tagFilter.getPage();
         int pageSize = tagFilter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
         List<Tag> tags = query.getResultList();
 
-        Query queryTotal = getEntityManager().createQuery
-                ("select distinct count(f.id) From Tag f where f.name like :name");
-        queryTotal.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
-        long countResult = (long) queryTotal.getSingleResult();
+        StringBuilder sqlTotal = new StringBuilder(SELECT_COUNT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sqlTotal.append(JOIN_CERT_TAG);
+        }
+        sqlTotal.append(WHERE_TAG_NAME);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sqlTotal.append(CERTIFICATE_ID);
+        }
 
-        tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult);
+        Query queryTotal = getEntityManager().createNativeQuery(sqlTotal.toString());
+        queryTotal.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            queryTotal.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
+        }
+        BigInteger countResult = (BigInteger) queryTotal.getSingleResult();
+
+        tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult.longValue());
         TagListWrapper listWrapper = new TagListWrapper();
         listWrapper.setList(tags);
         listWrapper.setFilter(tagFilter);
@@ -163,7 +196,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         List<String> resultList = new ArrayList<>();
         uids.forEach(id -> {
             Query query = getEntityManager().createNativeQuery(sql);
-            query.setParameter("uid", id);
+            query.setParameter(UID, id);
             List<String> result = query.getResultList();
             result.forEach(r -> resultList.add(r));
         });

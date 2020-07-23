@@ -3,16 +3,15 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.filter.TagFilterDto;
 import com.epam.esm.dto.wrapper.TagListWrapperDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.UpdateException;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
 import com.epam.esm.model.wrapper.TagListWrapper;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.TagService;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,9 +26,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j
-@Getter
 @Service
-@Transactional
 public class TagServiceImpl implements TagService {
 
     private TagRepository tagRepository;
@@ -44,6 +41,7 @@ public class TagServiceImpl implements TagService {
         this.certificateRepository = certificateRepository;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<TagDto> getByName(String name) {
         try {
@@ -59,6 +57,7 @@ public class TagServiceImpl implements TagService {
         return Optional.empty();
     }
 
+    @Transactional(readOnly = true)
     @Override
     public TagListWrapperDto getAll(TagFilterDto tagFilterDto) {
         TagFilter tagFilter = mapper.map(tagFilterDto, TagFilter.class);
@@ -74,6 +73,7 @@ public class TagServiceImpl implements TagService {
     }
 
 
+    @Transactional
     @Override
     public Optional<TagDto> save(TagDto tagDto) {
         Tag tag = mapper.map(tagDto, Tag.class);
@@ -98,6 +98,7 @@ public class TagServiceImpl implements TagService {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<TagDto> get(Integer id) {
         Optional<TagDto> tagDtoOptional = Optional.empty();
@@ -113,14 +114,15 @@ public class TagServiceImpl implements TagService {
         return Optional.empty();
     }
 
+    @Transactional
     @Override
     public boolean delete(Integer tagId) {
         Tag tag = tagRepository.get(tagId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + tagId));
-        tag.setDeleted(true);
-        tagRepository.update(tag).orElseThrow(() -> new UpdateException("Certificate update in delete operation exception"));
+        tagRepository.delete(tagId);
         return true;
     }
 
+    @Transactional
     @Override
     public void addTagToCertificate(Long certificateId, Set<Long> list) {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Certificate not found: id:" + certificateId));
@@ -131,6 +133,7 @@ public class TagServiceImpl implements TagService {
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Add Tag to Certificate: Tag update exception"));
     }
 
+    @Transactional
     @Override
     public void deleteTagFromCertificate(Long certificateId, Set<Long> list) {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Delete Tag from Certificate: Tag not found: id:" + certificateId));
@@ -141,6 +144,7 @@ public class TagServiceImpl implements TagService {
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Delete Tag to Certificate: Tag update exception"));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<String> findTopTag() {
         List<String> list = tagRepository.findTopTag();

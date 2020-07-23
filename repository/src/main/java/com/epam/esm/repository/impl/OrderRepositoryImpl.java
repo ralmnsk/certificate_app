@@ -12,13 +12,17 @@ import java.util.stream.Collectors;
 
 @Repository
 public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
-    public final static String PERCENT = "%";
-    private final String SELECT = "select";
-    private final String COUNT = "count";
-    private final String USER_SURNAME = "userSurname";
-    private final String USER_NAME = "userName";
-    private final String USER_ID = "userId";
-
+    private final static String PERCENT = "%";
+    private final static String SELECT = "select";
+    private final static String COUNT = "count";
+    private final static String USER_SURNAME = "userSurname";
+    private final static String USER_NAME = "userName";
+    private final static String USER_ID = "userId";
+    private final static String SELECT_SQL = "select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost  ";
+    private final static String COUNT_SQL = "select distinct count(*) from(select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
+    private final static String FROM = "from orders orders join users users on orders.user_id = users.id where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
+    private final static String AND_USERS = "and users.id = :userId";
+    private final static String APPEND_C = ") c";
     private QueryBuilder<OrderFilter> builder;
 
     public OrderRepositoryImpl(QueryBuilder<OrderFilter> builder) {
@@ -29,7 +33,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
 
     @Override
     public OrderListWrapper getAll(OrderFilter filter) {
-        String ql = assembleQlString(filter, SELECT);
+        String ql = assembleQlString(filter, SELECT).toString();
         Query query = getEntityManager().createNativeQuery(ql, Order.class);
         querySetParameters(filter, query);
         int pageNumber = filter.getPage();
@@ -40,7 +44,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         orders = orders.stream().filter(order -> !order.isDeleted()).collect(Collectors.toList());
 
         Query queryTotal = getEntityManager().createNativeQuery
-                (assembleQlString(filter, COUNT));
+                (assembleQlString(filter, COUNT).toString());
         querySetParameters(filter, queryTotal);
 
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
@@ -63,22 +67,21 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         }
     }
 
-    private String assembleQlString(OrderFilter filter, String selecting) {
-        String select = "select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost  ";
-        String count = "select distinct count(*) from(select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
+    private StringBuilder assembleQlString(OrderFilter filter, String selecting) {
+        String select = SELECT_SQL;
+
         if (selecting.equals(COUNT)) {
-            select = count;
+            select = COUNT_SQL;
         }
-        String ql = select + "from orders orders join users users on orders.user_id = users.id " +
-                "where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
+        StringBuilder ql = new StringBuilder(select).append(FROM);
         if (filter.getUserId() != null && filter.getUserId() > 0) {
-            ql = ql + "and users.id = :userId";
+            ql.append(AND_USERS);
         }
 
         ql = builder.addSortToQueryString(filter, selecting, ql);
 
         if (selecting.equals(COUNT)) {
-            ql = ql + ") c";
+            ql.append(APPEND_C);
         }
 
         return ql;

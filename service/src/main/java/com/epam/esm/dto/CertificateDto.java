@@ -1,6 +1,7 @@
 package com.epam.esm.dto;
 
 import com.epam.esm.deserializer.CertificateDeserializer;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -38,17 +39,16 @@ public class CertificateDto extends IdentifiableDto<Long> {
 //    @DecimalMax(value = "1000000000000.00", message = "Price should be 0.00 - 1000000000000.00")
     private BigDecimal price;
 
-    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp creation;
 
-    //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp modification;
 
     //    @NotNull(message = "duration has to be not null")
 //    @Range(min = 0, max = 100000, message = "duration range: 0 - 100000")
     private Integer duration;
-    @JsonIgnore
-    private boolean deleted;
+
     @JsonIgnore
     private Set<TagDto> tags = new HashSet<>();
 
@@ -60,7 +60,7 @@ public class CertificateDto extends IdentifiableDto<Long> {
 
         CertificateDto that = (CertificateDto) o;
 
-        if (deleted != that.deleted) return false;
+        if (isDeleted() != that.isDeleted()) return false;
         if (!name.equals(that.name)) return false;
         if (!description.equals(that.description)) return false;
         if (!price.equals(that.price)) return false;
@@ -74,7 +74,7 @@ public class CertificateDto extends IdentifiableDto<Long> {
         result = 31 * result + description.hashCode();
         result = 31 * result + price.hashCode();
         result = 31 * result + duration.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

@@ -22,8 +22,7 @@ public class User extends Identifiable<Long> {
     private String login;
     private String password;
     private Enum role;
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
+
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
@@ -41,7 +40,7 @@ public class User extends Identifiable<Long> {
         if (!login.equals(user.login)) return false;
         if (!password.equals(user.password)) return false;
         if (!role.equals(user.role)) return false;
-        return deleted.equals(user.deleted);
+        return isDeleted() == (user.isDeleted());
     }
 
     @Override
@@ -51,7 +50,7 @@ public class User extends Identifiable<Long> {
         result = 31 * result + login.hashCode();
         result = 31 * result + password.hashCode();
         result = 31 * result + role.hashCode();
-        result = 31 * result + deleted.hashCode();
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

@@ -15,53 +15,62 @@ import java.util.Set;
 @Component
 public class QueryBuilder<F extends AbstractFilter> {
 
-    private final String SELECT = " select distinct ";
-    private final String TAG = " tag.id, tag.deleted, tag.name ";
-    private final String CERTIFICATE = " certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration, certificate.modification,certificate.name,certificate.price ";
-    private final String ORDER = " orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
-    private final String USER = " users.id, users.deleted, users.login, users.name, users.password, users.role, users.surname ";
+    private final static String SELECT = " select distinct ";
+    private final static String TAG = " tag.id, tag.deleted, tag.name ";
+    private final static String CERTIFICATE = " certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration, certificate.modification,certificate.name,certificate.price ";
+    private final static String ORDER = " orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
+    private final static String USER = " users.id, users.deleted, users.login, users.name, users.password, users.role, users.surname ";
 
-    private final String TAG_TABLE = " tag ";
-    private final String CERTIFICATE_TABLE = " certificate ";
-    private final String ORDER_TABLE = " orders ";
-    private final String USER_TABLE = " users ";
+    private final static String TAG_TABLE = " tag ";
+    private final static String CERTIFICATE_TABLE = " certificate ";
+    private final static String ORDER_TABLE = " orders ";
+    private final static String USER_TABLE = " users ";
 
-    private final String FROM = " from ";
-    private final String JOIN = " join ";
-    private final String TAG_JOIN_CERTIFICATE = " join cert_tag ct on certificate.id = ct.certificate_id join tag on ct.tag_id = tag.id ";
-    private final String CERTIFICATE_JOIN_ORDER = " join order_certificate oc on certificate.id = oc.certificate_id join orders on oc.order_id = orders.id ";
-    private final String ORDER_JOIN_USER = " join users on orders.user_id = users.id ";
+    private final static String FROM = " from ";
+    private final static String JOIN = " join ";
+    private final static String TAG_JOIN_CERTIFICATE = " join cert_tag ct on certificate.id = ct.certificate_id join tag on ct.tag_id = tag.id ";
+    private final static String CERTIFICATE_JOIN_ORDER = " join order_certificate oc on certificate.id = oc.certificate_id join orders on oc.order_id = orders.id ";
+    private final static String ORDER_JOIN_USER = " join users on orders.user_id = users.id ";
 
-    private final String WHERE = " where ";
-    private final String AND = " and ";
+    private final static String WHERE = " where ";
+    private final static String AND = " and ";
 
-    private final String TAG_NAME = " tag.name like :tagName ";
+    private final static String TAG_NAME = " tag.name like :tagName ";
 
-    private final String CERTIFICATE_NAME = " certificate.name like :certificateName ";
+    private final static String CERTIFICATE_NAME = " certificate.name like :certificateName ";
 //    private final String CERTIFICATE_PRICE = " certificate.price >= :certificatePrice ";
 
 //    private final String ORDER_TOTAL_COST = " orders.total_cost >= :totalCost ";
 
-    private final String USER_SURNAME = " users.surname like :surname ";
-    private final String USER_NAME = " users.name like :userName ";
+    private final static String USER_SURNAME = " users.surname like :surname ";
+    private final static String USER_NAME = " users.name like :userName ";
 
-    private final String TAG_ID = " tag.id = :tagId ";
-    private final String CERTIFICATE_ID = " certificate.id = :certificateId ";
-    private final String ORDER_ID = " orders.id = :orderId ";
-    private final String USER_ID = " users.id = :userId ";
+    private final static String TAG_ID = " tag.id = :tagId ";
+    private final static String CERTIFICATE_ID = " certificate.id = :certificateId ";
+    private final static String ORDER_ID = " orders.id = :orderId and orders.deleted = false";
+    private final static String USER_ID = " users.id = :userId ";
 
-    private final String ORDER_BY = " order by  ";
-    private final String SELECT_COUNT = "select count(*) from (";
-    private final String SELECT_COUNT_END = " ) c ";
-    private final String EMPTY = "";
-    private final String COUNT = "count";
-    private final String PERCENT = "%";
+    private final static String ORDER_BY = " order by  ";
+    private final static String SELECT_COUNT = "select count(*) from (";
+    private final static String SELECT_COUNT_END = " ) c ";
+    private final static String EMPTY = "";
+    private final static String COUNT = "count";
+    private final static String PERCENT = "%";
+    private final static String CERTIFICATE_NAME_PARAM = "certificateName";
+    private final static String TAG_NAME_PARAM = "tagName";
+    private final static String SURNAME_PARAM = "surname";
+    private final static String USER_NAME_PARAM = "userName";
+    private final static String TAG_ID_PARAM = "tagId";
+    private final static String CERTIFICATE_ID_PARAM = "certificateId";
+    private final static String ORDER_ID_PARAM = "orderId";
+    private final static String USER_ID_PARAM = "userId";
+    private final static String CERTIFICATE_DELETED_FALSE = " certificate.deleted = false and ";
 
     private HashSet<String> entityNameSet;
 
     private F filter;
 
-    public String assembleQlString(CertificateFilter certificateFilter, Class clazz, String selecting) {//for class
+    public StringBuilder assembleQlString(CertificateFilter certificateFilter, Class clazz, String selecting) {//for class
         getEntityNameSet(certificateFilter);
         String tag_cert = entityNameSet.contains(TAG_TABLE) ? TAG_JOIN_CERTIFICATE : EMPTY;
         String cert_order = entityNameSet.contains(ORDER_TABLE) ? CERTIFICATE_JOIN_ORDER : EMPTY;
@@ -70,21 +79,25 @@ public class QueryBuilder<F extends AbstractFilter> {
         String tag_name = entityNameSet.contains(TAG_TABLE) ? TAG_NAME + AND : EMPTY;
         String user_name = entityNameSet.contains(USER_TABLE) ? AND + USER_SURNAME + AND + USER_NAME : EMPTY;
 
-        String ql = SELECT + addObjectColumns(clazz) + FROM + addObject(clazz) +
-                tag_cert +
-                cert_order +
-                order_user +
-                WHERE +
-                tag_name +
-                CERTIFICATE_NAME +
-                user_name;
+        StringBuilder ql = (new StringBuilder(SELECT))
+                .append(addObjectColumns(clazz))
+                .append(FROM)
+                .append(addObject(clazz))
+                .append(tag_cert)
+                .append(cert_order)
+                .append(order_user)
+                .append(WHERE)
+                .append(CERTIFICATE_DELETED_FALSE)
+                .append(tag_name)
+                .append(CERTIFICATE_NAME)
+                .append(user_name);
 
         ql = addObjectId(certificateFilter, ql);
 
         ql = addSortToQueryString(certificateFilter, selecting, ql);
 
         if (selecting.equals(COUNT)) {
-            ql = SELECT_COUNT + ql + SELECT_COUNT_END;
+            ql = (new StringBuilder(SELECT_COUNT)).append(ql).append(SELECT_COUNT_END);
 
         }
 
@@ -122,18 +135,18 @@ public class QueryBuilder<F extends AbstractFilter> {
         return this.entityNameSet;
     }
 
-    private String addObjectId(CertificateFilter certificateFilter, String ql) {
+    private StringBuilder addObjectId(CertificateFilter certificateFilter, StringBuilder ql) {
         if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {
-            ql = ql + AND + TAG_ID;
+            ql.append(AND).append(TAG_ID);
         }
         if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
-            ql = ql + AND + CERTIFICATE_ID;
+            ql.append(AND).append(CERTIFICATE_ID);
         }
         if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
-            ql = ql + AND + ORDER_ID;
+            ql.append(AND).append(ORDER_ID);
         }
         if (certificateFilter.getUserId() != null && certificateFilter.getUserId() > 0) {
-            ql = ql + AND + USER_ID;
+            ql.append(AND).append(USER_ID);
         }
         return ql;
     }
@@ -181,7 +194,7 @@ public class QueryBuilder<F extends AbstractFilter> {
     }
 
 
-    public String addSortToQueryString(AbstractFilter abstractFilter, String selecting, String ql) {
+    public StringBuilder addSortToQueryString(AbstractFilter abstractFilter, String selecting, StringBuilder ql) {
         if (!selecting.equals(COUNT) && abstractFilter.getFilterSort() != null && !abstractFilter.getFilterSort().getFilterOrders().isEmpty()) {
             String str = abstractFilter
                     .getFilterSort()
@@ -189,38 +202,38 @@ public class QueryBuilder<F extends AbstractFilter> {
                     .stream()
                     .map(o -> o.getParameter() + " " + o.getFilterDirection()).reduce("", (a, b) -> " " + a + " " + b + ",");
             str = str.substring(0, str.length() - 1);
-            ql = ql + ORDER_BY + str;
+            ql.append(ORDER_BY).append(str);
         }
         return ql;
     }
 
     public void setParameters(CertificateFilter certificateFilter, Query query) {
-        query.setParameter("certificateName", PERCENT + certificateFilter.getCertificateName() + PERCENT);
+        query.setParameter(CERTIFICATE_NAME_PARAM, PERCENT + certificateFilter.getCertificateName() + PERCENT);
 //        if (entityNameSet.contains(CERTIFICATE_TABLE)) {
 //        }
         if (entityNameSet.contains(TAG_TABLE)) {
-            query.setParameter("tagName", PERCENT + certificateFilter.getTagName() + PERCENT);
+            query.setParameter(TAG_NAME_PARAM, PERCENT + certificateFilter.getTagName() + PERCENT);
         }
         if (entityNameSet.contains(USER_TABLE)) {
-            query.setParameter("surname", PERCENT + certificateFilter.getUserSurname() + PERCENT);
-            query.setParameter("userName", PERCENT + certificateFilter.getUserName() + PERCENT);
+            query.setParameter(SURNAME_PARAM, PERCENT + certificateFilter.getUserSurname() + PERCENT);
+            query.setParameter(USER_NAME_PARAM, PERCENT + certificateFilter.getUserName() + PERCENT);
         }
 
         if (certificateFilter.getTagId() != null && certificateFilter.getTagId() > 0) {
-            query.setParameter("tagId", certificateFilter.getTagId());
+            query.setParameter(TAG_ID_PARAM, certificateFilter.getTagId());
         }
 
         if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
-            query.setParameter("certificateId", certificateFilter.getCertificateId());
+            query.setParameter(CERTIFICATE_ID_PARAM, certificateFilter.getCertificateId());
         }
 
 
         if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
-            query.setParameter("orderId", certificateFilter.getOrderId());
+            query.setParameter(ORDER_ID_PARAM, certificateFilter.getOrderId());
         }
 
         if (certificateFilter.getUserId() != null && certificateFilter.getUserId() > 0) {
-            query.setParameter("userId", certificateFilter.getUserId());
+            query.setParameter(USER_ID_PARAM, certificateFilter.getUserId());
         }
     }
 

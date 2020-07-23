@@ -2,14 +2,17 @@ package com.epam.esm.web.controller;
 
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.CustomPageDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
-import com.epam.esm.exception.NotFoundException;
-import com.epam.esm.exception.SaveException;
-import com.epam.esm.exception.UpdateException;
+import com.epam.esm.dto.filter.TagFilterDto;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.web.assembler.CertificateAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
+import com.epam.esm.web.page.TagPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,18 +42,21 @@ public class CertificateController {
     private ObjectMapper objectMapper;
     private CertificateAssembler certificateAssembler;
     private CertificatePageBuilder certificatePageBuilder;
+    private TagPageBuilder tagPageBuilder;
     private WebSecurity webSecurity;
 
     public CertificateController(CertificateService certificateService,
                                  TagService tagService, ObjectMapper objectMapper,
                                  CertificateAssembler certificateAssembler,
-                                 CertificatePageBuilder certificatePageBuilder, WebSecurity webSecurity) {
+                                 CertificatePageBuilder certificatePageBuilder, WebSecurity webSecurity,
+                                 TagPageBuilder tagPageBuilder) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
         this.certificatePageBuilder = certificatePageBuilder;
         this.webSecurity = webSecurity;
+        this.tagPageBuilder = tagPageBuilder;
     }
 
     @GetMapping
@@ -162,6 +168,36 @@ public class CertificateController {
         filterDto.setCertificateId(certificateId);
         CertificateDto certificateDto = certificateService.get(certificateId).orElseThrow(() -> new NotFoundException(this.getClass() + ":certificate not found, id:" + certificateId));
         return certificateAssembler.assemble(certificateId, certificateDto, authentication);
+    }
+
+    @GetMapping("/{certificateId}/tags")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomPageDto<TagDto> getAllTagsByCertificateId(
+            @RequestParam(value = "tagName", defaultValue = "")
+            @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
+
+            @RequestParam(value = "name", defaultValue = "")
+            @Size(max = 16, message = "name should be 0-16 characters") String certificateName,
+
+            @RequestParam(value = "page", defaultValue = "0")
+            @Min(0)
+            @Max(10000000) int page,
+
+            @RequestParam(value = "size", defaultValue = "5")
+            @Min(1)
+            @Max(100) int size,
+
+            @RequestParam(required = false) List<String> sort,
+            @PathVariable Long certificateId
+    ) {
+        TagFilterDto filterDto = new TagFilterDto();
+        filterDto.setCertificateName(certificateName);
+        filterDto.setPage(page);
+        filterDto.setSize(size);
+        filterDto.setSortParams(sort);
+        filterDto.setCertificateId(certificateId);
+
+        return tagPageBuilder.build(filterDto);
     }
 
     private CertificateDto applyPatchToCertificate(JsonPatch patch, CertificateDto certificateDto) throws JsonPatchException, JsonProcessingException {

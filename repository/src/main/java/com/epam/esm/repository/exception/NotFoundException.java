@@ -1,4 +1,6 @@
-package com.epam.esm.exception;
+package com.epam.esm.repository.exception;
+
+import com.epam.esm.repository.exception.GeneralException;
 
 public class NotFoundException extends GeneralException {
 

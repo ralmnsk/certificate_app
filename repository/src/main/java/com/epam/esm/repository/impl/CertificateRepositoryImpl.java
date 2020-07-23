@@ -23,7 +23,7 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
     @Override
     public CertificateListWrapper getAll(CertificateFilter filter) {
 
-        String ql = builder.assembleQlString(filter, Certificate.class, SELECT);
+        String ql = builder.assembleQlString(filter, Certificate.class, SELECT).toString();
         Query query = getEntityManager().createNativeQuery(ql, Certificate.class);
         builder.setParameters(filter, query);
         int pageNumber = filter.getPage();
@@ -33,7 +33,7 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
         List<Certificate> certificates = query.getResultList();
 
         Query queryTotal = getEntityManager().createNativeQuery
-                (builder.assembleQlString(filter, Certificate.class, COUNT));
+                (builder.assembleQlString(filter, Certificate.class, COUNT).toString());
         builder.setParameters(filter, queryTotal);
 
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());

@@ -11,11 +11,22 @@ public abstract class Identifiable<T> implements Serializable {
     @Column(name = "id", updatable = false)
     private T id;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean deleted;
+
     public T getId() {
         return id;
     }
 
     public void setId(T id) {
         this.id = id;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

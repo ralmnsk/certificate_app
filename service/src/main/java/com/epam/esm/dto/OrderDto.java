@@ -37,8 +37,6 @@ public class OrderDto extends IdentifiableDto<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp created;
 
-    private boolean deleted;
-
     private Set<CertificateDto> certificates = new HashSet<>();
 
     @Override
@@ -49,7 +47,7 @@ public class OrderDto extends IdentifiableDto<Long> {
 
         OrderDto orderDto = (OrderDto) o;
 
-        if (deleted != orderDto.deleted) return false;
+        if (isDeleted() != orderDto.isDeleted()) return false;
         if (!description.equals(orderDto.description)) return false;
         return created.equals(orderDto.created);
     }
@@ -59,7 +57,7 @@ public class OrderDto extends IdentifiableDto<Long> {
         int result = super.hashCode();
         result = 31 * result + description.hashCode();
         result = 31 * result + created.hashCode();
-        result = 31 * result + (deleted ? 1 : 0);
+        result = 31 * result + (isDeleted() ? 1 : 0);
         return result;
     }
 }

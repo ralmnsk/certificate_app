@@ -1,13 +1,20 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.dto.ExceptionResponseDto;
-import com.epam.esm.exception.*;
+import com.epam.esm.exception.AccessException;
+import com.epam.esm.exception.JwtUserAuthenticationException;
+import com.epam.esm.exception.NoHandlerException;
+import com.epam.esm.exception.ValidationException;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -155,6 +162,14 @@ public class AdviceController {
                 ex.getMessage());
     }
 
+
+    @ResponseBody
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponseDto exception(UsernameNotFoundException ex) {
+        return new ExceptionResponseDto("UsernameNotFoundException",
+                ex.getMessage());
+    }
 
     @ResponseBody
     @ExceptionHandler(Throwable.class)
