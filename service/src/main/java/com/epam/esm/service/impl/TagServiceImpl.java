@@ -146,8 +146,8 @@ public class TagServiceImpl implements TagService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<String> findTopTag() {
-        List<String> list = tagRepository.findTopTag();
+    public List<Integer> findTopTag() {
+        List<Integer> list = tagRepository.findTopTag();
         return list;
     }
 }

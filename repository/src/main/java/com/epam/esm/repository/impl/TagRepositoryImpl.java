@@ -51,7 +51,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
     @Override
     public TagListWrapper getAll(TagFilter tagFilter) {
         List<Tag> tags = getList(tagFilter);
-        tagFilter= setCountResult(tagFilter);
+        tagFilter = setCountResult(tagFilter);
 
         TagListWrapper listWrapper = new TagListWrapper();
         listWrapper.setList(tags);
@@ -60,53 +60,30 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         return listWrapper;
     }
 
-    public List<String> findTopTag() {
+    public List<Integer> findTopTag() {
 
-        String sumString = "select max(summa) from (select sum(o.total_cost) as summa, o.user_Id as uid " +
-                " from orders o join users u on o.user_id = u.id " +
-                " where o.deleted = false and u.deleted = false group by o.user_Id) s";
-//        Query query = getEntityManager().createNativeQuery(sql);
+        String sumString = "select max(summa) from (select sum(orders.total_cost) as summa,user_id as uid from orders where orders.deleted = false group by user_id) su";
         Query sumQuery = getEntityManager().createNativeQuery(sumString);
-//        List<String> resultList = query.getResultList();
         BigDecimal summa = (BigDecimal) sumQuery.getSingleResult();
-        String uidString = "select uid from (select sum(o.total_cost) as summa, o.user_Id as uid " +
-                " from orders o join users u on o.user_id = u.id " +
-                "                                where o.deleted = false " +
-                "                                  and u.deleted = false " +
-                "                                group by o.user_Id) as uid_summa " +
-                "                          where summa = :summa";
+        String uidString = "select uid from (select sum(orders.total_cost) as summa,user_id as uid from orders where orders.deleted = false group by user_id) su where summa = :summa";
         Query uidQuery = getEntityManager().createNativeQuery(uidString);
         uidQuery.setParameter("summa", summa);
         List<BigInteger> uids = uidQuery.getResultList();
-        String sql =
-                "select name\n" +
-                        "from (select count(id) as cnt, name\n" +
-                        "      from (select tag.id, tag.name\n" +
-                        "            from tag\n" +
-                        "                     join cert_tag ct on tag.id = ct.tag_id\n" +
-                        "                     join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-                        "                     join orders o on oc.order_id = o.id\n" +
-                        "                     join users u on o.user_id = u.id\n" +
-                        "            where u.id =  :uid\n" +
-                        "           ) as tg\n" +
-                        "      group by name) as t\n" +
-                        "where cnt =\n" +
-                        "      (select max(cnt)\n" +
-                        "       from (select count(id) as cnt, name\n" +
-                        "             from (select tag.id, tag.name\n" +
-                        "                   from tag\n" +
-                        "                            join cert_tag ct on tag.id = ct.tag_id\n" +
-                        "                            join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-                        "                            join orders o on oc.order_id = o.id\n" +
-                        "                            join users u on o.user_id = u.id\n" +
-                        "                   where u.id = :uid\n" +
-                        "                  ) as tg\n" +
-                        "             group by name) as t)";
-        List<String> resultList = new ArrayList<>();
+        String sql = "select tid from " +
+                "(select count(cert_tag.tag_id) as cnt,cert_tag.tag_id as tid from cert_tag join certificate c on cert_tag.certificate_id = c.id " +
+                "join order_certificate oc on c.id = oc.certificate_id " +
+                "join orders o on oc.order_id = o.id where o.user_id = :uid group by tid) as b " +
+                "where cnt=\n" +
+                "(select max(cnt) from\n" +
+                "    (select count(cert_tag.tag_id) as cnt,cert_tag.tag_id as tid from cert_tag join certificate c on cert_tag.certificate_id = c.id " +
+                "join order_certificate oc on c.id = oc.certificate_id " +
+                "join orders o on oc.order_id = o.id where o.user_id = :uid group by tid) as b )";
+        Query query = getEntityManager().createNativeQuery(sql);
+
+        List<Integer> resultList = new ArrayList<>();
         uids.forEach(id -> {
-            Query query = getEntityManager().createNativeQuery(sql);
             query.setParameter(UID, id);
-            List<String> result = query.getResultList();
+            List<Integer> result = query.getResultList();
             result.forEach(r -> resultList.add(r));
         });
 

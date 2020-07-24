@@ -90,7 +90,7 @@ public class TagController {
 
     @GetMapping("/find")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> findFrequentTag() {
+    public List<Integer> findFrequentTag() {
         return tagService.findTopTag();
     }
 

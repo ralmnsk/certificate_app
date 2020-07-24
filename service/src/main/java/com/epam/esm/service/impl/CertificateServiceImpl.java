@@ -65,8 +65,6 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
 
         found.setName(certificateDto.getName());
-        found.setCreation(certificateDto.getCreation());
-        found.setModification(certificateDto.getModification());
         found.setPrice(certificateDto.getPrice());
         found.setDescription(certificateDto.getDescription());
         found.setDuration(certificateDto.getDuration());

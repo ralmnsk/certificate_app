@@ -19,6 +19,6 @@ public interface TagService extends CrudService<TagDto, Integer> {
 
     TagListWrapperDto getAll(TagFilterDto filterDto);
 
-    List<String> findTopTag();
+    List<Integer> findTopTag();
 
 }

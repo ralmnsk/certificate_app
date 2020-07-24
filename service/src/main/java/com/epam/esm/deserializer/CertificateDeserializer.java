@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 @Slf4j
+
 public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
     private Map<String, String> errors = new HashMap<>();
 
@@ -45,6 +47,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
 
         return certificateDto;
     }
+
 
     public String validateName(String name) {
         boolean matches = name.matches("([А-Яа-яa-zA-Z0-9 .!&?#,;$]){2,256}");

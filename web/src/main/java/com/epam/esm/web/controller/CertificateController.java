@@ -5,6 +5,7 @@ import com.epam.esm.dto.CustomPageDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.dto.filter.TagFilterDto;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.repository.exception.UpdateException;
@@ -28,8 +29,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -133,21 +137,23 @@ public class CertificateController {
         try {
             certificateDtoPatched = applyPatchToCertificate(patch, certificateDto);
         } catch (JsonPatchException e) {
-            log.warn("Certificate patch exception:", e);
-            throw new UpdateException(id);
+            log.warn("Certificate patch exception:{}", e.getMessage());
+            throw new UpdateException("Certificate patch processing exception:" + e.getMessage());
         } catch (JsonProcessingException e) {
-            log.warn("Certificate patch processing exception:", e);
-            throw new UpdateException(id);
+            log.warn("Certificate patch processing exception:{}", e.getMessage());
+            throw new UpdateException("Certificate patch processing exception:" + e.getMessage());
         }
-        certificateDto = certificateService.update(certificateDtoPatched).orElseThrow(() -> new UpdateException(id));
+        certificateDto = patchToDto(certificateDto, certificateDtoPatched);
+        certificateDto = certificateService.update(certificateDto).orElseThrow(() -> new UpdateException(id));
 
         return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
+
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
-            @RequestBody Set<Long> tagIds, Authentication authentication) {
+                                              @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagService.addTagToCertificate(certificateId, tagIds);
@@ -161,7 +167,7 @@ public class CertificateController {
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
-            @RequestBody Set<Long> tagIds, Authentication authentication) {
+                                                   @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagService.removeTagFromCertificate(certificateId, tagIds);
@@ -205,5 +211,64 @@ public class CertificateController {
     private CertificateDto applyPatchToCertificate(JsonPatch patch, CertificateDto certificateDto) throws JsonPatchException, JsonProcessingException {
         JsonNode patched = patch.apply(objectMapper.convertValue(certificateDto, JsonNode.class));
         return objectMapper.treeToValue(patched, CertificateDto.class);
+    }
+
+    private CertificateDto patchToDto(CertificateDto dto, CertificateDto patched) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (patched.getName() != null) {
+            boolean matches = patched.getName().matches("([А-Яа-яa-zA-Z0-9 .!&?#,;$]){2,256}");
+            if (matches) {
+                dto.setName(patched.getName());
+            } else {
+                errors.put("name:", "Name must be between 2 and 256 characters.");
+            }
+        }
+
+        if (patched.getDescription() != null) {
+            boolean matches = patched.getDescription().matches("[А-Яа-яa-zA-Z0-9 .!&?#,;$]{0,999}");
+            if (matches) {
+                dto.setDescription(patched.getDescription());
+            } else {
+                errors.put("description:", "Description must be between 2 and 999 characters.");
+            }
+        }
+
+        if (patched.getPrice() != null) {
+            try {
+                if (patched.getPrice().compareTo(new BigDecimal(0.00)) < 0) {
+                    throw new NumberFormatException();
+                }
+                if (patched.getPrice().compareTo(new BigDecimal(1000000000000.00)) > 0) {
+                    throw new NumberFormatException();
+                }
+                dto.setPrice(patched.getPrice());
+            } catch (NumberFormatException nfe) {
+                errors.put("price:", "Price should be 0.00 - 1000000000000.00.");
+            }
+        }
+
+        if (patched.getDuration() != null) {
+            try {
+                if (patched.getDuration() < 0 || patched.getDuration() > 100000) {
+                    throw new NumberFormatException();
+                }
+                dto.setDuration(patched.getDuration());
+            } catch (NumberFormatException nfe) {
+                errors.put("duration:", "Range should be 0 - 100000.");
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            errors.forEach((k, v) -> {
+                builder.append("Field ").append(k).append(v).append("  ");
+            });
+            errors.clear();
+            log.error(builder.toString());
+            throw new ValidationException(builder.toString());
+        }
+
+        return dto;
     }
 }

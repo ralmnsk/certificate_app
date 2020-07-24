@@ -15,5 +15,5 @@ public interface TagRepository extends CrudRepository<Tag, Integer> {
 
     TagListWrapper getAll(TagFilter filter);
 
-    List<String> findTopTag();
+    List<Integer> findTopTag();
 }
