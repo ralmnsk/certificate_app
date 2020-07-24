@@ -57,6 +57,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public OrderDto create(@Valid @RequestBody OrderDto orderDto, Authentication authentication) {
 
         String login = authentication.getName();
@@ -75,6 +76,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public OrderDto get(@PathVariable Long id, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOrderId(login, id);
@@ -83,6 +85,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public OrderDto update(@Valid @RequestBody OrderDto orderDto, @PathVariable Long id, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOrderId(login, id);
@@ -179,7 +182,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}/certificates")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
                                                                     Principal principal) {
         webSecurity.checkOrderId(principal, orderId);

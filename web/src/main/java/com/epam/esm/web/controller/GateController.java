@@ -9,6 +9,7 @@ import com.epam.esm.service.security.OAuthService;
 import com.epam.esm.service.security.RegistrationService;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -86,10 +87,10 @@ public class GateController {
             throw new AccessException("Invalid username or password");
         }
         return ResponseEntity.notFound().build();
-
     }
 
     @PostMapping("/register")
+    @ResponseStatus(HttpStatus.CREATED)
     public RegistrationDto register(@Valid @RequestBody RegistrationDto registrationDto) {
         RegistrationDto registeredUser = registrationService.register(registrationDto);
         return registeredUser;
@@ -98,8 +99,7 @@ public class GateController {
     public String getURLBase(HttpServletRequest request) throws MalformedURLException {
         URL requestURL = new URL(request.getRequestURL().toString());
         String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
+
         return requestURL.getProtocol() + "://" + requestURL.getHost() + port;
-
     }
-
 }

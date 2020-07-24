@@ -49,6 +49,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public UserDto get(@PathVariable Long id, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkUserId(login, id);
@@ -58,6 +59,7 @@ public class UserController {
 
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public UserDto update(@Valid @RequestBody UserUpdateDto userUpdateDto, @PathVariable Long id,
                           Authentication authentication) {
         String login = authentication.getName();
@@ -72,8 +74,8 @@ public class UserController {
         return userAssembler.assemble(id, userDto, authentication);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, Principal principal) {
         webSecurity.checkUserId(principal, id);
         userService.delete(id);

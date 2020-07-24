@@ -65,6 +65,7 @@ public class TagController {
 
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public TagDto get(@PathVariable Integer id, Authentication authentication) {
         TagDto tagDto = tagService.get(id).orElseThrow(() -> new NotFoundException(id));
         int idInt = id;
@@ -72,8 +73,8 @@ public class TagController {
     }
 
     @PostMapping
-    public TagDto
-    create(@Valid @RequestBody TagDto tagDto, Authentication authentication) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public TagDto create(@Valid @RequestBody TagDto tagDto, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagDto = tagService.save(tagDto).orElseThrow(() -> new SaveException("Tag save exception"));
@@ -93,6 +94,4 @@ public class TagController {
     public List<Integer> findFrequentTag() {
         return tagService.findTopTag();
     }
-
-
 }

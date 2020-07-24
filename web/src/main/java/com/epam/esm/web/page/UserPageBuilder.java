@@ -14,10 +14,12 @@ import java.util.HashSet;
 
 @Component
 public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, UserAssembler, UserFilterDto> {
-    private final String EMPTY = "";
+    private final static String EMPTY = "";
+    private final static String SURNAME = "surname";
+    private final static String NAME = "name";
 
     public UserPageBuilder(UserService service, UserAssembler assembler) {
-        super(new HashSet<>(Arrays.asList("surname", "name")), service, assembler);
+        super(new HashSet<>(Arrays.asList(SURNAME, NAME)), service, assembler);
     }
 
     public CustomPageDto<UserDto> build(UserFilterDto filterDto) {
@@ -39,7 +41,7 @@ public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, U
         return page;
     }
 
-    private UserFilterDto validateFilter(UserFilterDto filterDto){
+    private UserFilterDto validateFilter(UserFilterDto filterDto) {
 
         if (filterDto.getUserSurname() == null) {
             filterDto.setUserSurname(EMPTY);

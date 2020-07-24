@@ -93,13 +93,15 @@ public class CertificateController {
 
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public CertificateDto get(@PathVariable Long id, Authentication authentication) {
         CertificateDto certificateDto = certificateService.get(id).orElseThrow(() -> new NotFoundException(id));
         return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
     @PostMapping
-    public CertificateDto create(/*@Valid*/ @RequestBody CertificateDto certificateDto, Authentication authentication) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CertificateDto create(@RequestBody CertificateDto certificateDto, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
@@ -109,7 +111,8 @@ public class CertificateController {
 
 
     @PutMapping("/{id}")
-    public CertificateDto update(/*@Valid*/ @RequestBody CertificateDto certificateDto, @PathVariable Long id,
+    @ResponseStatus(HttpStatus.OK)
+    public CertificateDto update(@RequestBody CertificateDto certificateDto, @PathVariable Long id,
                                             Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
@@ -129,6 +132,7 @@ public class CertificateController {
 
 
     @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
     public CertificateDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
@@ -165,7 +169,7 @@ public class CertificateController {
     }
 
     @DeleteMapping("/{certificateId}/tags")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
                                                    @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();

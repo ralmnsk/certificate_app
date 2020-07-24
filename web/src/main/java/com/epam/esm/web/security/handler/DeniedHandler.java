@@ -16,10 +16,10 @@ public class DeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException exc)
             throws IOException, ServletException {
-        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto("Access denied", "Access denied for this resource");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        ExceptionResponseDto exceptionResponseDto = new ExceptionResponseDto("AccessDenied", "Access denied for this resource");
         String json = new ObjectMapper().writeValueAsString(exceptionResponseDto);
         response.getWriter().write(json);
         response.flushBuffer();
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }

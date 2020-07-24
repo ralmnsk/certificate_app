@@ -1,8 +1,8 @@
 package com.epam.esm.web.security.handler;
 
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.model.Role;
+import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.service.UserService;
 import com.epam.esm.web.security.jwt.JwtTokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -64,9 +64,8 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
             response.addHeader("Authorization", "Bearer_" + token);
 
             Map<Object, Object> responseObj = new HashMap<>();
-//            responseObj.put("username", login == null ? name : login);
             responseObj.put("token", "Bearer_" + token);
-            responseObj.put("user link:", getURLBase(request) + "/users/" + user.getId());
+            responseObj.put("user_link:", getURLBase(request) + "/users/" + user.getId());
             response.setStatus(HttpStatus.OK.value());
             String json = new ObjectMapper().writeValueAsString(responseObj);
             response.getWriter().write(json);

@@ -15,10 +15,15 @@ import java.util.HashSet;
 
 @Component
 public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, CertificateService, CertificateAssembler, CertificateFilterDto> {
-    private final String EMPTY = "";
+    private final static String EMPTY = "";
+    private final static String TAG_NAME = "tag.name";
+    private final static String CERTIFICATE_NAME = "certificate.name";
+    private final static String PRICE = "price";
+    private final static String CREATION = "1970-01-01 00:00:00";
+    private final static String MODIFICATION = "1970-01-01 00:00:00";
 
     public CertificatePageBuilder(CertificateService service, CertificateAssembler certificateAssembler) {
-        super(new HashSet<>(Arrays.asList("tag.name", "certificate.name", "price")), service, certificateAssembler);
+        super(new HashSet<>(Arrays.asList(TAG_NAME, CERTIFICATE_NAME, PRICE)), service, certificateAssembler);
     }
 
 
@@ -41,7 +46,7 @@ public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, 
         return page;
     }
 
-    private CertificateFilterDto validateFilter(CertificateFilterDto filterDto){
+    private CertificateFilterDto validateFilter(CertificateFilterDto filterDto) {
         if (filterDto.getTagName() == null) {
             filterDto.setTagName(EMPTY);
         }
@@ -53,10 +58,10 @@ public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, 
             filterDto.setUserSurname(EMPTY);
         }
         if (filterDto.getCreation() == null) {
-            filterDto.setCreation("1970-01-01 00:00:00");
+            filterDto.setCreation(CREATION);
         }
         if (filterDto.getModification() == null) {
-            filterDto.setModification("1970-01-01 00:00:00");
+            filterDto.setModification(MODIFICATION);
         }
         if (filterDto.getDescription() == null) {
             filterDto.setDescription(EMPTY);

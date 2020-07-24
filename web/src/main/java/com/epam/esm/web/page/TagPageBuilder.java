@@ -14,10 +14,11 @@ import java.util.HashSet;
 
 @Component
 public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService, TagAssembler, TagFilterDto> {
-    private final String EMPTY = "";
+    private final static String EMPTY = "";
+    private final static String TAG_NAME = "tagName";
 
     public TagPageBuilder(TagService service, TagAssembler certificateAssembler) {
-        super(new HashSet<>(Arrays.asList("tagName")), service, certificateAssembler);
+        super(new HashSet<>(Arrays.asList(TAG_NAME)), service, certificateAssembler);
     }
 
     public CustomPageDto<TagDto> build(TagFilterDto filterDto) {
@@ -39,7 +40,7 @@ public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService, TagA
         return page;
     }
 
-    private TagFilterDto validateFilter(TagFilterDto filterDto){
+    private TagFilterDto validateFilter(TagFilterDto filterDto) {
         if (filterDto.getTagName() == null) {
             filterDto.setTagName(EMPTY);
         }

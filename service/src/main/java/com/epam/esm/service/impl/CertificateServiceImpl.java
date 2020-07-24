@@ -63,7 +63,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
         long id = certificateDto.getId();
         Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
-
+        //entity not managed without get
         found.setName(certificateDto.getName());
         found.setPrice(certificateDto.getPrice());
         found.setDescription(certificateDto.getDescription());

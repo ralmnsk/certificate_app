@@ -2,7 +2,6 @@ package com.epam.esm.web.page;
 
 import com.epam.esm.dto.CustomPageDto;
 import com.epam.esm.dto.filter.AbstractFilterDto;
-import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.page.FilterDirection;
 import com.epam.esm.page.FilterOrder;
 import com.epam.esm.page.FilterSort;
@@ -11,15 +10,20 @@ import com.epam.esm.web.assembler.Assembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 @Slf4j
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
-    private final String EMPTY = "";
+    private final static String EMPTY = "";
+    private final static String NAME = "name+";
+    private final static String REGEX = "[a-z.]{0,20}(([+]{0,1})|([-]{0,1}))";
+    private final static String PLUS = "+";
+    private final static String MINUS = "-";
+
     private Set<String> fieldSet;
     private S service;
     private A assembler;
@@ -53,7 +57,6 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
     }
 
     public F validateAbstractFilter(F filterDto) {
-
         if (filterDto.getSize() == 0) {
             filterDto.setSize(5);
         }
@@ -62,7 +65,7 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
         }
         if (filterDto.getSortParams() == null) {
             List<String> params = new ArrayList<>();
-            params.add("name+");
+            params.add(NAME);
             filterDto.setSortParams(params);
         }
 
@@ -73,14 +76,14 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
     public FilterSort getSort(List<String> params) {
         List<FilterOrder> filterOrders = new ArrayList<>();
         for (String param : params) {
-            if (param.matches("[a-z.]{0,20}(([+]{0,1})|([-]{0,1}))")) {
+            if (param.matches(REGEX)) {
                 FilterDirection filterDirection = FilterDirection.DESC;
                 param = param.trim();
                 if (param.contains("+")) {
                     filterDirection = FilterDirection.ASC;
-                    param = param.replace("+", "");
+                    param = param.replace(PLUS, EMPTY);
                 } else {
-                    param = param.replace("-", "");
+                    param = param.replace(MINUS, EMPTY);
                 }
                 if (fieldSet.contains(param)) {
                     FilterOrder filterOrder = new FilterOrder(filterDirection, param);
