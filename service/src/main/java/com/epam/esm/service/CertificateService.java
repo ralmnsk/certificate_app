@@ -11,7 +11,7 @@ public interface CertificateService extends CrudService<CertificateDto, Long> {
 
     void addCertificateToOrder(Long orderId, Set<Long> list);
 
-    void deleteCertificateFromOrder(Long orderId, Set<Long> list);
+    void removeCertificateFromOrder(Long orderId, Set<Long> list);
 
     CertificateListWrapperDto getAll(CertificateFilterDto filterDto);
 

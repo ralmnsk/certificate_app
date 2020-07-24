@@ -84,7 +84,7 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
         return collectionModel;
     }
 
-    private void addNextPrevious(CollectionModel<UserDto> collectionModel, AbstractFilterDto filter) {
+    private void addNextPrevious(CollectionModel<UserDto> collectionModel, UserFilterDto filter) {
         int page = filter.getPage();
 
         if (page > 0 && page <= filter.getTotalPages()) {

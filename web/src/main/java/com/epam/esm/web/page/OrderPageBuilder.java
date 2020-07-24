@@ -38,4 +38,23 @@ public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService
 
         return page;
     }
+
+    private OrderFilterDto validateFilter(OrderFilterDto filterDto) {
+
+        if (filterDto.getCertificateName() == null) {
+            filterDto.setCertificateName(EMPTY);
+        }
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+        if (filterDto.getUserName() == null) {
+            filterDto.setUserName(EMPTY);
+        }
+        filterDto = validateAbstractFilter(filterDto);
+        return filterDto;
+    }
 }

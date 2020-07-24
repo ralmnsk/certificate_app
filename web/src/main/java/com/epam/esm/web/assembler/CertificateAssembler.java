@@ -101,7 +101,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
         return collectionModel;
     }
 
-    private void addNextPrevious(CollectionModel<CertificateDto> collectionModel, AbstractFilterDto filter) {
+    private void addNextPrevious(CollectionModel<CertificateDto> collectionModel, CertificateFilterDto filter) {
         int page = filter.getPage();
 
         if (page > 0 && page <= filter.getTotalPages()) {

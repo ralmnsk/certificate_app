@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-//@Validated
 @RestController
 @RequestMapping("/certificates")
 public class CertificateController {
@@ -84,6 +83,7 @@ public class CertificateController {
         filterDto.setPage(page);
         filterDto.setSize(size);
         filterDto.setSortParams(sort);
+
         return certificatePageBuilder.build(filterDto);
     }
 
@@ -99,6 +99,7 @@ public class CertificateController {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         certificateDto = certificateService.save(certificateDto).orElseThrow(() -> new SaveException("Certificate save exception"));
+
         return certificateAssembler.assemble(certificateDto.getId(), certificateDto, authentication);
     }
 
@@ -110,6 +111,7 @@ public class CertificateController {
         webSecurity.checkOperationAccess(login);
         certificateDto.setId(id);
         certificateDto = certificateService.update(certificateDto).orElseThrow(() -> new NotFoundException(id));
+
         return certificateAssembler.assemble(id, certificateDto, authentication);
     }
 
@@ -145,7 +147,7 @@ public class CertificateController {
     @PutMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto addTagToCertificate(@PathVariable Long certificateId,
-            /*@Valid*/ @RequestBody Set<Long> tagIds, Authentication authentication) {
+            @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         tagService.addTagToCertificate(certificateId, tagIds);
@@ -159,10 +161,10 @@ public class CertificateController {
     @DeleteMapping("/{certificateId}/tags")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto deleteTagFromCertificate(@PathVariable Long certificateId,
-            /*@Valid*/ @RequestBody Set<Long> tagIds, Authentication authentication) {
+            @RequestBody Set<Long> tagIds, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
-        tagService.deleteTagFromCertificate(certificateId, tagIds);
+        tagService.removeTagFromCertificate(certificateId, tagIds);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setCertificateId(certificateId);

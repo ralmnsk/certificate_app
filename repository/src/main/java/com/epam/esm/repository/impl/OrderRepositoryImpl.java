@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
@@ -33,6 +32,18 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
 
     @Override
     public OrderListWrapper getAll(OrderFilter filter) {
+        List<Order> orders = getList(filter);
+        filter = setCountResult(filter);
+
+        OrderListWrapper listWrapper = new OrderListWrapper();
+        listWrapper.setList(orders);
+        listWrapper.setFilter(filter);
+
+        return listWrapper;
+
+    }
+
+    private List<Order> getList(OrderFilter filter) {
         String ql = assembleQlString(filter, SELECT).toString();
         Query query = getEntityManager().createNativeQuery(ql, Order.class);
         querySetParameters(filter, query);
@@ -41,22 +52,21 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
         List<Order> orders = query.getResultList();
-        orders = orders.stream().filter(order -> !order.isDeleted()).collect(Collectors.toList());
 
+        return orders;
+    }
+
+    private OrderFilter setCountResult(OrderFilter filter) {
         Query queryTotal = getEntityManager().createNativeQuery
                 (assembleQlString(filter, COUNT).toString());
         querySetParameters(filter, queryTotal);
 
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
         int i = (int) countResult;
-
+        int pageSize = filter.getSize();
         filter = builder.updateFilter(filter, pageSize, countResult);
-        OrderListWrapper listWrapper = new OrderListWrapper();
-        listWrapper.setList(orders);
-        listWrapper.setFilter(filter);
 
-        return listWrapper;
-
+        return filter;
     }
 
     private void querySetParameters(OrderFilter filter, Query query) {

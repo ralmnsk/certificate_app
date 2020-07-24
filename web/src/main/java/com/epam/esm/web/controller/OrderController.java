@@ -183,7 +183,7 @@ public class OrderController {
     public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
                                                                     Principal principal) {
         webSecurity.checkOrderId(principal, orderId);
-        certificateService.deleteCertificateFromOrder(orderId, set);
+        certificateService.removeCertificateFromOrder(orderId, set);
 
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setOrderId(orderId);

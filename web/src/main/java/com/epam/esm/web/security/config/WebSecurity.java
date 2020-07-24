@@ -5,11 +5,12 @@ import com.epam.esm.exception.AccessException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.model.Role;
 import com.epam.esm.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
 
-
+@Slf4j
 @Component
 public class WebSecurity {
     private UserService userService;
@@ -22,6 +23,7 @@ public class WebSecurity {
 
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
+            log.warn("Access denied");
             throw new AccessException("Access denied");
         }
         if (userDto.getRole().equals(Role.ADMIN)) {
@@ -61,11 +63,13 @@ public class WebSecurity {
 
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
+            log.warn("User with principal login: " + login + " not found exception");
             throw new NotFoundException("User with principal login: " + login + " not found exception");
         }
         if (userDto.getRole().equals(Role.ADMIN)) {
             return true;
         }
+        log.warn("Access denied");
         throw new AccessException("Access denied");
     }
 

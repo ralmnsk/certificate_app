@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@EqualsAndHashCode
 @Data
+@EqualsAndHashCode
 @NoArgsConstructor
 public class AbstractFilter {
 

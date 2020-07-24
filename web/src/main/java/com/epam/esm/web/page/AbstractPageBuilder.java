@@ -2,11 +2,13 @@ package com.epam.esm.web.page;
 
 import com.epam.esm.dto.CustomPageDto;
 import com.epam.esm.dto.filter.AbstractFilterDto;
+import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.page.FilterDirection;
 import com.epam.esm.page.FilterOrder;
 import com.epam.esm.page.FilterSort;
 import com.epam.esm.service.CrudService;
 import com.epam.esm.web.assembler.Assembler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 
 import java.math.BigDecimal;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@Slf4j
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
     private final String EMPTY = "";
     private Set<String> fieldSet;
@@ -50,37 +52,8 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
         return filterDto;
     }
 
-    public F validateFilter(F filterDto) {
-        if (filterDto.getTagName() == null) {
-            filterDto.setTagName(EMPTY);
-        }
-        if (filterDto.getCertificateName() == null) {
-            filterDto.setCertificateName(EMPTY);
-        }
-        if (filterDto.getUserSurname() == null) {
-            filterDto.setUserSurname(EMPTY);
-        }
-        if (filterDto.getCreation() == null) {
-            filterDto.setCreation("1970-01-01 00:00:00");
-        }
-        if (filterDto.getModification() == null) {
-            filterDto.setModification("1970-01-01 00:00:00");
-        }
-        if (filterDto.getDescription() == null) {
-            filterDto.setDescription(EMPTY);
-        }
-        if (filterDto.getPrice() == null) {
-            filterDto.setPrice(new BigDecimal(0.00));
-        }
-        if (filterDto.getDuration() == null) {
-            filterDto.setDuration(0);
-        }
-        if (filterDto.getUserSurname() == null) {
-            filterDto.setUserSurname(EMPTY);
-        }
-        if (filterDto.getUserName() == null) {
-            filterDto.setUserName(EMPTY);
-        }
+    public F validateAbstractFilter(F filterDto) {
+
         if (filterDto.getSize() == 0) {
             filterDto.setSize(5);
         }

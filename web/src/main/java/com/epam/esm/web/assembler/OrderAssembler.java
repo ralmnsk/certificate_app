@@ -98,7 +98,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
         return collectionModel;
     }
 
-    private void addNextPrevious(CollectionModel<OrderDto> collectionModel, AbstractFilterDto filter) {
+    private void addNextPrevious(CollectionModel<OrderDto> collectionModel, OrderFilterDto filter) {
         int page = filter.getPage();
 
         if (page > 0 && page <= filter.getTotalPages()) {

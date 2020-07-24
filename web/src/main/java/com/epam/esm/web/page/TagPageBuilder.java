@@ -39,4 +39,18 @@ public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService, TagA
         return page;
     }
 
+    private TagFilterDto validateFilter(TagFilterDto filterDto){
+        if (filterDto.getTagName() == null) {
+            filterDto.setTagName(EMPTY);
+        }
+
+        if (filterDto.getCertificateName() == null) {
+            filterDto.setCertificateName(EMPTY);
+        }
+
+        filterDto = validateAbstractFilter(filterDto);
+
+        return filterDto;
+    }
+
 }

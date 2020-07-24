@@ -39,7 +39,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Transactional
-    @Override //save without tags
+    @Override
     public Optional<CertificateDto> save(CertificateDto certificateDto) {
         certificateDto.getTags().clear();
         certificateDto.setId(null); //or detached entity passes to persistent and happens exception
@@ -109,9 +109,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
-        if (order.isDeleted()) {
-            throw new NotFoundException("Add Certificate to Order: order not found: id:" + orderId);
-        }
+
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto)))
@@ -121,11 +119,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Transactional
     @Override
-    public void deleteCertificateFromOrder(Long orderId, Set<Long> set) {
+    public void removeCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
-        if (order.isDeleted()) {
-            throw new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId);
-        }
+
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))

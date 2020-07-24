@@ -128,14 +128,14 @@ public class TagServiceImpl implements TagService {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Certificate not found: id:" + certificateId));
         list
                 .stream()
-                .map(idDto -> tagRepository.get((int) (long) idDto).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto)))
+                .map(idDto -> tagRepository.get(idDto.intValue()).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto)))
                 .forEach(tag -> certificate.getTags().add(tag));
         certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Add Tag to Certificate: Tag update exception"));
     }
 
     @Transactional
     @Override
-    public void deleteTagFromCertificate(Long certificateId, Set<Long> list) {
+    public void removeTagFromCertificate(Long certificateId, Set<Long> list) {
         Certificate certificate = certificateRepository.get(certificateId).orElseThrow(() -> new NotFoundException("Delete Tag from Certificate: Tag not found: id:" + certificateId));
         list
                 .stream()

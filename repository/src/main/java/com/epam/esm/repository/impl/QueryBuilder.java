@@ -36,12 +36,7 @@ public class QueryBuilder<F extends AbstractFilter> {
     private final static String AND = " and ";
 
     private final static String TAG_NAME = " tag.name like :tagName ";
-
     private final static String CERTIFICATE_NAME = " certificate.name like :certificateName ";
-//    private final String CERTIFICATE_PRICE = " certificate.price >= :certificatePrice ";
-
-//    private final String ORDER_TOTAL_COST = " orders.total_cost >= :totalCost ";
-
     private final static String USER_SURNAME = " users.surname like :surname ";
     private final static String USER_NAME = " users.name like :userName ";
 
@@ -131,7 +126,6 @@ public class QueryBuilder<F extends AbstractFilter> {
             entityNameSet.add(USER_TABLE);
         }
 
-
         return this.entityNameSet;
     }
 
@@ -158,6 +152,7 @@ public class QueryBuilder<F extends AbstractFilter> {
             filter.setTotalPages(((int) countResult / pageSize) + 1);
         }
         filter.setTotalElements(countResult);
+
         return filter;
     }
 
@@ -209,8 +204,6 @@ public class QueryBuilder<F extends AbstractFilter> {
 
     public void setParameters(CertificateFilter certificateFilter, Query query) {
         query.setParameter(CERTIFICATE_NAME_PARAM, PERCENT + certificateFilter.getCertificateName() + PERCENT);
-//        if (entityNameSet.contains(CERTIFICATE_TABLE)) {
-//        }
         if (entityNameSet.contains(TAG_TABLE)) {
             query.setParameter(TAG_NAME_PARAM, PERCENT + certificateFilter.getTagName() + PERCENT);
         }
@@ -226,7 +219,6 @@ public class QueryBuilder<F extends AbstractFilter> {
         if (certificateFilter.getCertificateId() != null && certificateFilter.getCertificateId() > 0) {
             query.setParameter(CERTIFICATE_ID_PARAM, certificateFilter.getCertificateId());
         }
-
 
         if (certificateFilter.getOrderId() != null && certificateFilter.getOrderId() > 0) {
             query.setParameter(ORDER_ID_PARAM, certificateFilter.getOrderId());

@@ -7,13 +7,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
     private Map<String, String> errors = new HashMap<>();
 
@@ -38,6 +39,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
             });
             errors.clear();
             certificateDto = null;
+            log.error(builder.toString());
             throw new ValidationException(builder.toString());
         }
 

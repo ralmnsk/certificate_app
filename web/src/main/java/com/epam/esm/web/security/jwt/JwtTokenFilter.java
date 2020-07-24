@@ -35,6 +35,7 @@ public class JwtTokenFilter extends GenericFilterBean {
                 Authentication authentication = jwtTokenProvider.authentication(token);
 
                 if (authentication == null) {
+                    log.warn("User authentication exception");
                     throw new JwtUserAuthenticationException("User authentication exception");
                 }
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -44,7 +45,6 @@ public class JwtTokenFilter extends GenericFilterBean {
             Map<Object, Object> responseObj = new HashMap<>();
             responseObj.put("message:", "User authentication exception. " + e.getMessage());
             responseObj.put("exception:", "JwtUserAuthenticationException");
-//            response.setStatus(HttpStatus.OK.value());
             String json = new ObjectMapper().writeValueAsString(responseObj);
             response.getWriter().write(json);
             response.flushBuffer();

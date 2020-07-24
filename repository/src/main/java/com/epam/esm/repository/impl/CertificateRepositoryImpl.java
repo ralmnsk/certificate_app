@@ -11,8 +11,8 @@ import java.util.List;
 
 @Repository
 public class CertificateRepositoryImpl extends AbstractRepository<Certificate, Long> implements CertificateRepository {
-    public final static String SELECT = "select";
-    public final static String COUNT = "count";
+    private final static String SELECT = "select";
+    private final static String COUNT = "count";
     private QueryBuilder<CertificateFilter> builder;
 
     public CertificateRepositoryImpl(QueryBuilder<CertificateFilter> builder) {
@@ -22,7 +22,17 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
 
     @Override
     public CertificateListWrapper getAll(CertificateFilter filter) {
+        List<Certificate> certificates = getList(filter);
+        filter = setCountResult(filter);
 
+        CertificateListWrapper wrapper = new CertificateListWrapper();
+        wrapper.setList(certificates);
+        wrapper.setFilter(filter);
+
+        return wrapper;
+    }
+
+    private List<Certificate> getList(CertificateFilter filter) {
         String ql = builder.assembleQlString(filter, Certificate.class, SELECT).toString();
         Query query = getEntityManager().createNativeQuery(ql, Certificate.class);
         builder.setParameters(filter, query);
@@ -32,20 +42,18 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
         query.setMaxResults(pageSize);
         List<Certificate> certificates = query.getResultList();
 
+        return certificates;
+    }
+
+    private CertificateFilter setCountResult(CertificateFilter filter) {
         Query queryTotal = getEntityManager().createNativeQuery
                 (builder.assembleQlString(filter, Certificate.class, COUNT).toString());
         builder.setParameters(filter, queryTotal);
-
         long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
-
+        int pageSize = filter.getSize();
         filter = builder.updateFilter(filter, pageSize, countResult);
 
-        CertificateListWrapper wrapper = new CertificateListWrapper();
-        wrapper.setList(certificates);
-        wrapper.setFilter(filter);
-
-        return wrapper;
+        return filter;
     }
-
 
 }

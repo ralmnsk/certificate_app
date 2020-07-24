@@ -151,21 +151,6 @@ public class UserController {
         filterDto.setSortParams(sort);
         filterDto.setUserId(userId);
 
-
         return orderPageBuilder.build(filterDto);
-
     }
-
-//    @PutMapping("/{userId}/orders")
-//    @ResponseStatus(HttpStatus.OK)
-//    public CustomPageDto<OrderDto> deleteOrderFromUser(@PathVariable Long userId, @Valid @RequestBody Set<Long> orderIds,
-//                                                       Principal principal) {
-//        webSecurity.checkUserId(principal, userId);
-//        orderService.deleteOrderFromUser(userId, orderIds);
-//
-//        OrderFilterDto filterDto = new OrderFilterDto();
-//        filterDto.setUserId(userId);
-//        return orderPageBuilder.build(filterDto);
-//    }
-
 }

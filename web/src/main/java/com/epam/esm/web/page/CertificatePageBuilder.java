@@ -9,6 +9,7 @@ import com.epam.esm.web.assembler.CertificateAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -38,5 +39,41 @@ public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, 
         page.setTotalPage(filterDto.getTotalPages());
 
         return page;
+    }
+
+    private CertificateFilterDto validateFilter(CertificateFilterDto filterDto){
+        if (filterDto.getTagName() == null) {
+            filterDto.setTagName(EMPTY);
+        }
+
+        if (filterDto.getCertificateName() == null) {
+            filterDto.setCertificateName(EMPTY);
+        }
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+        if (filterDto.getCreation() == null) {
+            filterDto.setCreation("1970-01-01 00:00:00");
+        }
+        if (filterDto.getModification() == null) {
+            filterDto.setModification("1970-01-01 00:00:00");
+        }
+        if (filterDto.getDescription() == null) {
+            filterDto.setDescription(EMPTY);
+        }
+        if (filterDto.getPrice() == null) {
+            filterDto.setPrice(new BigDecimal(0.00));
+        }
+        if (filterDto.getDuration() == null) {
+            filterDto.setDuration(0);
+        }
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+        if (filterDto.getUserName() == null) {
+            filterDto.setUserName(EMPTY);
+        }
+        filterDto = validateAbstractFilter(filterDto);
+        return filterDto;
     }
 }

@@ -9,8 +9,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 public abstract class AbstractRepository<T extends Identifiable, E> implements CrudRepository<T, E> {
-
-
     @PersistenceContext
     private EntityManager entityManager;
     private Class<T> entity;
@@ -41,7 +39,7 @@ public abstract class AbstractRepository<T extends Identifiable, E> implements C
 
     @Override
     public Optional<T> update(T t) {
-        T tBase = get((E)t.getId()).orElseThrow(()-> new NotFoundException("Repository: entity not found exception."));
+        T tBase = get((E) t.getId()).orElseThrow(() -> new NotFoundException("Repository: entity not found exception."));
         entityManager.merge(t);
         entityManager.flush();
         entityManager.refresh(t);
@@ -53,14 +51,13 @@ public abstract class AbstractRepository<T extends Identifiable, E> implements C
     public boolean delete(E id) {
         T t = entityManager.find(entity, id);
         if (t != null) {
-//            entityManager.remove(t);
             t.setDeleted(true);
             return true;
         }
         return false;
     }
 
-    private void checkIsDeleted(T t){
+    private void checkIsDeleted(T t) {
         if (t.isDeleted()) {
             throw new NotFoundException("Repository: entity not found");
         }

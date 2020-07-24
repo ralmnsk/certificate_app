@@ -50,43 +50,9 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
 
     @Override
     public TagListWrapper getAll(TagFilter tagFilter) {
-        StringBuilder sql = new StringBuilder(SELECT_FROM_TAG);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            sql.append(JOIN_CERT_TAG);
-        }
-        sql.append(WHERE_TAG_NAME);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            sql.append(CERTIFICATE_ID);
-        }
-        sql.append(ORDER_BY);
-        Query query = getEntityManager().createNativeQuery(sql.toString(), Tag.class);
-        query.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            query.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
-        }
-        int pageNumber = tagFilter.getPage();
-        int pageSize = tagFilter.getSize();
-        query.setFirstResult((pageNumber) * pageSize);
-        query.setMaxResults(pageSize);
-        List<Tag> tags = query.getResultList();
+        List<Tag> tags = getList(tagFilter);
+        tagFilter= setCountResult(tagFilter);
 
-        StringBuilder sqlTotal = new StringBuilder(SELECT_COUNT);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            sqlTotal.append(JOIN_CERT_TAG);
-        }
-        sqlTotal.append(WHERE_TAG_NAME);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            sqlTotal.append(CERTIFICATE_ID);
-        }
-
-        Query queryTotal = getEntityManager().createNativeQuery(sqlTotal.toString());
-        queryTotal.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
-        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
-            queryTotal.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
-        }
-        BigInteger countResult = (BigInteger) queryTotal.getSingleResult();
-
-        tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult.longValue());
         TagListWrapper listWrapper = new TagListWrapper();
         listWrapper.setList(tags);
         listWrapper.setFilter(tagFilter);
@@ -95,64 +61,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
     }
 
     public List<String> findTopTag() {
-//        String sql =
-//        "select name\n" +
-//                "from (select count(id) as cnt, name\n" +
-//                "      from (select tag.id, tag.name\n" +
-//                "            from tag\n" +
-//                "                     join cert_tag ct on tag.id = ct.tag_id\n" +
-//                "                     join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-//                "                     join orders o on oc.order_id = o.id\n" +
-//                "                     join users u on o.user_id = u.id\n" +
-//                "            where u.id =\n" +
-//
-//                "                  (select uid\n" +
-//                "                   from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-//                "                         from orders o\n" +
-//                "                                  join users u on o.user_id = u.id\n" +
-//                "                         where o.deleted = false\n" +
-//                "                           and u.deleted = false\n" +
-//                "                         group by o.user_Id) as uid_summa\n" +
-//                "                   where summa =\n" +
-//                "                         (select max(summa)\n" +
-//                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-//                "                                from orders o\n" +
-//                "                                         join users u on o.user_id = u.id\n" +
-//                "                                where o.deleted = false\n" +
-//                "                                  and u.deleted = false\n" +
-//                "                                group by o.user_Id) s))\n" +
-//
-//                "           ) as tg\n" +
-//                "      group by name) as t\n" +
-//                "where cnt =\n" +
-//                "      (select max(cnt)\n" +
-//                "       from (select count(id) as cnt, name\n" +
-//                "             from (select tag.id, tag.name\n" +
-//                "                   from tag\n" +
-//                "                            join cert_tag ct on tag.id = ct.tag_id\n" +
-//                "                            join order_certificate oc on ct.certificate_id = oc.certificate_id\n" +
-//                "                            join orders o on oc.order_id = o.id\n" +
-//                "                            join users u on o.user_id = u.id\n" +
-//                "                   where u.id =\n" +
-//
-//                "                         (select uid\n" +
-//                "                          from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-//                "                                from orders o\n" +
-//                "                                         join users u on o.user_id = u.id\n" +
-//                "                                where o.deleted = false\n" +
-//                "                                  and u.deleted = false\n" +
-//                "                                group by o.user_Id) as uid_summa\n" +
-//                "                          where summa =\n" +
-//                "                                (select max(summa)\n" +
-//                "                                 from (select sum(o.total_cost) as summa, o.user_Id as uid\n" +
-//                "                                       from orders o\n" +
-//                "                                                join users u on o.user_id = u.id\n" +
-//                "                                       where o.deleted = false\n" +
-//                "                                         and u.deleted = false\n" +
-//                "                                       group by o.user_Id) s))\n" +
-//
-//                "                  ) as tg\n" +
-//                "             group by name) as t)";
+
         String sumString = "select max(summa) from (select sum(o.total_cost) as summa, o.user_Id as uid " +
                 " from orders o join users u on o.user_id = u.id " +
                 " where o.deleted = false and u.deleted = false group by o.user_Id) s";
@@ -202,6 +111,52 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         });
 
         return resultList;
+    }
+
+    private List<Tag> getList(TagFilter tagFilter) {
+        StringBuilder sql = new StringBuilder(SELECT_FROM_TAG);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sql.append(JOIN_CERT_TAG);
+        }
+        sql.append(WHERE_TAG_NAME);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sql.append(CERTIFICATE_ID);
+        }
+        sql.append(ORDER_BY);
+        Query query = getEntityManager().createNativeQuery(sql.toString(), Tag.class);
+        query.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            query.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
+        }
+        int pageNumber = tagFilter.getPage();
+        int pageSize = tagFilter.getSize();
+        query.setFirstResult((pageNumber) * pageSize);
+        query.setMaxResults(pageSize);
+        List<Tag> tags = query.getResultList();
+
+        return tags;
+    }
+
+    private TagFilter setCountResult(TagFilter tagFilter) {
+        StringBuilder sqlTotal = new StringBuilder(SELECT_COUNT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sqlTotal.append(JOIN_CERT_TAG);
+        }
+        sqlTotal.append(WHERE_TAG_NAME);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            sqlTotal.append(CERTIFICATE_ID);
+        }
+
+        Query queryTotal = getEntityManager().createNativeQuery(sqlTotal.toString());
+        queryTotal.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
+        if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {
+            queryTotal.setParameter(CERTIFICATE_ID_PARAM, tagFilter.getCertificateId());
+        }
+        BigInteger countResult = (BigInteger) queryTotal.getSingleResult();
+        int pageSize = tagFilter.getSize();
+        tagFilter = queryBuilder.updateFilter(tagFilter, pageSize, countResult.longValue());
+
+        return tagFilter;
     }
 
 }

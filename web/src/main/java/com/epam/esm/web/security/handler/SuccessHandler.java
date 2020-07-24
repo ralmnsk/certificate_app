@@ -71,25 +71,6 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
             String json = new ObjectMapper().writeValueAsString(responseObj);
             response.getWriter().write(json);
             response.flushBuffer();
-//            response.
-
-//            response.setHeader("Access-Control-Allow-Origin", "http://localhost:8082");
-//            response.setHeader("Access-Control-Allow-Methods", "POST, PUT, GET, OPTIONS, DELETE, PATCH");
-//
-//            response.addHeader("Access-Control-Allow-Headers",
-//                    "x-requested-with, x-requested-by, Authorization, Origin, Content-Type");
-//            response.addHeader("Access-Control-Expose-Headers",
-//                    "x-requested-with, x-requested-by, Authorization, Origin, Content-Type");
-//            response.addHeader("Access-Control-Allow-Credentials", "true");
-
-//            response.sendRedirect("http://localhost:8082/login");
-
-//            AuthorizationCodeTokenRequest tokenRequest = new AuthorizationCodeTokenRequest(
-//                    new NetHttpTransport(),
-//                    new JacksonFactory(),
-//                    new GenericUrl("https://oauth2.googleapis.com/token"), "")
-//                    .setRedirectUri("http://localhost:8082/login/oauth2/code/google")
-//                    .setRequestInitializer(httpRequest -> httpRequest.getHeaders().setAccept(MediaType.APPLICATION_JSON_VALUE));
         }
     }
 

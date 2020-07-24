@@ -15,7 +15,7 @@ public interface TagService extends CrudService<TagDto, Integer> {
 
     void addTagToCertificate(Long certificateId, Set<Long> list);
 
-    void deleteTagFromCertificate(Long certificateId, Set<Long> list);
+    void removeTagFromCertificate(Long certificateId, Set<Long> list);
 
     TagListWrapperDto getAll(TagFilterDto filterDto);
 

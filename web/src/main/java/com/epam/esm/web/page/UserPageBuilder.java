@@ -38,4 +38,20 @@ public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, U
 
         return page;
     }
+
+    private UserFilterDto validateFilter(UserFilterDto filterDto){
+
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+
+        if (filterDto.getUserSurname() == null) {
+            filterDto.setUserSurname(EMPTY);
+        }
+        if (filterDto.getUserName() == null) {
+            filterDto.setUserName(EMPTY);
+        }
+        filterDto = validateAbstractFilter(filterDto);
+        return filterDto;
+    }
 }

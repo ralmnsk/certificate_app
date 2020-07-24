@@ -1,10 +1,14 @@
 package com.epam.esm.model.filter;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
 public class CertificateFilter extends AbstractFilter {
     private String tagName;
 

@@ -2,6 +2,7 @@ package com.epam.esm.web.security.jwt;
 
 import com.epam.esm.exception.JwtUserAuthenticationException;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
     @Value("${jwt.token.secret}")
@@ -48,7 +50,7 @@ public class JwtTokenProvider {
 
     public Authentication authentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUserLogin(token));
-        if(userDetails == null){
+        if (userDetails == null) {
             return null;
         }
         return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", userDetails.getAuthorities());
@@ -71,6 +73,7 @@ public class JwtTokenProvider {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT token is expired or invalid");
             throw new JwtUserAuthenticationException("JWT token is expired or invalid");
         }
     }
