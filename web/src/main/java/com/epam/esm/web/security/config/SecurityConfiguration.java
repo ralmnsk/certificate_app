@@ -1,6 +1,7 @@
 package com.epam.esm.web.security.config;
 
 import com.epam.esm.service.UserService;
+import com.epam.esm.web.security.handler.EntryPoint;
 import com.epam.esm.web.security.handler.DeniedHandler;
 import com.epam.esm.web.security.handler.SuccessHandler;
 import com.epam.esm.web.security.jwt.JwtConfigurer;
@@ -15,6 +16,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -52,6 +56,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new DeniedHandler();
+    }
+
+//    @Bean
+//    public AuthenticationEntryPoint entryPoint(){
+//        return new EntryPoint();
+//    }
+
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -65,13 +81,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(REGISTER).permitAll()
-                .antMatchers("/login/oauth2/code/google").permitAll()
-                .antMatchers("/login/oauth2/code/google*").permitAll()
-                .antMatchers("/login/oauth2/code/google/**").permitAll()
+//                .antMatchers("/login/oauth2/code/google").permitAll()
+//                .antMatchers("/login/oauth2/code/google*").permitAll()
+//                .antMatchers("/login/oauth2/code/google/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, TAGS).permitAll()
                 .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
-
 
                 .antMatchers(HttpMethod.POST, TAGS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PUT, TAGS).hasAnyRole(ADMIN)
@@ -101,7 +116,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
                 .and()
-                .exceptionHandling().accessDeniedHandler(new DeniedHandler())
+                .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
+//                .exceptionHandling().authenticationEntryPoint(entryPoint())
                 .and()
                 .oauth2Login()
                 .successHandler(new SuccessHandler(jwtTokenProvider, userService))

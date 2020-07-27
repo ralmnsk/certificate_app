@@ -1,10 +1,8 @@
 package com.epam.esm.web.security.jwt;
 
 import com.epam.esm.exception.JwtUserAuthenticationException;
-import com.epam.esm.web.security.handler.DeniedHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,35 +24,16 @@ import java.util.Map;
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
     private JwtTokenProvider jwtTokenProvider;
-    private DeniedHandler deniedHandler;
 
     public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Autowired
-    public void setDeniedHandler(DeniedHandler deniedHandler) {
-        this.deniedHandler = deniedHandler;
-    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
         try {
-
-            HttpServletRequest req = ((HttpServletRequest) request);
-            String uri = req.getRequestURI();
-            if (token == null && (!uri.equals("/login") && !uri.equals("/register") && (!uri.equals("/")))) {
-                HttpServletResponse resp = ((HttpServletResponse) response);
-                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                Map<Object, Object> responseObj = new HashMap<>();
-                responseObj.put("login", getURLBase(req) + "/login");
-                responseObj.put("register:", getURLBase(req) + "/register");
-                String json = new ObjectMapper().writeValueAsString(responseObj);
-                response.getWriter().write(json);
-                response.flushBuffer();
-                return;
-            }
 
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.authentication(token);
