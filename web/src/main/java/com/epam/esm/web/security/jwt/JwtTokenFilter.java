@@ -18,15 +18,27 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
     private JwtTokenProvider jwtTokenProvider;
+    private HashSet<String> endPoints = new HashSet<>();
+    private HashSet<String> methods = new HashSet<>();
 
     public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
+        endPoints.add("/");
+        endPoints.add("/login");
+        endPoints.add("/register");
+        endPoints.add("/certificates");
+//        endPoints.add("/tags");
+        methods.add("POST");
+        methods.add("PUT");
+        methods.add("PATCH");
+        methods.add("DELETE");
     }
 
 
@@ -34,6 +46,19 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
         try {
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse resp = (HttpServletResponse) response;
+            String uri = req.getRequestURI();
+            if (token == null && !containsUri(uri,req)) {
+                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                Map<Object, Object> responseObj = new HashMap<>();
+                responseObj.put("login", getURLBase(req) + "/login");
+                responseObj.put("register:", getURLBase(req) + "/register");
+                String json = new ObjectMapper().writeValueAsString(responseObj);
+                response.getWriter().write(json);
+                response.flushBuffer();
+                return;
+            }
 
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.authentication(token);
@@ -51,8 +76,40 @@ public class JwtTokenFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
+    private boolean containsUri(String uri, HttpServletRequest req) {
+        if(endPoints.contains(uri)){
+            return true;
+        }
+        if (uri.matches("/tags")&&!methods.contains(req.getMethod())) {
+            return true;
+        }
+        if (uri.matches("/certificates")&&!methods.contains(req.getMethod())) {
+            return true;
+        }
+        if(uri.matches("(/certificates/){1}[0-9]+(/tags){1}")&&!methods.contains(req.getMethod())){
+            return true;
+        }
+        return false;
+    }
+
+//    private void manageAnonymous(ServletRequest request, ServletResponse response) throws IOException {
+//        HttpServletRequest req = ((HttpServletRequest) request);
+//        String uri = req.getRequestURI();
+//        if (!uri.equals("/login") && !uri.equals("/register") && (!uri.equals("/"))) {
+//            HttpServletResponse resp = ((HttpServletResponse) response);
+//            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//            Map<Object, Object> responseObj = new HashMap<>();
+//            responseObj.put("login", getURLBase(req) + "/login");
+//            responseObj.put("register:", getURLBase(req) + "/register");
+//            String json = new ObjectMapper().writeValueAsString(responseObj);
+//            response.getWriter().write(json);
+//            response.flushBuffer();
+//        }
+//    }
+
+
     private void setExceptionResponse(ServletResponse response, Throwable e, String message) throws IOException {
-        ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_FORBIDDEN); //.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+        ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_FORBIDDEN);
         Map<Object, Object> responseObj = new HashMap<>();
         responseObj.put("message:", message);
         responseObj.put("exception:", e.getClass());

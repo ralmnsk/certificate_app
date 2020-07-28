@@ -8,20 +8,20 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+
 @Slf4j
 
 public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
     private Map<String, String> errors = new HashMap<>();
 
     @Override
-    public CertificateDto deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public CertificateDto deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
         String name = node.get("name").textValue();
         String description = node.get("description").textValue();

@@ -19,10 +19,7 @@ public interface Assembler<N, D, F extends AbstractFilterDto> {
         if (authentication == null) {
             return false;
         }
-        List<String> authorities = authentication.getAuthorities().stream().map(a -> ((GrantedAuthority) a).getAuthority()).collect(Collectors.toList());
-        if (authorities.contains("ROLE_ADMIN")) {
-            return true;
-        }
-        return false;
+        List<String> authorities = authentication.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList());
+        return authorities.contains("ROLE_ADMIN");
     }
 }

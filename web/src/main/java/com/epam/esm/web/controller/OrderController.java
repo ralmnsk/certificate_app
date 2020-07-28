@@ -182,7 +182,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{orderId}/certificates")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public CustomPageDto<CertificateDto> deleteCertificateFromOrder(@PathVariable Long orderId, @Valid @RequestBody Set<Long> set,
                                                                     Principal principal) {
         webSecurity.checkOrderId(principal, orderId);

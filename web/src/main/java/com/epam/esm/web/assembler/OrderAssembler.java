@@ -1,7 +1,6 @@
 package com.epam.esm.web.assembler;
 
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
 import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.OrderService;

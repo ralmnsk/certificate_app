@@ -33,6 +33,7 @@ public class TotalCostCalculator {
         List<BigDecimal> collect = certificates
                 .stream()
                 .filter(c -> c.getPrice() != null)
+                .filter(c -> !c.isDeleted())
                 .map(Certificate::getPrice)
                 .collect(Collectors.toList());
 
@@ -57,6 +58,7 @@ public class TotalCostCalculator {
         List<BigDecimal> collect = certificates
                 .stream()
                 .filter(c -> c.getPrice() != null)
+                .filter(c -> !c.isDeleted())
                 .map(CertificateDto::getPrice)
                 .collect(Collectors.toList());
 

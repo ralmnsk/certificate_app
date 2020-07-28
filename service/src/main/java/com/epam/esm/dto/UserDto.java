@@ -1,8 +1,8 @@
 package com.epam.esm.dto;
 
+import com.epam.esm.deserializer.EmailDeserializer;
 import com.epam.esm.deserializer.StringToRoleConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,15 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonRootName("user")
 @Relation(collectionRelation = "users")
+@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"email"})
+@JsonPropertyOrder({"id","surname","name","email"})
 public class UserDto extends IdentifiableDto<Long> {
+//    @JsonIgnore
+    @NotNull(message = "Email must be not null")
+    @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
+    @JsonProperty("email")
+    @JsonDeserialize(converter = EmailDeserializer.class)
+    private String login;
 
     @NotNull(message = "Surname must be not null")
     @Size(min = 2, max = 64, message = "User surname must be between 2 and 64 characters")
@@ -26,11 +34,6 @@ public class UserDto extends IdentifiableDto<Long> {
     @NotNull(message = "Name must be not null")
     @Size(min = 2, max = 64, message = "User name must be between 2 and 64 characters")
     private String name;
-
-    @JsonIgnore
-    @NotNull(message = "Login must be not null")
-    @Size(min = 2, max = 32, message = "Login must be between 2 and 32 characters")
-    private String login;
 
     @JsonIgnore
     @NotNull(message = "Password must be not null")

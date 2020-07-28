@@ -1,7 +1,6 @@
 package com.epam.esm.web.assembler;
 
 import com.epam.esm.dto.CertificateDto;
-import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.CertificateService;

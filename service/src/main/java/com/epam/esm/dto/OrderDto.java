@@ -2,6 +2,7 @@ package com.epam.esm.dto;
 
 import com.epam.esm.deserializer.StringToDecimalConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -37,6 +38,9 @@ public class OrderDto extends IdentifiableDto<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Timestamp created;
 
+    private boolean completed;
+
+    @JsonIgnore
     private Set<CertificateDto> certificates = new HashSet<>();
 
     @Override
@@ -48,6 +52,7 @@ public class OrderDto extends IdentifiableDto<Long> {
         OrderDto orderDto = (OrderDto) o;
 
         if (isDeleted() != orderDto.isDeleted()) return false;
+        if (completed != orderDto.completed) return false;
         if (!description.equals(orderDto.description)) return false;
         return created.equals(orderDto.created);
     }
@@ -58,6 +63,7 @@ public class OrderDto extends IdentifiableDto<Long> {
         result = 31 * result + description.hashCode();
         result = 31 * result + created.hashCode();
         result = 31 * result + (isDeleted() ? 1 : 0);
+        result = 31 * result + (completed ? 1 : 0);
         return result;
     }
 }

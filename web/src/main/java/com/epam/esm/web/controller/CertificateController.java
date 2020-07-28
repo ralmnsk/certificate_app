@@ -113,7 +113,7 @@ public class CertificateController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CertificateDto update(@RequestBody CertificateDto certificateDto, @PathVariable Long id,
-                                            Authentication authentication) {
+                                 Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkOperationAccess(login);
         certificateDto.setId(id);

@@ -2,7 +2,6 @@ package com.epam.esm.web.assembler;
 
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserUpdateDto;
-import com.epam.esm.dto.filter.AbstractFilterDto;
 import com.epam.esm.dto.filter.UserFilterDto;
 import com.epam.esm.dto.security.RegistrationDto;
 import com.epam.esm.dto.wrapper.ListWrapperDto;

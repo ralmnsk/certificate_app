@@ -4,15 +4,15 @@ import com.epam.esm.calculator.TotalCostCalculator;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
 import com.epam.esm.dto.wrapper.OrderListWrapperDto;
-import com.epam.esm.repository.exception.NotFoundException;
-import com.epam.esm.repository.exception.SaveException;
-import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.model.Order;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.OrderFilter;
 import com.epam.esm.model.wrapper.OrderListWrapper;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
+import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -73,6 +73,9 @@ public class OrderServiceImpl implements OrderService {
         Order found = orderRepository.get(orderDto.getId()).orElseThrow(() -> new NotFoundException("OrderService: get in update operation exception" + id));
 
         found.setDescription(orderDto.getDescription());
+        if (!found.getCertificates().isEmpty()) {
+            found.setCompleted(orderDto.isCompleted());
+        }
         Order order = orderRepository.update(found).orElseThrow(() -> new SaveException("OrderService:Order save exception"));
         OrderDto dto = mapper.map(order, OrderDto.class);
         dto.getCertificates().clear();

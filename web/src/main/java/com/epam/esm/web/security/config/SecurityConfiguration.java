@@ -1,7 +1,6 @@
 package com.epam.esm.web.security.config;
 
 import com.epam.esm.service.UserService;
-import com.epam.esm.web.security.handler.EntryPoint;
 import com.epam.esm.web.security.handler.DeniedHandler;
 import com.epam.esm.web.security.handler.SuccessHandler;
 import com.epam.esm.web.security.jwt.JwtConfigurer;
@@ -16,9 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -67,7 +64,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //    }
 
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -79,26 +75,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
                 .authorizeRequests()
+                .antMatchers("/").permitAll()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(REGISTER).permitAll()
-//                .antMatchers("/login/oauth2/code/google").permitAll()
-//                .antMatchers("/login/oauth2/code/google*").permitAll()
-//                .antMatchers("/login/oauth2/code/google/**").permitAll()
 
                 .antMatchers(HttpMethod.GET, TAGS).permitAll()
                 .antMatchers(HttpMethod.GET, CERTIFICATES).permitAll()
-
-                .antMatchers(HttpMethod.POST, TAGS).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.PUT, TAGS).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.PATCH, TAGS).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, TAGS).hasAnyRole(ADMIN)
-
-
-                .antMatchers(HttpMethod.POST, CERTIFICATES).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.PUT, CERTIFICATES).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.PATCH, CERTIFICATES).hasAnyRole(ADMIN)
-                .antMatchers(HttpMethod.DELETE, CERTIFICATES).hasAnyRole(ADMIN)
-
 
                 .antMatchers(HttpMethod.GET, ORDERS).hasAnyRole(USER, ADMIN)
                 .antMatchers(HttpMethod.POST, ORDERS).hasAnyRole(USER, ADMIN)
@@ -108,12 +90,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
                 .antMatchers(HttpMethod.GET, USERS).hasAnyRole(USER, ADMIN)
-                .antMatchers(HttpMethod.GET, "/users").hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.POST, USERS).hasAnyRole(ADMIN)
                 .antMatchers(HttpMethod.PUT, USERS).hasAnyRole(USER, ADMIN)
                 .antMatchers(HttpMethod.PATCH, USERS).hasAnyRole(USER, ADMIN)
                 .antMatchers(HttpMethod.DELETE, USERS).hasAnyRole(ADMIN, USER)
-
+                .anyRequest().hasRole(ADMIN)
 
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler())

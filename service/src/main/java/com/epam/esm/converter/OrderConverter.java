@@ -1,7 +1,7 @@
 package com.epam.esm.converter;
 
-import com.epam.esm.model.Order;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.model.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

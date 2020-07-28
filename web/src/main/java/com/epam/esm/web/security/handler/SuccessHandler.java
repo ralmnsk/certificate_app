@@ -31,6 +31,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
     private static final String NAME = "name";
     private static final String SURNAME = "family_name";
     private static final String NO_ENOUGH_INFORMATION = "Provider can't provide need information for login";
+    private static final String EMPTY = "";
 
     private JwtTokenProvider jwtTokenProvider;
     private UserService userService;
@@ -50,6 +51,10 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String login = (String) attr.get(EMAIL);
         String name = (String) attr.get(NAME);
         String surname = (String) attr.get(SURNAME);
+
+        if(name.contains(surname)){
+            name = (name.replace(surname,EMPTY)).trim();
+        }
 
         if ((login == null && name == null)) {
             response.getWriter().write(NO_ENOUGH_INFORMATION);

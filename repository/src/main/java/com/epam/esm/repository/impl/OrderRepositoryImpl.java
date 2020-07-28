@@ -22,6 +22,9 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     private final static String FROM = "from orders orders join users users on orders.user_id = users.id where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
     private final static String AND_USERS = "and users.id = :userId";
     private final static String APPEND_C = ") c";
+    private final static String ORDERS_BY_CERTIFICATE_ID = "select orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost,orders.user_id " +
+            "from orders join order_certificate oc on orders.id = oc.order_id join users u on orders.user_id = u.id " +
+            "join certificate c on oc.certificate_id = c.id where orders.deleted = false and u.deleted = false and c.deleted = false and c.id = :certificateId";
     private QueryBuilder<OrderFilter> builder;
 
     public OrderRepositoryImpl(QueryBuilder<OrderFilter> builder) {
@@ -41,6 +44,14 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
 
         return listWrapper;
 
+    }
+
+    @Override
+    public List<Order> getOrdersByCertificateId(Long certificateId) {
+        Query query = getEntityManager().createNativeQuery(ORDERS_BY_CERTIFICATE_ID,Order.class);
+        query.setParameter("certificateId", certificateId);
+        List<Order> orders = query.getResultList();
+        return orders;
     }
 
     private List<Order> getList(OrderFilter filter) {

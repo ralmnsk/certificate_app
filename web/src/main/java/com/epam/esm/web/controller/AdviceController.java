@@ -5,13 +5,13 @@ import com.epam.esm.exception.AccessException;
 import com.epam.esm.exception.JwtUserAuthenticationException;
 import com.epam.esm.exception.NoHandlerException;
 import com.epam.esm.exception.ValidationException;
+import com.epam.esm.repository.exception.JsonParseCustomException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.repository.exception.UpdateException;
 import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,10 +25,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.*;
+
 @Slf4j
 @RestControllerAdvice
 public class AdviceController {
@@ -116,6 +116,14 @@ public class AdviceController {
         return new ExceptionResponseDto("JsonParseException", ex.getMessage());
     }
 
+    @ResponseBody
+    @ExceptionHandler(JsonParseCustomException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto exception(JsonParseCustomException ex) {
+        log.error(ex.getMessage());
+        return new ExceptionResponseDto("JsonParseCustomException", ex.getMessage());
+    }
+
 
     @ResponseBody
     @ExceptionHandler(NoHandlerFoundException.class)
@@ -133,14 +141,14 @@ public class AdviceController {
         return new ExceptionResponseDto("NoHandlerException", ex.getMessage());
     }
 
-    @ResponseBody
-    @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
-        log.error(ex.getMessage());
-        return new ExceptionResponseDto("ConstraintViolationException",
-                ex.getMessage());
-    }
+//    @ResponseBody
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    @ResponseStatus(UNPROCESSABLE_ENTITY)
+//    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
+//        log.error(ex.getMessage());
+//        return new ExceptionResponseDto("ConstraintViolationException",
+//                ex.getMessage());
+//    }
 
 
     @ResponseBody
@@ -152,14 +160,14 @@ public class AdviceController {
                 ex.getMessage());
     }
 
-    @ResponseBody
-    @ExceptionHandler(DataAccessResourceFailureException.class)
-    @ResponseStatus(NOT_ACCEPTABLE)
-    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
-        log.error(ex.getMessage());
-        return new ExceptionResponseDto("DataAccessResourceFailureException",
-                "Failed to obtain JDBC Connection.");
-    }
+//    @ResponseBody
+//    @ExceptionHandler(DataAccessResourceFailureException.class)
+//    @ResponseStatus(NOT_ACCEPTABLE)
+//    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
+//        log.error(ex.getMessage());
+//        return new ExceptionResponseDto("DataAccessResourceFailureException",
+//                "Failed to obtain JDBC Connection.");
+//    }
 
     @ResponseBody
     @ExceptionHandler(JwtUserAuthenticationException.class)

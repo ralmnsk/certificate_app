@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.calculator.TotalCostCalculator;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.dto.wrapper.CertificateListWrapperDto;
@@ -30,12 +31,14 @@ public class CertificateServiceImpl implements CertificateService {
     private CertificateRepository certificateRepository;
     private ModelMapper mapper;
     private OrderRepository orderRepository;
+    private TotalCostCalculator calculator;
 
 
-    public CertificateServiceImpl(CertificateRepository certificateRepository, ModelMapper mapper, OrderRepository orderRepository) {
+    public CertificateServiceImpl(CertificateRepository certificateRepository, ModelMapper mapper, OrderRepository orderRepository, TotalCostCalculator calculator) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.orderRepository = orderRepository;
+        this.calculator = calculator;
     }
 
     @Transactional
@@ -65,20 +68,30 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
         //entity not managed without get
         found.setName(certificateDto.getName());
-        found.setPrice(certificateDto.getPrice());
         found.setDescription(certificateDto.getDescription());
         found.setDuration(certificateDto.getDuration());
 
+        found.setPrice(certificateDto.getPrice());
         Certificate certificate = certificateRepository.update(found).orElseThrow(() -> new SaveException("Certificate save exception"));
+        recalculateTotalPrices(found);
+
+
         CertificateDto dto = mapper.map(certificate, CertificateDto.class);
 
         return Optional.ofNullable(dto);
     }
 
+    private void recalculateTotalPrices(Certificate foundCertificate) {
+        List<Order> orders = orderRepository.getOrdersByCertificateId(foundCertificate.getId());
+        orders.stream().map(order -> calculator.calc(order)).forEach(orderRepository::update);
+    }
+
+
     @Transactional
     @Override
     public boolean delete(Long certId) {
         Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
+        recalculateTotalPrices(certificate);
         certificateRepository.delete(certId);
         return true;
     }

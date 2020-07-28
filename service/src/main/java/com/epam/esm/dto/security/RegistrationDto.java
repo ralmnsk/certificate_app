@@ -1,10 +1,14 @@
 package com.epam.esm.dto.security;
 
+import com.epam.esm.deserializer.EmailDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -14,8 +18,11 @@ import java.util.Collection;
 @NoArgsConstructor
 public class RegistrationDto {
 
-    @NotNull(message = "Login must be not null")
-    @Size(min = 2, max = 32, message = "Login must be between 2 and 32 characters")
+    @NotNull(message = "Email must be not null")
+    @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
+    @JsonProperty("email")
+//    @JsonDeserialize(converter = EmailDeserializer.class)
+    @Email
     private String login;
 
     @NotNull(message = "Password must be not null")

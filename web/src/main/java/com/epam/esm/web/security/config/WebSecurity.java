@@ -2,8 +2,8 @@ package com.epam.esm.web.security.config;
 
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.exception.AccessException;
-import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.model.Role;
+import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

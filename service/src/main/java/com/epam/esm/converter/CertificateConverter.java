@@ -1,7 +1,7 @@
 package com.epam.esm.converter;
 
-import com.epam.esm.model.Certificate;
 import com.epam.esm.dto.CertificateDto;
+import com.epam.esm.model.Certificate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

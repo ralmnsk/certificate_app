@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-public class UserFilterDto extends AbstractFilterDto{
+public class UserFilterDto extends AbstractFilterDto {
     private String userSurname;
     private String userName;
 
