@@ -22,6 +22,7 @@ public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, U
         super(new HashSet<>(Arrays.asList(SURNAME, NAME)), service, assembler);
     }
 
+
     public CustomPageDto<UserDto> build(UserFilterDto filterDto) {
         CustomPageDto<UserDto> page = new CustomPageDto<>();
         filterDto = validateFilter(filterDto);
@@ -40,6 +41,7 @@ public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, U
 
         return page;
     }
+
 
     private UserFilterDto validateFilter(UserFilterDto filterDto) {
 

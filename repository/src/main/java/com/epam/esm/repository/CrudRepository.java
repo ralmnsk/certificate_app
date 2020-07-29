@@ -13,5 +13,4 @@ public interface CrudRepository<T, E> {
     boolean delete(E id);
 
 
-
 }

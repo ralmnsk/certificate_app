@@ -52,8 +52,8 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String name = (String) attr.get(NAME);
         String surname = (String) attr.get(SURNAME);
 
-        if(name.contains(surname)){
-            name = (name.replace(surname,EMPTY)).trim();
+        if (name.contains(surname)) {
+            name = (name.replace(surname, EMPTY)).trim();
         }
 
         if ((login == null && name == null)) {

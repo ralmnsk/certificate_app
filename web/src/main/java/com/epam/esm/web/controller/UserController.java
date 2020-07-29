@@ -83,14 +83,13 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public CustomPageDto<UserDto> getAll(
+    public CustomPageDto<?> getAll(
 
             @RequestParam(value = "surname", defaultValue = "")
             @Size(max = 16, message = "surname should be 0-16 characters") String surname,
 
             @RequestParam(value = "name", defaultValue = "")
             @Size(max = 16, message = "name should be 0-16 characters") String name,
-
 
             @RequestParam(value = "page", defaultValue = "0")
             @Min(0)
@@ -110,7 +109,6 @@ public class UserController {
         UserDto byLogin = userService.findByLogin(login);
         if (byLogin != null) {
             filterDto.setUserId(byLogin.getId());
-
         }
         filterDto.setPage(page);
         filterDto.setSize(size);

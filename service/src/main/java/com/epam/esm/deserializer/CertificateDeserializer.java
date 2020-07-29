@@ -3,7 +3,6 @@ package com.epam.esm.deserializer;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.exception.ValidationException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-
 public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
     private Map<String, String> errors = new HashMap<>();
 

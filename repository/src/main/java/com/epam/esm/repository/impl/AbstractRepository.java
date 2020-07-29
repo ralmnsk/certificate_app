@@ -3,11 +3,12 @@ package com.epam.esm.repository.impl;
 import com.epam.esm.model.Identifiable;
 import com.epam.esm.repository.CrudRepository;
 import com.epam.esm.repository.exception.NotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
-
+@Slf4j
 public abstract class AbstractRepository<T extends Identifiable, E> implements CrudRepository<T, E> {
     @PersistenceContext
     private EntityManager entityManager;
@@ -32,6 +33,10 @@ public abstract class AbstractRepository<T extends Identifiable, E> implements C
     @Override
     public Optional<T> get(E id) {
         T t = entityManager.find(entity, id);
+        if (t == null){
+            log.warn("Entity not found, id:{}",id);
+            throw new NotFoundException(this.getClass()+": entity not found, id:"+id+". ");
+        }
         checkIsDeleted(t);
         return Optional.ofNullable(t);
     }
@@ -58,8 +63,10 @@ public abstract class AbstractRepository<T extends Identifiable, E> implements C
     }
 
     private void checkIsDeleted(T t) {
+
         if (t.isDeleted()) {
-            throw new NotFoundException("Repository: entity not found");
+            log.warn("Entity not found exception:" + t.toString());
+            throw new NotFoundException(this.getClass()+": isDeleted :entity not found, id:"+t.getId());
         }
     }
 

@@ -49,7 +49,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             HttpServletRequest req = (HttpServletRequest) request;
             HttpServletResponse resp = (HttpServletResponse) response;
             String uri = req.getRequestURI();
-            if (token == null && !containsUri(uri,req)) {
+            if (token == null && !containsUri(uri, req)) {
                 resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 Map<Object, Object> responseObj = new HashMap<>();
                 responseObj.put("login", getURLBase(req) + "/login");
@@ -77,19 +77,16 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     private boolean containsUri(String uri, HttpServletRequest req) {
-        if(endPoints.contains(uri)){
+        if (endPoints.contains(uri)) {
             return true;
         }
-        if (uri.matches("/tags")&&!methods.contains(req.getMethod())) {
+        if (uri.matches("/tags") && !methods.contains(req.getMethod())) {
             return true;
         }
-        if (uri.matches("/certificates")&&!methods.contains(req.getMethod())) {
+        if (uri.matches("/certificates") && !methods.contains(req.getMethod())) {
             return true;
         }
-        if(uri.matches("(/certificates/){1}[0-9]+(/tags){1}")&&!methods.contains(req.getMethod())){
-            return true;
-        }
-        return false;
+        return uri.matches("(/certificates/){1}[0-9]+(/tags){1}") && !methods.contains(req.getMethod());
     }
 
 //    private void manageAnonymous(ServletRequest request, ServletResponse response) throws IOException {

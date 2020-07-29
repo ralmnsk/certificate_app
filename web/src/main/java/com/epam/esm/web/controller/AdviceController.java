@@ -38,7 +38,6 @@ public class AdviceController {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionResponseDto notFoundException(NotFoundException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("NotFoundException", ex.getMessage());
     }
 
@@ -46,7 +45,6 @@ public class AdviceController {
     @ExceptionHandler(UpdateException.class)
     @ResponseStatus(NOT_FOUND)
     public ExceptionResponseDto certificateUpdateException(UpdateException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("UpdateException", ex.getMessage());
     }
 
@@ -54,7 +52,6 @@ public class AdviceController {
     @ExceptionHandler(SaveException.class)
     @ResponseStatus(CONFLICT)
     public ExceptionResponseDto certificateSaveException(SaveException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("SaveException", ex.getMessage());
     }
 
@@ -62,7 +59,6 @@ public class AdviceController {
     @ExceptionHandler(IncorrectResultSizeDataAccessException.class)
     @ResponseStatus(NOT_FOUND)
     public ExceptionResponseDto incorrectResultSizeDataAccessException(IncorrectResultSizeDataAccessException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("IncorrectResultSizeDataAccessException", ex.getMessage());
     }
 
@@ -73,8 +69,7 @@ public class AdviceController {
         Optional<String> message = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .reduce((a, b) -> a + ", " + b);
-        log.error(message.get());
+                .reduce((a, b) -> a + ".\r\n " + b);
         return new ExceptionResponseDto("MethodArgumentNotValidException", message.get());
     }
 
@@ -86,7 +81,6 @@ public class AdviceController {
         if (ex.getCause() != null) {
             message = ex.getCause().getMessage();
         }
-        log.error(message);
         return new ExceptionResponseDto("HttpMessageNotReadableException", message);
     }
 
@@ -94,7 +88,6 @@ public class AdviceController {
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(value = UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto validationException(ValidationException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("ValidationException", ex.getMessage());
     }
 
@@ -103,7 +96,6 @@ public class AdviceController {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("MethodArgumentTypeMismatchException",
                 ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
     }
@@ -112,7 +104,6 @@ public class AdviceController {
     @ExceptionHandler(JsonParseException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto jsonParseException(JsonParseException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("JsonParseException", ex.getMessage());
     }
 
@@ -120,7 +111,6 @@ public class AdviceController {
     @ExceptionHandler(JsonParseCustomException.class)
     @ResponseStatus(UNPROCESSABLE_ENTITY)
     public ExceptionResponseDto exception(JsonParseCustomException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("JsonParseCustomException", ex.getMessage());
     }
 
@@ -129,7 +119,6 @@ public class AdviceController {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(NOT_FOUND)
     public ExceptionResponseDto noHandlerFoundException(NoHandlerFoundException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("NoHandlerFoundException", ex.getMessage());
     }
 
@@ -137,43 +126,22 @@ public class AdviceController {
     @ExceptionHandler(NoHandlerException.class)
     @ResponseStatus(NOT_FOUND)
     public ExceptionResponseDto noHandlerException(NoHandlerException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("NoHandlerException", ex.getMessage());
     }
-
-//    @ResponseBody
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    @ResponseStatus(UNPROCESSABLE_ENTITY)
-//    public ExceptionResponseDto constraintViolationException(ConstraintViolationException ex) {
-//        log.error(ex.getMessage());
-//        return new ExceptionResponseDto("ConstraintViolationException",
-//                ex.getMessage());
-//    }
-
 
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(METHOD_NOT_ALLOWED)
     public ExceptionResponseDto httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("HttpRequestMethodNotSupportedException",
                 ex.getMessage());
     }
 
-//    @ResponseBody
-//    @ExceptionHandler(DataAccessResourceFailureException.class)
-//    @ResponseStatus(NOT_ACCEPTABLE)
-//    public ExceptionResponseDto dataAccessResourceFailureException(DataAccessResourceFailureException ex) {
-//        log.error(ex.getMessage());
-//        return new ExceptionResponseDto("DataAccessResourceFailureException",
-//                "Failed to obtain JDBC Connection.");
-//    }
 
     @ResponseBody
     @ExceptionHandler(JwtUserAuthenticationException.class)
     @ResponseStatus(FORBIDDEN)
     public ExceptionResponseDto exception(JwtUserAuthenticationException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("JwtUserAuthenticationException",
                 ex.getMessage());
     }
@@ -182,7 +150,6 @@ public class AdviceController {
     @ExceptionHandler(AccessException.class)
     @ResponseStatus(FORBIDDEN)
     public ExceptionResponseDto exception(AccessException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("AccessException",
                 ex.getMessage());
     }
@@ -192,7 +159,6 @@ public class AdviceController {
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(BAD_REQUEST)
     public ExceptionResponseDto exception(UsernameNotFoundException ex) {
-        log.error(ex.getMessage());
         return new ExceptionResponseDto("UsernameNotFoundException",
                 ex.getMessage());
     }

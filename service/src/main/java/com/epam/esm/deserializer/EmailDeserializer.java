@@ -14,9 +14,4 @@ public class EmailDeserializer extends StdConverter<String, String> {
         throw new JsonParseCustomException("Incorrect email address.");
     }
 
-//    public static void main(String args[]){
-//        EmailDeserializer emailDeserializer = new EmailDeserializer();
-//        String convert = emailDeserializer.convert("i5-land@mail.ruruy");
-//        System.out.println(convert);
-//    }
 }

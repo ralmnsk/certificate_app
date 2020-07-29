@@ -11,6 +11,7 @@ import com.epam.esm.web.controller.UserController;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -52,6 +53,7 @@ public class UserAssembler implements Assembler<Long, UserDto, UserFilterDto> {
     public CollectionModel<UserDto> toCollectionModel(UserFilterDto filter) {
         ListWrapperDto<UserDto, UserFilterDto> wrapper = userService.getAll(filter);
         List<UserDto> users = wrapper.getList();
+
         filter = wrapper.getFilterDto();
 
         if (!users.isEmpty()) {

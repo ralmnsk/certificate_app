@@ -3,7 +3,6 @@ package com.epam.esm.web.assembler;
 import com.epam.esm.dto.filter.AbstractFilterDto;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 import java.util.stream.Collectors;

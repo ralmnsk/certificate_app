@@ -1,7 +1,5 @@
 package com.epam.esm.repository.exception;
 
-import com.epam.esm.repository.exception.GeneralException;
-
 public class SaveException extends GeneralException {
 
 

@@ -3,7 +3,6 @@ package com.epam.esm.repository;
 import com.epam.esm.model.User;
 import com.epam.esm.model.filter.UserFilter;
 import com.epam.esm.model.wrapper.UserListWrapper;
-import com.epam.esm.repository.CrudRepository;
 
 import java.util.Optional;
 

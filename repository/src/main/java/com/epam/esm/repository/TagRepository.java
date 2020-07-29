@@ -3,7 +3,6 @@ package com.epam.esm.repository;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
 import com.epam.esm.model.wrapper.TagListWrapper;
-import com.epam.esm.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;

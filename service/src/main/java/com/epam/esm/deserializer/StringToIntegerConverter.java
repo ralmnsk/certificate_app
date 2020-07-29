@@ -3,11 +3,6 @@ package com.epam.esm.deserializer;
 import com.fasterxml.jackson.databind.util.StdConverter;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * The type String to integer converter.
- * The StringToIntegerConverter converts an numeric string into Integer
- * or throws RuntimeException.
- */
 @Slf4j
 public class StringToIntegerConverter extends StdConverter<String, Integer> {
     @Override

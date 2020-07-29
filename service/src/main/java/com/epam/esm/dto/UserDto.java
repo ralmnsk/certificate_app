@@ -1,9 +1,13 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.deserializer.EmailDeserializer;
 import com.epam.esm.deserializer.StringToRoleConverter;
-import com.fasterxml.jackson.annotation.*;
+import com.epam.esm.deserializer.UserSerializer;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.server.core.Relation;
@@ -17,14 +21,15 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonRootName("user")
 @Relation(collectionRelation = "users")
-@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"email"})
-@JsonPropertyOrder({"id","surname","name","email"})
+@JsonIgnoreProperties(ignoreUnknown = false, allowGetters = true, value = {"email", "role"})
+@JsonPropertyOrder({"id", "surname", "name", "email"})
+@JsonSerialize(using = UserSerializer.class)
 public class UserDto extends IdentifiableDto<Long> {
-//    @JsonIgnore
-    @NotNull(message = "Email must be not null")
-    @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
-    @JsonProperty("email")
-    @JsonDeserialize(converter = EmailDeserializer.class)
+    //        @JsonIgnore
+//    @NotNull(message = "Email must be not null")
+//    @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
+//    @JsonProperty("email")
+//    @JsonDeserialize(converter = EmailDeserializer.class)
     private String login;
 
     @NotNull(message = "Surname must be not null")
@@ -40,7 +45,7 @@ public class UserDto extends IdentifiableDto<Long> {
     @Size(min = 2, max = 256, message = "Password must be between 2 and 256 characters")
     private String password;
 
-    @JsonIgnore
+    //    @JsonIgnore
     @NotNull(message = "Role must be ADMIN, USER or GUEST")
     @JsonDeserialize(converter = StringToRoleConverter.class)
     private Enum role;

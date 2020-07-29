@@ -118,7 +118,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public boolean delete(Integer tagId) {
         Tag tag = tagRepository.get(tagId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + tagId));
-        tagRepository.delete(tagId);
+//        tagRepository.delete(tagId);
         return true;
     }
 
