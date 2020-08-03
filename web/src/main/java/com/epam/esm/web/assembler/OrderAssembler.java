@@ -92,6 +92,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             , null
                     )).withRel("orders");
             collectionModel.add(link);
+            addNextPreviousForAdmin(collectionModel, filter);
         }
 
         return collectionModel;
@@ -133,6 +134,44 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                                 }
                             }
                     )).withRel("user_id_" + filter.getUserId() + "_orders_next_page");
+            collectionModel.add(link);
+        }
+    }
+
+    private void addNextPreviousForAdmin(CollectionModel<OrderDto> collectionModel, OrderFilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAll(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
+                    )).withRel("orders_previous_page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(UserController.class)
+                    .getAll(filter.getUserSurname(),
+                            filter.getUserName(),
+                            filter.getPage() + 1,
+                            filter.getSize(),
+                            filter.getSortParams(),
+                            new Principal() {
+                                @Override
+                                public String getName() {
+                                    return null;
+                                }
+                            }
+                    )).withRel("orders_next_page");
             collectionModel.add(link);
         }
     }

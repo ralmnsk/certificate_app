@@ -3,6 +3,8 @@ package com.epam.esm.repository.impl;
 import com.epam.esm.model.Tag;
 import com.epam.esm.model.filter.TagFilter;
 import com.epam.esm.model.wrapper.TagListWrapper;
+import com.epam.esm.page.FilterDirection;
+import com.epam.esm.page.FilterOrder;
 import com.epam.esm.repository.TagRepository;
 import org.springframework.stereotype.Repository;
 
@@ -104,6 +106,15 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
             sql.append(CERTIFICATE_ID);
         }
         sql.append(ORDER_BY);
+        if(tagFilter.getFilterSort()!= null){
+            Optional<FilterOrder> tagName = tagFilter.getFilterSort().getFilterOrders().stream().filter(f -> f.getParameter().equals("tagName")).findFirst();
+            if (tagName.isPresent()){
+                FilterOrder filterOrder = tagName.get();
+                FilterDirection filterDirection = filterOrder.getFilterDirection();
+                String filterDirectionString = filterDirection.toString();
+                sql.append(filterDirectionString);
+            }
+        }
         Query query = getEntityManager().createNativeQuery(sql.toString(), Tag.class);
         query.setParameter(NAME, PERCENT + tagFilter.getTagName() + PERCENT);
         if (tagFilter.getCertificateId() != null && tagFilter.getCertificateId() > 0) {

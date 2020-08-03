@@ -16,7 +16,7 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@Component
+@Component("tagAssembler")
 public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
     private TagService tagService;
 
@@ -63,29 +63,57 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
 
     private void addNextPrevious(CollectionModel<TagDto> collectionModel, TagFilterDto filter) {
         int page = filter.getPage();
+        if (filter.getCertificateId() != null) {
+            if (page > 0 && page <= filter.getTotalPages()) {
+                Link link = linkTo(methodOn(CertificateController.class)
+                        .getAllTagsByCertificateId(
+                                filter.getTagName(),
+                                filter.getCertificateName(),
+                                (filter.getPage() - 1),
+                                filter.getSize(),
+                                filter.getSortParams(),
+                                filter.getCertificateId()
+                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_previous_page");
+                collectionModel.add(link);
+            }
 
-        if (page > 0 && page <= filter.getTotalPages()) {
-            Link link = linkTo(methodOn(CertificateController.class)
-                    .getAll(
-                            filter.getTagName(),
-                            filter.getCertificateName(),
-                            filter.getPage() - 1,
-                            filter.getSize(),
-                            filter.getSortParams()
-                    )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_previous_page");
-            collectionModel.add(link);
-        }
+            if (page >= 0 && page < filter.getTotalPages()) {
+                Link link = linkTo(methodOn(CertificateController.class)
+                        .getAllTagsByCertificateId(
+                                filter.getTagName(),
+                                filter.getCertificateName(),
+                                filter.getPage() + 1,
+                                filter.getSize(),
+                                filter.getSortParams(),
+                                filter.getCertificateId()
+                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_next_page");
+                collectionModel.add(link);
+            }
+        } else {
+            if (page > 0 && page <= filter.getTotalPages()) {
+                Link link = linkTo(methodOn(CertificateController.class)
+                        .getAll(
+                                filter.getTagName(),
+                                filter.getCertificateName(),
+                                (filter.getPage() - 1),
+                                filter.getSize(),
+                                filter.getSortParams()
+                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_previous_page");
+                collectionModel.add(link);
+            }
 
-        if (page >= 0 && page < filter.getTotalPages()) {
-            Link link = linkTo(methodOn(CertificateController.class)
-                    .getAll(
-                            filter.getTagName(),
-                            filter.getCertificateName(),
-                            filter.getPage() - 1,
-                            filter.getSize(),
-                            filter.getSortParams()
-                    )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_next_page");
-            collectionModel.add(link);
+            if (page >= 0 && page < filter.getTotalPages()) {
+                Link link = linkTo(methodOn(CertificateController.class)
+                        .getAll(
+                                filter.getTagName(),
+                                filter.getCertificateName(),
+                                filter.getPage() + 1,
+                                filter.getSize(),
+                                filter.getSortParams()
+                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_next_page");
+                collectionModel.add(link);
+            }
+
         }
     }
 }

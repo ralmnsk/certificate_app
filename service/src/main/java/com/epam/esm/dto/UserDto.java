@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.server.core.Relation;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -25,11 +26,7 @@ import java.util.Set;
 @JsonPropertyOrder({"id", "surname", "name", "email"})
 @JsonSerialize(using = UserSerializer.class)
 public class UserDto extends IdentifiableDto<Long> {
-    //        @JsonIgnore
-//    @NotNull(message = "Email must be not null")
-//    @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
-//    @JsonProperty("email")
-//    @JsonDeserialize(converter = EmailDeserializer.class)
+
     private String login;
 
     @NotNull(message = "Surname must be not null")

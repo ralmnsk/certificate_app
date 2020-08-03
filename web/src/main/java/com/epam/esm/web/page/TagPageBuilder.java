@@ -6,6 +6,8 @@ import com.epam.esm.dto.filter.TagFilterDto;
 import com.epam.esm.dto.wrapper.ListWrapperDto;
 import com.epam.esm.service.TagService;
 import com.epam.esm.web.assembler.TagAssembler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +19,8 @@ public class TagPageBuilder extends AbstractPageBuilder<TagDto, TagService, TagA
     private final static String EMPTY = "";
     private final static String TAG_NAME = "tagName";
 
-    public TagPageBuilder(TagService service, TagAssembler certificateAssembler) {
-        super(new HashSet<>(Arrays.asList(TAG_NAME)), service, certificateAssembler);
+    public TagPageBuilder(TagService service, TagAssembler tagAssembler) {
+        super(new HashSet<>(Arrays.asList(TAG_NAME)), service, tagAssembler);
     }
 
     public CustomPageDto<TagDto> build(TagFilterDto filterDto) {

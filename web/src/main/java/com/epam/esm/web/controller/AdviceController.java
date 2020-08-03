@@ -1,10 +1,7 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.dto.ExceptionResponseDto;
-import com.epam.esm.exception.AccessException;
-import com.epam.esm.exception.JwtUserAuthenticationException;
-import com.epam.esm.exception.NoHandlerException;
-import com.epam.esm.exception.ValidationException;
+import com.epam.esm.exception.*;
 import com.epam.esm.repository.exception.JsonParseCustomException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.SaveException;
@@ -160,6 +157,14 @@ public class AdviceController {
     @ResponseStatus(BAD_REQUEST)
     public ExceptionResponseDto exception(UsernameNotFoundException ex) {
         return new ExceptionResponseDto("UsernameNotFoundException",
+                ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(JsonSerializationException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ExceptionResponseDto exception(JsonSerializationException ex) {
+        return new ExceptionResponseDto("JsonSerializationException",
                 ex.getMessage());
     }
 

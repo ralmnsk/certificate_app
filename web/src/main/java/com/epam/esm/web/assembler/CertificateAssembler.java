@@ -95,6 +95,7 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getSortParams()
                     )).withRel("certificates");
             collectionModel.add(link);
+            addNextPreviousForAdmin(collectionModel, filter);
         }
 
         return collectionModel;
@@ -136,6 +137,34 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                                 }
                             }
                     )).withRel("order_id_" + filter.getOrderId() + "_certificates_next_page");
+            collectionModel.add(link);
+        }
+    }
+
+    private void addNextPreviousForAdmin(CollectionModel<CertificateDto> collectionModel, CertificateFilterDto filter) {
+        int page = filter.getPage();
+
+        if (page > 0 && page <= filter.getTotalPages()) {
+            Link link = linkTo(methodOn(CertificateController.class)
+                    .getAll(
+                            filter.getTagName(),
+                            filter.getCertificateName(),
+                            filter.getPage() - 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("certificates_previous_page");
+            collectionModel.add(link);
+        }
+
+        if (page >= 0 && page < filter.getTotalPages()) {
+            Link link = linkTo(methodOn(CertificateController.class)
+                    .getAll(
+                            filter.getTagName(),
+                            filter.getCertificateName(),
+                            filter.getPage() + 1,
+                            filter.getSize(),
+                            filter.getSortParams()
+                    )).withRel("certificates_next_page");
             collectionModel.add(link);
         }
     }

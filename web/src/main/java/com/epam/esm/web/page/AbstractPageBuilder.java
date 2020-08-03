@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
     private final static String EMPTY = "";
     private final static String NAME = "name+";
-    private final static String REGEX = "[a-z.]{0,20}(([+]{0,1})|([-]{0,1}))";
+    private final static String REGEX = "[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
     private final static String PLUS = "+";
     private final static String MINUS = "-";
 

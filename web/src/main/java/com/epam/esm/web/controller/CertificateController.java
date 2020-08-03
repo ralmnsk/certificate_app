@@ -31,10 +31,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -48,18 +45,14 @@ public class CertificateController {
     private TagPageBuilder tagPageBuilder;
     private WebSecurity webSecurity;
 
-    public CertificateController(CertificateService certificateService,
-                                 TagService tagService, ObjectMapper objectMapper,
-                                 CertificateAssembler certificateAssembler,
-                                 CertificatePageBuilder certificatePageBuilder, WebSecurity webSecurity,
-                                 TagPageBuilder tagPageBuilder) {
+    public CertificateController(CertificateService certificateService, TagService tagService, ObjectMapper objectMapper, CertificateAssembler certificateAssembler, CertificatePageBuilder certificatePageBuilder, TagPageBuilder tagPageBuilder, WebSecurity webSecurity) {
         this.certificateService = certificateService;
         this.tagService = tagService;
         this.objectMapper = objectMapper;
         this.certificateAssembler = certificateAssembler;
         this.certificatePageBuilder = certificatePageBuilder;
-        this.webSecurity = webSecurity;
         this.tagPageBuilder = tagPageBuilder;
+        this.webSecurity = webSecurity;
     }
 
     @GetMapping
@@ -188,7 +181,7 @@ public class CertificateController {
             @RequestParam(value = "tagName", defaultValue = "")
             @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 
-            @RequestParam(value = "name", defaultValue = "")
+            @RequestParam(value = "certificateName", defaultValue = "")
             @Size(max = 16, message = "name should be 0-16 characters") String certificateName,
 
             @RequestParam(value = "page", defaultValue = "0")
@@ -204,9 +197,16 @@ public class CertificateController {
     ) {
         TagFilterDto filterDto = new TagFilterDto();
         filterDto.setCertificateName(certificateName);
+        filterDto.setTagName(tagName);
         filterDto.setPage(page);
         filterDto.setSize(size);
-        filterDto.setSortParams(sort);
+        if (sort == null) {
+            List<String> list = new ArrayList();
+            list.add("tagName+");
+            filterDto.setSortParams(list);
+        } else {
+            filterDto.setSortParams(sort);
+        }
         filterDto.setCertificateId(certificateId);
 
         return tagPageBuilder.build(filterDto);
