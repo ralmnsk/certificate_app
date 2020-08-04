@@ -6,15 +6,25 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.UserUpdateDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
 import com.epam.esm.dto.filter.UserFilterDto;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.repository.exception.NotFoundException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.page.UserPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +33,11 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Validated
 @RestController
 @RequestMapping("/users")
@@ -35,17 +48,19 @@ public class UserController {
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
     private OrderService orderService;
+    private ObjectMapper objectMapper;
     private WebSecurity webSecurity;
+    private BCryptPasswordEncoder encoder;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService userService,
-                          UserAssembler userAssembler, UserPageBuilder userPageBuilder,
-                          OrderService orderService, WebSecurity webSecurity) {
+    public UserController(OrderPageBuilder orderPageBuilder, UserService userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, OrderService orderService, ObjectMapper objectMapper, WebSecurity webSecurity, BCryptPasswordEncoder encoder) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
         this.userPageBuilder = userPageBuilder;
         this.orderService = orderService;
+        this.objectMapper = objectMapper;
         this.webSecurity = webSecurity;
+        this.encoder = encoder;
     }
 
     @GetMapping("/{id}")
@@ -152,5 +167,78 @@ public class UserController {
         filterDto.setUserId(userId);
 
         return orderPageBuilder.build(filterDto);
+    }
+
+    @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Authentication authentication) {
+        String login = authentication.getName();
+        webSecurity.checkUserId(login, id);
+        UserDto userDto = userService.get(id).orElseThrow(() -> new NotFoundException(id));
+        UserUpdateDto userUpdateDtoPatched = null;
+        try {
+            userUpdateDtoPatched = applyPatchToUser(patch);
+        } catch (JsonPatchException e) {
+            log.warn("User patch exception:{}", e.getMessage());
+            throw new UpdateException("User patch processing exception:" + e.getMessage());
+        } catch (JsonProcessingException e) {
+            log.warn("User patch processing exception:{}", e.getMessage());
+            throw new UpdateException("User patch processing exception:" + e.getMessage());
+        }
+        userDto = patchToDto(userDto, userUpdateDtoPatched);
+        userDto = userService.update(userDto).orElseThrow(() -> new UpdateException(id));
+
+        return userAssembler.assemble(id, userDto, authentication);
+    }
+
+    private UserDto patchToDto(UserDto dto, UserUpdateDto patched) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (patched.getName() != null) {
+            boolean matches = patched.getName().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            if (matches) {
+                dto.setName(patched.getName());
+            } else {
+                errors.put("name:", "Name must be between 2 and 64 characters. Use these letters:[А-Яа-яa-zA-Z0-9- .!&?#,;$].");
+            }
+        }
+
+        if (patched.getSurname() != null) {
+            boolean matches = patched.getSurname().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            if (matches) {
+                dto.setSurname(patched.getSurname());
+            } else {
+                errors.put("surname:", "Surname must be between 2 and 64 characters. Use these letters:[А-Яа-яa-zA-Z0-9- .!&?#,;$].");
+            }
+        }
+
+        if (patched.getPassword() != null) {
+            boolean matches = patched.getPassword().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            if (matches) {
+                dto.setPassword(patched.getPassword());
+            } else {
+                errors.put("password:", "Password must be between 2 and 64 characters. Use these letters:[А-Яа-яa-zA-Z0-9- .!&?#,;$].");
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            errors.forEach((k, v) -> {
+                builder.append("Field ").append(k).append(v).append("  ");
+            });
+            log.error(builder.toString());
+            ValidationException validationException = new ValidationException(builder.toString());
+            validationException.getFieldsException().putAll(errors);
+            errors.clear();
+            throw validationException;
+        }
+
+        return dto;
+    }
+
+    private UserUpdateDto applyPatchToUser(JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+        UserUpdateDto newUserDto = new UserUpdateDto();
+        JsonNode patched = patch.apply(objectMapper.convertValue(newUserDto,JsonNode.class));
+        return objectMapper.treeToValue(patched, UserUpdateDto.class);
     }
 }

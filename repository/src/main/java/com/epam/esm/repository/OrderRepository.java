@@ -10,4 +10,6 @@ public interface OrderRepository extends CrudRepository<Order, Long> {
     OrderListWrapper getAll(OrderFilter filter);
 
     List<Order> getOrdersByCertificateId(Long certificateId);
+
+    Order getFirstByUserId(Long userId);
 }

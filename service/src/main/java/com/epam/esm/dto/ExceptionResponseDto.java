@@ -15,6 +15,10 @@ public class ExceptionResponseDto implements Serializable {
         this.message = message;
     }
 
+    public ExceptionResponseDto(String exception) {
+        this.exception = exception;
+    }
+
     public String getException() {
         return exception;
     }

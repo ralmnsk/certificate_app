@@ -268,9 +268,11 @@ public class CertificateController {
             errors.forEach((k, v) -> {
                 builder.append("Field ").append(k).append(v).append("  ");
             });
-            errors.clear();
             log.error(builder.toString());
-            throw new ValidationException(builder.toString());
+            ValidationException validationException = new ValidationException(builder.toString());
+            validationException.getFieldsException().putAll(errors);
+            errors.clear();
+            throw validationException;
         }
 
         return dto;

@@ -37,10 +37,12 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
             errors.forEach((k, v) -> {
                 builder.append("Field ").append(k).append(v).append("  ");
             });
-            errors.clear();
             certificateDto = null;
             log.error(builder.toString());
-            throw new ValidationException(builder.toString());
+            ValidationException validationException = new ValidationException(builder.toString());
+            validationException.getFieldsException().putAll(errors);
+            errors.clear();
+            throw validationException;
         }
 
         return certificateDto;

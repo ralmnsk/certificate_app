@@ -4,6 +4,7 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.security.LoginDto;
 import com.epam.esm.dto.security.RegistrationDto;
 import com.epam.esm.exception.AccessException;
+import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.security.OAuthService;
 import com.epam.esm.service.security.RegistrationService;
@@ -91,9 +92,15 @@ public class GateController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public RegistrationDto register(@Valid @RequestBody RegistrationDto registrationDto) {
+    public UserDto register(@Valid @RequestBody RegistrationDto registrationDto) {
         RegistrationDto registeredUser = registrationService.register(registrationDto);
-        return registeredUser;
+
+        String login = registeredUser.getLogin();
+        UserDto userDto = userService.findByLogin(login);
+        if (userDto == null) {
+            throw new NotFoundException("User not found, email:" + login);
+        }
+        return userDto;
     }
 
     public String getURLBase(HttpServletRequest request) throws MalformedURLException {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
@@ -25,6 +26,10 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     private final static String ORDERS_BY_CERTIFICATE_ID = "select orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost,orders.user_id " +
             "from orders join order_certificate oc on orders.id = oc.order_id join users u on orders.user_id = u.id " +
             "join certificate c on oc.certificate_id = c.id where orders.deleted = false and u.deleted = false and c.deleted = false and c.id = :certificateId";
+    private final static String ORDERS_BY_USER_ID = "select orders.id,orders.completed,orders.created,orders.deleted, orders.description,orders.total_cost " +
+            "from orders " +
+            "    join users u on orders.user_id = u.id " +
+            "where u.deleted=false and orders.deleted=false and u.id = :userId";
     private QueryBuilder<OrderFilter> builder;
 
     public OrderRepositoryImpl(QueryBuilder<OrderFilter> builder) {
@@ -32,6 +37,15 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         this.builder = builder;
     }
 
+    @Override
+    public Order getFirstByUserId(Long userId) {
+
+        Query query = getEntityManager().createNativeQuery(ORDERS_BY_USER_ID, Order.class);
+        query.setParameter("userId", userId);
+        List<Order> orders = query.getResultList();
+        Optional<Order> order = orders.stream().filter(o -> o.getCertificates().isEmpty()).findFirst();
+        return order.isPresent() ? order.get() : null;
+    }
 
     @Override
     public OrderListWrapper getAll(OrderFilter filter) {
@@ -48,7 +62,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
 
     @Override
     public List<Order> getOrdersByCertificateId(Long certificateId) {
-        Query query = getEntityManager().createNativeQuery(ORDERS_BY_CERTIFICATE_ID,Order.class);
+        Query query = getEntityManager().createNativeQuery(ORDERS_BY_CERTIFICATE_ID, Order.class);
         query.setParameter("certificateId", certificateId);
         List<Order> orders = query.getResultList();
         return orders;

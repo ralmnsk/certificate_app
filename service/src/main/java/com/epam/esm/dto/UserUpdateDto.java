@@ -26,6 +26,8 @@ public class UserUpdateDto extends IdentifiableDto<Long> {
     @Size(min = 2, max = 256, message = "Password must be between 2 and 256 characters")
     private String password;
 
+    private boolean deleted;
+
 
     @Override
     public boolean equals(Object o) {

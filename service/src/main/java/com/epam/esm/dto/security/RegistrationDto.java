@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,19 +21,22 @@ public class RegistrationDto {
     @Size(min = 2, max = 32, message = "Email must be between 2 and 32 characters")
     @JsonProperty("email")
 //    @JsonDeserialize(converter = EmailDeserializer.class)
-    @Email(message = "Incorrect email address")
+    @Email(message = "Incorrect email address", regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String login;
 
     @NotNull(message = "Password must be not null")
-    @Size(min = 2, max = 256, message = "Password must be between 2 and 256 characters")
+    @Size(min = 2, max = 64, message = "Password must be between 2 and 64 characters")
+    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
     private String password;
 
     @NotNull(message = "Surname must be not null")
     @Size(min = 2, max = 64, message = "User surname must be between 2 and 64 characters")
+    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
     private String surname;
 
     @NotNull(message = "Name must be not null")
     @Size(min = 2, max = 64, message = "User name must be between 2 and 64 characters")
+    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
     private String name;
 
     @JsonIgnore

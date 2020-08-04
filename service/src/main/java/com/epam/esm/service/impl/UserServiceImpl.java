@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
         found.setSurname(userDto.getSurname());
         found.setName(userDto.getName());
         found.setPassword((new BCryptPasswordEncoder()).encode(userDto.getPassword()));
+        found.setDeleted(userDto.isDeleted());
         User user = userRepository.update(found).orElseThrow(() -> new UpdateException("UserService update: User update exception"));
         UserDto dto = mapper.map(user, UserDto.class);
 

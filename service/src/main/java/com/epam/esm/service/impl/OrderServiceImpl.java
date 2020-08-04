@@ -16,9 +16,16 @@ import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -46,8 +53,32 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> save(OrderDto orderDto) {
         orderDto.getCertificates().clear();
         Order order = mapper.map(orderDto, Order.class);
-        order = orderRepository.save(order).orElseThrow(() -> new SaveException("OrderService: Order save exception"));
-        return get(order.getId());
+
+        Order emptyOrder = findEmptyOrder();
+        if (emptyOrder == null) {
+            order = orderRepository.save(order).orElseThrow(() -> new SaveException("OrderService: Order save exception"));
+            return get(order.getId());
+        }
+        emptyOrder.setDescription(orderDto.getDescription());
+        LocalDateTime ldt = LocalDateTime.now();
+        ZonedDateTime zdt = ZonedDateTime.of(ldt, ZoneId.systemDefault());
+        Instant instant = Instant.from(zdt);
+        Timestamp timestamp = Timestamp.from(instant);
+        emptyOrder.setCreated(timestamp);
+        emptyOrder = orderRepository.update(emptyOrder).orElseThrow(() -> new UpdateException("OrderService: order save exception"));
+        OrderDto dto = mapper.map(emptyOrder, OrderDto.class);
+        return Optional.ofNullable(dto);
+    }
+
+    private Order findEmptyOrder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        String principal = (String) authentication.getPrincipal();
+        User user = userRepository.findByLogin(principal);
+        Order order = orderRepository.getFirstByUserId(user.getId());
+        return order;
     }
 
     @Transactional

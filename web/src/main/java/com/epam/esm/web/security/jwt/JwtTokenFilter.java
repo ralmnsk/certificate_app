@@ -34,7 +34,6 @@ public class JwtTokenFilter extends GenericFilterBean {
         endPoints.add("/login");
         endPoints.add("/register");
         endPoints.add("/certificates");
-//        endPoints.add("/tags");
         methods.add("POST");
         methods.add("PUT");
         methods.add("PATCH");
@@ -50,7 +49,7 @@ public class JwtTokenFilter extends GenericFilterBean {
             HttpServletResponse resp = (HttpServletResponse) response;
             String uri = req.getRequestURI();
             if (token == null && !containsUri(uri, req)) {
-                resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 Map<Object, Object> responseObj = new HashMap<>();
                 responseObj.put("login", getURLBase(req) + "/login");
                 responseObj.put("register:", getURLBase(req) + "/register");
@@ -88,21 +87,6 @@ public class JwtTokenFilter extends GenericFilterBean {
         }
         return uri.matches("(/certificates/){1}[0-9]+(/tags){1}") && !methods.contains(req.getMethod());
     }
-
-//    private void manageAnonymous(ServletRequest request, ServletResponse response) throws IOException {
-//        HttpServletRequest req = ((HttpServletRequest) request);
-//        String uri = req.getRequestURI();
-//        if (!uri.equals("/login") && !uri.equals("/register") && (!uri.equals("/"))) {
-//            HttpServletResponse resp = ((HttpServletResponse) response);
-//            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//            Map<Object, Object> responseObj = new HashMap<>();
-//            responseObj.put("login", getURLBase(req) + "/login");
-//            responseObj.put("register:", getURLBase(req) + "/register");
-//            String json = new ObjectMapper().writeValueAsString(responseObj);
-//            response.getWriter().write(json);
-//            response.flushBuffer();
-//        }
-//    }
 
 
     private void setExceptionResponse(ServletResponse response, Throwable e, String message) throws IOException {

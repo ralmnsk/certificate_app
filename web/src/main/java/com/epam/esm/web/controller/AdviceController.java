@@ -1,6 +1,7 @@
 package com.epam.esm.web.controller;
 
 import com.epam.esm.dto.ExceptionResponseDto;
+import com.epam.esm.dto.ExceptionResponseDtoList;
 import com.epam.esm.exception.*;
 import com.epam.esm.repository.exception.JsonParseCustomException;
 import com.epam.esm.repository.exception.NotFoundException;
@@ -8,7 +9,6 @@ import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.repository.exception.UpdateException;
 import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -62,17 +64,23 @@ public class AdviceController {
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto methodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        Optional<String> message = ex.getBindingResult().getFieldErrors()
+    public ExceptionResponseDtoList methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ExceptionResponseDtoList list = new ExceptionResponseDtoList("MethodArgumentNotValidException", "Argument(s) of entity not valid.");
+
+        ex.getBindingResult().getFieldErrors()
                 .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .reduce((a, b) -> a + ".\r\n " + b);
-        return new ExceptionResponseDto("MethodArgumentNotValidException", message.get());
+                .map(e -> errors.put(e.getField().equals("login") ? "email" : e.getField(), e.getDefaultMessage()))
+                .collect(Collectors.toList());
+
+        list.setFields(errors);
+        return list;
     }
 
     @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
+    @ResponseStatus(value = BAD_REQUEST)
     public ExceptionResponseDto httpMessageNotReadableException(HttpMessageNotReadableException ex) {
         String message = ex.getMessage();
         if (ex.getCause() != null) {
@@ -83,15 +91,24 @@ public class AdviceController {
 
     @ResponseBody
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(value = UNPROCESSABLE_ENTITY)
-    public ExceptionResponseDto validationException(ValidationException ex) {
-        return new ExceptionResponseDto("ValidationException", ex.getMessage());
+    @ResponseStatus(value = BAD_REQUEST)
+    public ExceptionResponseDtoList validationException(ValidationException ex) {
+        Map<String, String> errors = ex.getFieldsException();
+
+        if (errors.isEmpty()) {
+            ExceptionResponseDtoList exception = new ExceptionResponseDtoList("ValidationException");
+            return exception;
+        }
+        ExceptionResponseDtoList list = new ExceptionResponseDtoList("ValidationException", "Validation exception happened.");
+        list.setFields(errors);
+        return list;
+//        return new ExceptionResponseDto("ValidationException", ex.getMessage());
     }
 
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    @ResponseStatus(BAD_REQUEST)
     public ExceptionResponseDto methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ExceptionResponseDto("MethodArgumentTypeMismatchException",
                 ex.getName() + " argument mismatch " + ex.getCause().getMessage().toLowerCase());
