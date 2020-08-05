@@ -42,18 +42,18 @@ public class TagController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public CustomPageDto<TagDto> getAll(
-            @RequestParam(value = "tagName", defaultValue = "")
+            @RequestParam(value = "tagName", defaultValue = "", name = "tagName")
             @Size(max = 16, message = "tagName should be 0-16 characters") String tagName,
 
-            @RequestParam(value = "page", defaultValue = "0")
-            @Min(0)
-            @Max(10000000) int page,
+            @RequestParam(value = "page", defaultValue = "0", name = "page")
+            @Min(value = 0, message = "page must be 0-10000000")
+            @Max(value = 10000000, message = "page must be 0-10000000") int page,
 
-            @RequestParam(value = "size", defaultValue = "1")
-            @Min(1)
-            @Max(100) int size,
+            @RequestParam(value = "size", defaultValue = "5", name = "size")
+            @Min(value=1, message = "size must be 1-100")
+            @Max(value=100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false) List<String> sort
+            @RequestParam(required = false, name = "sort") List<String> sort
     ) {
         TagFilterDto filterDto = new TagFilterDto();
         filterDto.setTagName(tagName);

@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
@@ -99,7 +102,6 @@ public class AdviceController {
         ExceptionResponseDtoList list = new ExceptionResponseDtoList("ValidationException", "Validation exception happened.");
         list.setFields(errors);
         return list;
-//        return new ExceptionResponseDto("ValidationException", ex.getMessage());
     }
 
 
@@ -188,6 +190,27 @@ public class AdviceController {
     public ExceptionResponseDto exception(DeleteException ex) {
         return new ExceptionResponseDto("DeleteException", ex.getMessage());
     }
+
+    @ResponseBody
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponseDtoList exception(ConstraintViolationException ex) {
+
+        Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
+
+        if (constraintViolations.isEmpty()) {
+            ExceptionResponseDtoList exception = new ExceptionResponseDtoList("ConstraintViolationException");
+            return exception;
+        }
+        ExceptionResponseDtoList list = new ExceptionResponseDtoList("ConstraintViolationException", "Constraint Violation exception happened.");
+        Map<String, String> errors = new HashMap<>();
+        constraintViolations.forEach(c->errors.put(c.getPropertyPath().toString(),c.getMessage()));
+        list.setFields(errors);
+        return list;
+//        ex.getConstraintViolations().
+//        return new ExceptionResponseDto("ConstraintViolationException", ex.getMessage());
+    }
+
 
     @ResponseBody
     @ExceptionHandler(Throwable.class)

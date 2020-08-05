@@ -1,7 +1,6 @@
 package com.epam.esm.deserializer;
 
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.exception.JsonSerializationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -39,14 +38,15 @@ public class UserSerializer extends StdSerializer<UserDto> {
             gen.writeStringField("role", user.getRole().toString());
             Links links = user.getLinks();
 
-            gen.writeArrayFieldStart("_links");
-            for (Link link:user.getLinks()) {
+            gen.writeFieldName("_links");
+            gen.writeStartObject();
+            for (Link link : user.getLinks()) {
+                gen.writeFieldName(link.getRel().value());
                 gen.writeStartObject();
-                gen.writeStringField(link.getRel().value(), link.getHref());
+                gen.writeStringField("href", link.getHref());
                 gen.writeEndObject();
             }
-            gen.writeEndArray();
-
+            gen.writeEndObject();
         }
 
         gen.writeEndObject();

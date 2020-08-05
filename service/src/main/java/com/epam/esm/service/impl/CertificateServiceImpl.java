@@ -67,6 +67,7 @@ public class CertificateServiceImpl implements CertificateService {
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
         long id = certificateDto.getId();
         if (isCertificateInAnyOrder(id)) {
+            log.warn("Certificate update: certificate was included in some orders. It can't be updated. Certificate id:{}", id);
             throw new DeleteException("Certificate update: certificate was included in some orders. It can't be updated. Certificate id:" + id);
         }
         Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
@@ -96,6 +97,7 @@ public class CertificateServiceImpl implements CertificateService {
     public boolean delete(Long certId) {
         Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
         if (isCertificateInAnyOrder(certId)) {
+            log.warn("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:{}",certId);
             throw new DeleteException("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:" + certId);
         }
         recalculateTotalPrices(certificate);
@@ -128,6 +130,7 @@ public class CertificateServiceImpl implements CertificateService {
     public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
         if(order.isCompleted()){
+            log.warn("CertificateService: certificates can't be added to the order. Order is completed. Order id:{}", orderId);
             throw new UpdateException("CertificateService: certificates can't be added to the order. Order is completed. Order id:"+orderId);
         }
         set
@@ -142,6 +145,7 @@ public class CertificateServiceImpl implements CertificateService {
     public void removeCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
         if(order.isCompleted()){
+            log.warn("CertificateService: certificates can't be removed from the order. Order is completed. Order id:{}",orderId);
             throw new UpdateException("CertificateService: certificates can't be removed from the order. Order is completed. Order id:"+orderId);
         }
         set
