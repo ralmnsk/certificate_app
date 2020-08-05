@@ -7,4 +7,5 @@ import com.epam.esm.model.wrapper.CertificateListWrapper;
 public interface CertificateRepository extends CrudRepository<Certificate, Long> {
     CertificateListWrapper getAll(CertificateFilter filter);
 
+    Long getCountOrdersByCertificateId(Long certificateId);
 }

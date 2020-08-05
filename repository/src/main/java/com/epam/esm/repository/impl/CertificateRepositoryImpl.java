@@ -13,6 +13,7 @@ import java.util.List;
 public class CertificateRepositoryImpl extends AbstractRepository<Certificate, Long> implements CertificateRepository {
     private final static String SELECT = "select";
     private final static String COUNT = "count";
+    private final static String COUNT_OF_ORDERS_BY_CERTIFICATE_ID = "select count(orders.id) from orders join order_certificate oc on orders.id = oc.order_id where oc.certificate_id = :certificateId ";
     private QueryBuilder<CertificateFilter> builder;
 
     public CertificateRepositoryImpl(QueryBuilder<CertificateFilter> builder) {
@@ -56,4 +57,11 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
         return filter;
     }
 
+    @Override
+    public Long getCountOrdersByCertificateId(Long certificateId) {
+        Query query = getEntityManager().createNativeQuery(COUNT_OF_ORDERS_BY_CERTIFICATE_ID);
+        query.setParameter("certificateId", certificateId);
+        long countResult = Long.valueOf(query.getSingleResult().toString());
+        return countResult;
+    }
 }

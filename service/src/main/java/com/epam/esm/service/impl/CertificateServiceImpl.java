@@ -10,6 +10,7 @@ import com.epam.esm.model.filter.CertificateFilter;
 import com.epam.esm.model.wrapper.CertificateListWrapper;
 import com.epam.esm.repository.CertificateRepository;
 import com.epam.esm.repository.OrderRepository;
+import com.epam.esm.repository.exception.DeleteException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.SaveException;
 import com.epam.esm.repository.exception.UpdateException;
@@ -65,6 +66,9 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public Optional<CertificateDto> update(CertificateDto certificateDto) {
         long id = certificateDto.getId();
+        if (isCertificateInAnyOrder(id)) {
+            throw new DeleteException("Certificate update: certificate was included in some orders. It can't be updated. Certificate id:" + id);
+        }
         Certificate found = certificateRepository.get(certificateDto.getId()).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
         //entity not managed without get
         found.setName(certificateDto.getName());
@@ -91,6 +95,9 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public boolean delete(Long certId) {
         Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
+        if (isCertificateInAnyOrder(certId)) {
+            throw new DeleteException("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:" + certId);
+        }
         recalculateTotalPrices(certificate);
         certificateRepository.delete(certId);
         return true;
@@ -120,7 +127,9 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
-
+        if(order.isCompleted()){
+            throw new UpdateException("CertificateService: certificates can't be added to the order. Order is completed. Order id:"+orderId);
+        }
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto)))
@@ -132,11 +141,19 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void removeCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
-
+        if(order.isCompleted()){
+            throw new UpdateException("CertificateService: certificates can't be removed from the order. Order is completed. Order id:"+orderId);
+        }
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().remove(certificate));
         orderRepository.update(order).orElseThrow(() -> new UpdateException("Delete Certificate to Order: Certificate update exception"));
     }
+
+    public boolean isCertificateInAnyOrder(Long certificateId) {
+        Long count = certificateRepository.getCountOrdersByCertificateId(certificateId);
+        return count > 0;
+    }
+
 }

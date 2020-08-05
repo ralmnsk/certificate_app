@@ -6,8 +6,10 @@ import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.dto.filter.CertificateFilterDto;
 import com.epam.esm.dto.filter.OrderFilterDto;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.SaveException;
+import com.epam.esm.repository.exception.UpdateException;
 import com.epam.esm.service.CertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
@@ -15,7 +17,14 @@ import com.epam.esm.web.assembler.OrderAssembler;
 import com.epam.esm.web.page.CertificatePageBuilder;
 import com.epam.esm.web.page.OrderPageBuilder;
 import com.epam.esm.web.security.config.WebSecurity;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +34,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+@Slf4j
 @Validated
 @RestController
 @RequestMapping("/orders")
@@ -41,12 +49,9 @@ public class OrderController {
     private CertificateService certificateService;
     private WebSecurity webSecurity;
     private UserService userService;
+    private ObjectMapper objectMapper;
 
-    public OrderController(OrderService orderService, OrderAssembler orderAssembler,
-                           OrderPageBuilder orderPageBuilder,
-                           CertificatePageBuilder certificatePageBuilder,
-                           CertificateService certificateService, WebSecurity webSecurity,
-                           UserService userService) {
+    public OrderController(OrderService orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService certificateService, WebSecurity webSecurity, UserService userService, ObjectMapper objectMapper) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
@@ -54,6 +59,7 @@ public class OrderController {
         this.certificateService = certificateService;
         this.webSecurity = webSecurity;
         this.userService = userService;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping
@@ -192,6 +198,65 @@ public class OrderController {
         filterDto.setOrderId(orderId);
 
         return certificatePageBuilder.build(filterDto);
+    }
+
+    @PatchMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDto update(@PathVariable Long id, @RequestBody JsonPatch patch, Authentication authentication) {
+        String principal = authentication.getName();
+        webSecurity.checkOrderId(principal, id);
+
+        OrderDto orderDto = orderService.get(id).orElseThrow(() -> new NotFoundException(id));
+        OrderDto orderDtoPatched = null;
+        try {
+            orderDtoPatched = applyPatchToOrder(patch, orderDto);
+        } catch (JsonPatchException e) {
+            log.warn("Order patch exception:{}", e.getMessage());
+            throw new UpdateException("Certificate patch processing exception:" + e.getMessage());
+        } catch (JsonProcessingException e) {
+            log.warn("Order patch processing exception:{}", e.getMessage());
+            throw new UpdateException("Order patch processing exception:" + e.getMessage());
+        }
+        orderDto = patchToDto(orderDto, orderDtoPatched);
+        orderDto = orderService.update(orderDto).orElseThrow(() -> new UpdateException(id));
+
+        return orderAssembler.assemble(id, orderDto, authentication);
+    }
+
+    private OrderDto applyPatchToOrder(JsonPatch patch, OrderDto orderDtoDto) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(orderDtoDto, JsonNode.class));
+        return objectMapper.treeToValue(patched, OrderDto.class);
+    }
+
+    private OrderDto patchToDto(OrderDto dto, OrderDto patched) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (patched.getDescription() != null) {
+            boolean matches = patched.getDescription().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){0,999}");
+            if (matches) {
+                dto.setDescription(patched.getDescription());
+            } else {
+                errors.put("description:", "Description must be between 0 and 999 characters.");
+            }
+        }
+
+        if (patched.isCompleted() == true) {
+            dto.setCompleted(patched.isCompleted());
+        }
+
+        if (!errors.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            errors.forEach((k, v) -> {
+                builder.append("Field ").append(k).append(v).append("  ");
+            });
+            log.error(builder.toString());
+            ValidationException validationException = new ValidationException(builder.toString());
+            validationException.getFieldsException().putAll(errors);
+            errors.clear();
+            throw validationException;
+        }
+
+        return dto;
     }
 
 }

@@ -3,10 +3,7 @@ package com.epam.esm.web.controller;
 import com.epam.esm.dto.ExceptionResponseDto;
 import com.epam.esm.dto.ExceptionResponseDtoList;
 import com.epam.esm.exception.*;
-import com.epam.esm.repository.exception.JsonParseCustomException;
-import com.epam.esm.repository.exception.NotFoundException;
-import com.epam.esm.repository.exception.SaveException;
-import com.epam.esm.repository.exception.UpdateException;
+import com.epam.esm.repository.exception.*;
 import com.fasterxml.jackson.core.JsonParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -183,6 +180,13 @@ public class AdviceController {
     public ExceptionResponseDto exception(JsonSerializationException ex) {
         return new ExceptionResponseDto("JsonSerializationException",
                 ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(DeleteException.class)
+    @ResponseStatus(UNPROCESSABLE_ENTITY)
+    public ExceptionResponseDto exception(DeleteException ex) {
+        return new ExceptionResponseDto("DeleteException", ex.getMessage());
     }
 
     @ResponseBody

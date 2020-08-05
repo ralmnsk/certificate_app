@@ -102,7 +102,9 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> update(OrderDto orderDto) {
         long id = orderDto.getId();
         Order found = orderRepository.get(orderDto.getId()).orElseThrow(() -> new NotFoundException("OrderService: get in update operation exception" + id));
-
+        if(found.isCompleted()){
+            throw new UpdateException("OrderService: order can't be updates because it is completed. Id:"+id);
+        }
         found.setDescription(orderDto.getDescription());
         if (!found.getCertificates().isEmpty()) {
             found.setCompleted(orderDto.isCompleted());
@@ -118,6 +120,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean delete(Long id) {
         Order order = orderRepository.get(id).orElseThrow(() -> new NotFoundException("Order delete: not found exception, id:" + id));
+        if(order.isCompleted()){
+            throw new UpdateException("OrderService: order can't be deleted because it is completed. Id:"+id);
+        }
         orderRepository.delete(id);
         return true;
     }

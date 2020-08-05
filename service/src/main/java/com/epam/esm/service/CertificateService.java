@@ -15,4 +15,6 @@ public interface CertificateService extends CrudService<CertificateDto, Long> {
 
     CertificateListWrapperDto getAll(CertificateFilterDto filterDto);
 
+    boolean isCertificateInAnyOrder(Long certificateId);
+
 }
