@@ -16,7 +16,7 @@ sonarqube {
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "src"
+            property "sonar.sources", "web/src/main/java,web/src/main/java,repository/src/main/java,service/src/main/java"
         }
     }
 }
