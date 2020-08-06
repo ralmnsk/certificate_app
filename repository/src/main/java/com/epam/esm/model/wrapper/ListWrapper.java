@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class ListWrapper<T,F extends AbstractFilter> {
+public class ListWrapper<T, F extends AbstractFilter> {
     private List<T> list;
     private F filter;
 }

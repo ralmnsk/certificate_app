@@ -1,7 +1,25 @@
+plugins {
+    id "org.sonarqube" version "3.0"
+}
+
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'war'
+
+sonarqube {
+    properties {
+        property "sonar.sourceEncoding", "UTF-8"
+    }
+}
+
+subprojects {
+    sonarqube {
+        properties {
+            property "sonar.sources", "src"
+        }
+    }
+}
 
 allprojects {
     apply plugin: 'java'

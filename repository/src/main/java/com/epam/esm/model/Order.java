@@ -19,7 +19,7 @@ public class Order extends Identifiable<Long> {
 
     private String description;
     private BigDecimal totalCost;
-//    @Column(updatable = false)
+    //    @Column(updatable = false)
     private Timestamp created;
 
     @Column(columnDefinition = "boolean default false")
