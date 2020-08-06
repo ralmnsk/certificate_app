@@ -1,11 +1,13 @@
 plugins {
     id "org.sonarqube" version "3.0"
+    id 'application'
 }
+apply plugin: 'war'
 
 group 'com.epam.esm'
-version '1.0-SNAPSHOT'
+version '1.0'
 
-apply plugin: 'war'
+mainClassName = 'web.Main'
 
 sonarqube {
     properties {
@@ -34,11 +36,12 @@ allprojects {
     apply plugin: 'idea'
 
     group 'com.epam.esm'
-    version '1.0-SNAPSHOT'
+    version '1.0'
     sourceCompatibility = '1.8'
 
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
@@ -99,5 +102,10 @@ allprojects {
 
 test {
     useJUnitPlatform()
+}
+
+war {
+    archiveName 'certificate_app-1.0.war'
+    from 'repository/build/libs', 'service/build/libs', 'web/build/libs'
 }
 

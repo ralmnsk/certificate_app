@@ -95,7 +95,7 @@ class CertificateServiceImplTest {
     @Test
     void delete() {
         certificateService.delete(any());
-        verify(certificateRepository).update(any());
+        verify(certificateRepository).delete(any());
     }
 
     @Test

@@ -117,7 +117,7 @@ class OrderServiceImplTest {
         when(orderRepository.get(order.getId())).thenReturn(Optional.ofNullable(order));
         when(orderRepository.update(order)).thenReturn(Optional.ofNullable(order));
         orderService.delete(1L);
-        verify(orderRepository).update(order);
+        verify(orderRepository).delete(1L);
     }
 
     @Test

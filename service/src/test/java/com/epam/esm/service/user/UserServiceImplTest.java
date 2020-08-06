@@ -125,7 +125,7 @@ class UserServiceImplTest {
         when(userRepository.update(any())).thenReturn(Optional.ofNullable(user));
         when(orderRepository.update(any())).thenReturn(Optional.ofNullable(order));
         userService.delete(1L);
-        verify(userRepository).update(any());
+        verify(userRepository).delete(any());
     }
 
     @Test
