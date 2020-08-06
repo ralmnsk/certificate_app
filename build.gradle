@@ -15,7 +15,7 @@ sonarqube {
         property "sonar.projectKey","certificate_app"
         property "sonar.projectVersion", "1.0-SNAPSHOT"
 //        property "sonar.exclusions", "**/build/**/.class,**/*.png,*.iml, **/*generated*,**/build/**/*.java,**/build/**/*package-info.java"
-        property "sonar.java.binaries", "**/build/**/.class"
+        property "sonar.java.binaries", "${project.buildDir}/classes/java/main"
 
     }
 }
