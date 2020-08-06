@@ -14,13 +14,16 @@ sonarqube {
         property "sonar.projectName","certificate_app"
         property "sonar.projectKey","certificate_app"
         property "sonar.projectVersion", "1.0-SNAPSHOT"
+//        property "sonar.exclusions", "**/build/**/.class,**/*.png,*.iml, **/*generated*,**/build/**/*.java,**/build/**/*package-info.java"
+        property "sonar.java.binaries", "**/build/**/.class"
+
     }
 }
 
 subprojects {
     sonarqube {
         properties {
-            property "sonar.sources", "/src/main/java"
+            property "sonar.sources", "src/main/java"
         }
     }
 }
