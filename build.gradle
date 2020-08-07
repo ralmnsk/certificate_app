@@ -3,10 +3,10 @@ plugins {
     id 'application'
     id "org.springframework.boot" version "2.3.1.RELEASE"
 }
-apply plugin: 'war'
+//apply plugin: 'war'
 
-group 'com.epam.esm'
-version '1.0'
+//group 'com.epam.esm'
+//version '1.0'
 
 mainClassName = 'web.Main'
 
@@ -24,6 +24,8 @@ sonarqube {
 }
 
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
     sonarqube {
         properties {
             property "sonar.sources", "src/main/java"
@@ -32,9 +34,6 @@ subprojects {
 }
 
 allprojects {
-    apply plugin: 'java'
-    apply plugin: 'application'
-    apply plugin: 'idea'
 
     group 'com.epam.esm'
     version '1.0'
@@ -46,9 +45,6 @@ allprojects {
     }
 
     dependencies {
-        implementation project(':repository')
-        implementation project(':service')
-        implementation project(':web')
 
         //-----------------Utils--------------------------
         compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
