@@ -45,19 +45,19 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
         try {
-//            HttpServletRequest req = (HttpServletRequest) request;
-//            HttpServletResponse resp = (HttpServletResponse) response;
-//            String uri = req.getRequestURI();
-//            if (token == null && !containsUri(uri, req)) {
-//                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//                Map<Object, Object> responseObj = new HashMap<>();
-//                responseObj.put("login", getURLBase(req) + "/login");
-//                responseObj.put("register:", getURLBase(req) + "/register");
-//                String json = new ObjectMapper().writeValueAsString(responseObj);
-//                response.getWriter().write(json);
-//                response.flushBuffer();
-//                return;
-//            }
+            HttpServletRequest req = (HttpServletRequest) request;
+            HttpServletResponse resp = (HttpServletResponse) response;
+            String uri = req.getRequestURI();
+            if (token == null && !containsUri(uri, req)) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                Map<Object, Object> responseObj = new HashMap<>();
+                responseObj.put("login", getURLBase(req) + "/login");
+                responseObj.put("register:", getURLBase(req) + "/register");
+                String json = new ObjectMapper().writeValueAsString(responseObj);
+                response.getWriter().write(json);
+                response.flushBuffer();
+                return;
+            }
 
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.authentication(token);
@@ -76,6 +76,8 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     private boolean containsUri(String uri, HttpServletRequest req) {
+        String contextPath = req.getServletContext().getContextPath();
+        uri = uri.replace(contextPath, "");
         if (endPoints.contains(uri)) {
             return true;
         }
@@ -100,9 +102,10 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     public String getURLBase(HttpServletRequest request) throws MalformedURLException {
+        String contextPath = request.getServletContext().getContextPath();
         URL requestURL = new URL(request.getRequestURL().toString());
         String port = requestURL.getPort() == -1 ? "" : ":" + requestURL.getPort();
-        return requestURL.getProtocol() + "://" + requestURL.getHost() + port;
+        return requestURL.getProtocol() + "://" + requestURL.getHost() + port + contextPath;
 
     }
 
