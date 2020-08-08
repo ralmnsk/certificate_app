@@ -1,7 +1,7 @@
 plugins {
     id "org.sonarqube" version "3.0"
     id 'application'
-    id "org.springframework.boot" version "2.3.1.RELEASE"
+//    id "org.springframework.boot" version "2.3.1.RELEASE"
 }
 //apply plugin: 'war'
 

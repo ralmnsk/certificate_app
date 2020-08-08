@@ -26,17 +26,17 @@ public class RegistrationDto {
 
     @NotNull(message = "Password must be not null")
     @Size(min = 2, max = 64, message = "Password must be between 2 and 64 characters")
-    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
+    @Pattern(regexp = "([a-zA-Z0-9- .!&?#,;$]){2,64}")
     private String password;
 
     @NotNull(message = "Surname must be not null")
     @Size(min = 2, max = 64, message = "User surname must be between 2 and 64 characters")
-    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
+    @Pattern(regexp = "([a-zA-Z0-9- .!&?#,;$]){2,64}")
     private String surname;
 
     @NotNull(message = "Name must be not null")
     @Size(min = 2, max = 64, message = "User name must be between 2 and 64 characters")
-    @Pattern(regexp = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}")
+    @Pattern(regexp = "([a-zA-Z0-9- .!&?#,;$]){2,64}")
     private String name;
 
     @JsonIgnore

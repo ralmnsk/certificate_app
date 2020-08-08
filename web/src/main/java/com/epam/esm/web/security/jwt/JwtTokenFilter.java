@@ -45,19 +45,19 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
         try {
-            HttpServletRequest req = (HttpServletRequest) request;
-            HttpServletResponse resp = (HttpServletResponse) response;
-            String uri = req.getRequestURI();
-            if (token == null && !containsUri(uri, req)) {
-                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                Map<Object, Object> responseObj = new HashMap<>();
-                responseObj.put("login", getURLBase(req) + "/login");
-                responseObj.put("register:", getURLBase(req) + "/register");
-                String json = new ObjectMapper().writeValueAsString(responseObj);
-                response.getWriter().write(json);
-                response.flushBuffer();
-                return;
-            }
+//            HttpServletRequest req = (HttpServletRequest) request;
+//            HttpServletResponse resp = (HttpServletResponse) response;
+//            String uri = req.getRequestURI();
+//            if (token == null && !containsUri(uri, req)) {
+//                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                Map<Object, Object> responseObj = new HashMap<>();
+//                responseObj.put("login", getURLBase(req) + "/login");
+//                responseObj.put("register:", getURLBase(req) + "/register");
+//                String json = new ObjectMapper().writeValueAsString(responseObj);
+//                response.getWriter().write(json);
+//                response.flushBuffer();
+//                return;
+//            }
 
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication authentication = jwtTokenProvider.authentication(token);
