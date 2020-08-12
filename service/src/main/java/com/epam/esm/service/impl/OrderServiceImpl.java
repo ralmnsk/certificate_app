@@ -84,7 +84,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Optional<OrderDto> get(Long id) {
-        Optional<OrderDto> orderDtoOptional = Optional.empty();
         Order order = orderRepository.get(id).orElseThrow(() -> new NotFoundException("OrderService: Order get exception" + id));
 
         calculator.calc(order);
@@ -92,9 +91,9 @@ public class OrderServiceImpl implements OrderService {
 
         OrderDto orderDto = mapper.map(order, OrderDto.class);
         orderDto.getCertificates().clear();
-        orderDtoOptional = Optional.ofNullable(orderDto);
+        return Optional.ofNullable(orderDto);
 
-        return orderDtoOptional;
+
     }
 
     @Transactional
@@ -102,8 +101,8 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderDto> update(OrderDto orderDto) {
         long id = orderDto.getId();
         Order found = orderRepository.get(orderDto.getId()).orElseThrow(() -> new NotFoundException("OrderService: get in update operation exception" + id));
-        if(found.isCompleted()){
-            throw new UpdateException("OrderService: order can't be updates because it is completed. Id:"+id);
+        if (found.isCompleted()) {
+            throw new UpdateException("OrderService: order can't be updates because it is completed. Id:" + id);
         }
         found.setDescription(orderDto.getDescription());
         if (!found.getCertificates().isEmpty()) {
@@ -120,8 +119,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean delete(Long id) {
         Order order = orderRepository.get(id).orElseThrow(() -> new NotFoundException("Order delete: not found exception, id:" + id));
-        if(order.isCompleted()){
-            throw new UpdateException("OrderService: order can't be deleted because it is completed. Id:"+id);
+        if (order.isCompleted()) {
+            throw new UpdateException("OrderService: order can't be deleted because it is completed. Id:" + id);
         }
         orderRepository.delete(id);
         return true;
@@ -155,7 +154,10 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
                 .forEach(order -> user.getOrders().add(order));
-        userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
+        Optional<User> updated = userRepository.update(user);
+        if (!updated.isPresent()) {
+            throw new UpdateException("Add Order to User: user update exception");
+        }
     }
 
     @Transactional
@@ -164,9 +166,11 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.get(userId).orElseThrow(() -> new NotFoundException("Add Order to User: user not found: id:" + userId));
         list
                 .stream()
-//                .map(idDto -> orderRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Order to User: Order not found: id:" + idDto)))
-                .forEach(orderId -> orderRepository.delete(orderId));//user.getOrders().remove(order));
-        userRepository.update(user).orElseThrow(() -> new UpdateException("Add Order to User: user update exception"));
+                .forEach(orderId -> orderRepository.delete(orderId));
+        Optional<User> updated = userRepository.update(user);
+        if (updated.isPresent()) {
+            throw new UpdateException("Add Order to User: user update exception");
+        }
     }
 
 }

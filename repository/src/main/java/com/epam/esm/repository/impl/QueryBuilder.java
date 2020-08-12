@@ -27,7 +27,6 @@ public class QueryBuilder<F extends AbstractFilter> {
     private final static String USER_TABLE = " users ";
 
     private final static String FROM = " from ";
-    private final static String JOIN = " join ";
     private final static String TAG_JOIN_CERTIFICATE = " join cert_tag ct on certificate.id = ct.certificate_id join tag on ct.tag_id = tag.id ";
     private final static String CERTIFICATE_JOIN_ORDER = " join order_certificate oc on certificate.id = oc.certificate_id join orders on oc.order_id = orders.id ";
     private final static String ORDER_JOIN_USER = " join users on orders.user_id = users.id ";
@@ -65,7 +64,7 @@ public class QueryBuilder<F extends AbstractFilter> {
 
     private F filter;
 
-    public StringBuilder assembleQlString(CertificateFilter certificateFilter, Class clazz, String selecting) {//for class
+    public StringBuilder assembleQlString(CertificateFilter certificateFilter, Class<?> clazz, String selecting) {//for class
         getEntityNameSet(certificateFilter);
         String tag_cert = entityNameSet.contains(TAG_TABLE) ? TAG_JOIN_CERTIFICATE : EMPTY;
         String cert_order = entityNameSet.contains(ORDER_TABLE) ? CERTIFICATE_JOIN_ORDER : EMPTY;
@@ -87,7 +86,7 @@ public class QueryBuilder<F extends AbstractFilter> {
                 .append(CERTIFICATE_NAME)
                 .append(user_name);
 
-        ql = addObjectId(certificateFilter, ql);
+        addObjectId(certificateFilter, ql);
 
         ql = addSortToQueryString(certificateFilter, selecting, ql);
 
@@ -156,7 +155,7 @@ public class QueryBuilder<F extends AbstractFilter> {
         return filter;
     }
 
-    private String addObjectColumns(Class clazz) {
+    private String addObjectColumns(Class<?> clazz) {
         if (clazz.equals(Tag.class)) {
             return TAG;
         }
@@ -172,7 +171,7 @@ public class QueryBuilder<F extends AbstractFilter> {
         return TAG;
     }
 
-    private String addObject(Class clazz) {
+    private String addObject(Class<?> clazz) {
         if (clazz.equals(Tag.class)) {
             return TAG_TABLE;
         }
