@@ -1,2 +1,2 @@
 # certificate_app
-certificate rest application test1
+certificate rest application test2
