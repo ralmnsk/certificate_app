@@ -80,9 +80,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean delete(Long id) {
         User user = userRepository.get(id).orElseThrow(() -> new NotFoundException("User delete: not found exception, id:" + id));
-        user.getOrders().forEach(order -> {
-            orderRepository.delete(order.getId());
-        });
+        user.getOrders().forEach(order ->
+            orderRepository.delete(order.getId())
+        );
         userRepository.delete(id);
 
         return true;

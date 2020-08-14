@@ -18,18 +18,18 @@ import java.util.Optional;
 
 @Repository
 public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implements TagRepository {
-    public final static String PERCENT = "%";
-    private final static String NAME = "name";
-    private final static String SELECT_BY_NAME = " select * from tag where tag.name = :name ";
-    private final static String SELECT_FROM_TAG = "select distinct tag.id,tag.name,tag.deleted from tag ";
-    private final static String JOIN_CERT_TAG = " join cert_tag on tag.id = cert_tag.tag_id ";
-    private final static String WHERE_TAG_NAME = " where tag.name like :name and tag.deleted = false";
+    public static final String PERCENT = "%";
+    public static final String NAME = "name";
+    public static final String SELECT_BY_NAME = " select * from tag where tag.name = :name ";
+    public static final String SELECT_FROM_TAG = "select distinct tag.id,tag.name,tag.deleted from tag ";
+    public static final String JOIN_CERT_TAG = " join cert_tag on tag.id = cert_tag.tag_id ";
+    public static final String WHERE_TAG_NAME = " where tag.name like :name and tag.deleted = false";
 
-    private final static String CERTIFICATE_ID = " and cert_tag.certificate_id = :certificateId ";
-    private final static String ORDER_BY = " order by tag.name ";
-    private final static String SELECT_COUNT = " select distinct count(tag.id) from tag ";
-    private final static String UID = "uid";
-    private final static String CERTIFICATE_ID_PARAM = "certificateId";
+    public static final String CERTIFICATE_ID = " and cert_tag.certificate_id = :certificateId ";
+    public static final String ORDER_BY = " order by tag.name ";
+    public static final String SELECT_COUNT = " select distinct count(tag.id) from tag ";
+    public static final String UID = "uid";
+    public static final String CERTIFICATE_ID_PARAM = "certificateId";
 
     private QueryBuilder<TagFilter> queryBuilder;
 
@@ -90,7 +90,7 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         uids.forEach(id -> {
             query.setParameter(UID, id);
             List<Integer> result = query.getResultList();
-            result.forEach(r -> resultList.add(r));
+            result.forEach(resultList::add);
         });
 
         return resultList;
@@ -124,9 +124,8 @@ public class TagRepositoryImpl extends AbstractRepository<Tag, Integer> implemen
         int pageSize = tagFilter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
-        List<Tag> tags = query.getResultList();
 
-        return tags;
+        return query.getResultList();
     }
 
     private TagFilter setCountResult(TagFilter tagFilter) {

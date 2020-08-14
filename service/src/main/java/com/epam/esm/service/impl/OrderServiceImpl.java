@@ -77,8 +77,7 @@ public class OrderServiceImpl implements OrderService {
         }
         String principal = (String) authentication.getPrincipal();
         User user = userRepository.findByLogin(principal);
-        Order order = orderRepository.getFirstByUserId(user.getId());
-        return order;
+        return orderRepository.getFirstByUserId(user.getId());
     }
 
     @Transactional

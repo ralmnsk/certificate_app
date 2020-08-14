@@ -19,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component("tagAssembler")
 public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
     private TagService tagService;
+    private static final String CERTIFICATE_ID = "certificate_id_";
 
     public TagAssembler(TagService tagService) {
         this.tagService = tagService;
@@ -73,7 +74,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                                 filter.getSize(),
                                 filter.getSortParams(),
                                 filter.getCertificateId()
-                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_previous_page");
+                        )).withRel((filter.getCertificateId() == null ? "" : (CERTIFICATE_ID + filter.getCertificateId() + "_")) + "tags_previous_page");
                 collectionModel.add(link);
             }
 
@@ -86,7 +87,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                                 filter.getSize(),
                                 filter.getSortParams(),
                                 filter.getCertificateId()
-                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_next_page");
+                        )).withRel((filter.getCertificateId() == null ? "" : (CERTIFICATE_ID + filter.getCertificateId() + "_")) + "tags_next_page");
                 collectionModel.add(link);
             }
         } else {
@@ -98,7 +99,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                                 (filter.getPage() - 1),
                                 filter.getSize(),
                                 filter.getSortParams()
-                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_previous_page");
+                        )).withRel((filter.getCertificateId() == null ? "" : (CERTIFICATE_ID + filter.getCertificateId() + "_")) + "tags_previous_page");
                 collectionModel.add(link);
             }
 
@@ -110,7 +111,7 @@ public class TagAssembler implements Assembler<Long, TagDto, TagFilterDto> {
                                 filter.getPage() + 1,
                                 filter.getSize(),
                                 filter.getSortParams()
-                        )).withRel((filter.getCertificateId() == null ? "" : ("certificate_id_" + filter.getCertificateId() + "_")) + "tags_next_page");
+                        )).withRel((filter.getCertificateId() == null ? "" : (CERTIFICATE_ID + filter.getCertificateId() + "_")) + "tags_next_page");
                 collectionModel.add(link);
             }
 

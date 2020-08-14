@@ -15,12 +15,12 @@ import java.util.HashSet;
 
 @Component
 public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, CertificateService, CertificateAssembler, CertificateFilterDto> {
-    private final static String EMPTY = "";
-    private final static String TAG_NAME = "tag.name";
-    private final static String CERTIFICATE_NAME = "certificate.name";
-    private final static String PRICE = "price";
-    private final static String CREATION = "1970-01-01 00:00:00";
-    private final static String MODIFICATION = "1970-01-01 00:00:00";
+    private static final String EMPTY = "";
+    private static final String TAG_NAME = "tag.name";
+    private static final String CERTIFICATE_NAME = "certificate.name";
+    private static final String PRICE = "price";
+    private static final String CREATION = "1970-01-01 00:00:00";
+    private static final String MODIFICATION = "1970-01-01 00:00:00";
 
     public CertificatePageBuilder(CertificateService service, CertificateAssembler certificateAssembler) {
         super(new HashSet<>(Arrays.asList(TAG_NAME, CERTIFICATE_NAME, PRICE)), service, certificateAssembler);
@@ -67,7 +67,7 @@ public class CertificatePageBuilder extends AbstractPageBuilder<CertificateDto, 
             filterDto.setDescription(EMPTY);
         }
         if (filterDto.getPrice() == null) {
-            filterDto.setPrice(new BigDecimal(0.00));
+            filterDto.setPrice(BigDecimal.valueOf(0.00));
         }
         if (filterDto.getDuration() == null) {
             filterDto.setDuration(0);

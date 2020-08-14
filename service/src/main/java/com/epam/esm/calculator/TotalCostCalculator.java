@@ -4,7 +4,6 @@ import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.model.Certificate;
 import com.epam.esm.model.Order;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -14,11 +13,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class TotalCostCalculator {
-    private ModelMapper mapper;
-
-    public TotalCostCalculator(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
 
     public Order calc(Order order) {
         Set<Certificate> certificates = order.getCertificates();

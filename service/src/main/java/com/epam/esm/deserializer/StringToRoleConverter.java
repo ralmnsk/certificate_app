@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StringToRoleConverter extends StdConverter<String, Role> {
-    private final String USER = "user";
-    private final String ADMIN = "admin";
+    private static final String USER = "user";
+    private static final String ADMIN = "admin";
 
     @Override
     public Role convert(String value) {
-        Role result = Role.GUEST;
+        Role result;
         String str = value.trim().toLowerCase();
         switch (str) {
             case USER:
@@ -20,6 +20,8 @@ public class StringToRoleConverter extends StdConverter<String, Role> {
             case ADMIN:
                 result = Role.ADMIN;
                 break;
+            default:
+                result = Role.GUEST;
         }
         return result;
     }

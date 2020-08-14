@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
-    private final static String EMPTY = "";
-    private final static String NAME = "name+";
-    private final static String REGEX = "[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
-    private final static String PLUS = "+";
-    private final static String MINUS = "-";
+    private static final String EMPTY = "";
+    private static final String NAME = "name+";
+    private static final String REGEX = "[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
+    private static final String PLUS = "+";
+    private static final String MINUS = "-";
 
     private Set<String> fieldSet;
     private S service;

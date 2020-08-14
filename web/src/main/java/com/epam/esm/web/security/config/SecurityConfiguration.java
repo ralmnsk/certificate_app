@@ -31,7 +31,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String ADMIN = "ADMIN";
     private static final String USER = "USER";
-    private static final String GUEST = "GUEST";
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
@@ -57,11 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AccessDeniedHandler accessDeniedHandler() {
         return new DeniedHandler();
     }
-
-//    @Bean
-//    public AuthenticationEntryPoint entryPoint(){
-//        return new EntryPoint();
-//    }
 
 
     @Override

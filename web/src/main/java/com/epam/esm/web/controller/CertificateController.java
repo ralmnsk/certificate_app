@@ -201,7 +201,7 @@ public class CertificateController {
         filterDto.setPage(page);
         filterDto.setSize(size);
         if (sort == null) {
-            List<String> list = new ArrayList();
+            List<String> list = new ArrayList<>();
             list.add("tagName+");
             filterDto.setSortParams(list);
         } else {
@@ -240,10 +240,10 @@ public class CertificateController {
 
         if (patched.getPrice() != null) {
             try {
-                if (patched.getPrice().compareTo(new BigDecimal(0.00)) < 0) {
+                if (patched.getPrice().compareTo(BigDecimal.valueOf(0.00)) < 0) {
                     throw new NumberFormatException();
                 }
-                if (patched.getPrice().compareTo(new BigDecimal(1000000000000.00)) > 0) {
+                if (patched.getPrice().compareTo(BigDecimal.valueOf(1000000000000.00)) > 0) {
                     throw new NumberFormatException();
                 }
                 dto.setPrice(patched.getPrice());
@@ -265,9 +265,9 @@ public class CertificateController {
 
         if (!errors.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            errors.forEach((k, v) -> {
-                builder.append("Field ").append(k).append(v).append("  ");
-            });
+            errors.forEach((k, v) ->
+                builder.append("Field ").append(k).append(v).append("  ")
+            );
             log.error(builder.toString());
             ValidationException validationException = new ValidationException(builder.toString());
             validationException.getFieldsException().putAll(errors);

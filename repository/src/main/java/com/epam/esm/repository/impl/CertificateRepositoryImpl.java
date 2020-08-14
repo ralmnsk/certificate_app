@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public class CertificateRepositoryImpl extends AbstractRepository<Certificate, Long> implements CertificateRepository {
-    private final static String SELECT = "select";
-    private final static String COUNT = "count";
-    private final static String COUNT_OF_ORDERS_BY_CERTIFICATE_ID = "select count(orders.id) from orders join order_certificate oc on orders.id = oc.order_id where oc.certificate_id = :certificateId ";
+    private static final  String SELECT = "select";
+    private static final  String COUNT = "count";
+    private static final  String COUNT_OF_ORDERS_BY_CERTIFICATE_ID = "select count(orders.id) from orders join order_certificate oc on orders.id = oc.order_id where oc.certificate_id = :certificateId ";
     private QueryBuilder<CertificateFilter> builder;
 
     public CertificateRepositoryImpl(QueryBuilder<CertificateFilter> builder) {
@@ -41,16 +41,15 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
-        List<Certificate> certificates = query.getResultList();
 
-        return certificates;
+        return  query.getResultList();
     }
 
     private CertificateFilter setCountResult(CertificateFilter filter) {
         Query queryTotal = getEntityManager().createNativeQuery
                 (builder.assembleQlString(filter, Certificate.class, COUNT).toString());
         builder.setParameters(filter, queryTotal);
-        long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
+        long countResult = Long.parseLong(queryTotal.getSingleResult().toString());
         int pageSize = filter.getSize();
         filter = builder.updateFilter(filter, pageSize, countResult);
 
@@ -61,7 +60,7 @@ public class CertificateRepositoryImpl extends AbstractRepository<Certificate, L
     public Long getCountOrdersByCertificateId(Long certificateId) {
         Query query = getEntityManager().createNativeQuery(COUNT_OF_ORDERS_BY_CERTIFICATE_ID);
         query.setParameter("certificateId", certificateId);
-        long countResult = Long.valueOf(query.getSingleResult().toString());
-        return countResult;
+
+        return Long.valueOf(query.getSingleResult().toString());
     }
 }

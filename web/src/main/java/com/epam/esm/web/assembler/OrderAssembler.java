@@ -11,7 +11,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto> {
+    private static final String USER_ID = "user_id_";
     private OrderService orderService;
 
     public OrderAssembler(OrderService orderService) {
@@ -35,9 +35,9 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
         Link linkUpdate = linkTo(methodOn(OrderController.class).update(orderDto, orderId, authentication)).withRel("put_update_order");
         Link linkDelete = linkTo(OrderController.class).slash(orderDto.getId()).withRel("delete_order");
         Link linkAddCertificates = linkTo(methodOn(OrderController.class)
-                .addCertificateToOrder(orderId, new HashSet<Long>(), authentication)).withRel("put_add_certificates_to_order");
+                .addCertificateToOrder(orderId, new HashSet<>(), authentication)).withRel("put_add_certificates_to_order");
         Link linkDeleteCertificates = linkTo(methodOn(OrderController.class)
-                .deleteCertificateFromOrder(orderId, new HashSet<Long>(), authentication)).withRel("put_remove_certificates_from_order");
+                .deleteCertificateFromOrder(orderId, new HashSet<>(), authentication)).withRel("put_remove_certificates_from_order");
         orderDto.add(linkSelf, linkCreate, linkUpdate, linkDelete, linkAddCertificates, linkDeleteCertificates);
 
         Link linkCertificates = linkTo(methodOn(OrderController.class)
@@ -72,13 +72,8 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getUserName(),
                             filter.getPage(), filter.getSize(), filter.getSortParams(),
                             filter.getUserId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
-                    )).withRel("user_id_" + filter.getUserId() + "_orders");
+                            null
+                    )).withRel(USER_ID + filter.getUserId() + "_orders");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
         } else {
@@ -109,13 +104,8 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getSize(),
                             filter.getSortParams(),
                             filter.getUserId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
-                    )).withRel("user_id_" + filter.getUserId() + "_orders_previous_page");
+                            null
+                    )).withRel(USER_ID + filter.getUserId() + "_orders_previous_page");
             collectionModel.add(link);
         }
 
@@ -127,13 +117,8 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getSize(),
                             filter.getSortParams(),
                             filter.getUserId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
-                    )).withRel("user_id_" + filter.getUserId() + "_orders_next_page");
+                            null
+                    )).withRel(USER_ID + filter.getUserId() + "_orders_next_page");
             collectionModel.add(link);
         }
     }
@@ -148,12 +133,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getPage() - 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
+                            null
                     )).withRel("orders_previous_page");
             collectionModel.add(link);
         }
@@ -165,12 +145,7 @@ public class OrderAssembler implements Assembler<Long, OrderDto, OrderFilterDto>
                             filter.getPage() + 1,
                             filter.getSize(),
                             filter.getSortParams(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
+                            null
                     )).withRel("orders_next_page");
             collectionModel.add(link);
         }

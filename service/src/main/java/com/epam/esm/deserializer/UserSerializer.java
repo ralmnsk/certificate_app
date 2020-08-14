@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Links;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.IOException;
@@ -36,7 +36,6 @@ public class UserSerializer extends StdSerializer<UserDto> {
         if (isAuthenticationAdmin(authentication) || isAuthenticationCurrentUser(authentication, user.getLogin())) {
             gen.writeStringField("email", user.getLogin());
             gen.writeStringField("role", user.getRole().toString());
-            Links links = user.getLinks();
 
             gen.writeFieldName("_links");
             gen.writeStartObject();
@@ -56,7 +55,7 @@ public class UserSerializer extends StdSerializer<UserDto> {
         if (authentication == null) {
             return false;
         }
-        List<String> authorities = authentication.getAuthorities().stream().map(a -> a.getAuthority()).collect(Collectors.toList());
+        List<String> authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         return authorities.contains("ROLE_ADMIN");
     }
 

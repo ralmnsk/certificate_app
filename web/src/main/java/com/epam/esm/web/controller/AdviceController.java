@@ -96,8 +96,7 @@ public class AdviceController {
         Map<String, String> errors = ex.getFieldsException();
 
         if (errors.isEmpty()) {
-            ExceptionResponseDtoList exception = new ExceptionResponseDtoList("ValidationException");
-            return exception;
+            return new ExceptionResponseDtoList("ValidationException");
         }
         ExceptionResponseDtoList list = new ExceptionResponseDtoList("ValidationException", "Validation exception happened.");
         list.setFields(errors);
@@ -199,16 +198,14 @@ public class AdviceController {
         Set<ConstraintViolation<?>> constraintViolations = ex.getConstraintViolations();
 
         if (constraintViolations.isEmpty()) {
-            ExceptionResponseDtoList exception = new ExceptionResponseDtoList("ConstraintViolationException");
-            return exception;
+            return new ExceptionResponseDtoList("ConstraintViolationException");
+
         }
         ExceptionResponseDtoList list = new ExceptionResponseDtoList("ConstraintViolationException", "Constraint Violation exception happened.");
         Map<String, String> errors = new HashMap<>();
-        constraintViolations.forEach(c->errors.put(c.getPropertyPath().toString(),c.getMessage()));
+        constraintViolations.forEach(c -> errors.put(c.getPropertyPath().toString(), c.getMessage()));
         list.setFields(errors);
         return list;
-//        ex.getConstraintViolations().
-//        return new ExceptionResponseDto("ConstraintViolationException", ex.getMessage());
     }
 
 

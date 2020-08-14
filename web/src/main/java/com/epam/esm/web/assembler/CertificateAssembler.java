@@ -11,7 +11,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class CertificateAssembler implements Assembler<Long, CertificateDto, CertificateFilterDto> {
+    private static final String ORDER_ID = "order_id_";
     private CertificateService certificateService;
 
     public CertificateAssembler(CertificateService certificateService) {
@@ -35,13 +35,12 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                     .create(certificateDto, authentication)).withRel("post_create_certificate");
             Link linkUpdate = linkTo(methodOn(CertificateController.class)
                     .update(certificateDto, certId, authentication)).withRel("put_update_certificate");
-            Link linkPatch = linkTo(methodOn(CertificateController.class)
-                    .update(certId, null, authentication)).withRel("patch_update_certificate");
+
             Link linkDelete = linkTo(CertificateController.class).slash(certificateDto.getId()).withRel("delete_certificate");
             Link linkAddTags = linkTo(methodOn(CertificateController.class)
-                    .addTagToCertificate(certId, new HashSet<Long>(), authentication)).withRel("put_add_tags_to_certificate");
+                    .addTagToCertificate(certId, new HashSet<>(), authentication)).withRel("put_add_tags_to_certificate");
             Link linkDeleteTags = linkTo(methodOn(CertificateController.class)
-                    .deleteTagFromCertificate(certId, new HashSet<Long>(), authentication)).withRel("put_remove_tags_from_certificate");
+                    .deleteTagFromCertificate(certId, new HashSet<>(), authentication)).withRel("put_remove_tags_from_certificate");
             certificateDto.add(linkCreate, linkUpdate, linkDelete, linkAddTags, linkDeleteTags);
         }
 
@@ -75,14 +74,9 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getSize(),
                             filter.getSortParams(),
                             filter.getOrderId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
+                            null
                     )
-            ).withRel("order_id_" + filter.getOrderId() + "_certificates");
+            ).withRel(ORDER_ID + filter.getOrderId() + "_certificates");
             collectionModel.add(link);
             addNextPrevious(collectionModel, filter);
         } else {
@@ -112,13 +106,8 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getSize(),
                             filter.getSortParams(),
                             filter.getOrderId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
-                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_previous_page");
+                            null
+                    )).withRel(ORDER_ID + filter.getOrderId() + "_certificates_previous_page");
             collectionModel.add(link);
         }
 
@@ -130,13 +119,8 @@ public class CertificateAssembler implements Assembler<Long, CertificateDto, Cer
                             filter.getSize(),
                             filter.getSortParams(),
                             filter.getOrderId(),
-                            new Principal() {
-                                @Override
-                                public String getName() {
-                                    return null;
-                                }
-                            }
-                    )).withRel("order_id_" + filter.getOrderId() + "_certificates_next_page");
+                            null
+                    )).withRel(ORDER_ID + filter.getOrderId() + "_certificates_next_page");
             collectionModel.add(link);
         }
     }

@@ -12,21 +12,21 @@ import java.util.Optional;
 
 @Repository
 public class OrderRepositoryImpl extends AbstractRepository<Order, Long> implements OrderRepository {
-    private final static String PERCENT = "%";
-    private final static String SELECT = "select";
-    private final static String COUNT = "count";
-    private final static String USER_SURNAME = "userSurname";
-    private final static String USER_NAME = "userName";
-    private final static String USER_ID = "userId";
-    private final static String SELECT_SQL = "select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost  ";
-    private final static String COUNT_SQL = "select distinct count(*) from(select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
-    private final static String FROM = "from orders orders join users users on orders.user_id = users.id where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
-    private final static String AND_USERS = "and users.id = :userId";
-    private final static String APPEND_C = ") c";
-    private final static String ORDERS_BY_CERTIFICATE_ID = "select orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost,orders.user_id " +
+    private static final String PERCENT = "%";
+    private static final String SELECT = "select";
+    private static final String COUNT = "count";
+    private static final String USER_SURNAME = "userSurname";
+    private static final String USER_NAME = "userName";
+    private static final String USER_ID = "userId";
+    private static final String SELECT_SQL = "select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost  ";
+    private static final String COUNT_SQL = "select distinct count(*) from(select distinct orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
+    private static final String FROM = "from orders orders join users users on orders.user_id = users.id where users.surname like :userSurname and users.name like :userName and users.deleted = false and orders.deleted = false ";
+    private static final String AND_USERS = "and users.id = :userId";
+    private static final String APPEND_C = ") c";
+    private static final String ORDERS_BY_CERTIFICATE_ID = "select orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost,orders.user_id " +
             "from orders join order_certificate oc on orders.id = oc.order_id join users u on orders.user_id = u.id " +
             "join certificate c on oc.certificate_id = c.id where orders.deleted = false and u.deleted = false and c.deleted = false and c.id = :certificateId";
-    private final static String ORDERS_BY_USER_ID = "select orders.id,orders.completed,orders.created,orders.deleted, orders.description,orders.total_cost " +
+    private static final String ORDERS_BY_USER_ID = "select orders.id,orders.completed,orders.created,orders.deleted, orders.description,orders.total_cost " +
             "from orders " +
             "    join users u on orders.user_id = u.id " +
             "where u.deleted=false and orders.deleted=false and u.id = :userId";
@@ -41,7 +41,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     public Order getFirstByUserId(Long userId) {
 
         Query query = getEntityManager().createNativeQuery(ORDERS_BY_USER_ID, Order.class);
-        query.setParameter("userId", userId);
+        query.setParameter(USER_ID, userId);
         List<Order> orders = query.getResultList();
         Optional<Order> order = orders.stream().filter(o -> o.getCertificates().isEmpty()).findFirst();
         return order.isPresent() ? order.get() : null;
@@ -64,8 +64,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     public List<Order> getOrdersByCertificateId(Long certificateId) {
         Query query = getEntityManager().createNativeQuery(ORDERS_BY_CERTIFICATE_ID, Order.class);
         query.setParameter("certificateId", certificateId);
-        List<Order> orders = query.getResultList();
-        return orders;
+        return query.getResultList();
     }
 
     private List<Order> getList(OrderFilter filter) {
@@ -76,9 +75,8 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
-        List<Order> orders = query.getResultList();
 
-        return orders;
+        return query.getResultList();
     }
 
     private OrderFilter setCountResult(OrderFilter filter) {
@@ -86,8 +84,7 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
                 (assembleQlString(filter, COUNT).toString());
         querySetParameters(filter, queryTotal);
 
-        long countResult = Long.valueOf(queryTotal.getSingleResult().toString());
-        int i = (int) countResult;
+        long countResult = Long.parseLong(queryTotal.getSingleResult().toString());
         int pageSize = filter.getSize();
         filter = builder.updateFilter(filter, pageSize, countResult);
 

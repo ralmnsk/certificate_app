@@ -14,9 +14,9 @@ import java.util.HashSet;
 
 @Component
 public class UserPageBuilder extends AbstractPageBuilder<UserDto, UserService, UserAssembler, UserFilterDto> {
-    private final static String EMPTY = "";
-    private final static String SURNAME = "surname";
-    private final static String NAME = "name";
+    private static final String EMPTY = "";
+    private static final String SURNAME = "surname";
+    private static final String NAME = "name";
 
     public UserPageBuilder(UserService service, UserAssembler assembler) {
         super(new HashSet<>(Arrays.asList(SURNAME, NAME)), service, assembler);

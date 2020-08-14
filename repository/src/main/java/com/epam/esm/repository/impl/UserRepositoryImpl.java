@@ -12,19 +12,19 @@ import java.util.Optional;
 
 @Repository
 public class UserRepositoryImpl extends AbstractRepository<User, Long> implements UserRepository {
-    private final static String PERCENT = "%";
-    private final static String SELECT = "select";
-    private final static String COUNT = "count";
-    private final static String SELECT_SQL = "select * from users where users.login = :login and users.deleted = false ";
-    private final static String LOGIN = "login";
-    private final static String NAME = "name";
-    private final static String SURNAME = "surname";
-    private final static String SELECT_BY_ORDER_ID = "select users.id,users.surname,users.name,users.login, users.password, users.deleted, users.role from users join orders o on users.id = o.user_id where o.id = :orderId";
-    private final static String ORDER_ID = "orderId";
-    private final static String SELECT_DISTINCT = "select distinct * ";
-    private final static String SELECT_COUNT = "select count(*) from (";
-    private final static String FROM_USERS = " from users where surname like :surname and name like :name and users.deleted = false ";
-    private final static String APPEND_C = ") c";
+    private static final String PERCENT = "%";
+    private static final String SELECT = "select";
+    private static final String COUNT = "count";
+    private static final String SELECT_SQL = "select * from users where users.login = :login and users.deleted = false ";
+    private static final String LOGIN = "login";
+    private static final String NAME = "name";
+    private static final String SURNAME = "surname";
+    private static final String SELECT_BY_ORDER_ID = "select users.id,users.surname,users.name,users.login, users.password, users.deleted, users.role from users join orders o on users.id = o.user_id where o.id = :orderId";
+    private static final String ORDER_ID = "orderId";
+    private static final String SELECT_DISTINCT = "select distinct * ";
+    private static final String SELECT_COUNT = "select count(*) from (";
+    private static final String FROM_USERS = " from users where surname like :surname and name like :name and users.deleted = false ";
+    private static final String APPEND_C = ") c";
     private QueryBuilder<UserFilter> builder;
 
     public UserRepositoryImpl(QueryBuilder<UserFilter> builder) {
@@ -36,9 +36,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     public User findByLogin(String login) {
         Query query = getEntityManager().createNativeQuery(SELECT_SQL, User.class);
         query.setParameter(LOGIN, login);
-        User user = (User) query.getSingleResult();
-
-        return user;
+        return (User) query.getSingleResult();
     }
 
     @Override
@@ -84,16 +82,14 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
         int pageSize = filter.getSize();
         query.setFirstResult((pageNumber) * pageSize);
         query.setMaxResults(pageSize);
-        List<User> users = query.getResultList();
-
-        return users;
+        return query.getResultList();
     }
 
     private UserFilter setCountResult(UserFilter filter) {
         Query queryCount = getEntityManager().createNativeQuery(assembleQlString(filter, COUNT).toString());
         queryCount.setParameter(NAME, PERCENT + filter.getUserName() + PERCENT);
         queryCount.setParameter(SURNAME, PERCENT + filter.getUserSurname() + PERCENT);
-        long countResult = Long.valueOf(queryCount.getSingleResult().toString());
+        long countResult = Long.parseLong(queryCount.getSingleResult().toString());
         int pageSize = filter.getSize();
         filter = builder.updateFilter(filter, pageSize, countResult);
 

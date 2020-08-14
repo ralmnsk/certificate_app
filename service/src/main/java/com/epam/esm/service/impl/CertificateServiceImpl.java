@@ -55,7 +55,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Transactional(readOnly = true)
     @Override
     public Optional<CertificateDto> get(Long id) {
-        Optional<CertificateDto> certificateDtoOptional = Optional.empty();
+        Optional<CertificateDto> certificateDtoOptional;
         Certificate certificate = certificateRepository.get(id).orElseThrow(() -> new NotFoundException("Certificate not found exception, id:" + id));
         certificateDtoOptional = Optional.ofNullable(mapper.map(certificate, CertificateDto.class));
 
@@ -97,7 +97,7 @@ public class CertificateServiceImpl implements CertificateService {
     public boolean delete(Long certId) {
         Certificate certificate = certificateRepository.get(certId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + certId));
         if (isCertificateInAnyOrder(certId)) {
-            log.warn("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:{}",certId);
+            log.warn("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:{}", certId);
             throw new DeleteException("Certificate delete: certificate was included in some orders. It can't be deleted. Certificate id:" + certId);
         }
         recalculateTotalPrices(certificate);
@@ -129,30 +129,36 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public void addCertificateToOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Add Certificate to Order: order not found: id:" + orderId));
-        if(order.isCompleted()){
+        if (order.isCompleted()) {
             log.warn("CertificateService: certificates can't be added to the order. Order is completed. Order id:{}", orderId);
-            throw new UpdateException("CertificateService: certificates can't be added to the order. Order is completed. Order id:"+orderId);
+            throw new UpdateException("CertificateService: certificates can't be added to the order. Order is completed. Order id:" + orderId);
         }
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Add Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().add(certificate));
-        orderRepository.update(order).orElseThrow(() -> new UpdateException("Add Certificate to Order: Certificate update exception"));
+        Optional<Order> update = orderRepository.update(order);
+        if (!update.isPresent()) {
+            throw new UpdateException("Add Certificate to Order: Certificate update exception");
+        }
     }
 
     @Transactional
     @Override
     public void removeCertificateFromOrder(Long orderId, Set<Long> set) {
         Order order = orderRepository.get(orderId).orElseThrow(() -> new NotFoundException("Delete Certificate from Order: Certificate not found: id:" + orderId));
-        if(order.isCompleted()){
-            log.warn("CertificateService: certificates can't be removed from the order. Order is completed. Order id:{}",orderId);
-            throw new UpdateException("CertificateService: certificates can't be removed from the order. Order is completed. Order id:"+orderId);
+        if (order.isCompleted()) {
+            log.warn("CertificateService: certificates can't be removed from the order. Order is completed. Order id:{}", orderId);
+            throw new UpdateException("CertificateService: certificates can't be removed from the order. Order is completed. Order id:" + orderId);
         }
         set
                 .stream()
                 .map(idDto -> certificateRepository.get(idDto).orElseThrow(() -> new NotFoundException("Delete Certificate to Order: Certificate not found: id:" + idDto)))
                 .forEach(certificate -> order.getCertificates().remove(certificate));
-        orderRepository.update(order).orElseThrow(() -> new UpdateException("Delete Certificate to Order: Certificate update exception"));
+        Optional<Order> update = orderRepository.update(order);
+        if (!update.isPresent()) {
+            throw new UpdateException("Delete Certificate to Order: Certificate update exception");
+        }
     }
 
     public boolean isCertificateInAnyOrder(Long certificateId) {

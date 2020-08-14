@@ -8,16 +8,14 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 @Service
 public class OAuthService {
 
-    private final String ROLE_USER = "ROLE_USER";
-    private final String ROLE_ADMIN = "ROLE_ADMIN";
-    private final String ROLE_GUEST = "ROLE_GUEST";
+    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+    private static final String ROLE_GUEST = "ROLE_GUEST";
 
     private UserService userService;
 
@@ -26,7 +24,6 @@ public class OAuthService {
     }
 
     public RegistrationDto getUserDetails(String login) {
-        Collection<GrantedAuthority> grantedAuthoritiesList = new ArrayList<>();
 
         RegistrationDto registrationDto = null;
         UserDto userDto = userService.findByLogin(login);

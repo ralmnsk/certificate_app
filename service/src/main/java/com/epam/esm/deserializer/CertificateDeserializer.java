@@ -34,10 +34,10 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
 
         if (!errors.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            errors.forEach((k, v) -> {
-                builder.append("Field ").append(k).append(v).append("  ");
-            });
-            certificateDto = null;
+            errors.forEach((k, v) ->
+                builder.append("Field ").append(k).append(v).append("  ")
+            );
+
             log.error(builder.toString());
             ValidationException validationException = new ValidationException(builder.toString());
             validationException.getFieldsException().putAll(errors);
@@ -51,7 +51,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
 
     public String validateName(String name) {
         boolean matches = name.matches("([А-Яа-яa-zA-Z0-9 .!&?#,;$]){2,256}");
-        if (name == null || !matches) {
+        if (name.isEmpty() || !matches) {
             errors.put("name:", "Name must be between 2 and 256 characters.");
         }
         return name;
@@ -59,7 +59,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
 
     public String validateDescription(String description) {
         boolean matches = description.matches("[А-Яа-яa-zA-Z0-9 .!&?#,;$]{0,999}");
-        if (description == null || !matches) {
+        if (description.isEmpty() || !matches) {
             errors.put("description:", "Description must be between 2 and 999 characters.");
         }
         return description;
@@ -71,10 +71,10 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
         try {
             num = new BigDecimal(priceString.trim());
             num = num.setScale(2, RoundingMode.HALF_EVEN);
-            if (num.compareTo(new BigDecimal(0.00)) < 0) {
+            if (num.compareTo(BigDecimal.valueOf(0.00)) < 0) {
                 throw new NumberFormatException();
             }
-            if (num.compareTo(new BigDecimal(1000000000000.00)) > 0) {
+            if (num.compareTo(BigDecimal.valueOf(1000000000000.00)) > 0) {
                 throw new NumberFormatException();
             }
             return num;

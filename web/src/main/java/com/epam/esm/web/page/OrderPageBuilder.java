@@ -14,8 +14,8 @@ import java.util.HashSet;
 
 @Component
 public class OrderPageBuilder extends AbstractPageBuilder<OrderDto, OrderService, OrderAssembler, OrderFilterDto> {
-    private final static String EMPTY = "";
-    private final static String ORDERS_ID = "orders.id";
+    private static final String EMPTY = "";
+    private static final String ORDERS_ID = "orders.id";
 
     public OrderPageBuilder(OrderService service, OrderAssembler assembler) {
         super(new HashSet<>(Arrays.asList(ORDERS_ID)), service, assembler);

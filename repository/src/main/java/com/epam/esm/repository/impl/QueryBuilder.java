@@ -15,50 +15,50 @@ import java.util.Set;
 @Component
 public class QueryBuilder<F extends AbstractFilter> {
 
-    private final static String SELECT = " select distinct ";
-    private final static String TAG = " tag.id, tag.deleted, tag.name ";
-    private final static String CERTIFICATE = " certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration, certificate.modification,certificate.name,certificate.price ";
-    private final static String ORDER = " orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
-    private final static String USER = " users.id, users.deleted, users.login, users.name, users.password, users.role, users.surname ";
+    private static final String SELECT = " select distinct ";
+    private static final String TAG = " tag.id, tag.deleted, tag.name ";
+    private static final String CERTIFICATE = " certificate.id,certificate.creation,certificate.deleted,certificate.description,certificate.duration, certificate.modification,certificate.name,certificate.price ";
+    private static final String ORDER = " orders.id,orders.completed,orders.created,orders.deleted,orders.description,orders.total_cost ";
+    private static final String USER = " users.id, users.deleted, users.login, users.name, users.password, users.role, users.surname ";
 
-    private final static String TAG_TABLE = " tag ";
-    private final static String CERTIFICATE_TABLE = " certificate ";
-    private final static String ORDER_TABLE = " orders ";
-    private final static String USER_TABLE = " users ";
+    private static final String TAG_TABLE = " tag ";
+    private static final String CERTIFICATE_TABLE = " certificate ";
+    private static final String ORDER_TABLE = " orders ";
+    private static final String USER_TABLE = " users ";
 
-    private final static String FROM = " from ";
-    private final static String TAG_JOIN_CERTIFICATE = " join cert_tag ct on certificate.id = ct.certificate_id join tag on ct.tag_id = tag.id ";
-    private final static String CERTIFICATE_JOIN_ORDER = " join order_certificate oc on certificate.id = oc.certificate_id join orders on oc.order_id = orders.id ";
-    private final static String ORDER_JOIN_USER = " join users on orders.user_id = users.id ";
+    private static final String FROM = " from ";
+    private static final String TAG_JOIN_CERTIFICATE = " join cert_tag ct on certificate.id = ct.certificate_id join tag on ct.tag_id = tag.id ";
+    private static final String CERTIFICATE_JOIN_ORDER = " join order_certificate oc on certificate.id = oc.certificate_id join orders on oc.order_id = orders.id ";
+    private static final String ORDER_JOIN_USER = " join users on orders.user_id = users.id ";
 
-    private final static String WHERE = " where ";
-    private final static String AND = " and ";
+    private static final String WHERE = " where ";
+    private static final String AND = " and ";
 
-    private final static String TAG_NAME = " tag.name like :tagName ";
-    private final static String CERTIFICATE_NAME = " certificate.name like :certificateName ";
-    private final static String USER_SURNAME = " users.surname like :surname ";
-    private final static String USER_NAME = " users.name like :userName ";
+    private static final String TAG_NAME = " tag.name like :tagName ";
+    private static final String CERTIFICATE_NAME = " certificate.name like :certificateName ";
+    private static final String USER_SURNAME = " users.surname like :surname ";
+    private static final String USER_NAME = " users.name like :userName ";
 
-    private final static String TAG_ID = " tag.id = :tagId ";
-    private final static String CERTIFICATE_ID = " certificate.id = :certificateId ";
-    private final static String ORDER_ID = " orders.id = :orderId and orders.deleted = false";
-    private final static String USER_ID = " users.id = :userId ";
+    private static final String TAG_ID = " tag.id = :tagId ";
+    private static final String CERTIFICATE_ID = " certificate.id = :certificateId ";
+    private static final String ORDER_ID = " orders.id = :orderId and orders.deleted = false";
+    private static final String USER_ID = " users.id = :userId ";
 
-    private final static String ORDER_BY = " order by  ";
-    private final static String SELECT_COUNT = "select count(*) from (";
-    private final static String SELECT_COUNT_END = " ) c ";
-    private final static String EMPTY = "";
-    private final static String COUNT = "count";
-    private final static String PERCENT = "%";
-    private final static String CERTIFICATE_NAME_PARAM = "certificateName";
-    private final static String TAG_NAME_PARAM = "tagName";
-    private final static String SURNAME_PARAM = "surname";
-    private final static String USER_NAME_PARAM = "userName";
-    private final static String TAG_ID_PARAM = "tagId";
-    private final static String CERTIFICATE_ID_PARAM = "certificateId";
-    private final static String ORDER_ID_PARAM = "orderId";
-    private final static String USER_ID_PARAM = "userId";
-    private final static String CERTIFICATE_DELETED_FALSE = " certificate.deleted = false and ";
+    private static final String ORDER_BY = " order by  ";
+    private static final String SELECT_COUNT = "select count(*) from (";
+    private static final String SELECT_COUNT_END = " ) c ";
+    private static final String EMPTY = "";
+    private static final String COUNT = "count";
+    private static final String PERCENT = "%";
+    private static final String CERTIFICATE_NAME_PARAM = "certificateName";
+    private static final String TAG_NAME_PARAM = "tagName";
+    private static final String SURNAME_PARAM = "surname";
+    private static final String USER_NAME_PARAM = "userName";
+    private static final String TAG_ID_PARAM = "tagId";
+    private static final String CERTIFICATE_ID_PARAM = "certificateId";
+    private static final String ORDER_ID_PARAM = "orderId";
+    private static final String USER_ID_PARAM = "userId";
+    private static final String CERTIFICATE_DELETED_FALSE = " certificate.deleted = false and ";
 
     private HashSet<String> entityNameSet;
 
@@ -66,25 +66,25 @@ public class QueryBuilder<F extends AbstractFilter> {
 
     public StringBuilder assembleQlString(CertificateFilter certificateFilter, Class<?> clazz, String selecting) {//for class
         getEntityNameSet(certificateFilter);
-        String tag_cert = entityNameSet.contains(TAG_TABLE) ? TAG_JOIN_CERTIFICATE : EMPTY;
-        String cert_order = entityNameSet.contains(ORDER_TABLE) ? CERTIFICATE_JOIN_ORDER : EMPTY;
-        String order_user = entityNameSet.contains(USER_TABLE) ? ORDER_JOIN_USER : EMPTY;
+        String tagCert = entityNameSet.contains(TAG_TABLE) ? TAG_JOIN_CERTIFICATE : EMPTY;
+        String certOrder = entityNameSet.contains(ORDER_TABLE) ? CERTIFICATE_JOIN_ORDER : EMPTY;
+        String orderUser = entityNameSet.contains(USER_TABLE) ? ORDER_JOIN_USER : EMPTY;
 
-        String tag_name = entityNameSet.contains(TAG_TABLE) ? TAG_NAME + AND : EMPTY;
-        String user_name = entityNameSet.contains(USER_TABLE) ? AND + USER_SURNAME + AND + USER_NAME : EMPTY;
+        String tagName = entityNameSet.contains(TAG_TABLE) ? TAG_NAME + AND : EMPTY;
+        String userName = entityNameSet.contains(USER_TABLE) ? AND + USER_SURNAME + AND + USER_NAME : EMPTY;
 
         StringBuilder ql = (new StringBuilder(SELECT))
                 .append(addObjectColumns(clazz))
                 .append(FROM)
                 .append(addObject(clazz))
-                .append(tag_cert)
-                .append(cert_order)
-                .append(order_user)
+                .append(tagCert)
+                .append(certOrder)
+                .append(orderUser)
                 .append(WHERE)
                 .append(CERTIFICATE_DELETED_FALSE)
-                .append(tag_name)
+                .append(tagName)
                 .append(CERTIFICATE_NAME)
-                .append(user_name);
+                .append(userName);
 
         addObjectId(certificateFilter, ql);
 

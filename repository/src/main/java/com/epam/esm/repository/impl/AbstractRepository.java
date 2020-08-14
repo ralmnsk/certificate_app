@@ -44,7 +44,10 @@ public abstract class AbstractRepository<T extends Identifiable, E> implements C
 
     @Override
     public Optional<T> update(T t) {
-        get((E) t.getId()).orElseThrow(() -> new NotFoundException("Repository: entity not found exception."));
+        Optional<T> optional = get((E) t.getId());
+        if(!optional.isPresent()){
+                throw new NotFoundException("Repository: entity not found exception.");
+        }
         entityManager.merge(t);
         entityManager.flush();
         entityManager.refresh(t);

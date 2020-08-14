@@ -101,7 +101,6 @@ public class TagServiceImpl implements TagService {
     @Transactional(readOnly = true)
     @Override
     public Optional<TagDto> get(Integer id) {
-        Optional<TagDto> tagDtoOptional = Optional.empty();
         Tag tag = tagRepository.get(id).orElseThrow(() -> new NotFoundException("Tag not found exception"));
         TagDto tagDto = mapper.map(tag, TagDto.class);
 
@@ -117,8 +116,11 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public boolean delete(Integer tagId) {
-        Tag tag = tagRepository.get(tagId).orElseThrow(() -> new NotFoundException("Certificate delete: not found exception, id:" + tagId));
-//        tagRepository.delete(tagId);
+        Optional<Tag> optionalTag = tagRepository.get(tagId);
+        if (!optionalTag.isPresent()) {
+            throw new NotFoundException("Certificate delete: not found exception, id:" + tagId);
+        }
+
         return true;
     }
 
@@ -130,7 +132,10 @@ public class TagServiceImpl implements TagService {
                 .stream()
                 .map(idDto -> tagRepository.get(idDto.intValue()).orElseThrow(() -> new NotFoundException("Add Tag to Certificate: Tag not found: id:" + idDto)))
                 .forEach(tag -> certificate.getTags().add(tag));
-        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Add Tag to Certificate: Tag update exception"));
+        Optional<Certificate> update = certificateRepository.update(certificate);
+        if (!update.isPresent()) {
+            throw new UpdateException("Add Tag to Certificate: Tag update exception");
+        }
     }
 
     @Transactional
@@ -141,13 +146,15 @@ public class TagServiceImpl implements TagService {
                 .stream()
                 .map(idDto -> tagRepository.get((int) (long) idDto).orElseThrow(() -> new NotFoundException("Delete Tag to Certificate: Tag not found: id:" + idDto)))
                 .forEach(tag -> certificate.getTags().remove(tag));
-        certificateRepository.update(certificate).orElseThrow(() -> new UpdateException("Delete Tag to Certificate: Tag update exception"));
+        Optional<Certificate> update = certificateRepository.update(certificate);
+        if (!update.isPresent()) {
+            throw new UpdateException("Delete Tag to Certificate: Tag update exception");
+        }
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Integer> findTopTag() {
-        List<Integer> list = tagRepository.findTopTag();
-        return list;
+        return tagRepository.findTopTag();
     }
 }

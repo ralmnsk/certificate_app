@@ -14,6 +14,9 @@ import java.security.Principal;
 @Component
 public class WebSecurity {
     private UserService userService;
+    private static final String ACCESS_DENIED = "Access denied";
+    private static final String USER = "User with principal login: ";
+    private static final String EXCEPTION = " not found exception";
 
     public WebSecurity(UserService userService) {
         this.userService = userService;
@@ -23,8 +26,8 @@ public class WebSecurity {
 
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
-            log.warn("Access denied");
-            throw new AccessException("Access denied");
+            log.warn(ACCESS_DENIED);
+            throw new AccessException(ACCESS_DENIED);
         }
         if (userDto.getRole().equals(Role.ADMIN)) {
             return true;
@@ -33,7 +36,7 @@ public class WebSecurity {
         if (userDto.getId().equals(userId)) {
             return true;
         }
-        throw new AccessException("Access denied");
+        throw new AccessException(ACCESS_DENIED);
     }
 
     public boolean checkUserId(Principal principal, Long userId) {
@@ -44,14 +47,14 @@ public class WebSecurity {
     public boolean checkOrderId(String login, Long orderId) {
 
         UserDto userFromLogin = userService.findByLogin(login);
-        UserDto userDto = userService.getUserByOrderId(orderId).orElseThrow(() -> new NotFoundException("User with principal login: " + login + " not found exception"));
+        UserDto userDto = userService.getUserByOrderId(orderId).orElseThrow(() -> new NotFoundException(USER + login + EXCEPTION));
         if (userFromLogin.getRole().equals(Role.ADMIN)) {
             return true;
         }
         if (userDto.getLogin().equals(login)) {
             return true;
         }
-        throw new AccessException("Access denied");
+        throw new AccessException(ACCESS_DENIED);
     }
 
     public boolean checkOrderId(Principal principal, Long orderId) {
@@ -63,14 +66,14 @@ public class WebSecurity {
 
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
-            log.warn("User with principal login: " + login + " not found exception");
-            throw new NotFoundException("User with principal login: " + login + " not found exception");
+            log.warn(USER + login + EXCEPTION);
+            throw new NotFoundException(USER + login + EXCEPTION);
         }
         if (userDto.getRole().equals(Role.ADMIN)) {
             return true;
         }
-        log.warn("Access denied");
-        throw new AccessException("Access denied");
+        log.warn(ACCESS_DENIED);
+        throw new AccessException(ACCESS_DENIED);
     }
 
     public boolean checkOperationAccess(Principal principal) {

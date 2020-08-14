@@ -1,5 +1,6 @@
 package com.epam.esm.deserializer;
 
+import com.epam.esm.repository.exception.JsonParseCustomException;
 import com.fasterxml.jackson.databind.util.StdConverter;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public class StringToDecimalConverter extends StdConverter<String, BigDecimal> {
             num = new BigDecimal(value.trim());
             num = num.setScale(2, RoundingMode.HALF_EVEN);
         } catch (NumberFormatException nfe) {
-            throw new RuntimeException("String '" + value + "' to decimal converting exception.");
+            throw new JsonParseCustomException("String '" + value + "' to decimal converting exception.");
         }
         return num;
 

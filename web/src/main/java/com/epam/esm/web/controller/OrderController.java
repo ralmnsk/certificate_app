@@ -51,7 +51,14 @@ public class OrderController {
     private UserService userService;
     private ObjectMapper objectMapper;
 
-    public OrderController(OrderService orderService, OrderAssembler orderAssembler, OrderPageBuilder orderPageBuilder, CertificatePageBuilder certificatePageBuilder, CertificateService certificateService, WebSecurity webSecurity, UserService userService, ObjectMapper objectMapper) {
+    public OrderController(OrderService orderService,
+                           OrderAssembler orderAssembler,
+                           OrderPageBuilder orderPageBuilder,
+                           CertificatePageBuilder certificatePageBuilder,
+                           CertificateService certificateService,
+                           WebSecurity webSecurity,
+                           UserService userService,
+                           ObjectMapper objectMapper) {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
         this.orderPageBuilder = orderPageBuilder;
@@ -137,9 +144,8 @@ public class OrderController {
         filter.setPage(page);
         filter.setSize(size);
         filter.setSortParams(sort);
-        CustomPageDto<OrderDto> build = orderPageBuilder.build(filter);
 
-        return build;
+        return orderPageBuilder.build(filter);
     }
 
 
@@ -217,7 +223,7 @@ public class OrderController {
             log.warn("Order patch processing exception:{}", e.getMessage());
             throw new UpdateException("Order patch processing exception:" + e.getMessage());
         }
-        orderDto = patchToDto(orderDto, orderDtoPatched);
+        patchToDto(orderDto, orderDtoPatched);
         orderDto = orderService.update(orderDto).orElseThrow(() -> new UpdateException(id));
 
         return orderAssembler.assemble(id, orderDto, authentication);
@@ -240,15 +246,15 @@ public class OrderController {
             }
         }
 
-        if (patched.isCompleted() == true) {
+        if (patched.isCompleted()) {
             dto.setCompleted(patched.isCompleted());
         }
 
         if (!errors.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            errors.forEach((k, v) -> {
-                builder.append("Field ").append(k).append(v).append("  ");
-            });
+            errors.forEach((k, v) ->
+                builder.append("Field ").append(k).append(v).append("  ")
+            );
             log.error(builder.toString());
             ValidationException validationException = new ValidationException(builder.toString());
             validationException.getFieldsException().putAll(errors);

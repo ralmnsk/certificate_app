@@ -9,7 +9,6 @@ import com.epam.esm.dto.filter.UserFilterDto;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.repository.exception.NotFoundException;
 import com.epam.esm.repository.exception.UpdateException;
-import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.web.assembler.UserAssembler;
 import com.epam.esm.web.page.OrderPageBuilder;
@@ -24,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,24 +41,27 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
 
+    private static final String REGEX = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}";
     private OrderPageBuilder orderPageBuilder;
     private UserService userService;
     private UserAssembler userAssembler;
     private UserPageBuilder userPageBuilder;
-    private OrderService orderService;
     private ObjectMapper objectMapper;
     private WebSecurity webSecurity;
-    private BCryptPasswordEncoder encoder;
 
-    public UserController(OrderPageBuilder orderPageBuilder, UserService userService, UserAssembler userAssembler, UserPageBuilder userPageBuilder, OrderService orderService, ObjectMapper objectMapper, WebSecurity webSecurity, BCryptPasswordEncoder encoder) {
+    public UserController(OrderPageBuilder orderPageBuilder,
+                          UserService userService,
+                          UserAssembler userAssembler,
+                          UserPageBuilder userPageBuilder,
+                          ObjectMapper objectMapper,
+                          WebSecurity webSecurity
+    ) {
         this.orderPageBuilder = orderPageBuilder;
         this.userService = userService;
         this.userAssembler = userAssembler;
         this.userPageBuilder = userPageBuilder;
-        this.orderService = orderService;
         this.objectMapper = objectMapper;
         this.webSecurity = webSecurity;
-        this.encoder = encoder;
     }
 
     @GetMapping("/{id}")
@@ -185,7 +186,7 @@ public class UserController {
             log.warn("User patch processing exception:{}", e.getMessage());
             throw new UpdateException("User patch processing exception:" + e.getMessage());
         }
-        userDto = patchToDto(userDto, userUpdateDtoPatched);
+        patchToDto(userDto, userUpdateDtoPatched);
         userDto = userService.update(userDto).orElseThrow(() -> new UpdateException(id));
 
         return userAssembler.assemble(id, userDto, authentication);
@@ -195,7 +196,7 @@ public class UserController {
         Map<String, String> errors = new HashMap<>();
 
         if (patched.getName() != null) {
-            boolean matches = patched.getName().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            boolean matches = patched.getName().matches(REGEX);
             if (matches) {
                 dto.setName(patched.getName());
             } else {
@@ -204,7 +205,7 @@ public class UserController {
         }
 
         if (patched.getSurname() != null) {
-            boolean matches = patched.getSurname().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            boolean matches = patched.getSurname().matches(REGEX);
             if (matches) {
                 dto.setSurname(patched.getSurname());
             } else {
@@ -213,7 +214,7 @@ public class UserController {
         }
 
         if (patched.getPassword() != null) {
-            boolean matches = patched.getPassword().matches("([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}");
+            boolean matches = patched.getPassword().matches(REGEX);
             if (matches) {
                 dto.setPassword(patched.getPassword());
             } else {
@@ -223,9 +224,9 @@ public class UserController {
 
         if (!errors.isEmpty()) {
             StringBuilder builder = new StringBuilder();
-            errors.forEach((k, v) -> {
-                builder.append("Field ").append(k).append(v).append("  ");
-            });
+            errors.forEach((k, v) ->
+                    builder.append("Field ").append(k).append(v).append("  ")
+            );
             log.error(builder.toString());
             ValidationException validationException = new ValidationException(builder.toString());
             validationException.getFieldsException().putAll(errors);
