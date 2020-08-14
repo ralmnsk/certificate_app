@@ -37,7 +37,7 @@ class OrderServiceImplTest {
     @Mock
     private ModelMapper mapper;
     @Mock
-    private TotalCostCalculator calculator = new TotalCostCalculator(mapper);
+    private TotalCostCalculator calculator = new TotalCostCalculator();
     @Mock
     private UserRepository userRepository;
     @InjectMocks
