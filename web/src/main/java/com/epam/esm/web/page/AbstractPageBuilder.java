@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
     private static final String EMPTY = "";
     private static final String NAME = "name+";
-    private static final String REGEX = "[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
+    private static final String REGEX = "[a-zA-Z.+-]{0,20}";
+    //"[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
 
@@ -76,6 +77,7 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
     public FilterSort getSort(List<String> params) {
         List<FilterOrder> filterOrders = new ArrayList<>();
         for (String param : params) {
+
             if (param.matches(REGEX)) {
                 FilterDirection filterDirection = FilterDirection.DESC;
                 param = param.trim();
@@ -95,4 +97,19 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
         filterSort.setFilterOrders(filterOrders);
         return filterSort;
     }
+
+//    public boolean isContainDirectionMoreThenOne(String str) {
+//        int plusCount = 0;
+//        int minusCount = 0;
+//        while (str.contains(PLUS)) {
+//            str = str.replace(PLUS, EMPTY);
+//            plusCount++;
+//        }
+//        while (str.contains(MINUS)) {
+//            str = str.replace(MINUS, EMPTY);
+//            minusCount++;
+//        }
+//
+//        return (plusCount + minusCount) > 1;
+//    }
 }
