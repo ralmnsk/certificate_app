@@ -148,7 +148,7 @@ public class QueryBuilder<F extends AbstractFilter> {
     public F updateFilter(F filter, int pageSize, long countResult) {
         filter.setTotalPages((countResult / pageSize));
         if (countResult % pageSize != 0) {
-            filter.setTotalPages(((int) countResult / pageSize) + 1);
+            filter.setTotalPages(((int) (countResult / pageSize) + 1));
         }
         filter.setTotalElements(countResult);
 

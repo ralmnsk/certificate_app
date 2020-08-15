@@ -87,7 +87,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         if (uri.matches("/certificates") && !methods.contains(req.getMethod())) {
             return true;
         }
-        return uri.matches("(/certificates/){1}[0-9]+(/tags){1}") && !methods.contains(req.getMethod());
+        return uri.matches("(/certificates/){1}[0-9]{0,18}(/tags){1}") && !methods.contains(req.getMethod());
     }
 
 
