@@ -24,16 +24,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.*;
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/certificates")
 public class CertificateController {
@@ -72,7 +75,7 @@ public class CertificateController {
             @Min(value = 1, message = "size must be 1-100")
             @Max(value = 100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false) List<String> sort
+            @RequestParam(required = false) @Size(min = 0, max = 3) List<@Pattern(regexp = "[a-zA-Z.+-]{0,20}") String> sort
     ) {
         CertificateFilterDto filterDto = new CertificateFilterDto();
         filterDto.setTagName(tagName);
@@ -266,7 +269,7 @@ public class CertificateController {
         if (!errors.isEmpty()) {
             StringBuilder builder = new StringBuilder();
             errors.forEach((k, v) ->
-                builder.append("Field ").append(k).append(v).append("  ")
+                    builder.append("Field ").append(k).append(v).append("  ")
             );
             log.error(builder.toString());
             ValidationException validationException = new ValidationException(builder.toString());

@@ -22,7 +22,7 @@ public class WebSecurity {
         this.userService = userService;
     }
 
-    public boolean checkUserId(String login, Long userId) {
+    public void checkUserId(String login, Long userId) {
 
         UserDto userDto = userService.findByLogin(login);
         if (userDto == null) {
@@ -30,18 +30,18 @@ public class WebSecurity {
             throw new AccessException(ACCESS_DENIED);
         }
         if (userDto.getRole().equals(Role.ADMIN)) {
-            return true;
+            return;
         }
 
         if (userDto.getId().equals(userId)) {
-            return true;
+            return;
         }
         throw new AccessException(ACCESS_DENIED);
     }
 
-    public boolean checkUserId(Principal principal, Long userId) {
+    public void checkUserId(Principal principal, Long userId) {
         String login = principal.getName();
-        return checkUserId(login, userId);
+        checkUserId(login, userId);
     }
 
     public boolean checkOrderId(String login, Long orderId) {

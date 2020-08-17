@@ -50,7 +50,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
 
 
     public String validateName(String name) {
-        boolean matches = name.matches("([А-Яа-яa-zA-Z0-9 .!&?#,;$]){2,256}");
+        boolean matches = name.matches("([a-zA-Z0-9 .!&?#,;$]){2,256}");
         if (name.isEmpty() || !matches) {
             errors.put("name:", "Name must be between 2 and 256 characters.");
         }
@@ -58,7 +58,7 @@ public class CertificateDeserializer extends JsonDeserializer<CertificateDto> {
     }
 
     public String validateDescription(String description) {
-        boolean matches = description.matches("[А-Яа-яa-zA-Z0-9 .!&?#,;$]{0,999}");
+        boolean matches = description.matches("[a-zA-Z0-9 .!&?#,;$]{0,999}");
         if (description.isEmpty() || !matches) {
             errors.put("description:", "Description must be between 2 and 999 characters.");
         }
