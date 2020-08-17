@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.security.Principal;
 import java.util.List;
@@ -53,7 +54,7 @@ public class TagController {
             @Min(value=1, message = "size must be 1-100")
             @Max(value=100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false, name = "sort") List<String> sort
+            @RequestParam(required = false, name = "sort") @Size(min = 0, max = 3) List<@Pattern(regexp = "[a-zA-Z.+-]{0,20}") String> sort
     ) {
         TagFilterDto filterDto = new TagFilterDto();
         filterDto.setTagName(tagName);

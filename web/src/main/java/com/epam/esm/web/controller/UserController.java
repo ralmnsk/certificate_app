@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.security.Principal;
 import java.util.HashMap;
@@ -115,7 +116,7 @@ public class UserController {
             @Min(value = 1, message = "size must be 1-100")
             @Max(value = 100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false) List<String> sort,
+            @RequestParam(required = false) @Size(min = 0, max = 3) List<@Pattern(regexp = "[a-zA-Z.+-]{0,20}") String> sort,
             Principal principal
     ) {
         UserFilterDto filterDto = new UserFilterDto();
@@ -151,7 +152,7 @@ public class UserController {
             @Min(value = 1, message = "size must be 1-100")
             @Max(value = 100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false) List<String> sort,
+            @RequestParam(required = false) @Size(min = 0, max = 3) List<@Pattern(regexp = "[a-zA-Z.+-]{0,20}") String> sort,
 
             @PathVariable Long userId,
 

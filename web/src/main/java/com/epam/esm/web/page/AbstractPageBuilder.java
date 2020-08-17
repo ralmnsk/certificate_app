@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractPageBuilder<T, S extends CrudService, A extends Assembler, F extends AbstractFilterDto> {
     private static final String EMPTY = "";
     private static final String NAME = "name+";
-    private static final String REGEX = "[a-zA-Z.+-]{0,20}";
+//    private static final String REGEX = "[a-zA-Z.+-]{0,20}";
     //"[a-zA-Z.]{0,20}(([+]{0,1})|([-]{0,1}))";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
@@ -78,7 +78,7 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
         List<FilterOrder> filterOrders = new ArrayList<>();
         for (String param : params) {
 
-            if (param.matches(REGEX)) {
+//            if (param.matches(REGEX)) {
                 FilterDirection filterDirection = FilterDirection.DESC;
                 param = param.trim();
                 if (param.contains("+")) {
@@ -91,7 +91,7 @@ public abstract class AbstractPageBuilder<T, S extends CrudService, A extends As
                     FilterOrder filterOrder = new FilterOrder(filterDirection, param);
                     filterOrders.add(filterOrder);
                 }
-            }
+//            }
         }
         FilterSort filterSort = new FilterSort();
         filterSort.setFilterOrders(filterOrders);

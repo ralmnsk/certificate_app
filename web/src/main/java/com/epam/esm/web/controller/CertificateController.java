@@ -195,7 +195,7 @@ public class CertificateController {
             @Min(value = 1, message = "size must be 1-100")
             @Max(value = 100, message = "size must be 1-100") int size,
 
-            @RequestParam(required = false) List<String> sort,
+            @RequestParam(required = false) @Size(min = 0, max = 3) List<@Pattern(regexp = "[a-zA-Z.+-]{0,20}") String> sort,
             @PathVariable Long certificateId
     ) {
         TagFilterDto filterDto = new TagFilterDto();
