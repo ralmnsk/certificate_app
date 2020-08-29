@@ -79,7 +79,7 @@ public class GateController {
 
                 Map<Object, Object> response = new HashMap<>();
                 response.put("token", "Bearer_" + token);
-                response.put("user_link:", getURLBase(request) + "/users/" + userDto.getId());
+                response.put("user_link", getURLBase(request) + "/users/" + userDto.getId());
                 return ResponseEntity.ok(response);
             }
 
