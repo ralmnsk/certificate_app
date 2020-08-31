@@ -40,6 +40,7 @@ import java.util.Map;
 @Validated
 @RestController
 @RequestMapping("/users")
+//@CrossOrigin("http://localhost:4200")
 public class UserController {
 
     private static final String REGEX = "([А-Яа-яa-zA-Z0-9- .!&?#,;$]){2,64}";
@@ -67,6 +68,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+
     public UserDto get(@PathVariable Long id, Authentication authentication) {
         String login = authentication.getName();
         webSecurity.checkUserId(login, id);

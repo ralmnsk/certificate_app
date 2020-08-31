@@ -60,6 +60,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new DeniedHandler();
     }
 
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -67,7 +68,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
-        config.addAllowedMethod("OPTIONS");
+//        config.addAllowedMethod("OPTIONS");
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
@@ -118,6 +119,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .successHandler(new SuccessHandler(jwtTokenProvider, userService))
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider))
+                .and()
+                .cors()
         ;
     }
 }
