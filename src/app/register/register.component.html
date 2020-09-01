@@ -1,0 +1,56 @@
+<!--<div class="container">-->
+<!--  <app-header></app-header>-->
+<!--  <app-navigation></app-navigation>-->
+<main class="main">
+  <div class="register-place">
+    <div class="register-place-head">
+      Register
+    </div>
+    <form class="register-form" method="post" [formGroup]="registerForm">
+      <div class="register-form-main">
+        <div class="register-form-main-inside">
+          <div class="label-input">
+            <label class="register-form-label">Email (Login)</label>
+            <input class="login-form-input" type="text" name="Email" placeholder="Email" formControlName="email"
+                   required="required"/>
+          </div>
+          <div class="label-input">
+            <label class="register-form-label">Surname</label>
+            <input class="login-form-input" type="text" name="Surname" placeholder="Surname" formControlName="surname"
+                   required="required"/>
+          </div>
+          <div class="label-input">
+            <label class="register-form-label">Name</label>
+            <input class="login-form-input" type="text" name="Name" placeholder="Name" formControlName="name"
+                   required="required" />
+          </div>
+          <div class="label-input">
+            <label class="register-form-label">Password</label>
+            <input class="login-form-input" type="password" name="Password" placeholder="Password"
+                   formControlName="password"
+                   required="required" />
+          </div>
+        </div>
+        <div class="register-form-footer">
+          <button class="register-form-btn white-btn" type="submit" (click)="toLoginPage()">
+            <a class="icon icon-dynamic">
+              Cancel
+            </a>
+          </button>
+          <button class="register-form-btn" type="submit" (click)="registerProcess()">
+            <a class="icon icon-dynamic">
+              Sign Up
+            </a>
+          </button>
+
+        </div>
+
+      </div>
+    </form>
+    <div class="message">
+      {{registerMessage}}
+    </div>
+  </div>
+</main>
+<app-footer></app-footer>
+<!--</div>-->

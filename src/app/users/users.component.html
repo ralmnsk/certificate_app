@@ -1,0 +1,37 @@
+<div class="users-container">
+  <app-header></app-header>
+  <app-navigation></app-navigation>
+  <div class="users-list">
+    <div class="div-table">
+      <div class="div-row">
+        <div class="div-cell">id</div>
+        <div class="div-cell">Surname</div>
+        <div class="div-cell">Name</div>
+      </div>
+    </div>
+  </div>
+  <div class="users-list" *ngFor="let u of users">
+    <div class="div-table">
+      <div class="user-info">
+        <div class="div-row">
+          <div class="div-cell">{{u.id}}</div>
+          <div class="div-cell">{{u.surname}}</div>
+          <div class="div-cell">{{u.name}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-nav">
+    <div>{{first}}</div>
+    <div id="0" class="nav-btn" (click)="toFirstPage()"><img class="icon icon-dynamic" src="assets/icons/skip-backward-fill.svg" alt="menu"
+                              width="35px" height="35px"></div>
+    <div id="1"class="nav-btn" (click)="toPreviousPage()"><img class="icon icon-dynamic" src="assets/icons/caret-left-fill.svg" alt="menu" width="35px"
+                              height="35px"></div>
+    <div> {{page}}</div>
+    <div id="2" class="nav-btn" (click)="toNextPage()"><img class="icon icon-dynamic" src="assets/icons/caret-right-fill.svg" alt="menu" width="35px"
+                              height="35px"></div>
+    <div id="3" class="nav-btn" (click)="toLastPage()"><img class="icon icon-dynamic" src="assets/icons/skip-forward-fill.svg" alt="menu" width="35px"
+                              height="35px"></div>
+    <div>{{last}}</div>
+  </div>
+</div>

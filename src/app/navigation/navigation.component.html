@@ -1,0 +1,48 @@
+<nav class="box nav">
+
+  <div class="menu-and-logo">
+    <div class="dropdown">
+      <span>
+        <img class="icon" src="assets/icons/justify.svg" alt="menu" width="35px" height="35px">
+      </span>
+      <div class="dropdown-content">
+        <a class ="icon"(click)="toUserPage()">User page</a>
+        <a class ="icon" (click)="toUsers()">Users</a>
+        <a class ="icon" (click)="toOrders()">Orders</a>
+        <a class ="icon" (click)="toCertificates()">Certificates</a>
+      </div>
+    </div>
+    <div class="logo">
+      <img src="assets/images/logo.png" alt="logo" width="40px" height="40px">
+    </div>
+  </div>
+
+  <div class="search-bar">
+    <div class="search-bar-one">
+      <input id="certificateInput" class="search-bar-input" type="text" name="search_item"
+             placeholder="Search by certificate name">
+    </div>
+    <div class="dropdown">
+      <div class="dropdown-categories-button">
+        All Categories
+        <img class="icon" src="assets/icons/chevron-compact-down.svg" alt="chevron" width="20px" height="20px">
+      </div>
+
+      <div id="dropDown" class="dropdown-content">
+        <input id="tagInput" class="search-bar-input" type="text" name="search_item"
+               placeholder="Search by tag">
+        <div id="inDropDown" class="dropdown-content">
+          <!--                       for tag name = category name-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="navigation-bar-right">
+    <img class="icon icon-dynamic" src="assets/icons/heart-fill.svg" alt="menu" width="20px" height="20px">
+    <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
+    <a id="login" class="icon icon-dynamic" *ngIf="login === 'Login'" (click)="toLogin()">Login</a>
+    <a id="logout" class="icon icon-dynamic" *ngIf="login === 'Logout'" (click)="logout()">Logout</a>
+    <a class="icon">|</a>
+    <a class="icon icon-dynamic" (click)="toRegistration()">Sign In</a>
+  </div>
+</nav>

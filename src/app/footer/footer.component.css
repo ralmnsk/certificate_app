@@ -1,0 +1,7 @@
+.footer {
+  background: white;
+  height: 9vh;
+  flex-basis: 100%;
+  font-size: 15px;
+  text-align: center;
+}

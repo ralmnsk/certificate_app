@@ -1,0 +1,11 @@
+.box {
+  text-align: left;
+}
+
+.header {
+  background: white;
+  flex-basis: 100%;
+  font-size: 10px;
+  text-align: center;
+  height: 10px;
+}

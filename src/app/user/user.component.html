@@ -1,0 +1,46 @@
+<app-header></app-header>
+<app-navigation></app-navigation>
+<main class="main main-order">
+  <div class="order-header">
+    User Page
+  </div>
+  <div class="order-place">
+    <form class="order-form" method="post" [formGroup]="userForm">
+      <div class="label-input order-input">
+        <label class="register-form-label">Surname</label>
+        <input class="login-form-input" type="text" name="surname" formControlName="surname"/>
+      </div>
+      <div class="label-input order-input">
+        <label class="register-form-label">Name</label>
+        <input class="login-form-input" type="text" name="name" formControlName="name"/>
+      </div>
+      <div class="label-input order-input">
+        <label class="register-form-label">Role</label>
+        <input class="login-form-input" type="text" name="role" readonly formControlName="role"/>
+      </div>
+      <div class="label-input order-input">
+        <label class="register-form-label">Email (login)</label>
+        <input class="login-form-input" type="text" name="login" formControlName="email"/>
+      </div>
+      <div class="label-input order-input">
+        <label class="register-form-label">Password</label>
+        <input class="login-form-input" type="password" name="password" formControlName="password"/>
+      </div>
+      <div class="user-form-footer">
+        <button class="register-form-btn white-btn " type="submit" (click)="toLoginPage()">
+          <a class="icon icon-dynamic">
+            Back
+          </a>
+        </button>
+        <button class="register-form-btn" type="submit" (click)="saveUser()">
+          <a class="icon icon-dynamic">
+            Save
+          </a>
+        </button>
+      </div>
+    </form>
+  </div>
+    <div class="userMessage">
+      {{userMessage}}
+    </div>
+</main>
