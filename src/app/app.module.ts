@@ -14,16 +14,21 @@ import {TokenStorageService} from './auth/token-storage.service';
 import {AuthService} from './auth/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserService} from './user/user.service';
-import { UserComponent } from './user/user.component';
-import { RegisterComponent } from './register/register.component';
+import {UserComponent} from './user/user.component';
+import {RegisterComponent} from './register/register.component';
 import {RegisterService} from './register/register.service';
 import {DataService} from './data/data.service';
 import {AuthInterceptor} from './auth/auth.interceptor';
-import { UsersComponent } from './users/users.component';
-import { OrdersComponent } from './orders/orders.component';
-import { InfoComponent } from './user/info/info.component';
-import { CertificatesComponent } from './certificates/certificates.component';
+import {UsersComponent} from './users/users.component';
+import {OrdersComponent} from './orders/orders.component';
+import {InfoComponent} from './user/info/info.component';
+import {CertificatesComponent} from './certificates/certificates.component';
 import {DataTokenService} from './data/data-token.service';
+import {CertificatesService} from './certificates/certificates.service';
+import {DataCertificateService} from './data/data-certificate.service';
+import {CertificateStorageService} from './data/certificate-storage.service';
+import { TagsComponent } from './tags/tags.component';
+import {TagsService} from './tags/tags.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +44,8 @@ import {DataTokenService} from './data/data-token.service';
     UsersComponent,
     OrdersComponent,
     InfoComponent,
-    CertificatesComponent
+    CertificatesComponent,
+    TagsComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +61,11 @@ import {DataTokenService} from './data/data-token.service';
     RegisterService,
     DataService,
     AuthInterceptor,
-    DataTokenService
+    DataTokenService,
+    DataCertificateService,
+    CertificatesService,
+    CertificateStorageService,
+    TagsService
   ],
   bootstrap: [AppComponent]
 })

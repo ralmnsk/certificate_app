@@ -1,0 +1,12 @@
+<div id="tag-place" class="tag-place">
+  <div id="left" class="certificate-header-arrow left" (click)="previous()">
+    <img class="icon icon-dynamic" src="assets/icons/caret-left-fill.svg" alt="left" width="50px" height="50px"></div>
+  <div class="tags">
+    <div class="tag" *ngFor="let tag of tags">
+      <div class="square"><img class="icon icon-dynamic" src="assets/images/tree.jfif" alt="img" width="60px" height="75px">
+      </div>
+      <a>{{tag.name}}</a></div>
+  </div>
+  <div id="right" class="certificate-header-arrow left" (click)="next()">
+    <img class="icon icon-dynamic" src="assets/icons/caret-right-fill.svg" alt="left" width="50px" height="50px"></div>
+</div>

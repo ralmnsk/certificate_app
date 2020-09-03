@@ -34,10 +34,8 @@ export class UsersComponent implements OnInit {
   getUsers(page: number, limit: number): void {
     this.disableNavigationButtons();
     this.userService.getAllUsers(page, limit)
-    // .pipe(throttle(value => interval(2000)))
       .subscribe(
         data => {
-          // this.users = (data as { collection: Array<UserInfo>, links: Array<string> }).collection;
           this.usersPage = data as UsersPage;
           this.first = 0;
           this.page = this.usersPage.page;

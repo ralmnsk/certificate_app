@@ -20,7 +20,8 @@
   <div class="search-bar">
     <div class="search-bar-one">
       <input id="certificateInput" class="search-bar-input" type="text" name="search_item"
-             placeholder="Search by certificate name">
+             placeholder="Search by certificate name"  [(ngModel)]="name" [formControl]="searchControl"/>
+      <!--(ngModelChange)="searchByName($event)"-->
     </div>
     <div class="dropdown">
       <div class="dropdown-categories-button">
@@ -30,7 +31,7 @@
 
       <div id="dropDown" class="dropdown-content">
         <input id="tagInput" class="search-bar-input" type="text" name="search_item"
-               placeholder="Search by tag">
+               placeholder="Search by tag" >
         <div id="inDropDown" class="dropdown-content">
           <!--                       for tag name = category name-->
         </div>
@@ -42,7 +43,7 @@
     <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
     <a id="login" class="icon icon-dynamic" *ngIf="login === 'Login'" (click)="toLogin()">Login</a>
     <a id="logout" class="icon icon-dynamic" *ngIf="login === 'Logout'" (click)="logout()">Logout</a>
-    <a class="icon">|</a>
-    <a class="icon icon-dynamic" (click)="toRegistration()">Sign In</a>
+    <a class="icon" *ngIf="login==='Login'">|</a>
+    <a class="icon icon-dynamic" (click)="toRegistration()" *ngIf="login==='Login'">Sign In</a>
   </div>
 </nav>

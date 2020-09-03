@@ -1,1 +1,35 @@
-<p>certificates works!</p>
+<app-header></app-header>
+<app-navigation></app-navigation>
+<main class="main main-order">
+  <div class="certificate-header">
+    <app-tags></app-tags>
+  </div>
+  <div class="certificate-place" id="certificate-place">
+    <!--            certificates-->
+    <!--    <div class="certificates">-->
+    <div class="certificate" *ngFor="let certificate of certificates">
+      <div class="certificate-main">
+        <img class="icon icon-dynamic" src="assets/images/car.jfif" alt="menu" width="320px"
+             height="250px"></div>
+      <div class="certificate-name">{{certificate.name}}</div>
+      <div class="certificate-description">
+        <div class="text">{{certificate.description}}</div>
+        <div class="expiration">Expires in 1 days</div>
+      </div>
+      <div class="certificate-footer">
+        <div class="price">${{certificate.price}}</div>
+        <div class="add-to-cart">add to cart</div>
+      </div>
+    </div>
+    <!--    </div>-->
+    <!--    certificates end-->
+    <a class="button" (click)="toPageTop()"><img class="icon" src="assets/icons/caret-up.svg" alt="menu" width="35px"
+                                                 height="35px"></a>
+    <a class="button down" (click)="toPageBottom()"><img class="icon" src="assets/icons/caret-down.svg" alt="menu"
+                                                         width="35px"
+                                                         height="35px"></a>
+  </div>
+</main>
+
+<footer class="footer"></footer>
+
