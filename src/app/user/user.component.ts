@@ -73,8 +73,6 @@ export class UserComponent implements OnInit {
     this.userForm.get('surname').setValue(this.tokenStorage.getSurname());
     this.userForm.get('name').setValue(this.tokenStorage.getName());
     this.userForm.get('role').setValue(this.tokenStorage.getRole());
-    // this.userForm.get('password').setValue('****');
-    // console.log('userComponent initForm user email:', this.userForm.get('email').value);
   }
 
   toLoginPage(): void {

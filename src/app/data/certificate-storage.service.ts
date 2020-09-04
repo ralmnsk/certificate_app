@@ -20,4 +20,13 @@ export class CertificateStorageService {
   setPagination(value: Pagination): void {
     this.pagination = value;
   }
+
+  getCurrentCertificateId(): number {
+    return Number(window.sessionStorage.getItem('CertificateId'));
+  }
+
+  setCurrentCertificate(value: number): void {
+    window.sessionStorage.removeItem('CertificateId');
+    window.sessionStorage.setItem('CertificateId', value.toString());
+  }
 }

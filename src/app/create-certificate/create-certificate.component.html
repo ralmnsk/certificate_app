@@ -1,0 +1,72 @@
+<main class="main main-order">
+  <div class="order-header">
+    New certificate
+  </div>
+  <div class="order-place">
+    <form class="order-form" method="post">
+      <div class="label-input order-input">
+        <label class="register-form-label">Name</label>
+        <input class="login-form-input" type="text" name="name" [formControl]="name"/>
+      </div>
+      <label class="register-form-label">Description</label>
+      <textarea class="textarea-form-input" type="text" name="description" placeholder="Description" required="required" [formControl]="description">
+                            </textarea>
+
+      <div class="label-input order-input">
+        <label class="register-form-label">Duration</label>
+        <input class="login-form-input" type="text" name="duration" [formControl]="duration"/>
+      </div>
+            <div class="label-input order-input">
+        <label class="register-form-label">Price</label>
+        <input class="login-form-input" type="text" name="price" [formControl]="price"/>
+      </div>
+      <div class="tag-list">
+        <div class="users-list">
+          <div class="div-table">
+            <div class="div-row">
+              <div class="div-cell">id</div>
+              <div class="div-cell">Tag name</div>
+              <div class="div-cell">Click for action</div>
+            </div>
+          </div>
+        </div>
+        <div class="users-list" *ngFor="let tag of tags">
+          <div class="div-table">
+            <div class="user-info">
+              <div class="div-row">
+                <div class="div-cell">{{tag.id}}</div>
+                <div class="div-cell">{{tag.name}}</div>
+                <div class="div-cell icon icon-dynamic" (click)="removeTag(tag.id)">remove tag</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="users-list">
+          <div class="div-table">
+            <div class="div-row">
+              <div class="div-cell">Add tag to certificate</div>
+              <div class="div-cell">
+                <input class="tag-input-add" type="text" name="name" [formControl]="addTag"/>
+              </div>
+              <div class="div-cell icon icon-dynamic" (click)="tagAddition()">add tag</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="order-form-footer">
+        <button class="register-form-btn white-btn " type="submit" (click)="back()">
+          <a class="icon icon-dynamic">
+            Back
+          </a>
+        </button>
+        <button id="save" class="register-form-btn" type="submit" (click)="save()">
+          <a class="icon icon-dynamic">
+            Create
+          </a>
+        </button>
+      </div>
+    </form>
+    {{message}}
+  </div>
+</main>
+

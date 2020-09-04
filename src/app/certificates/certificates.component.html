@@ -14,10 +14,11 @@
       <div class="certificate-name">{{certificate.name}}</div>
       <div class="certificate-description">
         <div class="text">{{certificate.description}}</div>
-        <div class="expiration">Expires in 1 days</div>
+        <div class="expiration">Expires in {{certificate.duration}} days</div>
       </div>
       <div class="certificate-footer">
         <div class="price">${{certificate.price}}</div>
+        <div class="add-to-cart edit" (click)="toEdit(certificate.id)">edit</div>
         <div class="add-to-cart">add to cart</div>
       </div>
     </div>

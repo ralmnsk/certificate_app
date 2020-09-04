@@ -1,1 +1,66 @@
-<p>orders works!</p>
+<div class="users-container">
+  <app-header></app-header>
+  <app-navigation></app-navigation>
+  <main class="main main-order">
+    <div class="order-header">
+      Orders Page
+    </div>
+    <div class="order-place">
+      <!--    orders-->
+      <div class="users-list">
+        <div class="div-table">
+          <div class="user-info">
+            <div class="div-row">
+              <div class="div-cell">Id</div>
+              <div class="div-cell">Description</div>
+              <div class="div-cell">Total cost</div>
+              <div class="div-cell">Created</div>
+              <div class="div-cell">Completed</div>
+              <div class="div-cell"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="users-list" *ngFor="let order of orders">
+        <div class="div-table">
+          <div class="user-info">
+            <div class="div-row">
+              <div class="div-cell">{{order.id}}</div>
+              <div class="div-cell order-cell">{{order.description}}</div>
+              <div class="div-cell">{{order.totalCost}}</div>
+              <div class="div-cell">{{order.created}}</div>
+              <div class="div-cell">{{order.completed}}</div>
+              <div class="div-cell"><img class="icon icon-dynamic"
+                                         src="assets/icons/skip-forward-fill.svg" alt="->" width="35px"
+                                         height="35px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-nav">
+      <div>{{first}}</div>
+      <div id="0" class="nav-btn" (click)="toFirstPage()"><img class="icon icon-dynamic"
+                                                               src="assets/icons/skip-backward-fill.svg" alt="menu"
+                                                               width="35px" height="35px"></div>
+      <div id="1" class="nav-btn" (click)="toPreviousPage()"><img class="icon icon-dynamic"
+                                                                  src="assets/icons/caret-left-fill.svg" alt="menu"
+                                                                  width="35px"
+                                                                  height="35px"></div>
+      <div> {{page}}</div>
+      <div id="2" class="nav-btn" (click)="toNextPage()"><img class="icon icon-dynamic"
+                                                              src="assets/icons/caret-right-fill.svg" alt="menu"
+                                                              width="35px"
+                                                              height="35px"></div>
+      <div id="3" class="nav-btn" (click)="toLastPage()"><img class="icon icon-dynamic"
+                                                              src="assets/icons/skip-forward-fill.svg" alt="menu"
+                                                              width="35px"
+                                                              height="35px"></div>
+      <div>{{last}}</div>
+    </div>
+    <div class="userMessage">
+      {{message}}
+    </div>
+  </main>
+</div>
+

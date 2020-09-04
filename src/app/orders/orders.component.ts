@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Order} from './order';
 
 @Component({
   selector: 'app-orders',
@@ -6,10 +7,31 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./orders.component.css']
 })
 export class OrdersComponent implements OnInit {
+  message: string;
+  orders: Array<Order>;
+  first: number;
+  page: number;
+  last: number;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
 
+  toFirstPage() {
+
+  }
+
+  toPreviousPage() {
+
+  }
+
+  toNextPage() {
+
+  }
+
+  toLastPage() {
+
+  }
 }

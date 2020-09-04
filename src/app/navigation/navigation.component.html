@@ -6,10 +6,11 @@
         <img class="icon" src="assets/icons/justify.svg" alt="menu" width="35px" height="35px">
       </span>
       <div class="dropdown-content">
-        <a class ="icon"(click)="toUserPage()">User page</a>
-        <a class ="icon" (click)="toUsers()">Users</a>
-        <a class ="icon" (click)="toOrders()">Orders</a>
-        <a class ="icon" (click)="toCertificates()">Certificates</a>
+        <a class="icon"(click)="toUserPage()">User page</a>
+        <a class="icon" (click)="toUsers()">Users</a>
+        <a class="icon" (click)="toOrders()">Orders</a>
+        <a class="icon" (click)="toCertificates()">Certificates</a>
+        <a class="icon" (click)="createCertificate()">New Certificate</a>
       </div>
     </div>
     <div class="logo">
@@ -31,12 +32,16 @@
 
       <div id="dropDown" class="dropdown-content">
         <input id="tagInput" class="search-bar-input" type="text" name="search_item"
-               placeholder="Search by tag" >
+               placeholder="Search by tag" [(ngModel)]="tagName" [formControl]="searchTag">
         <div id="inDropDown" class="dropdown-content">
           <!--                       for tag name = category name-->
+          <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
         </div>
       </div>
     </div>
+  </div>
+  <div *ngIf="userLogin !== null || userLogin !== undefined">
+    Login: {{userLogin}}  Role: {{userRole}}
   </div>
   <div class="navigation-bar-right">
     <img class="icon icon-dynamic" src="assets/icons/heart-fill.svg" alt="menu" width="20px" height="20px">

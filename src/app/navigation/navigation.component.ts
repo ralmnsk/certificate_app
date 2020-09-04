@@ -9,6 +9,10 @@ import {debounceTime} from 'rxjs/operators';
 import {DataCertificateService} from '../data/data-certificate.service';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {Pagination} from '../certificates/pagination';
+import {Tag} from '../tags/tag';
+import {TagsService} from '../tags/tags.service';
+import {TagStorageService} from '../data/tag-storage.service';
+import {DataTagService} from '../data/data-tag.service';
 
 @Component({
   selector: 'app-navigation',
@@ -22,7 +26,7 @@ export class NavigationComponent implements OnInit {
 
   private page: number;
   private size: number;
-  private tagName: string;
+  tagName: string;
   private certificateName: string;
   private sort: string;
   private last: number;
@@ -32,12 +36,21 @@ export class NavigationComponent implements OnInit {
   private message: string;
   private pagination: Pagination;
 
+  tags: Array<Tag>;
+  searchTag = new FormControl();
+
+  userLogin: string;
+  userRole: string;
+
   constructor(private router: Router,
               private tokenStorage: TokenStorageService,
               private dataTokenService: DataTokenService,
               private dataCertificateService: DataCertificateService,
               private certificatesService: CertificatesService,
-              private certificateStorage: CertificateStorageService
+              private certificateStorage: CertificateStorageService,
+              private tagService: TagsService,
+              private tagStorageService: TagStorageService,
+              private dataTagService: DataTagService
   ) {
 
   }
@@ -58,6 +71,20 @@ export class NavigationComponent implements OnInit {
       .pipe(
         debounceTime(2000))
       .subscribe((val) => this.searchByName(val));
+    this.searchTag.valueChanges
+      .pipe(
+        debounceTime(2000))
+      .subscribe((val) => this.searchTagByName(val));
+    this.dataTagService.currentMessage.subscribe(message => {
+      this.tagName = message;
+      console.log('tag name:', message);
+    });
+    this.initUserInfo();
+  }
+
+  initUserInfo(): void {
+    this.userLogin = this.tokenStorage.getEmail();
+    this.userRole = this.tokenStorage.getRole();
   }
 
   initPagination(): void {
@@ -134,5 +161,28 @@ export class NavigationComponent implements OnInit {
     this.pagination.setSort(this.sort);
     this.pagination.setLast(this.last);
     this.certificateStorage.setPagination(this.pagination);
+  }
+
+  searchTagByName(searchValue: string): void {
+    console.log(searchValue);
+    this.tagName = searchValue;
+    this.tagService
+      .getTags(0, 10, searchValue, this.sort)
+      .subscribe(data => {
+          this.tags = data.elements.content as Array<Tag>;
+          console.log('navigation search tags:', this.tags);
+        }, error => {
+          console.log(error.message);
+        }
+      );
+  }
+
+  setTagName(value: string): void {
+    console.log('setTagName', value);
+    this.tagName = value;
+  }
+
+  createCertificate(): void {
+    this.router.navigate(['create-certificate']);
   }
 }

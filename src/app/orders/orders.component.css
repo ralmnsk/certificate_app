@@ -1,0 +1,23 @@
+.div-table {
+  background-color: lightgreen;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.div-row {
+  width: 1200px;
+  display: flex;
+  flex-direction: row;
+}
+
+.div-cell {
+  /*width: 33.33%;*/
+  border-style: solid;
+  border-color: white;
+  padding-left: 10px;
+}
+
+.order-cell{
+  width:500px;
+}

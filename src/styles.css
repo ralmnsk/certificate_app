@@ -380,8 +380,8 @@
 
 .order-form-footer {
   position: relative;
-  transform: translateX(545px);
-  width: 255px;
+  transform: translateX(420px);
+  width: 375px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -667,3 +667,66 @@ input[type="file"] {
 .a {
   cursor: pointer;
 }
+
+.div-table {
+  background-color: lightgreen;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.div-row {
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+}
+
+.div-cell {
+  width: 33.33%;
+  border-style: solid;
+  border-color: white;
+  padding-left: 10px;
+}
+
+.tag-input-add {
+  width: calc(100% + 2px);
+  position: relative;
+  transform: translateX(-10px);
+  height: 25px;
+}
+
+.tag-input-add-disabled {
+  width: calc(100% + 2px);
+  position: relative;
+  transform: translateX(-10px);
+  height: 25px;
+  background-color: lightgray;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+}
+
+.div-table {
+  background-color: lightgreen;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.div-row {
+  width: 600px;
+  display: flex;
+  flex-direction: row;
+}
+
+.div-cell {
+  width: 33.33%;
+  border-style: solid;
+  border-color: white;
+  padding-left: 10px;
+}
+

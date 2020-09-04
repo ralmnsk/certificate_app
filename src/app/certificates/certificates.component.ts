@@ -5,6 +5,8 @@ import {fromEvent, Observable, Subscription} from 'rxjs';
 import {DataCertificateService} from '../data/data-certificate.service';
 import {Pagination} from './pagination';
 import {CertificateStorageService} from '../data/certificate-storage.service';
+import {Router} from '@angular/router';
+import {DataTagEditService} from '../data/data-tag-edit.service';
 
 @Component({
   selector: 'app-certificates',
@@ -36,7 +38,11 @@ export class CertificatesComponent implements OnInit {
 
   constructor(private certificateService: CertificatesService,
               private dataCertificateService: DataCertificateService,
-              private certificateStorage: CertificateStorageService
+              private certificateStorage: CertificateStorageService,
+              private router: Router,
+              private dataTagEditService: DataTagEditService
+              // private dataTagService: DataTagService,
+              // private tagStorageService: TagStorageService
   ) {
     this.scale = 1;
   }
@@ -69,6 +75,7 @@ export class CertificatesComponent implements OnInit {
     window.addEventListener('scroll', () => {
       this.loadOnScrollDown(this.startWidth, this.currentWidth, this.scale);
     });
+
   }
 
   searchCertificates(page: number, size: number, tagName: string, certificateName: string, sort: string): any {
@@ -93,7 +100,7 @@ export class CertificatesComponent implements OnInit {
       this.load(this.certificates);
       this.position = st;
     } else {
-      console.log('up');
+      // console.log('up');
     }
   }
 
@@ -104,7 +111,9 @@ export class CertificatesComponent implements OnInit {
       .subscribe(data => {
           downLoadCertificates = data.elements.content as Array<Certificate>;
           for (let i = 0; i < downLoadCertificates.length; i++) {
-            certificates.push(downLoadCertificates[i]);
+            if (certificates !== undefined) {
+              certificates.push(downLoadCertificates[i]);
+            }
           }
         },
         (error) => {
@@ -137,5 +146,11 @@ export class CertificatesComponent implements OnInit {
     this.tagName = pagination.getTagName();
     this.certificateName = pagination.getCertificateName();
     this.sort = pagination.getSort();
+  }
+
+  toEdit(value: number): void {
+    this.router.navigate(['certificate']);
+    this.dataTagEditService.changeMessage(value.toString());
+    this.certificateStorage.setCurrentCertificate(value);
   }
 }

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {TagsPagination} from './tags-pagination';
 import {TagsService} from './tags.service';
 import {Tag} from './tag';
+import {DataTagService} from '../data/data-tag.service';
 
 @Component({
   selector: 'app-tags',
@@ -12,7 +13,9 @@ export class TagsComponent implements OnInit {
   private pagination: TagsPagination;
   tags: Array<Tag>;
 
-  constructor(private tagsService: TagsService) {
+  constructor(private tagsService: TagsService,
+              private dataTagService: DataTagService
+  ) {
     this.pagination = new TagsPagination();
     this.pagination.setName('');
     this.pagination.setPage(0);
@@ -78,5 +81,10 @@ export class TagsComponent implements OnInit {
     }
     console.log(document.getElementById('left_disabled'));
     return true;
+  }
+
+  setTagName(name: string): void {
+    console.log('set tag name:', name);
+    this.dataTagService.changeMessage(name);
   }
 }
