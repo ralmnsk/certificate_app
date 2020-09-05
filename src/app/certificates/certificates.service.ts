@@ -17,8 +17,8 @@ export class CertificatesService {
     if (size === undefined) {
       size = 10;
     }
-    console.log(config.Url + '/certificates' + '?tagName=' + tagName
-      + '&name=' + certificateName + '&page=' + page + '&size=' + size + '&sort=' + sort);
+    // console.log(config.Url + '/certificates' + '?tagName=' + tagName
+    //   + '&name=' + certificateName + '&page=' + page + '&size=' + size + '&sort=' + sort);
     return this.http.get(config.Url + '/certificates' + '?tagName=' + tagName
       + '&name=' + certificateName + '&page=' + page + '&size=' + size + '&sort=' + sort);
   }

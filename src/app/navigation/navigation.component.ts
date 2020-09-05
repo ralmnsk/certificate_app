@@ -64,7 +64,7 @@ export class NavigationComponent implements OnInit {
       if (this.token !== undefined && this.token !== null && this.token.length > 5) {
         this.token = message;
         this.login = 'Logout';
-        console.log('navigation, message from dataTokenService:', message);
+        // console.log('navigation, message from dataTokenService:', message);
       }
     });
     this.searchControl.valueChanges
@@ -77,7 +77,7 @@ export class NavigationComponent implements OnInit {
       .subscribe((val) => this.searchTagByName(val));
     this.dataTagService.currentMessage.subscribe(message => {
       this.tagName = message;
-      console.log('tag name:', message);
+      // console.log('tag name:', message);
     });
     this.initUserInfo();
   }
@@ -119,6 +119,8 @@ export class NavigationComponent implements OnInit {
     this.token = null;
     this.login = 'Login';
     this.router.navigate(['login']);
+    this.userLogin = null;
+    this.userRole = null;
   }
 
   toLogin(): void {
@@ -144,7 +146,7 @@ export class NavigationComponent implements OnInit {
           this.certificates = data.elements.content as Array<Certificate>;
           this.sendPagination();
           this.dataCertificateService.changeMessage(new Date().toString());
-          console.log('navigation certificates:', this.certificates);
+          // console.log('navigation certificates:', this.certificates);
         }, error => {
           console.log(error.message);
         }
@@ -170,7 +172,7 @@ export class NavigationComponent implements OnInit {
       .getTags(0, 10, searchValue, this.sort)
       .subscribe(data => {
           this.tags = data.elements.content as Array<Tag>;
-          console.log('navigation search tags:', this.tags);
+          // console.log('navigation search tags:', this.tags);
         }, error => {
           console.log(error.message);
         }
@@ -184,5 +186,9 @@ export class NavigationComponent implements OnInit {
 
   createCertificate(): void {
     this.router.navigate(['create-certificate']);
+  }
+
+  cart(): void {
+    this.router.navigate(['order']);
   }
 }

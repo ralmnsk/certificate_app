@@ -4,6 +4,9 @@ import {FormControl, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {debounceTime} from 'rxjs/operators';
 import {TagsService} from '../tags/tags.service';
+import {Certificate} from '../certificates/certificate';
+import {CertificateService} from '../certificate/certificate.service';
+import {CertificateStorageService} from '../data/certificate-storage.service';
 
 @Component({
   selector: 'app-create-certificate',
@@ -18,10 +21,13 @@ export class CreateCertificateComponent implements OnInit {
   tags: Array<Tag>;
   addTag = new FormControl('');
   message: string;
+  certificate: Certificate;
 
 
   constructor(private router: Router,
-              private tagsService: TagsService
+              private tagsService: TagsService,
+              private certificateService: CertificateService,
+              private certificateStorageService: CertificateStorageService
   ) {
   }
 
@@ -81,7 +87,40 @@ export class CreateCertificateComponent implements OnInit {
 
   save(): void {
     this.isFormValid();
+    this.certificate = new Certificate();
+    this.certificate.name = this.name.value;
+    this.certificate.description = this.description.value;
+    this.certificate.duration = this.duration.value;
+    this.certificate.price = this.price.value;
+    this.certificateService.save(this.certificate)
+      .subscribe(
+        result => {
+          this.certificate = result as Certificate;
+          this.certificateStorageService.setCurrentCertificate(this.certificate.id);
+          this.message = 'Certificate was created.';
+          this.saveTagsOfCreatedCertificate();
+          this.router.navigate(['certificate']);
+        }, error => {
+          console.log(error.message);
+          this.message = 'Error happened during save';
+        }
+      );
+  }
 
+  saveTagsOfCreatedCertificate(): void {
+    for (let i = 0; i < this.tags.length; i++) {
+      this.certificateService.addTagToCertificate(this.certificate.id, this.tags[i].id)
+        .pipe(debounceTime(1000))
+        .subscribe(
+          result => {
+            this.certificate = result as Certificate;
+            this.message = 'Tag was added.';
+          }, error => {
+            console.log(error.message);
+            this.message = 'Error happened during tags saving.';
+          }
+        );
+    }
   }
 
   private isFormValid(): boolean {

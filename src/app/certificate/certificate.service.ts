@@ -17,7 +17,7 @@ export class CertificateService {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
-    console.log(config.Url + '/certificates/' + id);
+    // console.log(config.Url + '/certificates/' + id);
     return this.http.get(config.Url + '/certificates/' + id, {headers});
   }
 
@@ -25,7 +25,7 @@ export class CertificateService {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
-    console.log(config.Url + '/certificates/' + certificateId + '/tags');
+    // console.log(config.Url + '/certificates/' + certificateId + '/tags');
     return this.http.put(config.Url + '/certificates/' + certificateId + '/tags', [tagId], {headers});
   }
 
@@ -33,7 +33,7 @@ export class CertificateService {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
-    console.log('certificate update:' + config.Url + '/certificates/' + certificate.id);
+    // console.log('certificate update:' + config.Url + '/certificates/' + certificate.id);
     return this.http.put(config.Url + '/certificates/' + certificate.id, certificate, {headers});
   }
 
@@ -41,7 +41,15 @@ export class CertificateService {
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
-    console.log('certificate update:' + config.Url + '/certificates/' + id);
+    // console.log('certificate update:' + config.Url + '/certificates/' + id);
     return this.http.delete(config.Url + '/certificates/' + id, {headers});
+  }
+
+  save(certificate: Certificate): any {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json; charset=UTF-8')
+      .set('Authorization', this.tokenStorage.getToken());
+    // console.log('certificate save: ' + config.Url + '/certificates');
+    return this.http.post(config.Url + '/certificates', certificate, {headers});
   }
 }

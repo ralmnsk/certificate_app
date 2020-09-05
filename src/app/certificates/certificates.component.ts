@@ -61,7 +61,7 @@ export class CertificatesComponent implements OnInit {
     this.sort = 'certificate.name';
     this.dataCertificateService.currentMessage.subscribe(message => {
       this.message = message;
-      console.log('certificates component, pagination:', this.certificateStorage.getPagination());
+      // console.log('certificates component, pagination:', this.certificateStorage.getPagination());
       if (this.certificateStorage.getPagination().getCertificates().length > 0) {
         this.getPagination(this.certificateStorage.getPagination());
       }
@@ -87,6 +87,7 @@ export class CertificatesComponent implements OnInit {
           this.certificates = data.elements.content as Array<Certificate>;
         }, error => {
           console.log(error.message);
+          this.message = 'Error happened during certficates search.';
         }
       );
   }
@@ -118,6 +119,7 @@ export class CertificatesComponent implements OnInit {
         },
         (error) => {
           console.log(error.message);
+          this.message = 'Error happened during certificates loading.';
         }
       );
   }

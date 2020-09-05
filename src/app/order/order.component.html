@@ -1,0 +1,95 @@
+<div class="users-container">
+  <app-header></app-header>
+  <app-navigation></app-navigation>
+  <main class="main main-order">
+    <div class="order-header">
+      Cart [Certificates to buy]
+    </div>
+    <div class="order-place">
+      <!--    order-->
+      <form class="order-form" method="post">
+        <label class="register-form-label">Description</label>
+        <textarea class="textarea-form-input" type="text" name="description" placeholder="Order Description"
+                  required="required">
+                            </textarea>
+        <div class="order-info">
+          <div class="label-input order-input">
+            <label class="register-form-label">Creation</label>
+            <input class="login-form-input" type="text" name="creation" readonly />
+          </div>
+
+          <div class="label-input box-input">
+            <label class="register-form-label">Completed</label>
+            <input class="order-input-box" type="checkbox" name="completed" />
+          </div>
+
+<!--          <div class="label-input order-input">-->
+<!--            <label class="register-form-label">Total cost</label>-->
+<!--            <input class="login-form-input" type="text" name="cost" />-->
+<!--          </div>-->
+        </div>
+      </form>
+<!--      order end-->
+      Certificates:
+      <div class="users-list">
+        <div class="div-table">
+          <div class="user-info">
+            <div class="div-row">
+              <div class="div-cell">Id</div>
+              <div class="div-cell">Name</div>
+              <div class="div-cell">Duration</div>
+              <div class="div-cell">Price</div>
+              <div class="div-cell">Creation</div>
+              <div class="div-cell">Modification</div>
+              <div class="div-cell">Description</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="users-list" *ngFor="let certificate of certificates">
+        <div class="div-table">
+          <div class="user-info">
+            <div class="div-row">
+              <div class="div-cell">{{certificate.id}}</div>
+              <div class="div-cell">{{certificate.name}}</div>
+              <div class="div-cell">{{certificate.duration}}</div>
+              <div class="div-cell">{{certificate.price}}</div>
+              <div class="div-cell">{{certificate.creation}}</div>
+              <div class="div-cell">{{certificate.modification}}</div>
+              <div class="div-cell">{{certificate.description}}</div>
+<!--              <div class="div-cell"><img class="icon icon-dynamic"-->
+<!--                                         src="assets/icons/skip-forward-fill.svg" alt="->" width="35px"-->
+<!--                                         height="35px"></div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class = "users-list">
+      Total cost:
+    </div>
+    <div class="order-form-footer">
+      <button class="register-form-btn white-btn " type="submit" (click)="back()">
+        <a class="icon icon-dynamic">
+          Back
+        </a>
+      </button>
+      <button id="cancel" class="register-form-btn" type="submit" (click)="cancel()">
+        <a class="icon icon-dynamic">
+          Cancel
+        </a>
+      </button>
+      <button id="save" class="register-form-btn" type="submit" (click)="save()">
+        <a class="icon icon-dynamic">
+          Save
+        </a>
+      </button>
+    </div>
+    <div class="userMessage">
+      {{message}}
+    </div>
+  </main>
+</div>
+
+

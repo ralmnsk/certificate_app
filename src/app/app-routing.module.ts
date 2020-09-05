@@ -9,6 +9,7 @@ import {CertificatesComponent} from './certificates/certificates.component';
 import {CertificateComponent} from './certificate/certificate.component';
 import {CertificateDeletedComponent} from './certificate-deleted/certificate-deleted.component';
 import {CreateCertificateComponent} from './create-certificate/create-certificate.component';
+import {OrderComponent} from './order/order.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path: 'user', component: UserComponent},
   {path: 'users', component: UsersComponent},
   {path: 'orders', component: OrdersComponent},
+  {path: 'order', component: OrderComponent},
   {path: 'certificates', component: CertificatesComponent},
   {path: 'certificate', component: CertificateComponent},
   {path: 'certificate-deleted', component: CertificateDeletedComponent},

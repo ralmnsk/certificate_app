@@ -200,6 +200,7 @@ export class CertificateComponent implements OnInit {
                   }
                 }, error => {
                   console.log(error.message);
+                  this.message = 'Error happened during tags saving.';
                 }
               );
           }

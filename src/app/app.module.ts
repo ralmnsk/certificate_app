@@ -36,6 +36,9 @@ import {DataTagEditService} from './data/data-tag-edit.service';
 import {CertificateService} from './certificate/certificate.service';
 import { CertificateDeletedComponent } from './certificate-deleted/certificate-deleted.component';
 import { CreateCertificateComponent } from './create-certificate/create-certificate.component';
+import { OrderComponent } from './order/order.component';
+import {OrderService} from './order/order.service';
+import {OrderStorageService} from './data/order-storage.service';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,8 @@ import { CreateCertificateComponent } from './create-certificate/create-certific
     TagsComponent,
     CertificateComponent,
     CertificateDeletedComponent,
-    CreateCertificateComponent
+    CreateCertificateComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +83,9 @@ import { CreateCertificateComponent } from './create-certificate/create-certific
     CertificateService,
     CertificateStorageService,
     TagsService,
-    TagStorageService
+    TagStorageService,
+    OrderService,
+    OrderStorageService
   ],
   bootstrap: [AppComponent]
 })

@@ -16,8 +16,8 @@ export class TagsService {
   }
 
   getTags(page?: number, size?: number, name?: string, sort?: string): any {
-    console.log(config.Url + '/tags' + '?tagName=' + name
-      + '&page=' + page + '&size=' + size + '&sort=' + sort);
+    // console.log(config.Url + '/tags' + '?tagName=' + name
+    //   + '&page=' + page + '&size=' + size + '&sort=' + sort);
     return this.http.get(config.Url + '/tags' + '?tagName=' + name
       + '&page=' + page + '&size=' + size + '&sort=' + sort);
   }
@@ -32,7 +32,7 @@ export class TagsService {
       .set('Authorization', this.tokenStorage.getToken());
     let tag = new Tag();
     tag.name = value;
-    console.log('tag service, create:', config.Url + '/tags');
+    // console.log('tag service, create:', config.Url + '/tags');
     return this.http.post(config.Url + '/tags', tag, {headers});
   }
 
@@ -47,7 +47,7 @@ export class TagsService {
       }),
       body: [tagId],
     };
-    console.log('remove tag:', config.Url + '/certificates/' + certificateId + '/tags');
+    // console.log('remove tag:', config.Url + '/certificates/' + certificateId + '/tags');
     return this.http.delete(config.Url + '/certificates/' + certificateId + '/tags', options);
   }
 }
