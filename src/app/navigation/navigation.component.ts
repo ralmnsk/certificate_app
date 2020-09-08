@@ -13,6 +13,7 @@ import {Tag} from '../tags/tag';
 import {TagsService} from '../tags/tags.service';
 import {TagStorageService} from '../data/tag-storage.service';
 import {DataTagService} from '../data/data-tag.service';
+import {UserService} from '../user/user.service';
 
 @Component({
   selector: 'app-navigation',
@@ -50,7 +51,8 @@ export class NavigationComponent implements OnInit {
               private certificateStorage: CertificateStorageService,
               private tagService: TagsService,
               private tagStorageService: TagStorageService,
-              private dataTagService: DataTagService
+              private dataTagService: DataTagService,
+              private userService: UserService
   ) {
 
   }
@@ -64,7 +66,7 @@ export class NavigationComponent implements OnInit {
       if (this.token !== undefined && this.token !== null && this.token.length > 5) {
         this.token = message;
         this.login = 'Logout';
-        // console.log('navigation, message from dataTokenService:', message);
+        console.log('navigation, login user:', this.userLogin);
       }
     });
     this.searchControl.valueChanges
@@ -79,12 +81,17 @@ export class NavigationComponent implements OnInit {
       this.tagName = message;
       // console.log('tag name:', message);
     });
-    this.initUserInfo();
+    this.userService.getLoggedIn.subscribe(message => {
+      this.initUserInfo();
+    });
   }
 
   initUserInfo(): void {
+    // while (this.tokenStorage.getEmail() === null || this.tokenStorage.getEmail() === undefined) {
     this.userLogin = this.tokenStorage.getEmail();
     this.userRole = this.tokenStorage.getRole();
+    // }
+    console.log('navigation, userLogin:', this.userLogin);
   }
 
   initPagination(): void {

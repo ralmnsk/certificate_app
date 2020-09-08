@@ -6,8 +6,8 @@ export class Certificate {
   creation: Date;
   modification: Date;
   duration: number;
-  links: {
-    rel: string,
-    href: string
-  };
+  // links: {
+  //   rel: string,
+  //   href: string
+  // };
 }

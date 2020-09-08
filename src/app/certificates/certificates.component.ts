@@ -7,6 +7,7 @@ import {Pagination} from './pagination';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {Router} from '@angular/router';
 import {DataTagEditService} from '../data/data-tag-edit.service';
+import {OrderStorageService} from '../data/order-storage.service';
 
 @Component({
   selector: 'app-certificates',
@@ -40,9 +41,8 @@ export class CertificatesComponent implements OnInit {
               private dataCertificateService: DataCertificateService,
               private certificateStorage: CertificateStorageService,
               private router: Router,
-              private dataTagEditService: DataTagEditService
-              // private dataTagService: DataTagService,
-              // private tagStorageService: TagStorageService
+              private dataTagEditService: DataTagEditService,
+              private orderStorage: OrderStorageService
   ) {
     this.scale = 1;
   }
@@ -154,5 +154,12 @@ export class CertificatesComponent implements OnInit {
     this.router.navigate(['certificate']);
     this.dataTagEditService.changeMessage(value.toString());
     this.certificateStorage.setCurrentCertificate(value);
+  }
+
+  addToCart(id: number): void {
+    const set = this.orderStorage.getCertificateIds();
+    console.log('certificates component, set:', set);
+    set.add(id);
+    this.orderStorage.setCertificateIds(set);
   }
 }

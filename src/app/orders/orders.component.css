@@ -2,22 +2,23 @@
   background-color: lightgreen;
   display: flex;
   flex-direction: column;
+  width: 1100px;
 
 }
 
 .div-row {
-  width: 1200px;
+  width: 1100px;
   display: flex;
   flex-direction: row;
 }
 
-.div-cell {
-  /*width: 33.33%;*/
-  border-style: solid;
-  border-color: white;
-  padding-left: 10px;
-}
+/*.div-cell {*/
+/*  !*width: 33.33%;*!*/
+/*  border-style: solid;*/
+/*  border-color: white;*/
+/*  padding-left: 10px;*/
+/*}*/
 
-.order-cell{
-  width:500px;
+.order-cell {
+  width: 500px;
 }

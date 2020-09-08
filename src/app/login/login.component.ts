@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit {
   }
 
 
-
   ngOnInit(): void {
     this.initForm();
     this.messageLogin = '';
@@ -66,7 +65,7 @@ export class LoginComponent implements OnInit {
           this.userLink = result.user_link.replace(config.ServerUrl, config.Url);
           console.log('userLink:', this.userLink);
           this.userService.setUserInStorage(this.userLink);
-          this.router.navigate(['user']);
+          this.router.navigate(['certificates']);
 
         }, error => {
           console.log('error: ', error);

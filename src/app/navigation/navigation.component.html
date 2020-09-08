@@ -40,14 +40,17 @@
       </div>
     </div>
   </div>
-  <div *ngIf="userLogin !== null || userLogin !== undefined ">
+<!--  <div *ngIf="userLogin !== null || userLogin !== undefined ">-->
     {{userRole}} {{userLogin}}
-  </div>
+<!--  </div>-->
   <div class="navigation-bar-right">
     <!--    <img class="icon icon-dynamic" src="assets/icons/heart-fill.svg" alt="menu" width="20px" height="20px">-->
-    <a class="icon icon-dynamic" (click)="cart()">
-      <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
-    </a>
+    <div *ngIf="login === 'Logout'">
+      <a class="icon icon-dynamic" (click)="cart()">
+        <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
+      </a>
+    </div>
+
     <a id="login" class="icon icon-dynamic" *ngIf="login === 'Login'" (click)="toLogin()">Login</a>
     <a id="logout" class="icon icon-dynamic" *ngIf="login === 'Logout'" (click)="logout()">Logout</a>
     <a class="icon" *ngIf="login==='Login'">|</a>

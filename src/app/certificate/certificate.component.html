@@ -2,79 +2,56 @@
   <div class="order-header">
     <div *ngIf="certificate !== undefined">Certificate #{{id}} </div>
   </div>
-  <div class="order-place">
+  <br/>
+  <div class="order-place certificate-width">
     <form class="order-form" method="post">
       <div class="label-input order-input">
-        <label class="register-form-label">Name</label>
-        <input class="login-form-input" type="text" name="name" [formControl]="name"/>
+        Name
+        <input class="login-form-input" type="text" name="name" [formControl]="nameControl"/>
       </div>
-      <label class="register-form-label">Description</label>
-      <textarea class="textarea-form-input" type="text" name="description" placeholder="Order Description"
-                required="required" [formControl]="description">
-                            </textarea>
-      <!--                        </div>-->
-<!--      <div class="label-input order-input">-->
-<!--        <label class="register-form-label">Upload</label>-->
-<!--        <div class="load-file">-->
-<!--          <input type="file" name="file" id="file" accept=".jpg, .jpeg, .png" multiple [formControl]="file"/>-->
-<!--          <label for="file" class="upload-label">-->
-<!--            <img class="icon icon-dynamic" src="assets/icons/card-image.svg" alt="menu" width="20px"-->
-<!--                 height="20px">-->
-<!--          </label>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="big-image">
+        <img class="icon" src="assets/images/car.jfif" alt="menu" width="420px"
+             height="300px">
+      </div>
       <div class="label-input order-input">
-        <label class="register-form-label">Creation</label>
+        Creation
         <input class="login-form-input" type="text" name="creation" readonly [formControl]="creation"/>
       </div>
       <div class="label-input order-input">
-        <label class="register-form-label">Modification</label>
+        Modification
         <input class="login-form-input" type="text" name="modification" readonly [formControl]="modification"/>
       </div>
       <div class="label-input order-input">
-        <label class="register-form-label">Duration</label>
-        <input class="login-form-input" type="text" name="duration" [formControl]="duration"/>
+        Duration
+        <input class="login-form-input small" type="text" name="duration" [formControl]="duration"/>
       </div>
-      <!--      <div class="label-input box-input">-->
-      <!--        <label class="register-form-label">Deleted</label>-->
-      <!--        <input class="order-input-box" type="checkbox" name="deleted"  formControl="deleted"/>-->
-      <!--      </div>-->
       <div class="label-input order-input">
-        <label class="register-form-label">Price</label>
-        <input class="login-form-input" type="text" name="price" [formControl]="price"/>
+        Price
+        <input class="login-form-input small" type="text" name="price" [formControl]="price"/>
       </div>
-      <div class="tag-list">
-        <div class="users-list">
-          <div class="div-table">
-            <div class="div-row">
-              <div class="div-cell">id</div>
-              <div class="div-cell">Tag name</div>
-              <div class="div-cell">Click for action</div>
-            </div>
-          </div>
-        </div>
-        <div class="users-list" *ngFor="let tag of tags">
-          <div class="div-table">
-            <div class="user-info">
-              <div class="div-row">
-                <div class="div-cell">{{tag.id}}</div>
-                <div class="div-cell">{{tag.name}}</div>
-                <div class="div-cell icon icon-dynamic" (click)="removeTag(tag.id)">remove tag</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="users-list">
-          <div class="div-table">
-            <div class="div-row">
-              <div class="div-cell">Add tag to certificate</div>
-              <div class="div-cell">
-                <input class="tag-input-add" type="text" name="name" [formControl]="addTag"/>
-              </div>
-              <div class="div-cell icon icon-dynamic" (click)="tagAddition()">add tag</div>
-            </div>
-          </div>
-        </div>
+      <div class="label-input order-input">
+        <!-- -->
+        Tags:
+        <form [formGroup]="myForm">
+          <ng-multiselect-dropdown name="mdTags"
+                                   [settings]="dropdownSettings"
+                                   [placeholder]="'Select Tag'"
+                                   [data]="tagsToSelect" formControlName="tagsControl"
+                                   [(ngModel)]="selectedItems"
+                                   [disabled]="disabled"
+                                   (onFilterChange)="onFilterTextChange($event)"
+                                   (onDeSelect)="onItemDeselect($event)"
+                                   (onSelect)="onItemSelect($event)"
+                                   (onSelectAll)="onSelectAll($event)">
+          </ng-multiselect-dropdown>
+        </form>
+
+      </div>
+      <div class="label-input order-input">
+        Description
+        <textarea class="textarea-form-input textarea-certificate" type="text" name="description" placeholder="Order Description"
+                  required="required" [formControl]="description">
+                            </textarea>
       </div>
       <div class="order-form-footer">
         <button class="register-form-btn white-btn " type="submit" (click)="back()">
@@ -94,6 +71,7 @@
         </button>
       </div>
     </form>
+
     {{message}}
   </div>
 </main>

@@ -215,7 +215,8 @@
   background-color: white;
   border-style: groove;
   border-color: lightgray;
-  text-align: center;
+  border-radius: 5px;
+  text-align: left;
   width: 250px;
   min-width: 100px;
   height: 35px;
@@ -235,7 +236,9 @@
   width: 120px;
   height: 40px;
   background-color: lightgreen;
-  border-style: none;
+  border-style: groove;
+  border-color: lightgray;
+  border-radius: 5px;
   font-size: 20px;
   color: white;
 }
@@ -324,8 +327,8 @@
 }
 
 .label-input {
-  height: 50px;
-  padding: 10px;
+  /*height: 50px;*/
+  padding-left: 10px;
 }
 
 .order-input {
@@ -333,6 +336,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 5px;
   /*float: left;*/
 }
 
@@ -369,13 +373,18 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-top: 10px;
+  /*padding-top: 10px;*/
+  padding: 10px;
+  background-color: lightgray;
+  /*height: 600px;*/
+  border-radius: 5px;
 }
 
 .order-form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding-left: 12px;
 }
 
 .order-form-footer {
@@ -389,7 +398,7 @@
 }
 
 .textarea-form-input {
-  width: 800px;
+  /*width: 800px;*/
   height: 100px;
   resize: none;
   font-size: 20px;
@@ -675,18 +684,18 @@ input[type="file"] {
 
 }
 
-.div-row {
-  width: 600px;
-  display: flex;
-  flex-direction: row;
-}
+/*.div-row {*/
+/*  width: 600px;*/
+/*  display: flex;*/
+/*  flex-direction: row;*/
+/*}*/
 
-.div-cell {
-  width: 33.33%;
-  border-style: solid;
-  border-color: white;
-  padding-left: 10px;
-}
+/*.div-cell {*/
+/*  width: 33.33%;*/
+/*  border-style: solid;*/
+/*  border-color: white;*/
+/*  padding-left: 10px;*/
+/*}*/
 
 .tag-input-add {
   width: calc(100% + 2px);
@@ -718,15 +727,69 @@ input[type="file"] {
 }
 
 .div-row {
-  width: 600px;
+  width: 1190px;
   display: flex;
   flex-direction: row;
 }
 
 .div-cell {
-  width: 33.33%;
+  /*width: 33.33%;*/
   border-style: solid;
   border-color: white;
   padding-left: 10px;
 }
 
+.ten {
+  width: 10%;
+}
+
+.fifty {
+  width: 50%;
+}
+
+.five {
+  width: 5%;
+}
+
+.input, textarea {
+  border-radius: 5px;
+  /*direction: rtl;*/
+  text-align: left;
+}
+
+.small {
+  width: 30px;
+}
+
+.big-image {
+  position: absolute;
+  transform: translateX(320px) translateY(30px);
+}
+
+.cart {
+  padding-top: 10px;
+}
+
+.wide {
+  width: 1170px;
+}
+
+.twentyFive {
+  width: 25%;
+}
+
+.certificate-width {
+  width:800px;
+}
+
+.textarea-certificate {
+  width: 730px;
+}
+
+.uncompleted {
+  width:140px;
+}
+
+.back {
+  width: 100px;
+}

@@ -30,6 +30,7 @@ export class CertificateService {
   }
 
   update(certificate: Certificate): any {
+    console.log('certificate service:', certificate);
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
@@ -51,5 +52,26 @@ export class CertificateService {
       .set('Authorization', this.tokenStorage.getToken());
     // console.log('certificate save: ' + config.Url + '/certificates');
     return this.http.post(config.Url + '/certificates', certificate, {headers});
+  }
+
+  addCertificatesToOrder(id: number, certificateIds: Set<number>): any {
+    console.log('cerficate service, addCertificatesToOrder');
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json; charset=UTF-8')
+      .set('Authorization', this.tokenStorage.getToken());
+    const certificateIdsArray = new Array<number>();
+    for (const certificateId of certificateIds) {
+      certificateIdsArray.push(certificateId);
+    }
+    console.log('certificate service, certificateIdsArray:', certificateIdsArray);
+    return this.http.put(config.Url + '/orders/' + id + '/certificates', certificateIdsArray, {headers});
+  }
+
+  getCertificatesOfOrder(orderId: number, page: number, size: number): any {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json; charset=UTF-8')
+      .set('Authorization', this.tokenStorage.getToken());
+    // console.log('certificate service, getCertificatesOfOrder:');
+    return this.http.get(config.Url + '/orders/' + orderId + '/certificates', {headers});
   }
 }

@@ -1,5 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
+import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -27,18 +28,21 @@ import {DataTokenService} from './data/data-token.service';
 import {CertificatesService} from './certificates/certificates.service';
 import {DataCertificateService} from './data/data-certificate.service';
 import {CertificateStorageService} from './data/certificate-storage.service';
-import { TagsComponent } from './tags/tags.component';
+import {TagsComponent} from './tags/tags.component';
 import {TagsService} from './tags/tags.service';
 import {DataTagService} from './data/data-tag.service';
 import {TagStorageService} from './data/tag-storage.service';
-import { CertificateComponent } from './certificate/certificate.component';
+import {CertificateComponent} from './certificate/certificate.component';
 import {DataTagEditService} from './data/data-tag-edit.service';
 import {CertificateService} from './certificate/certificate.service';
-import { CertificateDeletedComponent } from './certificate-deleted/certificate-deleted.component';
-import { CreateCertificateComponent } from './create-certificate/create-certificate.component';
-import { OrderComponent } from './order/order.component';
+import {CertificateDeletedComponent} from './certificate-deleted/certificate-deleted.component';
+import {CreateCertificateComponent} from './create-certificate/create-certificate.component';
+import {OrderComponent} from './order/order.component';
 import {OrderService} from './order/order.service';
 import {OrderStorageService} from './data/order-storage.service';
+import {OrderViewComponent} from './order-view/order-view.component';
+import {DataOrderViewService} from './data/data-order-view.service';
+import {OrderViewStorageService} from './data/order-view-storage.service';
 
 @NgModule({
   declarations: [
@@ -59,14 +63,16 @@ import {OrderStorageService} from './data/order-storage.service';
     CertificateComponent,
     CertificateDeletedComponent,
     CreateCertificateComponent,
-    OrderComponent
+    OrderComponent,
+    OrderViewComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgMultiSelectDropDownModule.forRoot()
   ],
   providers: [
     TokenStorageService,
@@ -77,6 +83,8 @@ import {OrderStorageService} from './data/order-storage.service';
     AuthInterceptor,
     DataTokenService,
     DataCertificateService,
+    DataOrderViewService,
+    OrderViewStorageService,
     DataTagService,
     DataTagEditService,
     CertificatesService,

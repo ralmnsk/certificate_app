@@ -1,10 +1,12 @@
 <div class="users-container">
   <app-header></app-header>
   <app-navigation></app-navigation>
+
   <main class="main main-order">
-    <div class="order-header">
-      Cart [Certificates to buy]
+    <div *ngIf="order !== null && order !== undefined " class="order-header">
+      Order #{{order.id}} view
     </div>
+    <br/>
     <div class="order-place cart">
 
       <div class="label-input">
@@ -45,8 +47,17 @@
         </div>
       </div>
       <div class="users-list">
-        <div class="label-input">
-          Total cost:{{totalCost}}
+        <div class="label-input" *ngIf="order !== null && order !== undefined">
+          Total cost:{{order.totalCost}}
+        </div>
+      </div>
+      <br/>
+      <div *ngIf="order !== null && order !== undefined">
+        <div class="label-input" *ngIf="order.completed === true">
+          Status: Completed
+        </div>
+        <div class="label-input" *ngIf="order.completed === false">
+          Status: Not Completed
         </div>
       </div>
       <br/>
@@ -62,21 +73,23 @@
       </form>
       <!--      order end-->
       <div class="order-form-footer">
-        <button class="register-form-btn white-btn " type="submit" (click)="back()">
+        <button class="register-form-btn white-btn back" type="submit" (click)="back()">
           <a class="icon icon-dynamic">
             Back
           </a>
         </button>
-        <button id="cancel" class="register-form-btn" type="submit" (click)="cancel()">
-          <a class="icon icon-dynamic">
-            Clear cart
-          </a>
-        </button>
-        <button id="save" class="register-form-btn" type="submit" (click)="save()">
-          <a class="icon icon-dynamic">
-            Submit cart
-          </a>
-        </button>
+
+          <button id="complete" class="register-form-btn" type="submit" (click)="complete()">
+            <a class="icon icon-dynamic">
+              Complete
+            </a>
+          </button>
+
+        <!--        <button id="uncompleted" class="register-form-btn uncompleted" type="submit" (click)="uncompleted()">-->
+        <!--          <a class="icon icon-dynamic">-->
+        <!--            Uncompleted-->
+        <!--          </a>-->
+        <!--        </button>-->
       </div>
       <div class="userMessage">
         {{message}}
@@ -84,5 +97,6 @@
     </div>
   </main>
 </div>
+
 
 
