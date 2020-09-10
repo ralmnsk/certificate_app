@@ -2,31 +2,27 @@
   <app-header></app-header>
   <app-navigation></app-navigation>
   <main class="main">
-    <div class="login-place">
-      <div class="logo-big">
-        <img src="assets/images/logo.png" alt="logo" width="200px" height="200px">
-      </div>
-      <form class="login-form" method="post" [formGroup]="loginForm">
-        <input class="login-form-input" formControlName="email" type="text" name="username"
-               placeholder="Enter Username" required="required"/>
-        <input class="login-form-input" formControlName="password" type="password" name="password"
-               placeholder="Enter Password"
-               required="required"/>
-        <button class="login-form-btn" type="submit" (click)="loginProcess()">
-          <a class="icon icon-dynamic">
-            Login
-          </a>
+    <form method="post" [formGroup]="loginForm">
+      <mat-card class="login-place">
+        <div class="logo-big">
+          <img src="assets/images/logo.png" alt="logo" width="200px" height="200px">
+        </div>
+        <mat-form-field class="example-full-width">
+          <mat-label>Enter login</mat-label>
+          <input matInput placeholder="Email" value="" formControlName="email">
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+          <mat-label>Enter password</mat-label>
+          <input matInput placeholder="Password" value="" type="password" formControlName="password">
+        </mat-form-field>
+        <br/>
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="loginProcess()">Login</button>
+        <br/>
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="toRegisterPage()">Register
         </button>
-        <button class="login-form-btn" type="submit" (click)="toRegisterPage()">
-          <a class="icon icon-dynamic">
-            Register
-          </a>
-        </button>
-      </form>
-      <div>
         {{messageLogin}}
-      </div>
-    </div>
+      </mat-card>
+    </form>
   </main>
   <app-footer></app-footer>
 </div>

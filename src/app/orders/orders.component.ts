@@ -21,6 +21,8 @@ export class OrdersComponent implements OnInit {
   last: number;
   size: number;
   private viewMessage: string;
+  isProcessBar: boolean;
+  displayedColumns: string[] = ['View', 'Total cost', 'Created', 'Description', 'Completed'];
 
   constructor(private orderService: OrderService,
               private tokenStorage: TokenStorageService,
@@ -30,6 +32,7 @@ export class OrdersComponent implements OnInit {
   ) {
     this.first = 0;
     this.size = 5;
+    this.isProcessBar = true;
   }
 
   ngOnInit(): void {
@@ -39,6 +42,7 @@ export class OrdersComponent implements OnInit {
   }
 
   getOrders(userId: number, page?: number, size?: number): void {
+    this.isProcessBar = true;
     this.orderService.getOrders(userId, page, size)
       .pipe(debounceTime(250))
       .subscribe(
@@ -55,6 +59,7 @@ export class OrdersComponent implements OnInit {
                   count++;
                   if (count === orders.length) {
                     this.orders = loadedOrders.sort((a, b) => b.id - a.id);
+                    this.isProcessBar = false;
                     this.enableButtons();
                   }
                   // console.log('saved orders:', data as Order);
@@ -114,7 +119,6 @@ export class OrdersComponent implements OnInit {
     this.viewMessage = orderId.toString();
     this.orderViewStorage.setCurrentOrderId(orderId);
     this.dataOrderViewService.changeMessage(this.viewMessage);
-    // console.log('view order:', orderId);
     this.router.navigate(['order-view']);
   }
 
@@ -126,7 +130,9 @@ export class OrdersComponent implements OnInit {
 
   enableButtons(): void {
     for (let i = 0; i < 4; i++) {
-      document.getElementById(i.toString()).className = 'nav-btn';
+      if (document.getElementById(i.toString()) !== null && document.getElementById(i.toString()) !== undefined) {
+        document.getElementById(i.toString()).className = 'nav-btn';
+      }
     }
   }
 

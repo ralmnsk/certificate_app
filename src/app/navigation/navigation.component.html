@@ -1,50 +1,78 @@
-<nav class="box nav">
-
+<mat-toolbar class="box nav">
   <div class="menu-and-logo">
-    <div class="dropdown">
-      <span>
-        <img class="icon" src="assets/icons/justify.svg" alt="menu" width="35px" height="35px">
-      </span>
-      <div class="dropdown-content">
-        <a class="icon"(click)="toUserPage()">User page</a>
-        <a class="icon" (click)="toUsers()">Users</a>
-        <a class="icon" (click)="toOrders()">Orders</a>
-        <a class="icon" (click)="toCertificates()">Certificates</a>
-        <a class="icon" (click)="createCertificate()">New Certificate</a>
-      </div>
-    </div>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="toUserPage()">
+        <mat-icon>account_box</mat-icon>
+        <span>User Page</span>
+      </button>
+      <button mat-menu-item (click)="toUsers()">
+        <mat-icon>people</mat-icon>
+        <span>Users</span>
+      </button>
+      <button mat-menu-item (click)="toOrders()">
+        <mat-icon>receipt</mat-icon>
+        <span>Orders</span>
+      </button>
+      <button mat-menu-item (click)="toCertificates()">
+        <mat-icon>add_shopping_cart</mat-icon>
+        <span>Certificates</span>
+      </button>
+      <button mat-menu-item (click)="createCertificate()">
+        <mat-icon>create</mat-icon>
+        <span>New Certificate</span>
+      </button>
+    </mat-menu>
+
     <div class="logo">
       <img src="assets/images/logo.png" alt="logo" width="40px" height="40px">
     </div>
+    <span>Certificate application</span>
+    <span class="example-spacer"></span>
   </div>
 
-  <div class="search-bar">
+  <div class="search-bar" *ngIf="isShowSearchBar === true">
     <div class="search-bar-one">
       <input id="certificateInput" class="search-bar-input" type="text" name="search_item"
-             placeholder="Search by certificate name"  [(ngModel)]="name" [formControl]="searchControl"/>
-      <!--(ngModelChange)="searchByName($event)"-->
+             placeholder="Search by certificate name"  [(ngModel)]="name" [formControl]="searchControl"
+        (ngModelChange)="searchByName($event)"/>
     </div>
-    <div class="dropdown">
-      <div class="dropdown-categories-button">
-        All Categories
-        <img class="icon" src="assets/icons/chevron-compact-down.svg" alt="chevron" width="20px" height="20px">
-      </div>
+    <!--    -&#45;&#45;&#45;&#45;-->
+<!--    <div class="tag-input">-->
+<!--      <form class="example-form tag-input">-->
+<!--        <mat-form-field class="example-full-width">-->
+<!--          <mat-label>Search tag by name</mat-label>-->
+<!--          <input type="text" matInput [formControl]="searchTag" [matAutocomplete]="auto">-->
+<!--          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">-->
+<!--            <mat-option *ngFor="let tag of tags" [value]="tag" (click)="setTagName(tag)">-->
+<!--              {{tag.name}}-->
+<!--            </mat-option>-->
+<!--          </mat-autocomplete>-->
+<!--        </mat-form-field>-->
+<!--      </form>-->
+<!--    </div>-->
+    <!--    &#45;&#45;&#45;&#45;-->
+        <div class="dropdown">
+          <div class="dropdown-categories-button">
+            <input id="tagInput" class="search-bar-input" type="text" name="search_item"
+                   placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag">
+    <!--        <img class="icon" src="assets/icons/chevron-compact-down.svg" alt="chevron" width="20px" height="20px">-->
+          </div>
 
-      <div id="dropDown" class="dropdown-content">
-        <input id="tagInput" class="search-bar-input" type="text" name="search_item"
-               placeholder="Search by tag" [(ngModel)]="tagName" [formControl]="searchTag">
-        <div id="inDropDown" class="dropdown-content">
-          <!--                       for tag name = category name-->
-          <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
+          <div id="dropDown" class="dropdown-content">
+<!--            <input id="tagInput" class="search-bar-input" type="text" name="search_item"-->
+<!--                   placeholder="Search by tag" [(ngModel)]="tagName" [formControl]="searchTag">-->
+            <div id="inDropDown" class="dropdown-content">
+              <!--                       for tag name = category name-->
+              <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
   </div>
-<!--  <div *ngIf="userLogin !== null || userLogin !== undefined ">-->
-    {{userRole}} {{userLogin}}
-<!--  </div>-->
+
   <div class="navigation-bar-right">
-    <!--    <img class="icon icon-dynamic" src="assets/icons/heart-fill.svg" alt="menu" width="20px" height="20px">-->
     <div *ngIf="login === 'Logout'">
       <a class="icon icon-dynamic" (click)="cart()">
         <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
@@ -56,4 +84,5 @@
     <a class="icon" *ngIf="login==='Login'">|</a>
     <a class="icon icon-dynamic" (click)="toRegistration()" *ngIf="login==='Login'">Sign In</a>
   </div>
-</nav>
+
+</mat-toolbar>

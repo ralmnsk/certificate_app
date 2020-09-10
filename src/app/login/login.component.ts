@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   messageLogin: string;
   private newUrl: string;
   private user: User;
+  hide = true;
 
   constructor(private router: Router,
               private authService: AuthService,

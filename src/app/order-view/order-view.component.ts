@@ -7,6 +7,8 @@ import {FormControl} from '@angular/forms';
 import {Router} from '@angular/router';
 import {CertificateService} from '../certificate/certificate.service';
 import {OrderViewStorageService} from '../data/order-view-storage.service';
+import {CertificateStorageService} from '../data/certificate-storage.service';
+import {TokenStorageService} from '../auth/token-storage.service';
 
 @Component({
   selector: 'app-order-view',
@@ -26,16 +28,20 @@ export class OrderViewComponent implements OnInit {
   last: number;
   size: number;
 
+  isProcessBar: boolean;
 
   constructor(private dataOrderViewService: DataOrderViewService,
               private orderService: OrderService,
               private orderViewStorage: OrderViewStorageService,
               private certificateService: CertificateService,
-              private router: Router
+              private router: Router,
+              private certificateStorage: CertificateStorageService,
+              private tokenStorage: TokenStorageService
   ) {
   }
 
   ngOnInit(): void {
+    this.isProcessBar = true;
     this.first = 0;
     this.page = 0;
     this.size = 10;
@@ -72,6 +78,7 @@ export class OrderViewComponent implements OnInit {
           this.certificates = data.elements.content as Array<Certificate>;
           this.page = data.elements.page;
           this.last = data.elements.totalPage - 1;
+          this.isProcessBar = false;
         },
         error => {
           console.log(error.error.message);
@@ -82,7 +89,8 @@ export class OrderViewComponent implements OnInit {
 
   back(): void {
     this.orderViewStorage.setCurrentOrderId(this.order.id);
-    this.router.navigate(['orders']);
+    const url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    this.router.navigate([url]);
   }
 
   complete(): void {
@@ -112,5 +120,10 @@ export class OrderViewComponent implements OnInit {
           console.log(error.error.message);
         }
       );
+  }
+
+  view(certificateId: number): void {
+    this.certificateStorage.setCurrentCertificate(certificateId);
+    this.router.navigate(['certificate']);
   }
 }

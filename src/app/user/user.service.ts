@@ -71,4 +71,12 @@ export class UserService {
       .set('Authorization', this.tokenStorage.getToken());
     return this.http.get(config.Url + '/users' + '?page=' + page + '&size=' + size, {headers});
   }
+
+  getAllUsersBySurname(surname?: string, page?: number, size?: number): any {
+    const headers = new HttpHeaders()
+      .set('Content-Type', 'application/json; charset=UTF-8')
+      .set('Authorization', this.tokenStorage.getToken());
+
+    return this.http.get(config.Url + '/users?surname=' + surname + '&page=' + page + '&size=' + size, {headers});
+  }
 }

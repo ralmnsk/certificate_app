@@ -1,12 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {Tag} from '../tags/tag';
-import {FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {debounceTime} from 'rxjs/operators';
 import {TagsService} from '../tags/tags.service';
 import {Certificate} from '../certificates/certificate';
 import {CertificateService} from '../certificate/certificate.service';
 import {CertificateStorageService} from '../data/certificate-storage.service';
+import {IDropdownSettings} from 'ng-multiselect-dropdown';
+import {ListItem} from 'ng-multiselect-dropdown/multiselect.model';
+import {DataTagEditService} from '../data/data-tag-edit.service';
 
 @Component({
   selector: 'app-create-certificate',
@@ -18,37 +21,71 @@ export class CreateCertificateComponent implements OnInit {
   description = new FormControl('');
   duration = new FormControl('');
   price = new FormControl('');
-  tags: Array<Tag>;
+  tags = new Array<Tag>();
   addTag = new FormControl('');
+  deleteTag = new FormControl('');
   message: string;
   certificate: Certificate;
 
+  myForm: FormGroup;
+  disabled = false;
+  ShowFilter = true;
+  limitSelection = false;
+  tagsToSelect = new Array<Tag>();
+  selectedItems = new Array<Tag>();
+  dropdownSettings: IDropdownSettings = {};
 
   constructor(private router: Router,
               private tagsService: TagsService,
               private certificateService: CertificateService,
-              private certificateStorageService: CertificateStorageService
+              private certificateStorageService: CertificateStorageService,
+              private fb: FormBuilder,
+              private dataTagEditService: DataTagEditService
   ) {
   }
 
   ngOnInit(): void {
-    this.tags = new Array<Tag>();
+    this.myForm = this.fb.group({
+      tagsControl: [this.selectedItems]
+    });
+    this.multiSelectDropDown();
+
+    this.addTag.valueChanges
+      .pipe(
+        debounceTime(1000),
+      )
+      .subscribe(() => {
+        console.log('addTag valueChanges:', this.addTag.value);
+        if (!this.isContainTag(this.addTag.value)) {
+          this.tagAddition(this.addTag.value);
+          console.log('add tag value changes, tags:', this.tags, ' selectedItems:',
+            this.selectedItems, ' tags to select:', this.tagsToSelect);
+
+        }
+      });
+    this.deleteTag.valueChanges
+      .subscribe(() => {
+        this.removeTag(this.deleteTag.value);
+      });
   }
 
-  removeTag(id: number): void {
-    for (let i = 0; i < this.tags.length; i++) {
-      if (this.tags[i].id === id) {
-        this.tags.splice(i, 1);
-        console.log('remove Tag, tags:', this.tags);
+  removeTag(name: string): void {
+    console.log('remove Tag, name:', name);
+    console.log('remove Tag, selected items start:', this.selectedItems);
+    for (let i = 0; i < this.selectedItems.length; i++) {
+      if (this.selectedItems[i].name === name) {
+        this.selectedItems.splice(i, 1);
+        this.message = 'Tag' + name + 'was removed';
       }
     }
+    console.log('remove Tag, selected items end:', this.selectedItems);
   }
 
-  tagAddition(): void {
-    if (this.addTag.value === '' || this.addTag.value === null || this.addTag.value === undefined) {
+  tagAddition(value: string): void {
+    if (value === '' || value === null || value === undefined) {
       return;
     }
-    this.tagsService.create(this.addTag.value)
+    this.tagsService.create(value)
       .subscribe(data => {
           const tag = data as Tag;
           if (!this.isContainTag(tag)) {
@@ -58,8 +95,11 @@ export class CreateCertificateComponent implements OnInit {
                 result => {
                   const savedTag = result as Tag;
                   if (!this.isContainTag(savedTag)) {
-                    this.tags.push(savedTag);
-                    this.message = 'Tag was added.';
+                    // this.addTag.setValue(savedTag);
+                    this.selectedItems.push(savedTag);
+                    this.tagsToSelect.push(savedTag);
+                    this.myForm.get('tagsControl').setValue(this.selectedItems);
+                    this.message = 'Tag was added.' + savedTag.name;
                   }
                 }, error => {
                   console.log(error.message);
@@ -73,8 +113,9 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   isContainTag(tag: Tag): boolean {
-    for (let i = 0; i < this.tags.length; i++) {
-      if (this.tags[i].name === tag.name) {
+    console.log('isContainTag selected items:', this.selectedItems);
+    for (let i = 0; i < this.selectedItems.length; i++) {
+      if (this.selectedItems[i].name === tag.name) {
         return true;
       }
     }
@@ -108,13 +149,16 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   saveTagsOfCreatedCertificate(): void {
-    for (let i = 0; i < this.tags.length; i++) {
-      this.certificateService.addTagToCertificate(this.certificate.id, this.tags[i].id)
+    for (let i = 0; i < this.selectedItems.length; i++) {
+      this.certificateService.addTagToCertificate(this.certificate.id, this.selectedItems[i].id)
         .pipe(debounceTime(1000))
         .subscribe(
           result => {
             this.certificate = result as Certificate;
             this.message = 'Tag was added.';
+            if (i === this.selectedItems.length - 1) {
+              this.dataTagEditService.changeMessage(this.certificate.id.toString());
+            }
           }, error => {
             console.log(error.message);
             this.message = 'Error happened during tags saving.';
@@ -159,4 +203,40 @@ export class CreateCertificateComponent implements OnInit {
     console.log('form is valid');
     return true;
   }
+
+  onFilterTextChange($event: ListItem): void {
+    const value = String($event);
+    this.addTag.setValue(value);
+
+  }
+
+  onItemDeselect($event: ListItem): void {
+    const name = String($event);
+    console.log('item deselect', String($event));
+    this.removeTag(name);
+  }
+
+  onItemSelect(item: any): void {
+    console.log(item);
+  }
+
+  onSelectAll(items: any): void {
+    console.log(items);
+  }
+
+  multiSelectDropDown(): void {
+    this.dropdownSettings = {
+      singleSelection: false,
+      idField: 'id',
+      textField: 'name',
+      // selectAllText: 'Select All',
+      // unSelectAllText: 'UnSelect All',
+      enableCheckAll: false,
+      itemsShowLimit: 10,
+      allowSearchFilter: this.ShowFilter,
+      allowRemoteDataSearch: true
+    };
+    console.log('multi select drop down:');
+  }
+
 }

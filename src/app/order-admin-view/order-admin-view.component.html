@@ -3,7 +3,7 @@
   <app-navigation></app-navigation>
   <main class="main main-order">
     <div class="order-header">
-      Orders Page
+      User {{userSurnameView}} {{userNameView}} orders:
     </div>
     <br/>
     <table mat-table [dataSource]="orders" class="mat-elevation-z8 wide" *ngIf="isProcessBar ===false">
@@ -38,13 +38,14 @@
     <div class="users-list" *ngIf="isProcessBar ===true">
       <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
-<!--    <div class="order-place">-->
+
+<!--    <div class="order-admin-view">-->
 <!--      &lt;!&ndash;    orders&ndash;&gt;-->
 <!--      <div class="users-list">-->
 <!--        <div class="div-table">-->
 <!--          <div class="user-info">-->
 <!--            <div class="div-row">-->
-<!--&lt;!&ndash;              <div class="div-cell ten">Id</div>&ndash;&gt;-->
+<!--              &lt;!&ndash;              <div class="div-cell ten">Id</div>&ndash;&gt;-->
 <!--              <div class="div-cell five">View</div>-->
 <!--              <div class="div-cell ten">Total cost</div>-->
 <!--              <div class="div-cell twentyFive">Created</div>-->
@@ -54,23 +55,22 @@
 <!--          </div>-->
 <!--        </div>-->
 <!--      </div>-->
-<!--      <div class="users-list" *ngIf="isProcessBar ===true">-->
-<!--        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>-->
-<!--      </div>-->
 <!--      <div class="users-list" *ngFor="let order of orders">-->
 <!--        <div class="div-table">-->
 <!--          <div class="user-info">-->
 <!--            <div class="div-row">-->
-<!--              <div class="div-cell five" (click)="view(order.id)"><img class="icon icon-dynamic"-->
-<!--                                         src="assets/icons/caret-right-fill.svg" alt="->" width="35px"-->
-<!--                                         height="35px"></div>-->
-<!--&lt;!&ndash;              <div class="div-cell ten">{{order.id}}</div>&ndash;&gt;-->
+<!--              <div class="div-cell five" (click)="view(order.id)">-->
+<!--                <img class="icon icon-dynamic"-->
+<!--                     src="assets/icons/caret-right-fill.svg"-->
+<!--                     alt="->" width="35px"-->
+<!--                     height="35px"></div>-->
+<!--              &lt;!&ndash;              <div class="div-cell ten">{{order.id}}</div>&ndash;&gt;-->
 <!--              <div class="div-cell ten">{{order.totalCost}}</div>-->
 <!--              <div class="div-cell twentyFive">{{order.created}}</div>-->
 <!--              <div class="div-cell fifty">{{order.description}}</div>-->
 <!--              <div class="div-cell ten">-->
-<!--                <div *ngIf="order.completed === true"> Completed </div>-->
-<!--                <div *ngIf="order.completed === false"> No </div>-->
+<!--                <div *ngIf="order.completed === true"> Completed</div>-->
+<!--                <div *ngIf="order.completed === false"> No</div>-->
 <!--              </div>-->
 <!--            </div>-->
 <!--          </div>-->
@@ -78,28 +78,26 @@
 <!--      </div>-->
 <!--    </div>-->
     <div class="footer-nav">
-      <div>{{first + 1}}</div>
-      <div id="0" class="nav-btn" (click)="toFirstPage()"><img class="icon icon-dynamic"
-                                                               src="assets/icons/skip-backward-fill.svg" alt="menu"
-                                                               width="35px" height="35px"></div>
-      <div id="1" class="nav-btn" (click)="toPreviousPage()"><img class="icon icon-dynamic"
-                                                                  src="assets/icons/caret-left-fill.svg" alt="menu"
-                                                                  width="35px"
-                                                                  height="35px"></div>
-      <div> {{page + 1}}</div>
-      <div id="2" class="nav-btn" (click)="toNextPage()"><img class="icon icon-dynamic"
-                                                              src="assets/icons/caret-right-fill.svg" alt="menu"
-                                                              width="35px"
-                                                              height="35px"></div>
-      <div id="3" class="nav-btn" (click)="toLastPage()"><img class="icon icon-dynamic"
-                                                              src="assets/icons/skip-forward-fill.svg" alt="menu"
-                                                              width="35px"
-                                                              height="35px"></div>
-      <div>{{last + 1}}</div>
-    </div>
-    <div class="userMessage">
-      {{message}}
+      <div>{{firstOrderPage + 1}}</div>
+      <div id="4" class="nav-btn" (click)="toFirstOrderPage()"><img class="icon icon-dynamic"
+                                                                    src="assets/icons/skip-backward-fill.svg"
+                                                                    alt="menu"
+                                                                    width="35px" height="35px"></div>
+      <div id="5" class="nav-btn" (click)="toPreviousOrderPage()"><img class="icon icon-dynamic"
+                                                                       src="assets/icons/caret-left-fill.svg"
+                                                                       alt="menu"
+                                                                       width="35px"
+                                                                       height="35px"></div>
+      <div> {{currentOrderPage + 1}}</div>
+      <div id="6" class="nav-btn" (click)="toNextOrderPage()"><img class="icon icon-dynamic"
+                                                                   src="assets/icons/caret-right-fill.svg" alt="menu"
+                                                                   width="35px"
+                                                                   height="35px"></div>
+      <div id="7" class="nav-btn" (click)="toLastOrderPage()"><img class="icon icon-dynamic"
+                                                                   src="assets/icons/skip-forward-fill.svg" alt="menu"
+                                                                   width="35px"
+                                                                   height="35px"></div>
+      <div>{{lastOrderPage + 1}}</div>
     </div>
   </main>
 </div>
-

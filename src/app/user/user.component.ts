@@ -75,8 +75,9 @@ export class UserComponent implements OnInit {
     this.userForm.get('role').setValue(this.tokenStorage.getRole());
   }
 
-  toLoginPage(): void {
-    this.router.navigate(['login']);
+  back(): void {
+    const url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    this.router.navigate([url]);
   }
 
   saveUser(): void {

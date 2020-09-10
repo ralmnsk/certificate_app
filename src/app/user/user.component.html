@@ -4,43 +4,51 @@
   <div class="order-header">
     User Page
   </div>
-  <div class="order-place">
+  <br/>
+  <mat-card class="order-place">
     <form class="order-form" method="post" [formGroup]="userForm">
-      <div class="label-input order-input">
-        <label class="register-form-label">Surname</label>
-        <input class="login-form-input" type="text" name="surname" formControlName="surname"/>
-      </div>
-      <div class="label-input order-input">
-        <label class="register-form-label">Name</label>
-        <input class="login-form-input" type="text" name="name" formControlName="name"/>
-      </div>
-      <div class="label-input order-input">
-        <label class="register-form-label">Role</label>
-        <input class="login-form-input" type="text" name="role" readonly formControlName="role"/>
-      </div>
-      <div class="label-input order-input">
-        <label class="register-form-label">Email (login)</label>
-        <input class="login-form-input" type="text" name="login" formControlName="email"/>
-      </div>
-      <div class="label-input order-input">
-        <label class="register-form-label">Password</label>
-        <input class="login-form-input" type="password" name="password" formControlName="password"/>
-      </div>
+      <br/>
+      <mat-form-field class="example-full-width">
+        <mat-label>Surname</mat-label>
+        <input matInput placeholder="Surname" value="" formControlName="surname">
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" value="" formControlName="name">
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Role</mat-label>
+        <input matInput placeholder="role" value="" formControlName="role" disabled="disabled" readonly>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Email (login)</mat-label>
+        <input matInput placeholder="login" value="" formControlName="email">
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>New Password</mat-label>
+        <input matInput placeholder="new password" value="" formControlName="password" type="password">
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
       <div class="user-form-footer">
-        <button class="register-form-btn white-btn " type="submit" (click)="toLoginPage()">
-          <a class="icon icon-dynamic">
-            Back
-          </a>
-        </button>
-        <button class="register-form-btn" type="submit" (click)="saveUser()">
-          <a class="icon icon-dynamic">
-            Save
-          </a>
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <div>
+          <br/>
+        </div>
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="saveUser()">Update
         </button>
       </div>
+
+      <br/>
     </form>
+  </mat-card>
+  <div class="userMessage">
+    {{userMessage}}
   </div>
-    <div class="userMessage">
-      {{userMessage}}
-    </div>
 </main>

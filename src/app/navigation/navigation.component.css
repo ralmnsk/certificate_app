@@ -1,48 +1,23 @@
 .nav {
   background: white;
-  flex-basis: 100%;
-  height: 6vh;
-  min-height: 53px;
-  child-align: middle;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  min-width: 900px;
 }
 
 .box {
   text-align: left;
 }
 
-.menu-and-logo {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-}
-
-.dropdown {
-  /*display: flex;*/
-  /*flex-direction: column;*/
-  /*justify-content: flex-start;*/
-  display: inline-block;
-  /*align-content: center;*/
-  padding-left: 10px;
-  padding-top: 5px;
-  flex: 1;
-  /*background-color: red;*/
-}
-
 .dropdown-content {
+  transform: translateY(20px);
   display: none;
   position: absolute;
   background-color: #f9f9f9;
-  min-width: 200px;
+  min-width: 205px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  /*position: relative;*/
-  /*transform: translateX(-3px) translateY(-5px);*/
-
 }
 
 .dropdown-content a {
@@ -51,7 +26,6 @@
   text-decoration: none;
   display: block;
   text-align: left;
-
 }
 
 .dropdown-content a:hover {
@@ -62,64 +36,8 @@
   display: block;
 }
 
-
-.search-bar {
-  border-style: groove;
-  /*display: inline;*/
-  padding: 0;
-  width: 530px;
-  float: left;
-  /*position: relative;*/
-  /*transform: translateX(30px);*/
-  /*background-color: ;*/
-}
-
-.search-bar-input {
-  border-style: none;
-  width: 300px;
-  height: 40px;
-  font-size: 20px;
-  /*position: relative;*/
-  /*transform: translateX(-7px);*/
-}
-
-.dropdown-categories-button {
-  display: table-cell;
-  vertical-align: middle;
-  position: relative;
-  transform: translateY(0px);
-  width: 200px;
-  height: 32px;
-  font-size: 20px;
-  text-align: center;
-  float: right;
-
-}
-
-
-.search-bar-one {
-  position: relative;
-  transform: translateY(-0.5px);
-  float: left;
-  width: 305px;
-  border-right-style: groove;
-}
-
-/*.navigation-bar-right {*/
-/*  !*background-color: yellow;*!*/
-/*  position: relative;*/
-/*  transform: translateY(5px);*/
-/*  display: flex;*/
-/*  flex-direction: row;*/
-/*  flex-wrap: wrap;*/
-/*  justify-content: space-between;*/
-/*  width: 180px;*/
-/*  !*padding-right: 10px;*!*/
-/*}*/
-
 .icon {
   position: relative;
-  /*transform: translateY(5px);*/
 }
 
 .icon-dynamic {
@@ -136,6 +54,7 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  padding-left: 10px;
 }
 
 .logo {

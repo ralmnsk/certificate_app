@@ -16,10 +16,8 @@ import {AuthService} from './auth/auth.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserService} from './user/user.service';
 import {UserComponent} from './user/user.component';
-import {RegisterComponent} from './register/register.component';
 import {RegisterService} from './register/register.service';
 import {DataService} from './data/data.service';
-import {AuthInterceptor} from './auth/auth.interceptor';
 import {UsersComponent} from './users/users.component';
 import {OrdersComponent} from './orders/orders.component';
 import {InfoComponent} from './user/info/info.component';
@@ -43,6 +41,24 @@ import {OrderStorageService} from './data/order-storage.service';
 import {OrderViewComponent} from './order-view/order-view.component';
 import {DataOrderViewService} from './data/data-order-view.service';
 import {OrderViewStorageService} from './data/order-view-storage.service';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {OrderAdminViewComponent} from './order-admin-view/order-admin-view.component';
+import {UserAdminViewStorageService} from './data/user-admin-view-storage.service';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTableModule} from '@angular/material/table';
+import {AuthGuard} from './auth/auth.guard';
+import {ErrorInterceptor} from './auth/error.interceptor';
+import {JwtInterceptor} from './auth/jwt.interceptor';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatCardModule} from '@angular/material/card';
+import {MatButtonModule} from '@angular/material/button';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatInputModule} from '@angular/material/input';
+import {RegisterComponent} from './register/register.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [
@@ -57,6 +73,7 @@ import {OrderViewStorageService} from './data/order-view-storage.service';
     RegisterComponent,
     UsersComponent,
     OrdersComponent,
+    OrderAdminViewComponent,
     InfoComponent,
     CertificatesComponent,
     TagsComponent,
@@ -64,7 +81,8 @@ import {OrderViewStorageService} from './data/order-view-storage.service';
     CertificateDeletedComponent,
     CreateCertificateComponent,
     OrderComponent,
-    OrderViewComponent
+    OrderViewComponent,
+    OrderAdminViewComponent
   ],
   imports: [
     BrowserModule,
@@ -72,28 +90,43 @@ import {OrderViewStorageService} from './data/order-view-storage.service';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgMultiSelectDropDownModule.forRoot(),
+    BrowserAnimationsModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule,
+    MatMenuModule,
+    MatIconModule,
+    MatTableModule,
+    MatFormFieldModule,
+    MatCardModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatInputModule,
+    MatAutocompleteModule
   ],
   providers: [
-    TokenStorageService,
+    AuthGuard,
     AuthService,
-    UserService,
-    RegisterService,
+    CertificateService,
+    CertificatesService,
+    CertificateStorageService,
     DataService,
-    AuthInterceptor,
     DataTokenService,
     DataCertificateService,
     DataOrderViewService,
-    OrderViewStorageService,
     DataTagService,
     DataTagEditService,
-    CertificatesService,
-    CertificateService,
-    CertificateStorageService,
+    ErrorInterceptor,
+    JwtInterceptor,
+    OrderViewStorageService,
+    OrderService,
+    OrderStorageService,
+    RegisterService,
     TagsService,
     TagStorageService,
-    OrderService,
-    OrderStorageService
+    TokenStorageService,
+    UserService,
+    UserAdminViewStorageService
   ],
   bootstrap: [AppComponent]
 })

@@ -1,56 +1,46 @@
-<!--<div class="container">-->
-<!--  <app-header></app-header>-->
-<!--  <app-navigation></app-navigation>-->
 <main class="main">
-  <div class="register-place">
-    <div class="register-place-head">
-      Register
-    </div>
-    <form class="register-form" method="post" [formGroup]="registerForm">
-      <div class="register-form-main">
-        <div class="register-form-main-inside">
-          <div class="label-input">
-            <label class="register-form-label">Email (Login)</label>
-            <input class="login-form-input" type="text" name="Email" placeholder="Email" formControlName="email"
-                   required="required"/>
-          </div>
-          <div class="label-input">
-            <label class="register-form-label">Surname</label>
-            <input class="login-form-input" type="text" name="Surname" placeholder="Surname" formControlName="surname"
-                   required="required"/>
-          </div>
-          <div class="label-input">
-            <label class="register-form-label">Name</label>
-            <input class="login-form-input" type="text" name="Name" placeholder="Name" formControlName="name"
-                   required="required" />
-          </div>
-          <div class="label-input">
-            <label class="register-form-label">Password</label>
-            <input class="login-form-input" type="password" name="Password" placeholder="Password"
-                   formControlName="password"
-                   required="required" />
-          </div>
-        </div>
-        <div class="register-form-footer">
-          <button class="register-form-btn white-btn" type="submit" (click)="toLoginPage()">
-            <a class="icon icon-dynamic">
-              Cancel
-            </a>
-          </button>
-          <button class="register-form-btn" type="submit" (click)="registerProcess()">
-            <a class="icon icon-dynamic">
-              Sign Up
-            </a>
-          </button>
-
-        </div>
-
+  <form class="login-form" method="post" [formGroup]="registerForm">
+    <mat-card class="login-place">
+      <div class="register-place-head">
+        <br/>
+        Register
       </div>
-    </form>
-    <div class="message">
-      {{registerMessage}}
-    </div>
-  </div>
+      <mat-form-field>
+        <mat-label>Enter login (email)</mat-label>
+        <input matInput placeholder="Email" value="" formControlName="email">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Enter surname</mat-label>
+        <input matInput placeholder="Surname" value="" formControlName="surname">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Enter name</mat-label>
+        <input matInput placeholder="Name" value="" formControlName="name">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Enter password</mat-label>
+        <input matInput placeholder="Password" value="" type="password" formControlName="password">
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>Repeat password</mat-label>
+        <input matInput placeholder="Password" value="" type="password" formControlName="passwordRepeat">
+      </mat-form-field>
+      <br/>
+      <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="toLoginPage()">
+        Cancel
+      </button>
+      <div>
+        <br/>
+      </div>
+      <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="registerProcess()">
+        Register
+      </button>
+      <div class="message">
+        {{registerMessage}}
+      </div>
+    </mat-card>
+
+  </form>
 </main>
 <app-footer></app-footer>
-<!--</div>-->
+

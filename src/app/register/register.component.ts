@@ -55,11 +55,21 @@ export class RegisterComponent implements OnInit {
         Validators.min(4),
         Validators.max(30),
         Validators.required
+      ])),
+      passwordRepeat: new FormControl('', Validators.compose([
+        Validators.min(4),
+        Validators.max(30),
+        Validators.required
       ]))
     });
   }
 
   registerProcess(): void {
+    if (this.registerForm.get('password').value !== this.registerForm.get('passwordRepeat').value) {
+      this.registerMessage = 'Repeated password is different';
+      console.log('repeated password is different');
+      return;
+    }
     if (this.registerForm.invalid) {
       console.log('Registration data is invalid');
       this.registerMessage = 'Registration data is invalid';
@@ -73,7 +83,10 @@ export class RegisterComponent implements OnInit {
           this.newMessage();
         }, error => {
           console.log('error: ', error);
-          this.registerMessage = 'Error happened during registration';
+          this.registerMessage = error.error.message;
+          if (error.error.message === 'Entity save exception: User already exists exception') {
+            this.registerMessage = 'User already exists. Login(Email) (2-30 characters). Surname and name (2-20 characters). Password (4-30 characters).';
+          }
           this.router.navigate(['register']);
         }
       );

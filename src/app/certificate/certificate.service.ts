@@ -26,6 +26,7 @@ export class CertificateService {
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
     // console.log(config.Url + '/certificates/' + certificateId + '/tags');
+    console.log('add tag to certificate, certificateId:', certificateId, 'tagId:', tagId);
     return this.http.put(config.Url + '/certificates/' + certificateId + '/tags', [tagId], {headers});
   }
 

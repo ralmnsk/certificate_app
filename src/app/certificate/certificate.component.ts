@@ -82,10 +82,12 @@ export class CertificateComponent implements OnInit {
       singleSelection: false,
       idField: 'id',
       textField: 'name',
-      selectAllText: 'Select All',
-      unSelectAllText: 'UnSelect All',
+      // selectAllText: 'Select All',
+      // unSelectAllText: 'UnSelect All',
+      enableCheckAll: false,
       itemsShowLimit: 10,
-      allowSearchFilter: this.ShowFilter
+      allowSearchFilter: this.ShowFilter,
+      allowRemoteDataSearch: true
     };
     // console.log('this.tags:', this.tags);
   }
@@ -131,6 +133,7 @@ export class CertificateComponent implements OnInit {
       .subscribe(data => {
           this.tags = data.elements.content as Array<Tag>;
           this.multiSelectDropDown();
+          console.log('certificate component, load tags:', this.tags);
         }, error => {
           console.log(error.message);
         }
@@ -143,7 +146,7 @@ export class CertificateComponent implements OnInit {
 
   save(): void {
     if (!this.isSaveEnabled()) {
-      // console.log('isDisabled');
+      console.log('isDisabled');
       return;
     }
     this.disableSave();
@@ -151,25 +154,22 @@ export class CertificateComponent implements OnInit {
     this.certificate.description = this.description.value;
     this.certificate.duration = this.duration.value;
     this.certificate.price = this.price.value;
-    // this.certificate.creation = null;
-    // this.modification = null;
-    // console.log('this certificate', this.certificate);
 
     this.certificateService.update(this.certificate)
-    // .pipe(debounce<string>(async () => console.log('timeout:', Date.now())))
-    // .pipe(debounceTime(2000))
       .subscribe(data => {
           this.certificate = data as Certificate;
           this.fillValues();
           this.loadTags();
           this.message = 'Certificate data was updated.';
+          console.log('certificate data was updated');
           this.enableSave();
-          // console.log('enable save');
         }, error => {
           console.log(error.message);
           this.message = error.error.message;
+          if (this.message.indexOf('certificate was included in some orders') > 0) {
+            this.message = 'Certificate was included in some orders, so it could not be saved or deleted.';
+          }
           this.enableSave();
-          // console.log('enable save');
         }
       );
   }

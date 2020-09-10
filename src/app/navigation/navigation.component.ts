@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {DataTokenService} from '../data/data-token.service';
@@ -14,6 +14,7 @@ import {TagsService} from '../tags/tags.service';
 import {TagStorageService} from '../data/tag-storage.service';
 import {DataTagService} from '../data/data-tag.service';
 import {UserService} from '../user/user.service';
+import {MatMenuTrigger} from '@angular/material/menu';
 
 @Component({
   selector: 'app-navigation',
@@ -43,6 +44,11 @@ export class NavigationComponent implements OnInit {
   userLogin: string;
   userRole: string;
 
+  isShowSearchBar: boolean;
+  pathsWithoutSearchBar: Set<string>;
+
+  @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+
   constructor(private router: Router,
               private tokenStorage: TokenStorageService,
               private dataTokenService: DataTokenService,
@@ -54,10 +60,18 @@ export class NavigationComponent implements OnInit {
               private dataTagService: DataTagService,
               private userService: UserService
   ) {
+    this.pathsWithoutSearchBar = new Set<string>();
+    this.pathsWithoutSearchBar.add('/user');
+    this.pathsWithoutSearchBar.add('/users');
+    this.pathsWithoutSearchBar.add('/orders');
+    this.pathsWithoutSearchBar.add('/login');
+    this.pathsWithoutSearchBar.add('/order-view');
+    this.pathsWithoutSearchBar.add('/order-admin-view');
 
   }
 
   ngOnInit(): void {
+    this.isShowSearchBar = true;
     this.initPagination();
     this.login = 'Login';
     this.dataCertificateService.currentMessage.subscribe(message => this.message = message);
@@ -66,6 +80,7 @@ export class NavigationComponent implements OnInit {
       if (this.token !== undefined && this.token !== null && this.token.length > 5) {
         this.token = message;
         this.login = 'Logout';
+        this.initUserInfo();
         console.log('navigation, login user:', this.userLogin);
       }
     });
@@ -84,6 +99,7 @@ export class NavigationComponent implements OnInit {
     this.userService.getLoggedIn.subscribe(message => {
       this.initUserInfo();
     });
+    this.manageSearchBar();
   }
 
   initUserInfo(): void {
@@ -100,6 +116,15 @@ export class NavigationComponent implements OnInit {
     this.tagName = '';
     this.certificateName = '';
     this.sort = 'certificate.name-';
+  }
+
+  manageSearchBar(): void {
+    const url = this.router.url;
+    if (this.pathsWithoutSearchBar.has(url)) {
+      this.isShowSearchBar = false;
+      return;
+    }
+    this.isShowSearchBar = true;
   }
 
 
@@ -187,8 +212,9 @@ export class NavigationComponent implements OnInit {
   }
 
   setTagName(value: string): void {
-    console.log('setTagName', value);
     this.tagName = value;
+    console.log('setTagName', this.tagName);
+    // this.searchTag.setValue(tag.name);
   }
 
   createCertificate(): void {
@@ -197,5 +223,9 @@ export class NavigationComponent implements OnInit {
 
   cart(): void {
     this.router.navigate(['order']);
+  }
+
+  displayFn(tag: Tag): string {
+    return tag && tag.name ? tag.name : '';
   }
 }

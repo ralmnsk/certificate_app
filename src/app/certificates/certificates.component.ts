@@ -151,9 +151,9 @@ export class CertificatesComponent implements OnInit {
   }
 
   toEdit(value: number): void {
-    this.router.navigate(['certificate']);
     this.dataTagEditService.changeMessage(value.toString());
     this.certificateStorage.setCurrentCertificate(value);
+    this.router.navigate(['certificate']);
   }
 
   addToCart(id: number): void {

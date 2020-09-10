@@ -5,30 +5,39 @@
   <br/>
   <div class="order-place certificate-width">
     <form class="order-form" method="post">
-      <div class="label-input order-input">
-        Name
-        <input class="login-form-input" type="text" name="name" [formControl]="nameControl"/>
-      </div>
+      <br/>
+      <mat-form-field class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" value="" [formControl]="nameControl">
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
       <div class="big-image">
         <img class="icon" src="assets/images/car.jfif" alt="menu" width="420px"
              height="300px">
       </div>
-      <div class="label-input order-input">
-        Creation
-        <input class="login-form-input" type="text" name="creation" readonly [formControl]="creation"/>
-      </div>
-      <div class="label-input order-input">
-        Modification
-        <input class="login-form-input" type="text" name="modification" readonly [formControl]="modification"/>
-      </div>
-      <div class="label-input order-input">
-        Duration
-        <input class="login-form-input small" type="text" name="duration" [formControl]="duration"/>
-      </div>
-      <div class="label-input order-input">
-        Price
-        <input class="login-form-input small" type="text" name="price" [formControl]="price"/>
-      </div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Creation</mat-label>
+        <input matInput placeholder="Creation" value="" [formControl]="creation" readonly>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Modification</mat-label>
+        <input matInput placeholder="Modification" value="" [formControl]="modification" readonly>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Duration,days</mat-label>
+        <input matInput placeholder="Duration" value="" [formControl]="duration" >
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Price, $</mat-label>
+        <input matInput placeholder="Price" value="" [formControl]="price" >
+        <mat-icon matSuffix>mode_edit</mat-icon>
+      </mat-form-field>
+
       <div class="label-input order-input">
         <!-- -->
         Tags:
@@ -42,36 +51,26 @@
                                    (onFilterChange)="onFilterTextChange($event)"
                                    (onDeSelect)="onItemDeselect($event)"
                                    (onSelect)="onItemSelect($event)"
-                                   (onSelectAll)="onSelectAll($event)">
+                                   (onSelectAll)="onSelectAll($event)"
+                                   class="multiselect-wide">
           </ng-multiselect-dropdown>
         </form>
 
       </div>
       <div class="label-input order-input">
         Description
-        <textarea class="textarea-form-input textarea-certificate" type="text" name="description" placeholder="Order Description"
+        <textarea class="textarea-form-input textarea-certificate" type="text" name="description"
+                  placeholder="Order Description"
                   required="required" [formControl]="description">
                             </textarea>
       </div>
+      <br/>
       <div class="order-form-footer">
-        <button class="register-form-btn white-btn " type="submit" (click)="back()">
-          <a class="icon icon-dynamic">
-            Back
-          </a>
-        </button>
-        <button id="save" class="register-form-btn" type="submit" (click)="save()">
-          <a class="icon icon-dynamic">
-            Save
-          </a>
-        </button>
-        <button id="delete" class="register-form-btn" type="submit" (click)="delete()">
-          <a class="icon icon-dynamic">
-            Delete
-          </a>
-        </button>
+        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Update</button>
+        <button id="delete"class="register-form-btn" mat-raised-button color="lightgreen" (click)="delete()">Delete</button>
       </div>
-    </form>
-
     {{message}}
+    </form>
   </div>
 </main>

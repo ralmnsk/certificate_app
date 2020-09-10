@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {UserService} from '../user/user.service';
-import {TokenStorageService} from '../auth/token-storage.service';
 import {Router} from '@angular/router';
-import {DataService} from '../data/data.service';
 import {UsersPage} from './users.page';
 import {UserInfo} from '../user/info/user.info';
+import {FormControl} from '@angular/forms';
+import {UserAdminViewStorageService} from '../data/user-admin-view-storage.service';
 
 @Component({
   selector: 'app-users',
@@ -17,17 +17,26 @@ export class UsersComponent implements OnInit {
   usersPage: UsersPage;
   users: Array<UserInfo>;
   first: number;
-  private prev: number;
-  private next: number;
+  prev: number;
+  next: number;
   last: number;
 
+  userSendId: number;
+
+  message: string;
+  findUserControl = new FormControl('');
+  isProcessBar: boolean;
+
+  displayedColumns: string[] = ['View', 'Id', 'Surname', 'Name'];
+
   constructor(private userService: UserService,
-              private tokenStorage: TokenStorageService,
               private router: Router,
-              private dataService: DataService) {
+              private userAdminViewStorageService: UserAdminViewStorageService
+  ) {
   }
 
   ngOnInit(): void {
+    this.isProcessBar = true;
     this.getUsers(this.page, this.limit);
   }
 
@@ -40,6 +49,7 @@ export class UsersComponent implements OnInit {
           this.first = 0;
           this.page = this.usersPage.page;
           this.last = this.usersPage.totalPage.valueOf() - 1;
+          this.isProcessBar = false;
           this.users = this.usersPage.elements.content as Array<UserInfo>;
           this.enableNavigationButtons();
         },
@@ -109,5 +119,33 @@ export class UsersComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  searchUser(): void {
+    const surname = this.findUserControl.value;
+    this.disableNavigationButtons();
+    this.userService.getAllUsersBySurname(surname, 0, 10)
+      .subscribe(
+        data => {
+          this.usersPage = data as UsersPage;
+          this.first = 0;
+          this.page = this.usersPage.page;
+          this.last = this.usersPage.totalPage.valueOf() - 1;
+          this.users = this.usersPage.elements.content as Array<UserInfo>;
+          this.enableNavigationButtons();
+        },
+        (error) => {
+          this.message = error.error.message;
+          this.enableNavigationButtons();
+        }
+      );
+  }
+
+  viewOrders(userId: number, surname: string, name: string): void {
+    this.userSendId = userId;
+    this.userAdminViewStorageService.setCurrentUserId(userId);
+    this.userAdminViewStorageService.setSurname(surname);
+    this.userAdminViewStorageService.setName(name);
+    this.router.navigate(['order-admin-view']);
   }
 }
