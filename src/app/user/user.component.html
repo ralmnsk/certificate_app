@@ -29,7 +29,10 @@
         <mat-label>Email (login)</mat-label>
         <input matInput placeholder="login" value="" formControlName="email">
       </mat-form-field>
-
+      <div class="message-error">
+        {{userMessage}}
+      </div>
+      <br/>
       <mat-form-field class="example-full-width">
         <mat-label>New Password</mat-label>
         <input matInput placeholder="new password" value="" formControlName="password" type="password">
@@ -37,18 +40,17 @@
       </mat-form-field>
 
       <div class="user-form-footer">
-        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="saveUser()">Update
+        </button>
         <div>
           <br/>
         </div>
-        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="saveUser()">Update
-        </button>
+
+        <button class="login-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
       </div>
 
       <br/>
     </form>
   </mat-card>
-  <div class="userMessage">
-    {{userMessage}}
-  </div>
+
 </main>

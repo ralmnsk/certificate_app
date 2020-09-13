@@ -55,8 +55,7 @@ export class UserService {
       }, error => {
         console.log('userService error:', error);
         return 'error';
-      })
-      ;
+      });
   }
 
   getAllUsers(page?: number, size?: number): any {

@@ -2,27 +2,34 @@
   <app-header></app-header>
   <app-navigation></app-navigation>
   <main class="main">
+<!--    <div class="mat-error">{{messageLogin}}</div>-->
     <form method="post" [formGroup]="loginForm">
       <mat-card class="login-place">
         <div class="logo-big">
           <img src="assets/images/logo.png" alt="logo" width="200px" height="200px">
         </div>
         <mat-form-field class="example-full-width">
-          <mat-label>Enter login</mat-label>
+          <div class="mat-error">{{loginError}}<br/></div>
+          <mat-label>Login</mat-label>
           <input matInput placeholder="Email" value="" formControlName="email">
         </mat-form-field>
         <mat-form-field class="example-full-width">
-          <mat-label>Enter password</mat-label>
+          <div class="mat-error">{{passwordError}}<br/></div>
+          <mat-label>Password</mat-label>
           <input matInput placeholder="Password" value="" type="password" formControlName="password">
         </mat-form-field>
+        <div class="mat-error">{{messageLogin}}</div>
         <br/>
         <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="loginProcess()">Login</button>
         <br/>
-        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="toRegisterPage()">Register
+        <button class="login-form-btn gray" mat-raised-button color="lightgray" (click)="toRegisterPage()">Register
         </button>
-        {{messageLogin}}
+<!--        <div class="mat-error">{{messageLogin}}</div>-->
       </mat-card>
     </form>
+    <div class="users-list" *ngIf="isProcessBar ===true">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
   </main>
   <app-footer></app-footer>
 </div>

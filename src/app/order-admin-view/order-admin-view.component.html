@@ -7,24 +7,26 @@
     </div>
     <br/>
     <table mat-table [dataSource]="orders" class="mat-elevation-z8 wide" *ngIf="isProcessBar ===false">
-      <ng-container matColumnDef="View" >
-        <th mat-header-cell *matHeaderCellDef> View </th>
-        <td mat-cell *matCellDef="let order" (click)="view(order.id)"> <mat-icon pointer>pageview</mat-icon> </td>
+      <ng-container matColumnDef="View">
+        <th mat-header-cell *matHeaderCellDef> View</th>
+        <td mat-cell *matCellDef="let order" (click)="view(order.id)">
+          <mat-icon pointer>pageview</mat-icon>
+        </td>
       </ng-container>
       <ng-container matColumnDef="Total cost">
-        <th mat-header-cell *matHeaderCellDef> Total cost </th>
-        <td mat-cell *matCellDef="let order"> {{order.totalCost}} </td>
+        <th mat-header-cell *matHeaderCellDef> Total cost</th>
+        <td mat-cell *matCellDef="let order"> {{order.totalCost|currency:"USD":"symbol"}} </td>
       </ng-container>
       <ng-container matColumnDef="Created">
-        <th mat-header-cell *matHeaderCellDef> Created </th>
-        <td mat-cell *matCellDef="let order"> {{order.created}} </td>
+        <th mat-header-cell *matHeaderCellDef> Created</th>
+        <td mat-cell *matCellDef="let order"> {{order.created| date:'short'}} </td>
       </ng-container>
       <ng-container matColumnDef="Description">
-        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <th mat-header-cell *matHeaderCellDef width="500px"> Description</th>
         <td mat-cell *matCellDef="let order"> {{order.description}} </td>
       </ng-container>
       <ng-container matColumnDef="Completed">
-        <th mat-header-cell *matHeaderCellDef> Completed </th>
+        <th mat-header-cell *matHeaderCellDef> Completed</th>
         <td mat-cell *matCellDef="let order">
           <div *ngIf="order.completed === true">Completed</div>
           <div *ngIf="order.completed === false">Not completed</div>
@@ -39,46 +41,8 @@
       <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     </div>
 
-<!--    <div class="order-admin-view">-->
-<!--      &lt;!&ndash;    orders&ndash;&gt;-->
-<!--      <div class="users-list">-->
-<!--        <div class="div-table">-->
-<!--          <div class="user-info">-->
-<!--            <div class="div-row">-->
-<!--              &lt;!&ndash;              <div class="div-cell ten">Id</div>&ndash;&gt;-->
-<!--              <div class="div-cell five">View</div>-->
-<!--              <div class="div-cell ten">Total cost</div>-->
-<!--              <div class="div-cell twentyFive">Created</div>-->
-<!--              <div class="div-cell fifty">Description</div>-->
-<!--              <div class="div-cell ten">Completed</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="users-list" *ngFor="let order of orders">-->
-<!--        <div class="div-table">-->
-<!--          <div class="user-info">-->
-<!--            <div class="div-row">-->
-<!--              <div class="div-cell five" (click)="view(order.id)">-->
-<!--                <img class="icon icon-dynamic"-->
-<!--                     src="assets/icons/caret-right-fill.svg"-->
-<!--                     alt="->" width="35px"-->
-<!--                     height="35px"></div>-->
-<!--              &lt;!&ndash;              <div class="div-cell ten">{{order.id}}</div>&ndash;&gt;-->
-<!--              <div class="div-cell ten">{{order.totalCost}}</div>-->
-<!--              <div class="div-cell twentyFive">{{order.created}}</div>-->
-<!--              <div class="div-cell fifty">{{order.description}}</div>-->
-<!--              <div class="div-cell ten">-->
-<!--                <div *ngIf="order.completed === true"> Completed</div>-->
-<!--                <div *ngIf="order.completed === false"> No</div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-    <div class="footer-nav">
-      <div>{{firstOrderPage + 1}}</div>
+    <div class="footer-nav" *ngIf="isProcessBar === false">
+      <div class="pagination-number">{{firstOrderPage + 1}}</div>
       <div id="4" class="nav-btn" (click)="toFirstOrderPage()"><img class="icon icon-dynamic"
                                                                     src="assets/icons/skip-backward-fill.svg"
                                                                     alt="menu"
@@ -88,7 +52,7 @@
                                                                        alt="menu"
                                                                        width="35px"
                                                                        height="35px"></div>
-      <div> {{currentOrderPage + 1}}</div>
+      <div class="pagination-number"> {{currentOrderPage + 1}}</div>
       <div id="6" class="nav-btn" (click)="toNextOrderPage()"><img class="icon icon-dynamic"
                                                                    src="assets/icons/caret-right-fill.svg" alt="menu"
                                                                    width="35px"
@@ -97,7 +61,7 @@
                                                                    src="assets/icons/skip-forward-fill.svg" alt="menu"
                                                                    width="35px"
                                                                    height="35px"></div>
-      <div>{{lastOrderPage + 1}}</div>
+      <div class="pagination-number">{{lastOrderPage + 1}}</div>
     </div>
   </main>
 </div>

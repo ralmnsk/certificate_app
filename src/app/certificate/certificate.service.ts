@@ -73,6 +73,6 @@ export class CertificateService {
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());
     // console.log('certificate service, getCertificatesOfOrder:');
-    return this.http.get(config.Url + '/orders/' + orderId + '/certificates', {headers});
+    return this.http.get(config.Url + '/orders/' + orderId + '/certificates?page=' + page + '&size=' + size, {headers});
   }
 }

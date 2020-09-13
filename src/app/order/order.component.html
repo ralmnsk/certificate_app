@@ -5,79 +5,76 @@
     <div class="order-header">
       Cart [Certificates to buy]
     </div>
+    <br/>
     <div class="order-place cart">
 
-      <div class="label-input">
-        Certificates
+      <div class="users-list" *ngIf="isProcessBar ===true">
+        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
       </div>
-      <div class="users-list cart">
-        <div class="div-table">
-          <div class="user-info">
-            <div class="div-row">
-              <div class="div-cell five">Id</div>
-              <div class="div-cell ten">Name</div>
-              <div class="div-cell ten">Duration</div>
-              <div class="div-cell five">Price</div>
-              <div class="div-cell ten">Creation</div>
-              <div class="div-cell ten">Modification</div>
-              <div class="div-cell fifty">Description</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <table mat-table [dataSource]="certificates" class="mat-elevation-z8 wide" *ngIf="isProcessBar ===false">
 
-      <div class="users-list" *ngFor="let certificate of certificates">
-        <div class="div-table">
-          <div class="user-info">
-            <div class="div-row">
-              <div class="div-cell five">{{certificate.id}}</div>
-              <div class="div-cell ten">{{certificate.name}}</div>
-              <div class="div-cell ten">{{certificate.duration}}</div>
-              <div class="div-cell five">{{certificate.price}}</div>
-              <div class="div-cell ten">{{certificate.creation}}</div>
-              <div class="div-cell ten">{{certificate.modification}}</div>
-              <div class="div-cell fifty">{{certificate.description}}</div>
-              <!--              <div class="div-cell"><img class="icon icon-dynamic"-->
-              <!--                                         src="assets/icons/skip-forward-fill.svg" alt="->" width="35px"-->
-              <!--                                         height="35px"></div>-->
-            </div>
-          </div>
-        </div>
-      </div>
+        <ng-container matColumnDef="Id">
+          <th mat-header-cell *matHeaderCellDef> No.</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.id}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Name">
+          <th mat-header-cell *matHeaderCellDef> Name</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Duration">
+          <th mat-header-cell *matHeaderCellDef> Duration</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.duration}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Price">
+          <th mat-header-cell *matHeaderCellDef> Price, $</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.price|currency:"USD":"symbol"}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Creation">
+          <th mat-header-cell *matHeaderCellDef> Creation</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.creation| date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Modification">
+          <th mat-header-cell *matHeaderCellDef> Modification</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.modification| date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Description">
+          <th mat-header-cell *matHeaderCellDef> Description</th>
+          <td mat-cell *matCellDef="let certificate"> {{certificate.description}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Remove">
+          <th mat-header-cell *matHeaderCellDef> Remove</th>
+          <td mat-cell *matCellDef="let certificate" (click)="remove(certificate.id)"><mat-icon pointer>remove_shopping_cart</mat-icon> </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <br/>
       <div class="users-list">
         <div class="label-input">
-          Total cost:{{totalCost}}
+          <h1>Total cost:${{totalCost}}</h1>
         </div>
       </div>
       <br/>
-      <!--    order-->
       <form class="order-form" method="post">
         <div class="label-input">
           Description
         </div>
-        <!--        <label class="register-form-label">Description</label>-->
         <textarea class="textarea-form-input wide" type="text" name="description" placeholder="Order Description"
-                  required="required" [formControl]="description">
-                            </textarea>
+                  required="required" [formControl]="description"> maxlength="999" </textarea>
       </form>
-      <!--      order end-->
+
       <div class="order-form-footer">
-        <button class="register-form-btn white-btn " type="submit" (click)="back()">
-          <a class="icon icon-dynamic">
-            Back
-          </a>
-        </button>
-        <button id="cancel" class="register-form-btn" type="submit" (click)="cancel()">
-          <a class="icon icon-dynamic">
-            Clear cart
-          </a>
-        </button>
-        <button id="save" class="register-form-btn" type="submit" (click)="save()">
-          <a class="icon icon-dynamic">
-            Submit cart
-          </a>
-        </button>
+        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="cancel()">Clear Cart</button>
+          <app-modal></app-modal>
+        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Submit</button>
       </div>
+
       <div class="userMessage">
         {{message}}
       </div>

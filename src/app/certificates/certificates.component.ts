@@ -8,6 +8,7 @@ import {CertificateStorageService} from '../data/certificate-storage.service';
 import {Router} from '@angular/router';
 import {DataTagEditService} from '../data/data-tag-edit.service';
 import {OrderStorageService} from '../data/order-storage.service';
+import {TokenStorageService} from '../auth/token-storage.service';
 
 @Component({
   selector: 'app-certificates',
@@ -36,18 +37,24 @@ export class CertificatesComponent implements OnInit {
   resizeSubscription: Subscription;
 
   private message: string;
+  cart = 'cart';
+  role: string;
+  roleString: string;
 
   constructor(private certificateService: CertificatesService,
               private dataCertificateService: DataCertificateService,
               private certificateStorage: CertificateStorageService,
               private router: Router,
               private dataTagEditService: DataTagEditService,
-              private orderStorage: OrderStorageService
+              private orderStorage: OrderStorageService,
+              private tokenStorage: TokenStorageService
   ) {
     this.scale = 1;
+    this.roleString = 'ADMIN';
   }
 
   ngOnInit(): void {
+    this.role = this.tokenStorage.getRole();
     this.startWidth = 1920;
     this.currentWidth = 1920;
     this.lastScrollTop = 0;
@@ -65,6 +72,7 @@ export class CertificatesComponent implements OnInit {
       if (this.certificateStorage.getPagination().getCertificates().length > 0) {
         this.getPagination(this.certificateStorage.getPagination());
       }
+        this.markAdded();
     });
     this.resizeObservable = fromEvent(window, 'resize');
     this.resizeSubscription = this.resizeObservable.subscribe(evt => {
@@ -75,7 +83,6 @@ export class CertificatesComponent implements OnInit {
     window.addEventListener('scroll', () => {
       this.loadOnScrollDown(this.startWidth, this.currentWidth, this.scale);
     });
-
   }
 
   searchCertificates(page: number, size: number, tagName: string, certificateName: string, sort: string): any {
@@ -85,11 +92,32 @@ export class CertificatesComponent implements OnInit {
           this.last = data.totalPage;
           this.page = data.page;
           this.certificates = data.elements.content as Array<Certificate>;
+          this.markAdded();
         }, error => {
           console.log(error.message);
           this.message = 'Error happened during certficates search.';
         }
       );
+  }
+
+  markAdded(): void {
+    const set = this.orderStorage.getCertificateIds();
+    for (const id of set) {
+      const shopCart = document.getElementById(id.toString());
+      const span = document.getElementById('cart' + id);
+      if (shopCart === undefined || shopCart === null) {
+        return;
+      }
+      if (span === undefined || span === null) {
+        return;
+      }
+      console.log('certificates component markAdded, set:', set);
+      span.innerText = 'Drop from the cart';
+      set.add(id);
+      shopCart.style.backgroundColor = 'lightgreen';
+
+      this.orderStorage.setCertificateIds(set);
+    }
   }
 
   loadOnScrollDown(startWidth: number, currentWidth: number, scale: number): void {
@@ -116,6 +144,7 @@ export class CertificatesComponent implements OnInit {
               certificates.push(downLoadCertificates[i]);
             }
           }
+          this.markAdded();
         },
         (error) => {
           console.log(error.message);
@@ -159,7 +188,23 @@ export class CertificatesComponent implements OnInit {
   addToCart(id: number): void {
     const set = this.orderStorage.getCertificateIds();
     console.log('certificates component, set:', set);
-    set.add(id);
+    const shopCart = document.getElementById(id.toString());
+    const span = document.getElementById('cart' + id);
+    if (shopCart === undefined || shopCart === null) {
+      return;
+    }
+    if (span === undefined || span === null) {
+      return;
+    }
+    if (set.has(id)) {
+      span.innerText = 'Add to the cart';
+      set.delete(id);
+      shopCart.style.backgroundColor = 'white';
+    } else if (!set.has(id)) {
+      span.innerText = 'Drop from the cart';
+      set.add(id);
+      shopCart.style.backgroundColor = 'lightgreen';
+    }
     this.orderStorage.setCertificateIds(set);
   }
 }

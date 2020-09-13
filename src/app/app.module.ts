@@ -1,9 +1,21 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {NgMultiSelectDropDownModule} from 'ng-multiselect-dropdown';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatTableModule} from '@angular/material/table';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatCardModule} from '@angular/material/card';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatIconModule} from '@angular/material/icon';
 import {NavigationComponent} from './navigation/navigation.component';
 import {MainComponent} from './main/main.component';
 import {FooterComponent} from './footer/footer.component';
@@ -42,23 +54,16 @@ import {OrderViewComponent} from './order-view/order-view.component';
 import {DataOrderViewService} from './data/data-order-view.service';
 import {OrderViewStorageService} from './data/order-view-storage.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {OrderAdminViewComponent} from './order-admin-view/order-admin-view.component';
 import {UserAdminViewStorageService} from './data/user-admin-view-storage.service';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTableModule} from '@angular/material/table';
 import {AuthGuard} from './auth/auth.guard';
 import {ErrorInterceptor} from './auth/error.interceptor';
 import {JwtInterceptor} from './auth/jwt.interceptor';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatInputModule} from '@angular/material/input';
 import {RegisterComponent} from './register/register.component';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+import { ModalComponent } from './modal/modal.component';
+import {DataOrderService} from './data/data-order.service';
 
 @NgModule({
   declarations: [
@@ -82,14 +87,12 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     CreateCertificateComponent,
     OrderComponent,
     OrderViewComponent,
-    OrderAdminViewComponent
+    OrderAdminViewComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
     NgMultiSelectDropDownModule.forRoot(),
     BrowserAnimationsModule,
     MatProgressSpinnerModule,
@@ -102,7 +105,11 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     MatButtonModule,
     MatToolbarModule,
     MatInputModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatTooltipModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AuthGuard,
@@ -114,6 +121,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     DataTokenService,
     DataCertificateService,
     DataOrderViewService,
+    DataOrderService,
     DataTagService,
     DataTagEditService,
     ErrorInterceptor,

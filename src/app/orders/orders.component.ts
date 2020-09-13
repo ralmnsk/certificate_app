@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Order} from './order';
 import {OrderService} from '../order/order.service';
-import {debounceTime} from 'rxjs/operators';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {Router} from '@angular/router';
 import {DataOrderViewService} from '../data/data-order-view.service';
@@ -44,36 +43,86 @@ export class OrdersComponent implements OnInit {
   getOrders(userId: number, page?: number, size?: number): void {
     this.isProcessBar = true;
     this.orderService.getOrders(userId, page, size)
-      .pipe(debounceTime(250))
+    // .pipe(debounceTime(250))
       .subscribe(
         result => {
           this.last = result.totalPage - 1;
           this.page = result.page;
           const orders = result.elements.content as Array<Order>;
-          const loadedOrders = new Array<Order>();
-          let count = 0;
+          this.orders = orders;
+          this.isProcessBar = false;
+          this.enableButtons();
+          // const loadedOrders = new Array<Order>();
+          // let count = 0;
           for (const order of orders) {
-            this.orderService.getOrder(order.id)
-              .subscribe(data => {
-                  loadedOrders.push(data as Order);
-                  count++;
-                  if (count === orders.length) {
-                    this.orders = loadedOrders.sort((a, b) => b.id - a.id);
-                    this.isProcessBar = false;
-                    this.enableButtons();
+            if (order.totalCost === 0 || order.totalCost === null || order.totalCost === undefined) {
+              this.orderService.getOrder(order.id)
+                .subscribe(
+                  data => {
+                    const loadOrder = data as Order;
+                    order.totalCost = loadOrder.totalCost;
+                  },
+                  error => {
+                    this.message = error.error.message;
                   }
-                  // console.log('saved orders:', data as Order);
-                }, error => {
-                  console.log('error:', error);
-                }
-              );
+                );
+            }
           }
+          //   this.orderService.getOrder(order.id)
+          //     .subscribe(data => {
+          //         loadedOrders.push(data as Order);
+          //         count++;
+          //         if (count === orders.length) {
+          //           this.orders = loadedOrders.sort((a, b) => b.id - a.id);
+          //           this.isProcessBar = false;
+          //           this.enableButtons();
+          //         }
+          //         // console.log('saved orders:', data as Order);
+          //       }, error => {
+          //         console.log('error:', error);
+          //       }
+          //     );
+          // }
         }, error => {
           console.log(error.message);
           this.message = error.error.message;
         }
       );
   }
+
+  // getOrders(userId: number, page?: number, size?: number): void {
+  //   this.isProcessBar = true;
+  //   this.orderService.getOrders(userId, page, size)
+  //     .pipe(debounceTime(250))
+  //     .subscribe(
+  //       result => {
+  //         this.last = result.totalPage - 1;
+  //         this.page = result.page;
+  //         const orders = result.elements.content as Array<Order>;
+  //         const loadedOrders = new Array<Order>();
+  //         let count = 0;
+  //         for (const order of orders) {
+  //           this.orderService.getOrder(order.id)
+  //             .subscribe(data => {
+  //                 loadedOrders.push(data as Order);
+  //                 count++;
+  //                 if (count === orders.length) {
+  //                   this.orders = loadedOrders.sort((a, b) => b.id - a.id);
+  //                   this.isProcessBar = false;
+  //                   this.enableButtons();
+  //                 }
+  //                 // console.log('saved orders:', data as Order);
+  //               }, error => {
+  //                 console.log('error:', error);
+  //               }
+  //             );
+  //         }
+  //       }, error => {
+  //         console.log(error.message);
+  //         this.message = error.error.message;
+  //       }
+  //     );
+  // }
 
   toFirstPage(): void {
     if (this.isButtonsDisabled()) {
@@ -124,7 +173,9 @@ export class OrdersComponent implements OnInit {
 
   disableButtons(): void {
     for (let i = 0; i < 4; i++) {
-      document.getElementById(i.toString()).className = 'disabled';
+      if (document.getElementById(i.toString()) !== null && document.getElementById(i.toString()) !== undefined) {
+        document.getElementById(i.toString()).className = 'disabled';
+      }
     }
   }
 

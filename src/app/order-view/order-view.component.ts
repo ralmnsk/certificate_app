@@ -29,6 +29,7 @@ export class OrderViewComponent implements OnInit {
   size: number;
 
   isProcessBar: boolean;
+  displayedColumns: string[] = ['View', 'Id', 'Name', 'Price', 'Creation', 'Modification', 'Description'];
 
   constructor(private dataOrderViewService: DataOrderViewService,
               private orderService: OrderService,
@@ -44,7 +45,7 @@ export class OrderViewComponent implements OnInit {
     this.isProcessBar = true;
     this.first = 0;
     this.page = 0;
-    this.size = 10;
+    this.size = 50;
     this.orderId = this.orderViewStorage.getCurrentOrderId();
     this.getOrder(this.orderId);
     console.log('order view ng init');
@@ -102,12 +103,6 @@ export class OrderViewComponent implements OnInit {
     this.updateOrder(this.order);
     this.orderViewStorage.setCurrentOrderId(this.order.id);
   }
-
-  // uncompleted(): void {
-  //   this.order.completed = false;
-  //   this.updateOrder(this.order);
-  //   this.orderViewStorage.setCurrentOrderId(this.order.id);
-  // }
 
   updateOrder(order: Order): void {
     this.orderService.update(order)

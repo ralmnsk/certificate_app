@@ -42,8 +42,8 @@
   <div class="users-list" *ngIf="isProcessBar ===true">
     <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
   </div>
-  <div class="footer-nav">
-    <div>{{first + 1}}</div>
+  <div class="footer-nav" *ngIf="isProcessBar ===false">
+    <div class="pagination-number">{{first + 1}}</div>
     <div id="0" class="nav-btn" (click)="toFirstPage()"><img class="icon icon-dynamic"
                                                              src="assets/icons/skip-backward-fill.svg" alt="menu"
                                                              width="35px" height="35px"></div>
@@ -51,7 +51,7 @@
                                                                 src="assets/icons/caret-left-fill.svg" alt="menu"
                                                                 width="35px"
                                                                 height="35px"></div>
-    <div> {{page + 1}}</div>
+    <div class="pagination-number"> {{page + 1}}</div>
     <div id="2" class="nav-btn" (click)="toNextPage()"><img class="icon icon-dynamic"
                                                             src="assets/icons/caret-right-fill.svg" alt="menu"
                                                             width="35px"
@@ -60,7 +60,7 @@
                                                             src="assets/icons/skip-forward-fill.svg" alt="menu"
                                                             width="35px"
                                                             height="35px"></div>
-    <div>{{last + 1}}</div>
+    <div class="pagination-number">{{last + 1}}</div>
   </div>
   {{message}}
 </div>

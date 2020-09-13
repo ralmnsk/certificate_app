@@ -45,19 +45,18 @@ export class UserComponent implements OnInit {
       email: new FormControl('', Validators.compose(
         [
           Validators.minLength(2),
-          Validators.maxLength(20),
+          Validators.maxLength(30),
+          Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$'),
           Validators.required
         ])),
       surname: new FormControl('', Validators.compose(
         [
-          Validators.minLength(2),
-          Validators.maxLength(20),
+          Validators.pattern('[a-zA-Z]{2,30}'),
           Validators.required
         ])),
       name: new FormControl('', Validators.compose(
         [
-          Validators.minLength(2),
-          Validators.maxLength(20),
+          Validators.pattern('[a-zA-Z]{2,30}'),
           Validators.required
         ])),
       role: new FormControl('', Validators.compose(
@@ -66,7 +65,10 @@ export class UserComponent implements OnInit {
           Validators.maxLength(20),
           Validators.required
         ])),
-      password: new FormControl()
+      password: new FormControl('', Validators.compose([
+        Validators.pattern('[a-zA-Z]{4,30}'),
+        Validators.required
+      ]))
     });
     this.userForm.get('email').setValue(this.tokenStorage.getEmail());
     this.userForm.get('email').disable();
@@ -76,7 +78,10 @@ export class UserComponent implements OnInit {
   }
 
   back(): void {
-    const url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    let url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    if (url === null || url === undefined || url === 'user') {
+      url = 'certificates';
+    }
     this.router.navigate([url]);
   }
 
@@ -85,18 +90,18 @@ export class UserComponent implements OnInit {
     console.log('userComponent name:', this.userForm.get('name').value);
     console.log('userComponent password:', this.userForm.get('password').value);
     if (this.userForm.get('surname').invalid) {
-      this.userMessage = 'surname is invalid';
-      console.log(this.userMessage);
+      this.userMessage = 'Surname is invalid. Surname has to be 2-30 latin letters.';
+      // console.log(this.userMessage);
       return;
     }
     if (this.userForm.get('name').invalid) {
-      this.userMessage = 'surname is invalid';
-      console.log(this.userMessage);
+      this.userMessage = 'Name is invalid. Name has to be 2-30 latin letters.';
+      // console.log(this.userMessage);
       return;
     }
     if (this.userForm.get('password').value === null || this.userForm.get('password').value === '' || !this.isPasswordValid(this.userForm.get('password').value)) {
-      this.userMessage = 'password is invalid:' + this.userForm.get('password').value;
-      console.log(this.userMessage);
+      this.userMessage = 'Password is invalid and has to be 4-30 latin letters';
+      // console.log(this.userMessage);
       return;
     }
     this.password = this.userForm.get('password').value;
@@ -105,11 +110,11 @@ export class UserComponent implements OnInit {
     this.updateUser = new UpdateUser(this.surname, this.name, this.password);
     this.userService.update(this.updateUser);
     this.initUserForm();
-    this.userMessage = 'New data saved successful';
+    this.userMessage = 'New data updated successfully';
   }
 
   isPasswordValid(password: string): boolean {
-    this.pattern = new RegExp('[a-zA-Z0-9]{4,30}');
+    this.pattern = new RegExp('[a-zA-Z]{4,30}');
     if (this.pattern.test(password)) {
       return true;
     }

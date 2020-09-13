@@ -20,7 +20,7 @@ export class OrderAdminViewComponent implements OnInit {
   userNameView: string;
   orders: Array<Order>;
   firstOrderPage = 0;
-  currentOrderPage: number;
+  currentOrderPage = 0;
   lastOrderPage: number;
   orderPageSize: number;
   private viewMessage: string;
@@ -79,7 +79,7 @@ export class OrderAdminViewComponent implements OnInit {
       .subscribe(
         data => {
           this.orders = data.elements.content as Array<Order>;
-          this.lastOrderPage = data.totalPage - 1;
+          this.lastOrderPage = data.totalPage;
           console.log('user orders:', this.orders);
           this.enableOrderNavigationButtons();
           this.isProcessBar = false;
@@ -138,7 +138,9 @@ export class OrderAdminViewComponent implements OnInit {
 
   enableOrderNavigationButtons(): void {
     for (let i = 4; i < 8; i++) {
-      document.getElementById(i.toString()).className = 'nav-btn';
+      if (document.getElementById(i.toString()) !== null && document.getElementById(i.toString()) !== undefined) {
+        document.getElementById(i.toString()).className = 'nav-btn';
+      }
     }
     console.log('enable navigation buttons');
   }

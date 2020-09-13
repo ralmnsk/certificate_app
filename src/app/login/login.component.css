@@ -24,8 +24,8 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  width: 450px;
-  height: 450px;
+  /*width: 350px;*/
+  /*height: 450px;*/
   background-color: white;
   border-radius: 10px;
 }
@@ -59,15 +59,15 @@
   font-size: 20px;
 }
 
-.login-form-btn {
-  width: 257px;
-  height: 40px;
-  background-color: lightgreen;
-  border-style: none;
-  font-size: 20px;
-  color: white;
-  border-right: 5px;
-}
+/*.login-form-btn {*/
+/*  width: 180px;*/
+/*  height: 40px;*/
+/*  background-color: lightgreen;*/
+/*  border-style: none;*/
+/*  font-size: 20px;*/
+/*  color: white;*/
+/*  border-right: 5px;*/
+/*}*/
 
 
 .icon {

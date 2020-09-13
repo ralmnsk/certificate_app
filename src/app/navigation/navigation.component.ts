@@ -63,6 +63,7 @@ export class NavigationComponent implements OnInit {
     this.pathsWithoutSearchBar = new Set<string>();
     this.pathsWithoutSearchBar.add('/user');
     this.pathsWithoutSearchBar.add('/users');
+    this.pathsWithoutSearchBar.add('/order');
     this.pathsWithoutSearchBar.add('/orders');
     this.pathsWithoutSearchBar.add('/login');
     this.pathsWithoutSearchBar.add('/order-view');

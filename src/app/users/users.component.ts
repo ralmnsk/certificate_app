@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {UserService} from '../user/user.service';
 import {Router} from '@angular/router';
 import {UsersPage} from './users.page';
@@ -102,14 +102,18 @@ export class UsersComponent implements OnInit {
 
   disableNavigationButtons(): void {
     for (let i = 0; i < 4; i++) {
-      document.getElementById(i.toString()).className = 'disabled';
+      if (document.getElementById(i.toString()) !== null && document.getElementById(i.toString()) !== undefined) {
+        document.getElementById(i.toString()).className = 'disabled';
+      }
     }
     console.log('disabled navigation buttons');
   }
 
   enableNavigationButtons(): void {
     for (let i = 0; i < 4; i++) {
-      document.getElementById(i.toString()).className = 'nav-btn';
+      if (document.getElementById(i.toString()) !== null && document.getElementById(i.toString()) !== undefined) {
+        document.getElementById(i.toString()).className = 'nav-btn';
+      }
     }
     console.log('enable navigation buttons');
   }

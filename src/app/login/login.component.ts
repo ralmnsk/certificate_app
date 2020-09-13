@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {Router} from '@angular/router';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -21,6 +21,9 @@ export class LoginComponent implements OnInit {
   private newUrl: string;
   private user: User;
   hide = true;
+  loginError: string;
+  passwordError: string;
+  isProcessBar = false;
 
   constructor(private router: Router,
               private authService: AuthService,
@@ -49,6 +52,7 @@ export class LoginComponent implements OnInit {
       password: new FormControl('', Validators.compose([
         Validators.minLength(4),
         Validators.maxLength(30),
+        Validators.pattern('[a-zA-z]{4,30}'),
         Validators.required
       ]))
     })
@@ -56,8 +60,19 @@ export class LoginComponent implements OnInit {
   }
 
   loginProcess(): void {
+    this.isProcessBar = true;
+    this.messageLogin = null;
+    this.tokenStorage.logout();
+    this.initErrorMessages();
     if (this.loginForm.invalid) {
+      if (this.loginForm.get('email').invalid) {
+        this.loginError = 'Login has to be 2- 30 latin letters';
+      }
+      if (this.loginForm.get('password').invalid) {
+        this.passwordError = 'Password has to be 4-30 latin letters';
+      }
       console.log('login or password is invalid');
+      this.isProcessBar = false;
       return;
     }
     if (this.loginForm.valid) {
@@ -67,11 +82,12 @@ export class LoginComponent implements OnInit {
           console.log('userLink:', this.userLink);
           this.userService.setUserInStorage(this.userLink);
           this.router.navigate(['certificates']);
-
+          this.isProcessBar = false;
         }, error => {
-          console.log('error: ', error);
+          console.log('error: ', error.error.message);
           this.messageLogin = 'Login or password is incorrect';
           this.router.navigate(['login']);
+          this.isProcessBar = false;
         }
       );
     }
@@ -81,4 +97,8 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['register']);
   }
 
+  private initErrorMessages(): void {
+    this.loginError = null;
+    this.passwordError = null;
+  }
 }

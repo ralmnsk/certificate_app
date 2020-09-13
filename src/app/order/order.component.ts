@@ -6,6 +6,7 @@ import {OrderStorageService} from '../data/order-storage.service';
 import {CertificateService} from '../certificate/certificate.service';
 import {FormControl, Validators} from '@angular/forms';
 import {OrderService} from './order.service';
+import {DataOrderService} from '../data/data-order.service';
 
 @Component({
   selector: 'app-order',
@@ -13,42 +14,73 @@ import {OrderService} from './order.service';
   styleUrls: ['./order.component.css']
 })
 export class OrderComponent implements OnInit {
-  certificates: Set<Certificate>;
+  certificates: Array<Certificate>;
   certificateIds: Set<number>;
   order: Order;
   message: string;
   totalCost: number;
 
   description: FormControl;
+  isProcessBar: boolean;
+  displayedColumns: string[] = ['Id', 'Name', 'Duration', 'Price', 'Creation', 'Modification', 'Description', 'Remove'];
+  isModal = false;
 
   constructor(private router: Router,
               private orderStorage: OrderStorageService,
               private certificateService: CertificateService,
-              private orderService: OrderService
+              private orderService: OrderService,
+              private dataOrderService: DataOrderService
   ) {
   }
 
   ngOnInit(): void {
-    this.certificates = new Set<Certificate>();
-    this.description = new FormControl('', Validators.compose([
-      Validators.minLength(0),
-      Validators.maxLength(999)
-      // Validators.required
-    ]));
-    this.getCertificates();
-    console.log('order component, certificate ids from  storage:', this.orderStorage.getCertificateIds());
+    this.dataOrderService.changeMessage(false);
+    console.log('isModal', this.isModal);
+    this.initOrder();
+    // console.log('order component, certificate ids from  storage:', this.orderStorage.getCertificateIds());
+    this.dataOrderService.backMessage
+      .subscribe(data => {
+        console.log('dataOrder, backMessage, isModal=', this.isModal);
+        if (data === true) {
+          this.realCancel();
+          this.isModal = false;
+          this.router.navigate(['order']);
+          this.initOrder();
+        }
+      });
   }
 
+  initOrder(): void {
+    this.isProcessBar = true;
+    this.isModal = false;
+    this.certificates = new Array<Certificate>();
+    this.description = new FormControl('', Validators.compose([
+      Validators.minLength(0),
+      Validators.maxLength(999),
+      Validators.required
+    ]));
+    this.getCertificates();
+    console.log('initOrder, isModal:', this.isModal);
+  }
 
   getCertificates(): void {
     this.certificateIds = this.orderStorage.getCertificateIds();
+    const size = this.certificateIds.size;
+    if (size === 0) {
+      this.isProcessBar = false;
+    }
+    let counter = 0;
     for (const id of this.certificateIds) {
       this.certificateService.getCertificate(id)
         .subscribe(data => {
             // console.log('order component, id:', id);
             const certificate = data as Certificate;
-            this.certificates.add(certificate);
-            this.calculateTotalCost();
+            this.certificates.push(certificate);
+            counter++;
+            if (counter === size) {
+              this.calculateTotalCost();
+              this.isProcessBar = false;
+            }
           }, error => {
             console.log(error.message);
             this.message = 'Order component getting certificates error';
@@ -57,20 +89,31 @@ export class OrderComponent implements OnInit {
     }
   }
 
-
   back(): void {
     this.router.navigate(['certificates']);
+    this.isModal = false;
   }
 
   cancel(): void {
-    this.orderStorage.cancelOrder();
-    this.ngOnInit();
+    this.isModal = true;
+    this.dataOrderService.changeMessage(this.isModal);
+    this.isModal = false;
     // this.router.navigate(['order']);
+  }
+
+
+  realCancel(): void {
+    this.orderStorage.cancelOrder();
+    this.totalCost = 0;
   }
 
   save(): void {
     this.order = this.orderStorage.getOrder();
     this.certificateIds = this.orderStorage.getCertificateIds();
+    if (this.certificateIds.size === 0) {
+      this.message = 'There are no certificates to save';
+      return;
+    }
     this.order.description = this.description.value;
     this.orderService.save(this.order)
       .subscribe(data => {
@@ -81,8 +124,9 @@ export class OrderComponent implements OnInit {
                 console.log(result.elements.content);
                 this.orderStorage.cancelOrder();
                 this.router.navigate(['orders']);
+                this.orderService.getOrder(this.order.id);
               }, error => {
-                console.log(error);
+                console.log(error.error.message);
                 this.message = 'Error happened during certificates saving in order';
               }
             );
@@ -100,5 +144,19 @@ export class OrderComponent implements OnInit {
       this.totalCost = this.totalCost + certificate.price;
       console.log('total cost, price:', certificate.price);
     }
+  }
+
+  remove(id: number): void {
+    this.certificateIds.delete(id);
+    const certificates = new Array<Certificate>();
+    this.orderStorage.setCertificateIds(this.certificateIds);
+    // let found = null;
+    for (let i = 0; i < this.certificates.length; i++) {
+      if (this.certificates[i].id !== id) {
+        certificates.push(this.certificates[i]);
+      }
+    }
+    this.certificates = certificates;
+    this.calculateTotalCost();
   }
 }

@@ -11,7 +11,7 @@
 }
 
 .dropdown-content {
-  transform: translateY(20px);
+  transform: translateY(18px);
   display: none;
   position: absolute;
   background-color: #f9f9f9;

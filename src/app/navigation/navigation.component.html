@@ -39,33 +39,15 @@
              placeholder="Search by certificate name"  [(ngModel)]="name" [formControl]="searchControl"
         (ngModelChange)="searchByName($event)"/>
     </div>
-    <!--    -&#45;&#45;&#45;&#45;-->
-<!--    <div class="tag-input">-->
-<!--      <form class="example-form tag-input">-->
-<!--        <mat-form-field class="example-full-width">-->
-<!--          <mat-label>Search tag by name</mat-label>-->
-<!--          <input type="text" matInput [formControl]="searchTag" [matAutocomplete]="auto">-->
-<!--          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">-->
-<!--            <mat-option *ngFor="let tag of tags" [value]="tag" (click)="setTagName(tag)">-->
-<!--              {{tag.name}}-->
-<!--            </mat-option>-->
-<!--          </mat-autocomplete>-->
-<!--        </mat-form-field>-->
-<!--      </form>-->
-<!--    </div>-->
-    <!--    &#45;&#45;&#45;&#45;-->
+
         <div class="dropdown">
           <div class="dropdown-categories-button">
             <input id="tagInput" class="search-bar-input" type="text" name="search_item"
-                   placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag">
-    <!--        <img class="icon" src="assets/icons/chevron-compact-down.svg" alt="chevron" width="20px" height="20px">-->
+                   placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag" autocomplete="off">
           </div>
 
           <div id="dropDown" class="dropdown-content">
-<!--            <input id="tagInput" class="search-bar-input" type="text" name="search_item"-->
-<!--                   placeholder="Search by tag" [(ngModel)]="tagName" [formControl]="searchTag">-->
             <div id="inDropDown" class="dropdown-content">
-              <!--                       for tag name = category name-->
               <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
             </div>
           </div>
@@ -73,6 +55,7 @@
   </div>
 
   <div class="navigation-bar-right">
+    <div class="credentials"> {{userRole}} {{userLogin}}</div>
     <div *ngIf="login === 'Logout'">
       <a class="icon icon-dynamic" (click)="cart()">
         <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
