@@ -1,3 +1,6 @@
+<app-modal></app-modal>
+<app-header></app-header>
+<app-navigation></app-navigation>
 <main class="main main-order">
   <div class="order-header">
     <div *ngIf="certificate !== undefined">Certificate #{{id}} </div>
@@ -28,13 +31,13 @@
 
       <mat-form-field class="example-full-width">
         <mat-label>Duration,days</mat-label>
-        <input matInput placeholder="Duration" value="" [formControl]="duration" >
+        <input matInput placeholder="Duration" value="" [formControl]="duration">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
         <mat-label>Price, $</mat-label>
-        <input matInput placeholder="Price" value="" [formControl]="price" >
+        <input matInput placeholder="Price" value="" [formControl]="price">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
 
@@ -66,11 +69,17 @@
       </div>
       <br/>
       <div class="order-form-footer">
-        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-        <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Update</button>
-        <button id="delete"class="register-form-btn" mat-raised-button color="lightgreen" (click)="delete()">Delete</button>
+
+        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <div *ngIf="userRole === 'ADMIN'">
+          <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="preSave()">Update
+          </button>
+          <button id="delete" class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="preDelete()">
+            Delete
+          </button>
+        </div>
       </div>
-    {{message}}
+      <div class="message-error">{{message}}</div>
     </form>
   </div>
 </main>

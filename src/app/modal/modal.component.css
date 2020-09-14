@@ -2,7 +2,7 @@
 .modal {
   display: none; /* Hidden by default */
   position: absolute; /* Stay in place */
-  transform: translateY(-580px) translateX(-740px);
+  /*transform: translateY(-580px) translateX(-740px);*/
   z-index: 2; /* Sit on top */
   left: 0;
   top: 0;

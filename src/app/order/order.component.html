@@ -1,3 +1,4 @@
+<app-modal></app-modal>
 <div class="users-container">
   <app-header></app-header>
   <app-navigation></app-navigation>
@@ -56,7 +57,7 @@
       <br/>
       <div class="users-list">
         <div class="label-input">
-          <h1>Total cost:${{totalCost}}</h1>
+          <h2>Total cost:{{totalCost|currency:"USD":"symbol"}}</h2>
         </div>
       </div>
       <br/>
@@ -71,7 +72,7 @@
       <div class="order-form-footer">
         <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
         <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="cancel()">Clear Cart</button>
-          <app-modal></app-modal>
+
         <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Submit</button>
       </div>
 

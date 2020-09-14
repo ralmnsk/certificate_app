@@ -1,0 +1,6 @@
+{
+  "/api/*": {
+    "target": "http://localhost:8083/web-1.0",
+    "secure": false
+  }
+}

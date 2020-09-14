@@ -26,7 +26,7 @@ const routes: Routes = [
   {path: 'order-view', component: OrderViewComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'order-admin-view', component: OrderAdminViewComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'certificates', component: CertificatesComponent},
-  {path: 'certificate', component: CertificateComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
+  {path: 'certificate', component: CertificateComponent, canActivate: [AuthGuard]},
   {path: 'certificate-deleted', component: CertificateDeletedComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'create-certificate', component: CreateCertificateComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: '**', redirectTo: 'certificates'}

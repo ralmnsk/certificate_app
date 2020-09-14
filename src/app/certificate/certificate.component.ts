@@ -9,6 +9,10 @@ import {Tag} from '../tags/tag';
 import {debounceTime} from 'rxjs/operators';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {IDropdownSettings, ListItem} from 'ng-multiselect-dropdown/multiselect.model';
+import {DataModalService} from '../data/data-modal.service';
+import {DELETE, FALSE, TRUE, UPDATE} from '../modal/modal.component';
+import {DataTokenService} from '../data/data-token.service';
+import {TokenStorageService} from '../auth/token-storage.service';
 
 @Component({
   selector: 'app-certificate',
@@ -43,17 +47,31 @@ export class CertificateComponent implements OnInit {
   dropdownSettings: IDropdownSettings = {};
 
   addTag = new FormControl();
+  userRole: string;
 
   constructor(private dataTagEditService: DataTagEditService,
               private certificateService: CertificateService,
               private router: Router,
               private tagsService: TagsService,
               private certificateStorageService: CertificateStorageService,
-              private fb: FormBuilder
+              private fb: FormBuilder,
+              private dataModal: DataModalService,
+              private tokenStorage: TokenStorageService
   ) {
   }
 
   ngOnInit(): void {
+    this.userRole = this.tokenStorage.getRole();
+    this.dataModal.changeMessage(FALSE);
+    this.dataModal.backMessage
+      .subscribe(data => {
+        if (data === UPDATE) {
+          this.save();
+        }
+        if (data === DELETE) {
+          this.delete();
+        }
+      });
     this.myForm = this.fb.group({
       tagsControl: [this.selectedItems]
     });
@@ -144,6 +162,10 @@ export class CertificateComponent implements OnInit {
     this.router.navigate(['certificates']);
   }
 
+  preSave(): void {
+    this.dataModal.changeMessage('certificate-update');
+  }
+
   save(): void {
     if (!this.isSaveEnabled()) {
       console.log('isDisabled');
@@ -194,6 +216,10 @@ export class CertificateComponent implements OnInit {
       return true;
     }
     return false;
+  }
+
+  preDelete(): void {
+    this.dataModal.changeMessage('certificate-delete');
   }
 
   delete(): void {

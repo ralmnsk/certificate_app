@@ -65,6 +65,7 @@ export class NavigationComponent implements OnInit {
     this.pathsWithoutSearchBar.add('/users');
     this.pathsWithoutSearchBar.add('/order');
     this.pathsWithoutSearchBar.add('/orders');
+    this.pathsWithoutSearchBar.add('/certificate');
     this.pathsWithoutSearchBar.add('/login');
     this.pathsWithoutSearchBar.add('/order-view');
     this.pathsWithoutSearchBar.add('/order-admin-view');
@@ -124,6 +125,12 @@ export class NavigationComponent implements OnInit {
     if (this.pathsWithoutSearchBar.has(url)) {
       this.isShowSearchBar = false;
       return;
+    }
+    for (const path of this.pathsWithoutSearchBar) {
+      if (path.indexOf(url) > 0) {
+        this.isShowSearchBar = false;
+        return;
+      }
     }
     this.isShowSearchBar = true;
   }

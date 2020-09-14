@@ -6,18 +6,21 @@
   <div class="order-place">
     <form class="order-form" method="post">
       <br/>
+        <div class="message-error">{{messageNameError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
         <input matInput placeholder="Name" value="" [formControl]="name">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
+      <div class="message-error">{{messageDurationError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Duration,days</mat-label>
         <input matInput placeholder="Duration" value="" [formControl]="duration" >
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
+      <div class="message-error">{{messagePriceError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Price, $</mat-label>
         <input matInput placeholder="Price" value="" [formControl]="price" >
@@ -43,6 +46,7 @@
 
       </div>
       <br/>
+      <div class="message-error">{{messageDescriptionError}}</div>
       <div class="label-input order-input">
         Description
         <textarea class="textarea-form-input large" type="text" name="description" placeholder="Description"
@@ -51,21 +55,11 @@
       </div>
       <br/>
       <div class="order-form-footer">
-        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-<!--        <button class="register-form-btn white-btn " type="submit" (click)="back()">-->
-<!--          <a class="icon icon-dynamic">-->
-<!--            Back-->
-<!--          </a>-->
-<!--        </button>-->
+        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
         <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Create</button>
-<!--        <button id="save" class="register-form-btn" type="submit" (click)="save()">-->
-<!--          <a class="icon icon-dynamic">-->
-<!--            Create-->
-<!--          </a>-->
-<!--        </button>-->
       </div>
     </form>
-    {{message}}
+    <div class="message-error">{{message}}</div>
   </div>
 </main>
 

@@ -6,7 +6,7 @@ import {OrderStorageService} from '../data/order-storage.service';
 import {CertificateService} from '../certificate/certificate.service';
 import {FormControl, Validators} from '@angular/forms';
 import {OrderService} from './order.service';
-import {DataOrderService} from '../data/data-order.service';
+import {DataModalService} from '../data/data-modal.service';
 
 @Component({
   selector: 'app-order',
@@ -23,27 +23,23 @@ export class OrderComponent implements OnInit {
   description: FormControl;
   isProcessBar: boolean;
   displayedColumns: string[] = ['Id', 'Name', 'Duration', 'Price', 'Creation', 'Modification', 'Description', 'Remove'];
-  isModal = false;
+  // isModal = false;
 
   constructor(private router: Router,
               private orderStorage: OrderStorageService,
               private certificateService: CertificateService,
               private orderService: OrderService,
-              private dataOrderService: DataOrderService
+              private dataModalService: DataModalService
   ) {
   }
 
   ngOnInit(): void {
-    this.dataOrderService.changeMessage(false);
-    console.log('isModal', this.isModal);
+    this.dataModalService.changeMessage('false');
     this.initOrder();
-    // console.log('order component, certificate ids from  storage:', this.orderStorage.getCertificateIds());
-    this.dataOrderService.backMessage
+    this.dataModalService.backMessage
       .subscribe(data => {
-        console.log('dataOrder, backMessage, isModal=', this.isModal);
-        if (data === true) {
+        if (data === 'true') {
           this.realCancel();
-          this.isModal = false;
           this.router.navigate(['order']);
           this.initOrder();
         }
@@ -52,7 +48,7 @@ export class OrderComponent implements OnInit {
 
   initOrder(): void {
     this.isProcessBar = true;
-    this.isModal = false;
+    // this.isModal = false;
     this.certificates = new Array<Certificate>();
     this.description = new FormControl('', Validators.compose([
       Validators.minLength(0),
@@ -60,7 +56,7 @@ export class OrderComponent implements OnInit {
       Validators.required
     ]));
     this.getCertificates();
-    console.log('initOrder, isModal:', this.isModal);
+    // console.log('initOrder, isModal:', this.isModal);
   }
 
   getCertificates(): void {
@@ -91,14 +87,10 @@ export class OrderComponent implements OnInit {
 
   back(): void {
     this.router.navigate(['certificates']);
-    this.isModal = false;
   }
 
   cancel(): void {
-    this.isModal = true;
-    this.dataOrderService.changeMessage(this.isModal);
-    this.isModal = false;
-    // this.router.navigate(['order']);
+    this.dataModalService.changeMessage('order');
   }
 
 

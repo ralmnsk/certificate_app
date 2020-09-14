@@ -8,48 +8,53 @@
       <div class="message-error">
         {{registerMessage}}
       </div>
-        <div class="message-error">{{loginError}}<br/></div>
-      <mat-form-field>
+      <div class="message-error">{{loginError}}<br/></div>
+      <mat-form-field class="register-input">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="Email" value="" formControlName="email" minlength="2" maxlength="30" pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+        <input matInput placeholder="Email" value="" formControlName="email" minlength="2" maxlength="30"
+               pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
       </mat-form-field>
 
-        <div class="message-error">{{surnameError}}<br/></div>
-      <mat-form-field class="example-full-width">
+      <div class="message-error">{{surnameError}}<br/></div>
+      <mat-form-field class="register-input">
         <mat-label>Surname</mat-label>
-        <input matInput placeholder="Surname" value="" formControlName="surname" >
+        <input matInput placeholder="Surname" value="" formControlName="surname">
       </mat-form-field>
 
 
-        <div class="message-error">{{nameError}}<br/></div>
-      <mat-form-field class="example-full-width">
+      <div class="message-error">{{nameError}}<br/></div>
+      <mat-form-field class="register-input">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" value="" formControlName="name" >
+        <input matInput placeholder="Name" value="" formControlName="name">
       </mat-form-field>
 
-        <div class="message-error">{{passwordError}}<br/></div>
-      <mat-form-field class="example-full-width">
+      <div class="message-error">{{passwordError}}<br/></div>
+      <mat-form-field class="register-input">
         <mat-label>Password</mat-label>
         <input matInput placeholder="Password" value="" type="password" formControlName="password">
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="register-input">
         <mat-label>Repeat password</mat-label>
         <input matInput placeholder="Repeat Password" value="" type="password" formControlName="passwordRepeat">
       </mat-form-field>
       <br/>
-      <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="registerProcess()">
-        Register
-      </button>
+      <div class ="register-input">
+        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="registerProcess()">
+          Register
+        </button>
+      </div>
       <div>
         <br/>
       </div>
-      <button class="login-form-btn gray" mat-raised-button color="lightgreen" (click)="toLoginPage()">
-        Cancel
-      </button>
-<!--      <div class="message">-->
-<!--        {{registerMessage}}-->
-<!--      </div>-->
+      <div class="register-input">
+        <button class="login-form-btn gray" mat-raised-button color="lightgreen" (click)="toLoginPage()">
+          Cancel
+        </button>
+      </div>
+      <!--      <div class="message">-->
+      <!--        {{registerMessage}}-->
+      <!--      </div>-->
     </mat-card>
 
   </form>

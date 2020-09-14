@@ -9,6 +9,8 @@ import {CertificateService} from '../certificate/certificate.service';
 import {OrderViewStorageService} from '../data/order-view-storage.service';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
+import {DataModalService} from '../data/data-modal.service';
+import {ORDER_VIEW} from '../modal/modal.component';
 
 @Component({
   selector: 'app-order-view',
@@ -37,7 +39,8 @@ export class OrderViewComponent implements OnInit {
               private certificateService: CertificateService,
               private router: Router,
               private certificateStorage: CertificateStorageService,
-              private tokenStorage: TokenStorageService
+              private tokenStorage: TokenStorageService,
+              private dataModal: DataModalService
   ) {
   }
 
@@ -49,11 +52,13 @@ export class OrderViewComponent implements OnInit {
     this.orderId = this.orderViewStorage.getCurrentOrderId();
     this.getOrder(this.orderId);
     console.log('order view ng init');
-    // this.dataOrderViewService.currentMessage.subscribe(message => {
-    //   this.orderId = Number(message);
-    //   console.log('order view id from dataOrderView:', this.orderId);
-    //   this.getOrder(this.orderId);
-    // });
+    this.dataModal.backMessage.subscribe(
+      data => {
+        if (data === 'true') {
+          this.realComplete();
+        }
+      }
+    );
   }
 
   getOrder(id: number): void {
@@ -90,8 +95,12 @@ export class OrderViewComponent implements OnInit {
 
   back(): void {
     this.orderViewStorage.setCurrentOrderId(this.order.id);
-    const url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    let url = this.tokenStorage.getPreviousUrl().replace('/', '');
+    if (url === null || url === undefined || url === 'order-view') {
+      url = 'certificates';
+    }
     this.router.navigate([url]);
+    this.dataModal.changeMessage('false');
   }
 
   complete(): void {
@@ -99,6 +108,10 @@ export class OrderViewComponent implements OnInit {
       this.message = 'Order already was completed';
       return;
     }
+    this.dataModal.changeMessage(ORDER_VIEW);
+  }
+
+  realComplete(): void {
     this.order.completed = true;
     this.updateOrder(this.order);
     this.orderViewStorage.setCurrentOrderId(this.order.id);

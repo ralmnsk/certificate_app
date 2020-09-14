@@ -60,10 +60,8 @@ import {AuthGuard} from './auth/auth.guard';
 import {ErrorInterceptor} from './auth/error.interceptor';
 import {JwtInterceptor} from './auth/jwt.interceptor';
 import {RegisterComponent} from './register/register.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
 import { ModalComponent } from './modal/modal.component';
-import {DataOrderService} from './data/data-order.service';
+import {DataModalService} from './data/data-modal.service';
 
 @NgModule({
   declarations: [
@@ -121,7 +119,7 @@ import {DataOrderService} from './data/data-order.service';
     DataTokenService,
     DataCertificateService,
     DataOrderViewService,
-    DataOrderService,
+    DataModalService,
     DataTagService,
     DataTagEditService,
     ErrorInterceptor,

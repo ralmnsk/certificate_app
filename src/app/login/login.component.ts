@@ -84,7 +84,7 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['certificates']);
           this.isProcessBar = false;
         }, error => {
-          console.log('error: ', error.error.message);
+          console.log('error: ', error.message);
           this.messageLogin = 'Login or password is incorrect';
           this.router.navigate(['login']);
           this.isProcessBar = false;

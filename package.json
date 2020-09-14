@@ -2,12 +2,9 @@
   "name": "certificate-angular",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve --proxy-config proxy.conf.json",
-    "build": "ng build --prod --aot --vendor-chunk --common-chunk --delete-output-path --buildOptimizer --hmr",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "serve": "webpack-dev-server --mode=development --proxy-config proxy.conf.json",
+    "build": "webpack",
+    "build:prod": "webpack --config webpack.config.prod.js"
   },
   "private": true,
   "dependencies": {
@@ -25,7 +22,9 @@
     "ng-multiselect-dropdown": "^0.2.10",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.1",
-    "zone.js": "~0.10.3"
+    "zone.js": "~0.10.3",
+    "copy-webpack-plugin": "latest",
+    "mini-css-extract-plugin": "latest"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.7",
@@ -37,6 +36,9 @@
     "cache-loader": "^4.1.0",
     "clean-webpack-plugin": "^3.0.0",
     "codelyzer": "^6.0.0",
+    "css-loader": "^4.3.0",
+    "cssnano": "^4.1.10",
+    "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.4.1",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
@@ -45,12 +47,23 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "node-sass": "^4.14.1",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^4.0.1",
     "protractor": "~7.0.0",
+    "sass-loader": "^10.0.2",
+    "style-loader": "^1.2.1",
+    "sugarss": "^2.0.0",
     "terser-webpack-plugin": "^4.2.0",
+    "ts-loader": "^8.0.3",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~3.9.5",
-    "webpack-cli": "^3.3.12"
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.4"
   },
   "serve": {
     "builder": "@angular-devkit/build-angular:dev-server",

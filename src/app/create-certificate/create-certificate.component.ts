@@ -34,6 +34,10 @@ export class CreateCertificateComponent implements OnInit {
   tagsToSelect = new Array<Tag>();
   selectedItems = new Array<Tag>();
   dropdownSettings: IDropdownSettings = {};
+  messageNameError: string;
+  messageDurationError: string;
+  messagePriceError: string;
+  messageDescriptionError: string;
 
   constructor(private router: Router,
               private tagsService: TagsService,
@@ -67,6 +71,54 @@ export class CreateCertificateComponent implements OnInit {
       .subscribe(() => {
         this.removeTag(this.deleteTag.value);
       });
+    this.initControlsValidation();
+  }
+
+  initControlsValidation(): void {
+    this.name.validator = Validators.compose([
+      Validators.pattern('[a-z A-Z]{2,256}'),
+      Validators.required
+    ]);
+    this.description.validator = Validators.compose([
+      Validators.maxLength(990),
+      Validators.required
+    ]);
+    this.price.validator = Validators.compose([
+      Validators.pattern('[0-9]{0,1000000000}'),
+      Validators.required
+    ]);
+    this.duration.validator = Validators.compose([
+      Validators.pattern('[0-9]{0,100000}'),
+      Validators.required
+    ]);
+  }
+
+  isInputErrors(): boolean {
+    let flag = false;
+    if (this.name.invalid) {
+      this.messageNameError = 'Name has to be 2-256 letters.';
+      flag = true;
+    }
+    if (this.description.invalid) {
+      this.messageDescriptionError = 'Description has to be 0-990 letters.';
+      flag = true;
+    }
+    if (this.price.invalid) {
+      this.messagePriceError = 'Price has to be 0-1000000000.';
+      flag = true;
+    }
+    if (this.duration.invalid) {
+      this.messageDurationError = 'Duration has to be 0-100000.';
+      flag = true;
+    }
+    return flag;
+  }
+
+  initMessageErrors(): void {
+    this.messageNameError = null;
+    this.messageDescriptionError = null;
+    this.messagePriceError = null;
+    this.messageDurationError = null;
   }
 
   removeTag(name: string): void {
@@ -127,7 +179,10 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   save(): void {
-    this.isFormValid();
+    this.initMessageErrors();
+    if (this.isInputErrors()) {
+      return;
+    }
     this.certificate = new Certificate();
     this.certificate.name = this.name.value;
     this.certificate.description = this.description.value;
@@ -142,7 +197,7 @@ export class CreateCertificateComponent implements OnInit {
           this.saveTagsOfCreatedCertificate();
           this.router.navigate(['certificate']);
         }, error => {
-          console.log(error.message);
+          console.log(error.error.message);
           this.message = 'Error happened during save';
         }
       );
@@ -167,42 +222,42 @@ export class CreateCertificateComponent implements OnInit {
     }
   }
 
-  private isFormValid(): boolean {
-    this.name.validator = Validators.compose([
-      Validators.minLength(2),
-      Validators.maxLength(30),
-      Validators.required
-    ]);
-    if (this.name.invalid) {
-      return false;
-    }
-    this.description.validator = Validators.compose([
-      Validators.minLength(0),
-      Validators.maxLength(999),
-      Validators.required
-    ]);
-    if (this.description.invalid) {
-      return false;
-    }
-    this.duration.validator = Validators.compose([
-      Validators.min(0),
-      Validators.max(10000),
-      Validators.required
-    ]);
-    if (this.duration.invalid) {
-      return false;
-    }
-    this.price.validator = Validators.compose([
-      Validators.min(0),
-      Validators.max(1000000),
-      Validators.required
-    ]);
-    if (this.price.invalid) {
-      return false;
-    }
-    console.log('form is valid');
-    return true;
-  }
+  // private isFormValid(): boolean {
+  //   this.name.validator = Validators.compose([
+  //     Validators.minLength(2),
+  //     Validators.maxLength(256),
+  //     Validators.required
+  //   ]);
+  //   if (this.name.invalid) {
+  //     return false;
+  //   }
+  //   this.description.validator = Validators.compose([
+  //     Validators.minLength(0),
+  //     Validators.maxLength(999),
+  //     Validators.required
+  //   ]);
+  //   if (this.description.invalid) {
+  //     return false;
+  //   }
+  //   this.duration.validator = Validators.compose([
+  //     Validators.min(0),
+  //     Validators.max(10000),
+  //     Validators.required
+  //   ]);
+  //   if (this.duration.invalid) {
+  //     return false;
+  //   }
+  //   this.price.validator = Validators.compose([
+  //     Validators.min(0),
+  //     Validators.max(1000000),
+  //     Validators.required
+  //   ]);
+  //   if (this.price.invalid) {
+  //     return false;
+  //   }
+  //   console.log('form is valid');
+  //   return true;
+  // }
 
   onFilterTextChange($event: ListItem): void {
     const value = String($event);

@@ -4,15 +4,15 @@
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="toUserPage()">
+      <button mat-menu-item (click)="toUserPage()" *ngIf=" userRole === 'ADMIN' || userRole === 'USER'">
         <mat-icon>account_box</mat-icon>
         <span>User Page</span>
       </button>
-      <button mat-menu-item (click)="toUsers()">
+      <button mat-menu-item (click)="toUsers()" *ngIf="userRole === 'ADMIN'">
         <mat-icon>people</mat-icon>
         <span>Users</span>
       </button>
-      <button mat-menu-item (click)="toOrders()">
+      <button mat-menu-item (click)="toOrders()" *ngIf=" userRole === 'ADMIN' || userRole === 'USER'">
         <mat-icon>receipt</mat-icon>
         <span>Orders</span>
       </button>
@@ -20,7 +20,7 @@
         <mat-icon>add_shopping_cart</mat-icon>
         <span>Certificates</span>
       </button>
-      <button mat-menu-item (click)="createCertificate()">
+      <button mat-menu-item (click)="createCertificate()" *ngIf="userRole === 'ADMIN'">
         <mat-icon>create</mat-icon>
         <span>New Certificate</span>
       </button>
@@ -29,7 +29,7 @@
     <div class="logo">
       <img src="assets/images/logo.png" alt="logo" width="40px" height="40px">
     </div>
-    <span>Certificate application</span>
+    <span class="application-label">Certificate application</span>
     <span class="example-spacer"></span>
   </div>
 
@@ -46,11 +46,11 @@
                    placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag" autocomplete="off">
           </div>
 
-          <div id="dropDown" class="dropdown-content">
+<!--          <div id="dropDown" class="dropdown-content">-->
             <div id="inDropDown" class="dropdown-content">
               <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
             </div>
-          </div>
+<!--          </div>-->
         </div>
   </div>
 

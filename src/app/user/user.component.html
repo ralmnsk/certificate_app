@@ -8,24 +8,24 @@
   <mat-card class="order-place">
     <form class="order-form" method="post" [formGroup]="userForm">
       <br/>
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="user-input">
         <mat-label>Surname</mat-label>
         <input matInput placeholder="Surname" value="" formControlName="surname">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="user-input">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" value="" formControlName="name">
+        <input  matInput placeholder="Name" value="" formControlName="name">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="user-input">
         <mat-label>Role</mat-label>
         <input matInput placeholder="role" value="" formControlName="role" disabled="disabled" readonly>
       </mat-form-field>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="user-input">
         <mat-label>Email (login)</mat-label>
         <input matInput placeholder="login" value="" formControlName="email">
       </mat-form-field>
@@ -33,20 +33,20 @@
         {{userMessage}}
       </div>
       <br/>
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="user-input">
         <mat-label>New Password</mat-label>
         <input matInput placeholder="new password" value="" formControlName="password" type="password">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
 
       <div class="user-form-footer">
-        <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="saveUser()">Update
+        <button  class="login-form-btn user-input" mat-raised-button color="lightgreen" (click)="saveUser()">Update
         </button>
         <div>
           <br/>
         </div>
 
-        <button class="login-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+        <button class="login-form-btn gray user-input" mat-raised-button color="lightgreen" (click)="back()">Back</button>
       </div>
 
       <br/>

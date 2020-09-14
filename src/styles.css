@@ -92,6 +92,8 @@
 .search-bar {
   width: 530px;
   float: left;
+  position: relative;
+  transform: translateY(-7px);
 }
 
 .search-bar-input {
@@ -233,6 +235,7 @@
   font-size: 25px;
   text-align: center;
   vertical-align: center;
+  width: 260px;
 }
 
 .register-form-main {
@@ -327,6 +330,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  /*background-color: red;*/
 }
 
 .textarea-form-input {
@@ -652,6 +656,7 @@ input[type="file"] {
 .big-image {
   position: absolute;
   transform: translateX(320px) translateY(10px);
+  z-index: 1;
 }
 
 .cart {
@@ -702,7 +707,7 @@ input[type="file"] {
 
 .credentials {
   position: absolute;
-  top: 20px;
+  top: 0px;
   right: 250px;
 }
 
@@ -752,11 +757,10 @@ body {
 }
 
 .register-form {
-  position: relative;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 210px;
 }
@@ -834,3 +838,29 @@ body {
   width: 250px;
 }
 
+.btn-together {
+  width: 270px;
+  transform: translateX(450px);
+}
+
+.register-input {
+  position: relative;
+  transform: translateX(40px);
+}
+
+.application-label {
+  position: relative;
+  transform: translateY(4px);
+}
+
+.tag-name {
+  position: relative;
+  transform: translateY(5px);
+  font-size: 15px;
+}
+
+.user-input {
+  width: 220px;
+  position: relative;
+  transform: translateX(-10px);
+}
