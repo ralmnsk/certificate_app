@@ -38,9 +38,6 @@ com/epam/esm/web/assembler/TagAssembler.java
  com.epam.esm.web.assembler.TagAssembler
 com/epam/esm/web/security/config/SecurityConfiguration.java
  com.epam.esm.web.security.config.SecurityConfiguration
-com/epam/esm/web/config/SpringAppConfig.java
- com.epam.esm.web.config.SpringAppConfig
- com.epam.esm.web.config.SpringAppConfig$1
 com/epam/esm/web/page/AbstractPageBuilder.java
  com.epam.esm.web.page.AbstractPageBuilder
 com/epam/esm/web/page/CertificatePageBuilder.java

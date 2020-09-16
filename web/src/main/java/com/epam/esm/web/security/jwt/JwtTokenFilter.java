@@ -78,9 +78,21 @@ public class JwtTokenFilter extends GenericFilterBean {
     private boolean containsUri(String uri, HttpServletRequest req) {
         String contextPath = req.getServletContext().getContextPath();
         uri = uri.replace(contextPath, "");
-        if (endPoints.contains(uri)) {
+//        if (endPoints.contains(uri)) {
+//            return true;
+//        }
+        final String finalUri = uri;
+            long result = 0L;
+            for (String e : endPoints) {
+                if (finalUri.contains(e)) {
+                    result++;
+                }
+            }
+            long count = result;
+        if(count > 0L){
             return true;
         }
+
         if (uri.matches("/tags") && !methods.contains(req.getMethod())) {
             return true;
         }
