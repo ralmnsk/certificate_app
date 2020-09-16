@@ -28,11 +28,11 @@ export class TokenStorageService {
         console.log('prev:', event.url);
         const current = window.sessionStorage.getItem(CURRENT_URL);
         if (current !== null && current !== undefined) {
-          window.sessionStorage.removeItem(PREVIOUS_URL);
-          window.sessionStorage.setItem(PREVIOUS_URL, current);
+          localStorage.removeItem(PREVIOUS_URL);
+          localStorage.setItem(PREVIOUS_URL, current);
         }
-        window.sessionStorage.removeItem(CURRENT_URL);
-        window.sessionStorage.setItem(CURRENT_URL, event.url);
+        localStorage.removeItem(CURRENT_URL);
+        localStorage.setItem(CURRENT_URL, event.url);
       });
   }
 
@@ -41,12 +41,12 @@ export class TokenStorageService {
   }
 
   getToken(): string {
-    return window.sessionStorage.getItem(TOKEN);
+    return localStorage.getItem(TOKEN);
   }
 
   setToken(token: string): void {
-    window.sessionStorage.removeItem(TOKEN);
-    window.sessionStorage.setItem(TOKEN, token);
+    localStorage.removeItem(TOKEN);
+    localStorage.setItem(TOKEN, token);
     this.newMessage();
   }
 
@@ -55,56 +55,56 @@ export class TokenStorageService {
   }
 
   setName(name: string): void {
-    window.sessionStorage.removeItem(NAME);
-    window.sessionStorage.setItem(NAME, name);
+    localStorage.removeItem(NAME);
+    localStorage.setItem(NAME, name);
   }
 
   getSurname(): string {
-    return window.sessionStorage.getItem(SURNAME);
+    return localStorage.getItem(SURNAME);
   }
 
   setSurname(surname: string): void {
-    window.sessionStorage.removeItem(SURNAME);
-    window.sessionStorage.setItem(SURNAME, surname);
+    localStorage.removeItem(SURNAME);
+    localStorage.setItem(SURNAME, surname);
   }
 
   getEmail(): string {
-    return window.sessionStorage.getItem(EMAIL);
+    return localStorage.getItem(EMAIL);
   }
 
   setEmail(email: string): void {
-    window.sessionStorage.removeItem(EMAIL);
-    window.sessionStorage.setItem(EMAIL, email);
+    localStorage.removeItem(EMAIL);
+    localStorage.setItem(EMAIL, email);
   }
 
   getRole(): string {
-    return window.sessionStorage.getItem(ROLE);
+    return localStorage.getItem(ROLE);
   }
 
   setRole(role: string): void {
-    window.sessionStorage.removeItem(ROLE);
-    window.sessionStorage.setItem(ROLE, role);
+    localStorage.removeItem(ROLE);
+    localStorage.setItem(ROLE, role);
   }
 
   logout(): void {
-    window.sessionStorage.clear();
+    localStorage.clear();
   }
 
   setId(id: string): void {
-    window.sessionStorage.removeItem(ID);
-    window.sessionStorage.setItem(ID, id);
+    localStorage.removeItem(ID);
+    localStorage.setItem(ID, id);
   }
 
   getId(): string {
-    return window.sessionStorage.getItem(ID);
+    return localStorage.getItem(ID);
   }
 
   getPreviousUrl(): string {
-    return window.sessionStorage.getItem(PREVIOUS_URL);
+    return localStorage.getItem(PREVIOUS_URL);
   }
 
   setPreviousUrl(url: string): void {
-    window.sessionStorage.removeItem(PREVIOUS_URL);
-    window.sessionStorage.setItem(PREVIOUS_URL, url);
+    localStorage.removeItem(PREVIOUS_URL);
+    localStorage.setItem(PREVIOUS_URL, url);
   }
 }

@@ -15,6 +15,8 @@ import {TagStorageService} from '../data/tag-storage.service';
 import {DataTagService} from '../data/data-tag.service';
 import {UserService} from '../user/user.service';
 import {MatMenuTrigger} from '@angular/material/menu';
+import {OrderStorageService} from '../data/order-storage.service';
+import {DataOrderService} from '../data/data-order.service';
 
 @Component({
   selector: 'app-navigation',
@@ -48,6 +50,7 @@ export class NavigationComponent implements OnInit {
   pathsWithoutSearchBar: Set<string>;
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
+  purchaseCount: number;
 
   constructor(private router: Router,
               private tokenStorage: TokenStorageService,
@@ -58,7 +61,9 @@ export class NavigationComponent implements OnInit {
               private tagService: TagsService,
               private tagStorageService: TagStorageService,
               private dataTagService: DataTagService,
-              private userService: UserService
+              private userService: UserService,
+              private orderStorage: OrderStorageService,
+              private dataOrderService: DataOrderService
   ) {
     this.pathsWithoutSearchBar = new Set<string>();
     this.pathsWithoutSearchBar.add('/user');
@@ -96,12 +101,25 @@ export class NavigationComponent implements OnInit {
       .subscribe((val) => this.searchTagByName(val));
     this.dataTagService.currentMessage.subscribe(message => {
       this.tagName = message;
-      // console.log('tag name:', message);
     });
     this.userService.getLoggedIn.subscribe(message => {
       this.initUserInfo();
     });
     this.manageSearchBar();
+    this.manageCartMark();
+    this.dataOrderService.currentMessage.subscribe(
+      message => {
+        if (message === 'change-cart-mark') {
+          this.manageCartMark();
+        }
+      }
+    );
+    this.router.events.subscribe(
+      value => {
+        // console.log('navigation router event');
+        this.manageCartMark();
+      }
+    );
   }
 
   initUserInfo(): void {
@@ -109,7 +127,7 @@ export class NavigationComponent implements OnInit {
     this.userLogin = this.tokenStorage.getEmail();
     this.userRole = this.tokenStorage.getRole();
     // }
-    console.log('navigation, userLogin:', this.userLogin);
+    // console.log('navigation, userLogin:', this.userLogin);
   }
 
   initPagination(): void {
@@ -176,8 +194,8 @@ export class NavigationComponent implements OnInit {
     if (searchValue === undefined || searchValue === null) {
       this.certificateName = '';
     }
-    console.log(searchValue);
-    console.log(this.page, this.size, this.tagName, this.certificateName, this.sort);
+    // console.log(searchValue);
+    // console.log(this.page, this.size, this.tagName, this.certificateName, this.sort);
     this.certificatesService
       .getCertificates(this.page, this.size, this.tagName, searchValue, this.sort)
       .subscribe(data => {
@@ -206,10 +224,10 @@ export class NavigationComponent implements OnInit {
   }
 
   searchTagByName(searchValue: string): void {
-    console.log(searchValue);
+    // console.log(searchValue);
     this.tagName = searchValue;
     this.tagService
-      .getTags(0, 10, searchValue, this.sort)
+      .getTags(0, 7, searchValue, this.sort)
       .subscribe(data => {
           this.tags = data.elements.content as Array<Tag>;
           // console.log('navigation search tags:', this.tags);
@@ -221,7 +239,7 @@ export class NavigationComponent implements OnInit {
 
   setTagName(value: string): void {
     this.tagName = value;
-    console.log('setTagName', this.tagName);
+    // console.log('setTagName', this.tagName);
     // this.searchTag.setValue(tag.name);
   }
 
@@ -235,5 +253,22 @@ export class NavigationComponent implements OnInit {
 
   displayFn(tag: Tag): string {
     return tag && tag.name ? tag.name : '';
+  }
+
+  manageCartMark(): void {
+    const set = this.orderStorage.getCertificateIds();
+    // const cartToBuy = document.getElementById('cart-to-buy');
+    // if (cartToBuy === null || cartToBuy === undefined) {
+    //   // console.log('navigation, manage cart mark, cart undefined');
+    //   return;
+    // }
+    // if (set.size === 0) {
+    //   cartToBuy.style.backgroundColor = 'white';
+    //   // console.log('navigation, manage cart mark, set white');
+    //   return;
+    // }
+    // cartToBuy.style.backgroundColor = 'lightgreen';
+    this.purchaseCount = set.size;
+    // console.log('navigation, manage cart mark, set green mark of the cart');
   }
 }

@@ -2,9 +2,12 @@
   "name": "certificate-angular",
   "version": "0.0.0",
   "scripts": {
-    "serve": "webpack-dev-server --mode=development --proxy-config proxy.conf.json",
-    "build": "webpack",
-    "build:prod": "webpack --config webpack.config.prod.js"
+    "ng": "ng",
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "build": "ng build --aot=true --watch=false --prod=false --vendor-chunk --common-chunk --delete-output-path --buildOptimizer --hmr",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -22,9 +25,7 @@
     "ng-multiselect-dropdown": "^0.2.10",
     "rxjs": "~6.5.5",
     "tslib": "^2.0.1",
-    "zone.js": "~0.10.3",
-    "copy-webpack-plugin": "latest",
-    "mini-css-extract-plugin": "latest"
+    "zone.js": "~0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.1000.7",

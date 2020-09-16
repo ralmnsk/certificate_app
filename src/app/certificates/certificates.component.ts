@@ -9,6 +9,8 @@ import {Router} from '@angular/router';
 import {DataTagEditService} from '../data/data-tag-edit.service';
 import {OrderStorageService} from '../data/order-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
+import {DataOrderService} from '../data/data-order.service';
+import {UserService} from '../user/user.service';
 
 @Component({
   selector: 'app-certificates',
@@ -39,7 +41,6 @@ export class CertificatesComponent implements OnInit {
   private message: string;
   cart = 'cart';
   role: string;
-  roleString: string;
 
   constructor(private certificateService: CertificatesService,
               private dataCertificateService: DataCertificateService,
@@ -47,14 +48,19 @@ export class CertificatesComponent implements OnInit {
               private router: Router,
               private dataTagEditService: DataTagEditService,
               private orderStorage: OrderStorageService,
-              private tokenStorage: TokenStorageService
+              private tokenStorage: TokenStorageService,
+              private dataOrderService: DataOrderService,
+              private userService: UserService
   ) {
     this.scale = 1;
-    this.roleString = 'ADMIN';
   }
 
   ngOnInit(): void {
-    this.role = this.tokenStorage.getRole();
+    this.userService.getLoggedIn.subscribe(
+      value => {
+        this.role = this.tokenStorage.getRole();
+      }
+    );
     this.startWidth = 1920;
     this.currentWidth = 1920;
     this.lastScrollTop = 0;
@@ -72,7 +78,7 @@ export class CertificatesComponent implements OnInit {
       if (this.certificateStorage.getPagination().getCertificates().length > 0) {
         this.getPagination(this.certificateStorage.getPagination());
       }
-        this.markAdded();
+      this.markAdded();
     });
     this.resizeObservable = fromEvent(window, 'resize');
     this.resizeSubscription = this.resizeObservable.subscribe(evt => {
@@ -83,6 +89,8 @@ export class CertificatesComponent implements OnInit {
     window.addEventListener('scroll', () => {
       this.loadOnScrollDown(this.startWidth, this.currentWidth, this.scale);
     });
+    this.role = this.tokenStorage.getRole();
+    console.log('certificates init, role:', this.role);
   }
 
   searchCertificates(page: number, size: number, tagName: string, certificateName: string, sort: string): any {
@@ -117,6 +125,7 @@ export class CertificatesComponent implements OnInit {
       shopCart.style.backgroundColor = 'lightgreen';
 
       this.orderStorage.setCertificateIds(set);
+      this.dataOrderService.changeMessage('change-cart-mark');
     }
   }
 
@@ -182,6 +191,7 @@ export class CertificatesComponent implements OnInit {
   toEdit(value: number): void {
     this.dataTagEditService.changeMessage(value.toString());
     this.certificateStorage.setCurrentCertificate(value);
+    // console.log('certificates, id value:', value);
     this.router.navigate(['certificate']);
   }
 
@@ -206,5 +216,6 @@ export class CertificatesComponent implements OnInit {
       shopCart.style.backgroundColor = 'lightgreen';
     }
     this.orderStorage.setCertificateIds(set);
+    this.dataOrderService.changeMessage('change-cart-mark');
   }
 }

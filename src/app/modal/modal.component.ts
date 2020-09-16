@@ -7,6 +7,7 @@ export const DELETE = 'delete';
 export const UPDATE = 'update';
 export const EMPTY = '';
 export const ORDER = 'order';
+export const SUBMIT = 'submit';
 export const ORDER_VIEW = 'order-view';
 export const ORDER_MESSAGE = 'Do you really want to clear your cart?';
 export const ORDER_VIEW_MESSAGE = 'Do you really want to complete?';
@@ -14,6 +15,8 @@ export const CERTIFICATE_UPDATE = 'certificate-update';
 export const CERTIFICATE_UPDATE_MESSAGE = 'Do you really want to update?';
 export const CERTIFICATE_DELETE = 'certificate-delete';
 export const CERTIFICATE_DELETE_MESSAGE = 'Do you really want to delete?';
+export const SUBMIT_ORDER_MESSAGE = 'Do you really want to submit?';
+export const SUBMIT_ORDER = 'submit-order';
 
 @Component({
   selector: 'app-modal',
@@ -53,6 +56,12 @@ export class ModalComponent implements OnInit {
             this.showModal();
             this.modalMessage = CERTIFICATE_DELETE_MESSAGE;
             this.backMessage = DELETE;
+            break;
+          }
+          case SUBMIT_ORDER: {
+            this.showModal();
+            this.modalMessage = SUBMIT_ORDER_MESSAGE;
+            this.backMessage = SUBMIT;
             break;
           }
           case FALSE: {

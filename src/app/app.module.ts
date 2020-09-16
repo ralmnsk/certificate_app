@@ -62,6 +62,7 @@ import {JwtInterceptor} from './auth/jwt.interceptor';
 import {RegisterComponent} from './register/register.component';
 import { ModalComponent } from './modal/modal.component';
 import {DataModalService} from './data/data-modal.service';
+import {DataOrderService} from './data/data-order.service';
 
 @NgModule({
   declarations: [
@@ -118,6 +119,7 @@ import {DataModalService} from './data/data-modal.service';
     DataService,
     DataTokenService,
     DataCertificateService,
+    DataOrderService,
     DataOrderViewService,
     DataModalService,
     DataTagService,

@@ -1,5 +1,5 @@
 <main class="main">
-  <form class="register-form" method="post" [formGroup]="registerForm">
+  <form class="register-form" *ngIf="isProcessBar !== true" method="post" [formGroup]="registerForm">
     <mat-card class="login-place">
       <div class="register-place-head">
         <br/>
@@ -33,15 +33,15 @@
         <mat-label>Password</mat-label>
         <input matInput placeholder="Password" value="" type="password" formControlName="password">
       </mat-form-field>
-
+      <div><br/></div>
       <mat-form-field class="register-input">
         <mat-label>Repeat password</mat-label>
         <input matInput placeholder="Repeat Password" value="" type="password" formControlName="passwordRepeat">
       </mat-form-field>
-      <br/>
+      <div><br/><br/></div>
       <div class ="register-input">
         <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="registerProcess()">
-          Register
+          Sign Up
         </button>
       </div>
       <div>

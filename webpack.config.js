@@ -1,83 +1,44 @@
-
+const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/main.ts',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle-[hash].js'
+  entry: {
+    app: './src/index.js',
   },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js']
-  },
+  devtool: 'inline-source-map',
   devServer: {
-    contentBase: 'dist',
-    compress: true,
-    port: 3000
+    contentBase: './dist',
+    hot: true,
   },
+  plugins: [
+    // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Hot Module Replacement',
+    }),
+  ],
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  mode: 'development',
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        enforce: 'pre',
-        loader: 'tslint-loader',
-        options: {/* Loader options go here */}
+        test: /\.js$/,
+        use: ['cache-loader', 'babel-loader'],
+        include: path.resolve('src'),
       },
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader'
-      },
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: process.env.NODE_ENV === 'development',
-            },
-          },
-          'css-loader',
-          'postcss-loader',
-          'sass-loader',
-        ],
-      },
-      {
-        test: /\.(svg|woff|woff2|ttf|eot|otf)([\?]?.*)$/,
-        loader: 'file-loader?name=assets/fonts/[name].[ext]',
-      }
     ],
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new CopyWebpackPlugin([
-      {
-        from: 'src/index.html',
-        to: './index.html'
-      },
-      {
-        from: 'src/assets/**/*',
-        to: './assets',
-        transformPath(targetPath, absolutePath) {
-          return targetPath.replace('src/assets', '');
-        }
-      },
-    ]),
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      minify: {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        useShortDoctype: true
-      }
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'style-[hash].css',
-      allChunks: true
-    })
-  ]
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: 4,
+      }),
+    ],
+  },
 };

@@ -76,7 +76,7 @@ export class CreateCertificateComponent implements OnInit {
 
   initControlsValidation(): void {
     this.name.validator = Validators.compose([
-      Validators.pattern('[a-z A-Z]{2,256}'),
+      Validators.pattern('[a-z A-Z.,!@#$%()]{2,100}'),
       Validators.required
     ]);
     this.description.validator = Validators.compose([
@@ -84,7 +84,7 @@ export class CreateCertificateComponent implements OnInit {
       Validators.required
     ]);
     this.price.validator = Validators.compose([
-      Validators.pattern('[0-9]{0,1000000000}'),
+      Validators.pattern('^(\\d){0,1000000}\\.{0,2}\\d{0,2}$'),
       Validators.required
     ]);
     this.duration.validator = Validators.compose([
@@ -96,7 +96,7 @@ export class CreateCertificateComponent implements OnInit {
   isInputErrors(): boolean {
     let flag = false;
     if (this.name.invalid) {
-      this.messageNameError = 'Name has to be 2-256 letters.';
+      this.messageNameError = 'Name has to be 2-100 letters.';
       flag = true;
     }
     if (this.description.invalid) {
@@ -104,7 +104,7 @@ export class CreateCertificateComponent implements OnInit {
       flag = true;
     }
     if (this.price.invalid) {
-      this.messagePriceError = 'Price has to be 0-1000000000.';
+      this.messagePriceError = 'Price has to be 0-1000000.';
       flag = true;
     }
     if (this.duration.invalid) {

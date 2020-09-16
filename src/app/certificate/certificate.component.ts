@@ -10,8 +10,7 @@ import {debounceTime} from 'rxjs/operators';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {IDropdownSettings, ListItem} from 'ng-multiselect-dropdown/multiselect.model';
 import {DataModalService} from '../data/data-modal.service';
-import {DELETE, FALSE, TRUE, UPDATE} from '../modal/modal.component';
-import {DataTokenService} from '../data/data-token.service';
+import {DELETE, FALSE, UPDATE} from '../modal/modal.component';
 import {TokenStorageService} from '../auth/token-storage.service';
 
 @Component({
@@ -85,7 +84,7 @@ export class CertificateComponent implements OnInit {
     }
     this.addTag.valueChanges
       .pipe(
-        debounceTime(1000),
+        debounceTime(100),
       )
       .subscribe(() => {
         this.tagAddition(this.addTag.value);
@@ -120,14 +119,15 @@ export class CertificateComponent implements OnInit {
 
 
   initialGetCertificate(): void {
+    console.log('certificate initial get, id', this.id);
     this.certificateService.getCertificate(this.id)
       .subscribe(data => {
           this.certificate = data as Certificate;
-          // console.log('certificate:', this.certificate);
+          console.log('certificate component, certificate:', this.certificate);
           this.fillValues();
           this.loadTags();
         }, error => {
-          console.log(error.message);
+          console.log('initialGetCertificate error:', error.message);
           // this.message = 'Error happened during certificate getting';
         }
       );
@@ -274,7 +274,7 @@ export class CertificateComponent implements OnInit {
           console.log('tag created(got) from db:', tag);
           if (!this.isContainTag(tag)) {
             this.certificateService.addTagToCertificate(this.certificate.id, tag.id)
-              .pipe(debounceTime(1000))
+              .pipe(debounceTime(200))
               .subscribe(
                 result => {
                   this.certificate = result as Certificate;
@@ -297,6 +297,10 @@ export class CertificateComponent implements OnInit {
   }
 
   isContainTag(tag: Tag): boolean {
+    // if (this.tags === null || this.tags === undefined) {
+    //   this.tags = new Array<Tag>();
+    //   return false;
+    // }
     for (let i = 0; i < this.tags.length; i++) {
       if (this.tags[i].name === tag.name) {
         return true;

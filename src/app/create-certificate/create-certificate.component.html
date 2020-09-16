@@ -9,21 +9,21 @@
         <div class="message-error">{{messageNameError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" value="" [formControl]="name">
+        <input matInput placeholder="Name" value="" [formControl]="name" autocomplete="off" maxlength="">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
       <div class="message-error">{{messageDurationError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Duration,days</mat-label>
-        <input matInput placeholder="Duration" value="" [formControl]="duration" >
+        <input matInput placeholder="Duration" value="" [formControl]="duration" autocomplete="off">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
       <div class="message-error">{{messagePriceError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Price, $</mat-label>
-        <input matInput placeholder="Price" value="" [formControl]="price" >
+        <input matInput placeholder="Price" value="" [formControl]="price" autocomplete="off">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>

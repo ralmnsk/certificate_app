@@ -205,8 +205,9 @@
 }
 
 .icon {
-  position: relative;
+  /*position: relative;*/
   cursor: pointer;
+  border-radius: 5px;
 }
 
 .icon-dynamic {
@@ -375,14 +376,18 @@ input[type="file"] {
 .tag {
   display: flex;
   flex-direction: column;
-  justify-items: flex-start;
+  flex-flow: column;
+  justify-items: center;
+  align-content: center;
   padding: 20px;
   font-size: 20px;
 }
 
 .square {
   height: 70px;
-
+  width: 60px;
+  overflow: hidden;
+  border-radius: 30px;
   background-color: white;
 }
 
@@ -416,6 +421,9 @@ input[type="file"] {
   height: 30px;
   padding-left: 10px;
   padding-right: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .certificate-description {
@@ -431,6 +439,10 @@ input[type="file"] {
 
 .text {
   font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 180px;
 }
 
 .expiration {
@@ -767,7 +779,7 @@ body {
 
 .edit-buy {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
   width: 30%;
 }
@@ -775,6 +787,7 @@ body {
 .tooltip {
   position: relative;
   display: inline-block;
+  z-index: 1;
 }
 
 .tooltip .tooltiptext {
@@ -826,8 +839,6 @@ body {
   font-size: 20px;
   position:relative;
   transform: translateY(5px);
-  /*text-align: center;*/
-  /*float: bottom;*/
 }
 
 .modal-footer {
@@ -854,8 +865,8 @@ body {
 }
 
 .tag-name {
-  position: relative;
-  transform: translateY(5px);
+  /*position: relative;*/
+  /*transform: translateY(5px);*/
   font-size: 15px;
 }
 
@@ -864,3 +875,41 @@ body {
   position: relative;
   transform: translateX(-10px);
 }
+
+
+.purchase-count {
+  /*background-color: lightgreen;*/
+  /*border-radius: 10px;*/
+  /*height: 20px;*/
+  /*width: 20px;*/
+  /*position: relative;*/
+  /*vertical-align: center;*/
+  /*padding: 2px;*/
+  /*display: flex;*/
+  /*flex-direction: row;*/
+  /*align-content: center;*/
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  padding: 3px;
+
+  /*background: #fff;*/
+  /*border: 2px solid #666;*/
+  color: #666;
+  text-align: center;
+
+  font: 11px Arial, sans-serif;
+  background-color: lightgreen;
+}
+
+#cart-to-buy {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+/*.spinner {*/
+/*  position: relative;*/
+/*  transform: translateX(50%);*/
+/*}*/

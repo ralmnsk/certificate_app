@@ -40,32 +40,37 @@
         (ngModelChange)="searchByName($event)"/>
     </div>
 
-        <div class="dropdown">
-          <div class="dropdown-categories-button">
-            <input id="tagInput" class="search-bar-input" type="text" name="search_item"
-                   placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag" autocomplete="off">
-          </div>
+    <div class="dropdown">
+      <div class="dropdown-categories-button">
+        <input id="tagInput" class="search-bar-input" type="text" name="search_item"
+               placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag" autocomplete="off">
+      </div>
 
-<!--          <div id="dropDown" class="dropdown-content">-->
-            <div id="inDropDown" class="dropdown-content">
-              <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
-            </div>
-<!--          </div>-->
-        </div>
+      <!--          <div id="dropDown" class="dropdown-content">-->
+      <div id="inDropDown" class="dropdown-content">
+        <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
+      </div>
+      <!--          </div>-->
+    </div>
   </div>
 
   <div class="navigation-bar-right">
     <div class="credentials"> {{userRole}} {{userLogin}}</div>
     <div *ngIf="login === 'Logout'">
-      <a class="icon icon-dynamic" (click)="cart()">
+      <a id="cart-to-buy" class="icon icon-dynamic" (click)="cart()">
         <img class="icon icon-dynamic" src="assets/icons/cart-fill.svg" alt="menu" width="20px" height="20px">
+        <div class="purchase-count" *ngIf="purchaseCount !== null && purchaseCount !== undefined && purchaseCount >0" >
+          <div class="count">
+            {{purchaseCount}}
+          </div>
+        </div>
       </a>
     </div>
 
     <a id="login" class="icon icon-dynamic" *ngIf="login === 'Login'" (click)="toLogin()">Login</a>
     <a id="logout" class="icon icon-dynamic" *ngIf="login === 'Logout'" (click)="logout()">Logout</a>
     <a class="icon" *ngIf="login==='Login'">|</a>
-    <a class="icon icon-dynamic" (click)="toRegistration()" *ngIf="login==='Login'">Sign In</a>
+    <a class="icon icon-dynamic" (click)="toRegistration()" *ngIf="login==='Login'">Sign Up</a>
   </div>
 
 </mat-toolbar>

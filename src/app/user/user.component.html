@@ -32,13 +32,12 @@
       <div class="message-error">
         {{userMessage}}
       </div>
-      <br/>
       <mat-form-field class="user-input">
         <mat-label>New Password</mat-label>
         <input matInput placeholder="new password" value="" formControlName="password" type="password">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
-
+      <br/>
       <div class="user-form-footer">
         <button  class="login-form-btn user-input" mat-raised-button color="lightgreen" (click)="saveUser()">Update
         </button>

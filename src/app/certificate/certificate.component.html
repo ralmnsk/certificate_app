@@ -12,7 +12,7 @@
       <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
         <input matInput placeholder="Name" value="" [formControl]="nameControl">
-        <mat-icon matSuffix>mode_edit</mat-icon>
+        <mat-icon matSuffix *ngIf="userRole === 'ADMIN'">mode_edit</mat-icon>
       </mat-form-field>
 
       <div class="big-image">
@@ -32,13 +32,13 @@
       <mat-form-field class="example-full-width">
         <mat-label>Duration,days</mat-label>
         <input matInput placeholder="Duration" value="" [formControl]="duration">
-        <mat-icon matSuffix>mode_edit</mat-icon>
+        <mat-icon matSuffix *ngIf="userRole === 'ADMIN'">mode_edit</mat-icon>
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
         <mat-label>Price, $</mat-label>
         <input matInput placeholder="Price" value="" [formControl]="price">
-        <mat-icon matSuffix>mode_edit</mat-icon>
+        <mat-icon matSuffix *ngIf="userRole === 'ADMIN'">mode_edit</mat-icon>
       </mat-form-field>
 
       <div class="label-input order-input">

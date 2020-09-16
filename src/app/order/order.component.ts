@@ -7,6 +7,7 @@ import {CertificateService} from '../certificate/certificate.service';
 import {FormControl, Validators} from '@angular/forms';
 import {OrderService} from './order.service';
 import {DataModalService} from '../data/data-modal.service';
+import {SUBMIT} from '../modal/modal.component';
 
 @Component({
   selector: 'app-order',
@@ -22,7 +23,9 @@ export class OrderComponent implements OnInit {
 
   description: FormControl;
   isProcessBar: boolean;
+  isProcessSubmit: boolean;
   displayedColumns: string[] = ['Id', 'Name', 'Duration', 'Price', 'Creation', 'Modification', 'Description', 'Remove'];
+
   // isModal = false;
 
   constructor(private router: Router,
@@ -34,6 +37,7 @@ export class OrderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isProcessSubmit = false;
     this.dataModalService.changeMessage('false');
     this.initOrder();
     this.dataModalService.backMessage
@@ -43,10 +47,14 @@ export class OrderComponent implements OnInit {
           this.router.navigate(['order']);
           this.initOrder();
         }
+        if (data === SUBMIT) {
+          this.realSave();
+        }
       });
   }
 
   initOrder(): void {
+    this.isProcessSubmit = false;
     this.isProcessBar = true;
     // this.isModal = false;
     this.certificates = new Array<Certificate>();
@@ -100,6 +108,12 @@ export class OrderComponent implements OnInit {
   }
 
   save(): void {
+    this.dataModalService.changeMessage('submit-order');
+
+  }
+
+  realSave(): void {
+    this.isProcessSubmit = true;
     this.order = this.orderStorage.getOrder();
     this.certificateIds = this.orderStorage.getCertificateIds();
     if (this.certificateIds.size === 0) {
@@ -116,10 +130,12 @@ export class OrderComponent implements OnInit {
                 console.log(result.elements.content);
                 this.orderStorage.cancelOrder();
                 this.router.navigate(['orders']);
+                this.isProcessSubmit = false;
                 this.orderService.getOrder(this.order.id);
               }, error => {
                 console.log(error.error.message);
                 this.message = 'Error happened during certificates saving in order';
+                this.isProcessSubmit = false;
               }
             );
         }, error => {

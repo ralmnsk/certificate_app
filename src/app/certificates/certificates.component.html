@@ -19,18 +19,7 @@
       <div class="certificate-footer">
         <div class="price">${{certificate.price}}</div>
         <div class="edit-buy">
-<!--          <div *ngIf="role === roleString">-->
-            <a>
-              <div class="tooltip">
-                <mat-icon pointer class="icon icon-dynamic" (click)="toEdit(certificate.id)">
-                  search
-                </mat-icon>
-                <span class="tooltiptext">View</span>
-              </div>
-            </a>
-<!--          </div>-->
-
-          <a>
+          <a *ngIf="role === 'ADMIN' || role === 'USER'">
             <div class="tooltip">
               <mat-icon id={{certificate.id}} pointer class="icon icon-dynamic"
                         (click)="addToCart(certificate.id)">shopping_cart
@@ -38,6 +27,16 @@
               <span id=cart{{certificate.id}} class="tooltiptext">Add to the cart</span>
             </div>
           </a>
+          <!--          <div *ngIf="role === roleString">-->
+          <a>
+            <div class="tooltip">
+              <mat-icon pointer class="icon icon-dynamic" (click)="toEdit(certificate.id)">
+                search
+              </mat-icon>
+              <span class="tooltiptext">View</span>
+            </div>
+          </a>
+          <!--          </div>-->
         </div>
       </div>
     </div>

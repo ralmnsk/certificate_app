@@ -31,7 +31,6 @@ export class UserComponent implements OnInit {
   ) {
   }
 
-
   ngOnInit(): void {
     this.initUserForm();
     this.userService.getLoggedIn.subscribe(message => {

@@ -14,9 +14,16 @@ export class CertificateService {
   }
 
   getCertificate(id: number): any {
-    const headers = new HttpHeaders()
-      .set('Content-Type', 'application/json; charset=UTF-8')
-      .set('Authorization', this.tokenStorage.getToken());
+    const token = this.tokenStorage.getToken();
+    let headers;
+    if (token === null || token === undefined) {
+      headers = new HttpHeaders()
+        .set('Content-Type', 'application/json; charset=UTF-8');
+    } else {
+      headers = new HttpHeaders()
+        .set('Content-Type', 'application/json; charset=UTF-8')
+        .set('Authorization', this.tokenStorage.getToken());
+    }
     // console.log(config.Url + '/certificates/' + id);
     return this.http.get(config.Url + '/certificates/' + id, {headers});
   }

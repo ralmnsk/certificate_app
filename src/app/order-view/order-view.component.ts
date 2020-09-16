@@ -10,7 +10,7 @@ import {OrderViewStorageService} from '../data/order-view-storage.service';
 import {CertificateStorageService} from '../data/certificate-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {DataModalService} from '../data/data-modal.service';
-import {ORDER_VIEW} from '../modal/modal.component';
+import {FALSE, ORDER_VIEW} from '../modal/modal.component';
 
 @Component({
   selector: 'app-order-view',
@@ -45,6 +45,7 @@ export class OrderViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.dataModal.changeMessage(FALSE);
     this.isProcessBar = true;
     this.first = 0;
     this.page = 0;

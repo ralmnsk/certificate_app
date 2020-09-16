@@ -23,10 +23,10 @@ const routes: Routes = [
   {path: 'users', component: UsersComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'orders', component: OrdersComponent, canActivate: [AuthGuard]},
   {path: 'order', component: OrderComponent, canActivate: [AuthGuard]},
-  {path: 'order-view', component: OrderViewComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
+  {path: 'order-view', component: OrderViewComponent, canActivate: [AuthGuard]},
   {path: 'order-admin-view', component: OrderAdminViewComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'certificates', component: CertificatesComponent},
-  {path: 'certificate', component: CertificateComponent, canActivate: [AuthGuard]},
+  {path: 'certificate', component: CertificateComponent},
   {path: 'certificate-deleted', component: CertificateDeletedComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: 'create-certificate', component: CreateCertificateComponent, canActivate: [AuthGuard], data: { roles: ['ADMIN']}},
   {path: '**', redirectTo: 'certificates'}

@@ -3,7 +3,7 @@
   <app-navigation></app-navigation>
   <main class="main">
     <!--    <div class="mat-error">{{messageLogin}}</div>-->
-    <form class="register-form" method="post" [formGroup]="loginForm">
+    <form class="register-form" *ngIf="isProcessBar !==true" method="post" [formGroup]="loginForm">
       <mat-card class="login-place">
         <div class="logo-big">
           <img src="assets/images/logo.png" alt="logo" width="200px" height="200px">
@@ -20,9 +20,10 @@
         </mat-form-field>
         <div class="mat-error">{{messageLogin}}</div>
         <br/>
+        <br/>
         <button class="login-form-btn" mat-raised-button color="lightgreen" (click)="loginProcess()">Login</button>
         <br/>
-        <button class="login-form-btn gray" mat-raised-button color="lightgray" (click)="toRegisterPage()">Register
+        <button class="login-form-btn gray" mat-raised-button color="lightgray" (click)="toRegisterPage()">Sign Up
         </button>
         <!--        <div class="mat-error">{{messageLogin}}</div>-->
       </mat-card>
