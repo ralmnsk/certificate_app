@@ -89,7 +89,6 @@ export class NavigationComponent implements OnInit {
         this.token = message;
         this.login = 'Logout';
         this.initUserInfo();
-        console.log('navigation, login user:', this.userLogin);
       }
     });
     this.searchControl.valueChanges
@@ -117,18 +116,14 @@ export class NavigationComponent implements OnInit {
     );
     this.router.events.subscribe(
       value => {
-        // console.log('navigation router event');
         this.manageCartMark();
       }
     );
   }
 
   initUserInfo(): void {
-    // while (this.tokenStorage.getEmail() === null || this.tokenStorage.getEmail() === undefined) {
     this.userLogin = this.tokenStorage.getEmail();
     this.userRole = this.tokenStorage.getRole();
-    // }
-    // console.log('navigation, userLogin:', this.userLogin);
   }
 
   initPagination(): void {
@@ -140,16 +135,12 @@ export class NavigationComponent implements OnInit {
   }
 
   manageSearchBar(): void {
-    console.log('manageSearchBar');
     const url = this.router.url;
     if (this.pathsWithoutSearchBar.has(url)) {
       this.isShowSearchBar = false;
       return;
     }
     for (const path of this.pathsWithoutSearchBar) {
-        console.log('navigation, is url contain path:', url.indexOf(path));
-        console.log('navigation, url:', url);
-        console.log('navigation, path:', path);
       if (url.indexOf(path) >= 0) {
         this.isShowSearchBar = false;
         return;
@@ -180,6 +171,7 @@ export class NavigationComponent implements OnInit {
   logout(): void {
     this.tokenStorage.logout();
     this.token = null;
+    this.purchaseCount = null;
     this.login = 'Login';
     this.router.navigate(['login']);
     this.userLogin = null;
@@ -199,8 +191,6 @@ export class NavigationComponent implements OnInit {
     if (searchValue === undefined || searchValue === null) {
       this.certificateName = '';
     }
-    // console.log(searchValue);
-    // console.log(this.page, this.size, this.tagName, this.certificateName, this.sort);
     this.certificatesService
       .getCertificates(this.page, this.size, this.tagName, searchValue, this.sort)
       .subscribe(data => {
@@ -209,7 +199,6 @@ export class NavigationComponent implements OnInit {
           this.certificates = data.elements.content as Array<Certificate>;
           this.sendPagination();
           this.dataCertificateService.changeMessage(new Date().toString());
-          // console.log('navigation certificates:', this.certificates);
         }, error => {
           console.log(error.message);
         }
@@ -229,13 +218,11 @@ export class NavigationComponent implements OnInit {
   }
 
   searchTagByName(searchValue: string): void {
-    // console.log(searchValue);
     this.tagName = searchValue;
     this.tagService
       .getTags(0, 7, searchValue, this.sort)
       .subscribe(data => {
           this.tags = data.elements.content as Array<Tag>;
-          // console.log('navigation search tags:', this.tags);
         }, error => {
           console.log(error.message);
         }
@@ -244,8 +231,6 @@ export class NavigationComponent implements OnInit {
 
   setTagName(value: string): void {
     this.tagName = value;
-    // console.log('setTagName', this.tagName);
-    // this.searchTag.setValue(tag.name);
   }
 
   createCertificate(): void {
@@ -262,18 +247,6 @@ export class NavigationComponent implements OnInit {
 
   manageCartMark(): void {
     const set = this.orderStorage.getCertificateIds();
-    // const cartToBuy = document.getElementById('cart-to-buy');
-    // if (cartToBuy === null || cartToBuy === undefined) {
-    //   // console.log('navigation, manage cart mark, cart undefined');
-    //   return;
-    // }
-    // if (set.size === 0) {
-    //   cartToBuy.style.backgroundColor = 'white';
-    //   // console.log('navigation, manage cart mark, set white');
-    //   return;
-    // }
-    // cartToBuy.style.backgroundColor = 'lightgreen';
     this.purchaseCount = set.size;
-    // console.log('navigation, manage cart mark, set green mark of the cart');
   }
 }

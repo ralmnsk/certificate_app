@@ -66,7 +66,6 @@ export class OrderComponent implements OnInit {
       Validators.required
     ]));
     this.getCertificates();
-    // console.log('initOrder, isModal:', this.isModal);
   }
 
   getCertificates(): void {
@@ -79,7 +78,6 @@ export class OrderComponent implements OnInit {
     for (const id of this.certificateIds) {
       this.certificateService.getCertificate(id)
         .subscribe(data => {
-            // console.log('order component, id:', id);
             const certificate = data as Certificate;
             this.certificates.push(certificate);
             counter++;
@@ -111,6 +109,10 @@ export class OrderComponent implements OnInit {
   }
 
   save(): void {
+    if (this.certificates === undefined || this.certificates === null || this.certificates.length === 0) {
+      this.message = 'There are no certificates in the order. The order can not be submitted';
+      return;
+    }
     this.dataModalService.changeMessage('submit-order');
 
   }
@@ -127,10 +129,10 @@ export class OrderComponent implements OnInit {
     this.orderService.save(this.order)
       .subscribe(data => {
           this.order = data as Order;
-          console.log('order component, save order:', this.order);
+          // console.log('order component, save order:', this.order);
           this.certificateService.addCertificatesToOrder(this.order.id, this.certificateIds)
             .subscribe(result => {
-                console.log(result.elements.content);
+                // console.log(result.elements.content);
                 this.orderStorage.cancelOrder();
                 this.router.navigate(['orders']);
                 this.isProcessSubmit = false;
@@ -150,10 +152,10 @@ export class OrderComponent implements OnInit {
 
   calculateTotalCost(): void {
     this.totalCost = 0.00;
-    console.log('certificates:', this.certificates);
+    // console.log('certificates:', this.certificates);
     for (const certificate of this.certificates) {
       this.totalCost = this.totalCost + certificate.price;
-      console.log('total cost, price:', certificate.price);
+      // console.log('total cost, price:', certificate.price);
     }
   }
 
@@ -169,5 +171,6 @@ export class OrderComponent implements OnInit {
     }
     this.certificates = certificates;
     this.calculateTotalCost();
+    this.dataOrderService.changeMessage('change-cart-mark');
   }
 }

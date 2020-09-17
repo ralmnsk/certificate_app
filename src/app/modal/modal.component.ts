@@ -35,7 +35,6 @@ export class ModalComponent implements OnInit {
   ngOnInit(): void {
     this.dataOrderService.currentMessage
       .subscribe(data => {
-        console.log('modal message got:', data);
         switch (data) {
           case ORDER: {
             this.showModal();
@@ -96,7 +95,6 @@ export class ModalComponent implements OnInit {
   private showModal(): void {
     const modal = document.getElementById('myModal');
     modal.style.display = 'block';
-    console.log('modal component showModal()');
   }
 
   hide(): void {

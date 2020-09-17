@@ -88,6 +88,7 @@ export class TokenStorageService {
 
   logout(): void {
     localStorage.clear();
+    window.sessionStorage.clear();
   }
 
   setId(id: string): void {

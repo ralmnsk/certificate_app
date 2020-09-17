@@ -74,7 +74,6 @@ export class CertificatesComponent implements OnInit {
     this.sort = 'certificate.name';
     this.dataCertificateService.currentMessage.subscribe(message => {
       this.message = message;
-      // console.log('certificates component, pagination:', this.certificateStorage.getPagination());
       if (this.certificateStorage.getPagination().getCertificates().length > 0) {
         this.getPagination(this.certificateStorage.getPagination());
       }
@@ -90,7 +89,6 @@ export class CertificatesComponent implements OnInit {
       this.loadOnScrollDown(this.startWidth, this.currentWidth, this.scale);
     });
     this.role = this.tokenStorage.getRole();
-    console.log('certificates init, role:', this.role);
   }
 
   searchCertificates(page: number, size: number, tagName: string, certificateName: string, sort: string): any {
@@ -119,7 +117,6 @@ export class CertificatesComponent implements OnInit {
       if (span === undefined || span === null) {
         return;
       }
-      console.log('certificates component markAdded, set:', set);
       span.innerText = 'Drop from the cart';
       set.add(id);
       shopCart.style.backgroundColor = 'lightgreen';
@@ -137,8 +134,6 @@ export class CertificatesComponent implements OnInit {
     if (st.valueOf() >= (scrollHeight.valueOf() - clientHeight.valueOf()) * scale) {
       this.load(this.certificates);
       this.position = st;
-    } else {
-      // console.log('up');
     }
   }
 
@@ -191,13 +186,11 @@ export class CertificatesComponent implements OnInit {
   toEdit(value: number): void {
     this.dataTagEditService.changeMessage(value.toString());
     this.certificateStorage.setCurrentCertificate(value);
-    // console.log('certificates, id value:', value);
     this.router.navigate(['certificate']);
   }
 
   addToCart(id: number): void {
     const set = this.orderStorage.getCertificateIds();
-    console.log('certificates component, set:', set);
     const shopCart = document.getElementById(id.toString());
     const span = document.getElementById('cart' + id);
     if (shopCart === undefined || shopCart === null) {
