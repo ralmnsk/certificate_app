@@ -10,6 +10,8 @@ import {CertificateStorageService} from '../data/certificate-storage.service';
 import {IDropdownSettings} from 'ng-multiselect-dropdown';
 import {ListItem} from 'ng-multiselect-dropdown/multiselect.model';
 import {DataTagEditService} from '../data/data-tag-edit.service';
+import {DataModalService} from '../data/data-modal.service';
+import {CERTIFICATE_CREATE, CREATE, FALSE} from '../modal/modal.component';
 
 @Component({
   selector: 'app-create-certificate',
@@ -38,17 +40,29 @@ export class CreateCertificateComponent implements OnInit {
   messageDurationError: string;
   messagePriceError: string;
   messageDescriptionError: string;
+  isProcessing: boolean;
 
   constructor(private router: Router,
               private tagsService: TagsService,
               private certificateService: CertificateService,
               private certificateStorageService: CertificateStorageService,
               private fb: FormBuilder,
-              private dataTagEditService: DataTagEditService
+              private dataTagEditService: DataTagEditService,
+              private dataModalService: DataModalService
   ) {
   }
 
   ngOnInit(): void {
+    this.isProcessing = false;
+    this.dataModalService.changeMessage(FALSE);
+    this.dataModalService.backMessage
+      .subscribe(
+        value => {
+          if (value === CREATE) {
+            this.realSave();
+          }
+        }
+      );
     this.myForm = this.fb.group({
       tagsControl: [this.selectedItems]
     });
@@ -76,7 +90,7 @@ export class CreateCertificateComponent implements OnInit {
 
   initControlsValidation(): void {
     this.name.validator = Validators.compose([
-      Validators.pattern('[a-z A-Z.,!@#$%()]{2,100}'),
+      Validators.pattern('[a-z A-Z.,!@#$%()0-9]{2,100}'),
       Validators.required
     ]);
     this.description.validator = Validators.compose([
@@ -89,6 +103,8 @@ export class CreateCertificateComponent implements OnInit {
     ]);
     this.duration.validator = Validators.compose([
       Validators.pattern('[0-9]{0,100000}'),
+      Validators.min(0),
+      Validators.max(100000),
       Validators.required
     ]);
   }
@@ -100,11 +116,11 @@ export class CreateCertificateComponent implements OnInit {
       flag = true;
     }
     if (this.description.invalid) {
-      this.messageDescriptionError = 'Description has to be 0-990 letters.';
+      this.messageDescriptionError = 'Description has to be 0-990 letters:a-zA-Z0-9space.!&?#,;$.';
       flag = true;
     }
     if (this.price.invalid) {
-      this.messagePriceError = 'Price has to be 0-1000000.';
+      this.messagePriceError = 'Price has to be 0-1000000.Example: 1234.12';
       flag = true;
     }
     if (this.duration.invalid) {
@@ -181,8 +197,14 @@ export class CreateCertificateComponent implements OnInit {
   save(): void {
     this.initMessageErrors();
     if (this.isInputErrors()) {
+      console.log('input errors ?:', this.isInputErrors());
       return;
     }
+    this.dataModalService.changeMessage(CERTIFICATE_CREATE);
+  }
+
+  realSave(): void {
+    this.isProcessing = true;
     this.certificate = new Certificate();
     this.certificate.name = this.name.value;
     this.certificate.description = this.description.value;
@@ -196,9 +218,11 @@ export class CreateCertificateComponent implements OnInit {
           this.message = 'Certificate was created.';
           this.saveTagsOfCreatedCertificate();
           this.router.navigate(['certificate']);
+          this.isProcessing = false;
         }, error => {
           console.log(error.error.message);
           this.message = 'Error happened during save';
+          this.isProcessing = false;
         }
       );
   }

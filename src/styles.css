@@ -281,6 +281,8 @@
   flex-direction: column;
   align-items: flex-start;
   border-radius: 5px;
+  /*background-color: green;*/
+  margin-right: 10px;
 }
 
 .order-input-box {
@@ -324,14 +326,11 @@
 }
 
 .order-form-footer {
-  position: relative;
-  transform: translateX(370px);
-  width: 375px;
+  width: 800px;
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  /*background-color: red;*/
+  justify-content: space-around;
+  margin-bottom: 10px;
 }
 
 .textarea-form-input {
@@ -339,6 +338,7 @@
   resize: none;
   font-size: 20px;
   text-align: left;
+  border-radius: 5px;
 }
 
 input[type="file"] {
@@ -684,11 +684,11 @@ input[type="file"] {
 }
 
 .certificate-width {
-  width: 800px;
+  width: 830px;
 }
 
 .textarea-certificate {
-  width: 730px;
+  width: 800px;
 }
 
 .uncompleted {
@@ -765,7 +765,7 @@ body {
 }
 
 .gray {
-  background-color: lightgray;
+  background-color: gray;
 }
 
 .register-form {
@@ -847,6 +847,7 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
   width: 250px;
+  margin-bottom: 10px;
 }
 
 .btn-together {
@@ -907,9 +908,15 @@ body {
   flex-direction: row;
   justify-content: space-between;
   font-size: 15px;
+  position: relative;
+  transform: translateY(5px);
 }
 
-/*.spinner {*/
-/*  position: relative;*/
-/*  transform: translateX(50%);*/
-/*}*/
+
+.footer-buttons {
+  width: 50%;
+  /*background-color: red;*/
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}

@@ -68,8 +68,12 @@
           "options": {
             "browserTarget": "certificate-angular:build",
             "optimization": true,
+            "progress": false,
+            "vendorChunk": true,
             "aot": true,
             "hmr": true,
+            "sourceMap": false,
+            "watch": true,
             "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {

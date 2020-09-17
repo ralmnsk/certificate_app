@@ -71,6 +71,7 @@ export class NavigationComponent implements OnInit {
     this.pathsWithoutSearchBar.add('/order');
     this.pathsWithoutSearchBar.add('/orders');
     this.pathsWithoutSearchBar.add('/certificate');
+    this.pathsWithoutSearchBar.add('/create-certificate');
     this.pathsWithoutSearchBar.add('/login');
     this.pathsWithoutSearchBar.add('/order-view');
     this.pathsWithoutSearchBar.add('/order-admin-view');

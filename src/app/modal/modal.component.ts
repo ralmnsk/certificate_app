@@ -5,12 +5,15 @@ export const FALSE = 'false';
 export const TRUE = 'true';
 export const DELETE = 'delete';
 export const UPDATE = 'update';
+export const CREATE = 'create';
 export const EMPTY = '';
 export const ORDER = 'order';
 export const SUBMIT = 'submit';
 export const ORDER_VIEW = 'order-view';
 export const ORDER_MESSAGE = 'Do you really want to clear your cart?';
 export const ORDER_VIEW_MESSAGE = 'Do you really want to complete?';
+export const CERTIFICATE_CREATE = 'certificate-create';
+export const CERTIFICATE_CREATE_MESSAGE = 'Do you really want to create a certificate?';
 export const CERTIFICATE_UPDATE = 'certificate-update';
 export const CERTIFICATE_UPDATE_MESSAGE = 'Do you really want to update?';
 export const CERTIFICATE_DELETE = 'certificate-delete';
@@ -50,6 +53,12 @@ export class ModalComponent implements OnInit {
             this.showModal();
             this.modalMessage = CERTIFICATE_UPDATE_MESSAGE;
             this.backMessage = UPDATE;
+            break;
+          }
+          case CERTIFICATE_CREATE: {
+            this.showModal();
+            this.modalMessage = CERTIFICATE_CREATE_MESSAGE;
+            this.backMessage = CREATE;
             break;
           }
           case CERTIFICATE_DELETE: {

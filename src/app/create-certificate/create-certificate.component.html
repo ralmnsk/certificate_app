@@ -1,33 +1,37 @@
+<app-modal></app-modal>
+<app-header></app-header>
+<app-navigation></app-navigation>
 <main class="main main-order">
   <div class="order-header">
     New certificate
   </div>
   <br/>
-  <div class="order-place">
+  <mat-progress-spinner mode="indeterminate" *ngIf="isProcessing === true"></mat-progress-spinner>
+  <div class="order-place" *ngIf="isProcessing !== true">
     <form class="order-form" method="post">
       <br/>
-        <div class="message-error">{{messageNameError}}</div>
+      <div class="message-error">{{messageNameError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="Name" value="" [formControl]="name" autocomplete="off" maxlength="">
+        <input matInput placeholder="Name" value="" [formControl]="name" autocomplete="off" maxlength="100">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
       <div class="message-error">{{messageDurationError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Duration,days</mat-label>
-        <input matInput placeholder="Duration" value="" [formControl]="duration" autocomplete="off">
+        <input matInput placeholder="Duration" value="" [formControl]="duration" autocomplete="off" maxlength="6">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
       <div class="message-error">{{messagePriceError}}</div>
       <mat-form-field class="example-full-width">
         <mat-label>Price, $</mat-label>
-        <input matInput placeholder="Price" value="" [formControl]="price" autocomplete="off">
+        <input matInput placeholder="Price" value="" [formControl]="price" autocomplete="off" maxlength="10">
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
       <br/>
-      <div class="label-input order-input">
+      <div class="order-input">
         <!-- -->
         Tags:
         <form [formGroup]="myForm">
@@ -47,16 +51,19 @@
       </div>
       <br/>
       <div class="message-error">{{messageDescriptionError}}</div>
-      <div class="label-input order-input">
+      <div class="order-input">
         Description
         <textarea class="textarea-form-input large" type="text" name="description" placeholder="Description"
-                  required="required" [formControl]="description">
+                  required="required" [formControl]="description" maxlength="990">
                             </textarea>
       </div>
       <br/>
       <div class="order-form-footer">
-        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-        <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Create</button>
+        <div class="footer-buttons">
+          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+          <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Create
+          </button>
+        </div>
       </div>
     </form>
     <div class="message-error">{{message}}</div>

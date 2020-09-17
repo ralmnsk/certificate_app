@@ -1,9 +1,11 @@
-.order-form-footer {
-  position: relative;
-  transform: translateX(420px);
-  width: 255px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
+/*.order-form-footer {*/
+/*  !*position: relative;*!*/
+/*  !*transform: translateX(50%) translateX(-125px);*!*/
+/*  !*width: 440px;*!*/
+/*  display: flex;*/
+/*  flex-direction: row;*/
+/*  flex-wrap: wrap;*/
+/*  justify-content: flex-end;*/
+/*  background-color: red;*/
+/*  float: right;*/
+/*}*/

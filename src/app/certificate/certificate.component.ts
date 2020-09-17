@@ -35,7 +35,7 @@ export class CertificateComponent implements OnInit {
   // addTag = new FormControl('');
 
   message: string;
-
+  messageCrudOperations: string;
   title = 'CodeSandbox';
   myForm: FormGroup;
   disabled = false;
@@ -47,6 +47,7 @@ export class CertificateComponent implements OnInit {
 
   addTag = new FormControl();
   userRole: string;
+  isProcessing: boolean;
 
   constructor(private dataTagEditService: DataTagEditService,
               private certificateService: CertificateService,
@@ -60,6 +61,7 @@ export class CertificateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isProcessing = false;
     this.userRole = this.tokenStorage.getRole();
     this.dataModal.changeMessage(FALSE);
     this.dataModal.backMessage
@@ -84,7 +86,7 @@ export class CertificateComponent implements OnInit {
     }
     this.addTag.valueChanges
       .pipe(
-        debounceTime(100),
+        debounceTime(1000),
       )
       .subscribe(() => {
         this.tagAddition(this.addTag.value);
@@ -119,6 +121,7 @@ export class CertificateComponent implements OnInit {
 
 
   initialGetCertificate(): void {
+    this.isProcessing = true;
     console.log('certificate initial get, id', this.id);
     this.certificateService.getCertificate(this.id)
       .subscribe(data => {
@@ -144,6 +147,7 @@ export class CertificateComponent implements OnInit {
     }
     this.duration.setValue(this.certificate.duration);
     this.price.setValue(this.certificate.price);
+    this.isProcessing = false;
   }
 
   loadTags(): void {
@@ -151,9 +155,11 @@ export class CertificateComponent implements OnInit {
       .subscribe(data => {
           this.tags = data.elements.content as Array<Tag>;
           this.multiSelectDropDown();
+          this.isProcessing = false;
           console.log('certificate component, load tags:', this.tags);
         }, error => {
           console.log(error.message);
+          this.isProcessing = false;
         }
       );
   }
@@ -167,6 +173,7 @@ export class CertificateComponent implements OnInit {
   }
 
   save(): void {
+    this.isProcessing = true;
     if (!this.isSaveEnabled()) {
       console.log('isDisabled');
       return;
@@ -182,9 +189,10 @@ export class CertificateComponent implements OnInit {
           this.certificate = data as Certificate;
           this.fillValues();
           this.loadTags();
-          this.message = 'Certificate data was updated.';
+          this.messageCrudOperations = 'Certificate data was updated.';
           console.log('certificate data was updated');
           this.enableSave();
+          this.isProcessing = false;
         }, error => {
           console.log(error.message);
           this.message = error.error.message;
@@ -227,6 +235,7 @@ export class CertificateComponent implements OnInit {
       console.log('isDisabled');
       return;
     }
+    this.isProcessing = true;
     this.disableDelete();
     this.certificateService.delete(this.certificate.id)
       .subscribe(data => {
@@ -234,6 +243,7 @@ export class CertificateComponent implements OnInit {
           this.certificate = null;
           this.router.navigate(['certificate-deleted']);
           this.enableDelete();
+          this.isProcessing = false;
         }, error => {
           console.log(error.message);
           this.enableDelete();
@@ -274,7 +284,7 @@ export class CertificateComponent implements OnInit {
           console.log('tag created(got) from db:', tag);
           if (!this.isContainTag(tag)) {
             this.certificateService.addTagToCertificate(this.certificate.id, tag.id)
-              .pipe(debounceTime(200))
+              .pipe(debounceTime(1000))
               .subscribe(
                 result => {
                   this.certificate = result as Certificate;

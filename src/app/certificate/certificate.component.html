@@ -6,7 +6,8 @@
     <div *ngIf="certificate !== undefined">Certificate #{{id}} </div>
   </div>
   <br/>
-  <div class="order-place certificate-width">
+  <mat-progress-spinner mode="indeterminate" *ngIf="isProcessing === true"></mat-progress-spinner>
+  <div class="order-place certificate-width" *ngIf="isProcessing !== true">
     <form class="order-form" method="post">
       <br/>
       <mat-form-field class="example-full-width">
@@ -16,7 +17,7 @@
       </mat-form-field>
 
       <div class="big-image">
-        <img class="icon" src="assets/images/car.jfif" alt="menu" width="420px"
+        <img class="icon" src="assets/images/car.jfif" alt="menu" width="480px"
              height="300px">
       </div>
       <mat-form-field class="example-full-width">
@@ -41,7 +42,7 @@
         <mat-icon matSuffix *ngIf="userRole === 'ADMIN'">mode_edit</mat-icon>
       </mat-form-field>
 
-      <div class="label-input order-input">
+      <div class="order-input">
         <!-- -->
         Tags:
         <form [formGroup]="myForm">
@@ -60,7 +61,8 @@
         </form>
 
       </div>
-      <div class="label-input order-input">
+      <br/>
+      <div class="order-input">
         Description
         <textarea class="textarea-form-input textarea-certificate" type="text" name="description"
                   placeholder="Order Description"
@@ -69,17 +71,17 @@
       </div>
       <br/>
       <div class="order-form-footer">
-
-        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-        <div *ngIf="userRole === 'ADMIN'">
-          <button id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="preSave()">Update
-          </button>
-          <button id="delete" class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="preDelete()">
-            Delete
-          </button>
+        <div class="footer-buttons">
+          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+            <button *ngIf="userRole === 'ADMIN'" id="save" class="register-form-btn" mat-raised-button color="lightgreen" (click)="preSave()">Update
+            </button>
+            <button *ngIf="userRole === 'ADMIN'" id="delete" class="register-form-btn gray" mat-raised-button color="lightgreen"
+                    (click)="preDelete()">
+              Delete
+            </button>
         </div>
       </div>
-      <div class="message-error">{{message}}</div>
+      <div class="message-error">{{message}}{{messageCrudOperations}}</div>
     </form>
   </div>
 </main>
