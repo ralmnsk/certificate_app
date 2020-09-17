@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {DataTagEditService} from '../data/data-tag-edit.service';
 import {CertificateService} from './certificate.service';
 import {Certificate} from '../certificates/certificate';
@@ -339,5 +339,10 @@ export class CertificateComponent implements OnInit {
     const id = $event.id;
     console.log('item deselect', id);
     this.removeTag(Number(id));
+  }
+
+  @HostListener('alert')
+  onAlert(): void{
+    console.log('alert');
   }
 }

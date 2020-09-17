@@ -9,6 +9,7 @@ import {OrderService} from './order.service';
 import {DataModalService} from '../data/data-modal.service';
 import {SUBMIT} from '../modal/modal.component';
 import {DataOrderService} from '../data/data-order.service';
+import {TokenStorageService} from '../auth/token-storage.service';
 
 @Component({
   selector: 'app-order',
@@ -34,7 +35,8 @@ export class OrderComponent implements OnInit {
               private certificateService: CertificateService,
               private orderService: OrderService,
               private dataModalService: DataModalService,
-              private dataOrderService: DataOrderService
+              private dataOrderService: DataOrderService,
+              private tokenStorage: TokenStorageService
   ) {
   }
 
@@ -134,8 +136,8 @@ export class OrderComponent implements OnInit {
             .subscribe(result => {
                 // console.log(result.elements.content);
                 this.orderStorage.cancelOrder();
-                this.router.navigate(['orders']);
                 this.isProcessSubmit = false;
+                this.router.navigate(['orders']);
                 this.orderService.getOrder(this.order.id);
               }, error => {
                 console.log(error.error.message);
@@ -146,6 +148,11 @@ export class OrderComponent implements OnInit {
         }, error => {
           console.log(error.message);
           this.message = 'Error happened during order saving';
+          let id = this.tokenStorage.getId();
+          if (id === null || id === undefined || Number(id) === 0){
+            this.message = 'The user did not log in. ';
+          }
+          this.isProcessSubmit = false;
         }
       );
   }
