@@ -8,6 +8,7 @@ import {FormControl, Validators} from '@angular/forms';
 import {OrderService} from './order.service';
 import {DataModalService} from '../data/data-modal.service';
 import {SUBMIT} from '../modal/modal.component';
+import {DataOrderService} from '../data/data-order.service';
 
 @Component({
   selector: 'app-order',
@@ -32,7 +33,8 @@ export class OrderComponent implements OnInit {
               private orderStorage: OrderStorageService,
               private certificateService: CertificateService,
               private orderService: OrderService,
-              private dataModalService: DataModalService
+              private dataModalService: DataModalService,
+              private dataOrderService: DataOrderService
   ) {
   }
 
@@ -105,6 +107,7 @@ export class OrderComponent implements OnInit {
   realCancel(): void {
     this.orderStorage.cancelOrder();
     this.totalCost = 0;
+    this.dataOrderService.changeMessage('change-cart-mark');
   }
 
   save(): void {

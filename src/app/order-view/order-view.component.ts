@@ -105,7 +105,7 @@ export class OrderViewComponent implements OnInit {
   }
 
   complete(): void {
-    if (this.order.completed === true) {
+    if (this.order !== undefined && this.order.completed === true) {
       this.message = 'Order already was completed';
       return;
     }

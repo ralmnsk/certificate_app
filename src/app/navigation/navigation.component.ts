@@ -140,13 +140,17 @@ export class NavigationComponent implements OnInit {
   }
 
   manageSearchBar(): void {
+    console.log('manageSearchBar');
     const url = this.router.url;
     if (this.pathsWithoutSearchBar.has(url)) {
       this.isShowSearchBar = false;
       return;
     }
     for (const path of this.pathsWithoutSearchBar) {
-      if (path.indexOf(url) > 0) {
+        console.log('navigation, is url contain path:', url.indexOf(path));
+        console.log('navigation, url:', url);
+        console.log('navigation, path:', path);
+      if (url.indexOf(path) >= 0) {
         this.isShowSearchBar = false;
         return;
       }

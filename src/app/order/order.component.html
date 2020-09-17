@@ -6,13 +6,14 @@
     <div class="order-header">
       Cart [Certificates to buy]
     </div>
+    <div class="users-list" *ngIf="isProcessBar ===true">
+      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+    </div>
     <mat-progress-spinner mode="indeterminate" *ngIf="isProcessSubmit === true"></mat-progress-spinner>
     <br/>
-    <div class="order-place cart" *ngIf="isProcessSubmit !== true">
+    <div class="order-place cart" *ngIf="isProcessSubmit !== true && isProcessBar !== true">
 
-      <div class="users-list" *ngIf="isProcessBar ===true">
-        <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
-      </div>
+
       <table mat-table [dataSource]="certificates" class="mat-elevation-z8 wide" *ngIf="isProcessBar ===false">
 
         <ng-container matColumnDef="Id">
@@ -68,16 +69,17 @@
         <div class="label-input">
           Description
         </div>
-        <textarea class="textarea-form-input wide" type="text" name="description" placeholder="Order Description"
+        <textarea class="textarea-form-input" type="text" name="description" placeholder="Order Description"
                   required="required" [formControl]="description"> maxlength="999" </textarea>
       </form>
-
+      <br/>
       <div class="order-form-footer">
-        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="cancel()">Clear Cart
-        </button>
-
-        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Submit</button>
+        <div class="footer-buttons">
+          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="cancel()">Clear Cart
+          </button>
+          <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Submit</button>
+        </div>
       </div>
 
       <div class="message-error">

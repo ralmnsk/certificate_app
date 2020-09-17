@@ -326,7 +326,7 @@
 }
 
 .order-form-footer {
-  width: 800px;
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
@@ -339,6 +339,7 @@
   font-size: 20px;
   text-align: left;
   border-radius: 5px;
+  width: 1145px;
 }
 
 input[type="file"] {
@@ -919,4 +920,8 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+
+.two-btn {
+  width: 400px;
 }

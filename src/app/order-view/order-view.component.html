@@ -81,15 +81,17 @@
           Description
         </div>
         <!--        <label class="register-form-label">Description</label>-->
-        <textarea class="textarea-form-input wide" type="text" name="description" placeholder="Order Description"
+        <textarea class="textarea-form-input" type="text" name="description" placeholder="Order Description"
                   required="required" [formControl]="description">
                             </textarea>
       </form>
       <!--      order end-->
-      <div class="order-form-footer btn-together">
-        <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
-        <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="complete()">Complete</button>
-
+      <br/>
+      <div class="order-form-footer">
+        <div class="footer-buttons two-btn">
+          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
+          <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="complete()">Complete</button>
+        </div>
       </div>
 
     </div>
