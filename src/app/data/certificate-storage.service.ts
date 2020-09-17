@@ -22,11 +22,11 @@ export class CertificateStorageService {
   }
 
   getCurrentCertificateId(): number {
-    return Number(window.sessionStorage.getItem('CertificateId'));
+    return Number(localStorage.getItem('CertificateId'));
   }
 
   setCurrentCertificate(value: number): void {
-    window.sessionStorage.removeItem('CertificateId');
-    window.sessionStorage.setItem('CertificateId', value.toString());
+    localStorage.removeItem('CertificateId');
+    localStorage.setItem('CertificateId', value.toString());
   }
 }

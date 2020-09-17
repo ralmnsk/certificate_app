@@ -11,32 +11,32 @@ export class UserAdminViewStorageService {
   @Output() getChangedUserView: EventEmitter<any> = new EventEmitter();
 
   getCurrentUserId(): number {
-    return Number(window.sessionStorage.getItem('userViewId'));
+    return Number(localStorage.getItem('userViewId'));
   }
 
   setCurrentUserId(value: number): void {
-    window.sessionStorage.removeItem('userViewId');
-    window.sessionStorage.setItem('userViewId', value.toString());
+    localStorage.removeItem('userViewId');
+    localStorage.setItem('userViewId', value.toString());
     this.getChangedUserView.emit('getChangedUserView');
   }
 
   setSurname(surname: string): void {
-    window.sessionStorage.removeItem('SurnameViewId');
-    window.sessionStorage.setItem('SurnameViewId', surname);
+    localStorage.removeItem('SurnameViewId');
+    localStorage.setItem('SurnameViewId', surname);
     this.getChangedUserView.emit('getChangedUserView');
   }
 
   getSurname(): string {
-    return window.sessionStorage.getItem('SurnameViewId');
+    return localStorage.getItem('SurnameViewId');
   }
 
   setName(name: string): void {
-    window.sessionStorage.removeItem('NameViewId');
-    window.sessionStorage.setItem('NameViewId', name);
+    localStorage.removeItem('NameViewId');
+    localStorage.setItem('NameViewId', name);
     this.getChangedUserView.emit('getChangedUserView');
   }
 
   getName(): string {
-    return window.sessionStorage.getItem('NameViewId');
+    return localStorage.getItem('NameViewId');
   }
 }

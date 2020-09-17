@@ -26,7 +26,7 @@ export class TokenStorageService {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         console.log('prev:', event.url);
-        const current = window.sessionStorage.getItem(CURRENT_URL);
+        const current = localStorage.getItem(CURRENT_URL);
         if (current !== null && current !== undefined) {
           localStorage.removeItem(PREVIOUS_URL);
           localStorage.setItem(PREVIOUS_URL, current);
@@ -51,7 +51,7 @@ export class TokenStorageService {
   }
 
   getName(): string {
-    return window.sessionStorage.getItem(NAME);
+    return localStorage.getItem(NAME);
   }
 
   setName(name: string): void {
@@ -88,7 +88,7 @@ export class TokenStorageService {
 
   logout(): void {
     localStorage.clear();
-    window.sessionStorage.clear();
+    localStorage.clear();
   }
 
   setId(id: string): void {
