@@ -63,6 +63,7 @@ import {RegisterComponent} from './register/register.component';
 import { ModalComponent } from './modal/modal.component';
 import {DataModalService} from './data/data-modal.service';
 import {DataOrderService} from './data/data-order.service';
+import {CartCacheService} from './cache/cart-cache.service';
 
 @NgModule({
   declarations: [
@@ -116,6 +117,7 @@ import {DataOrderService} from './data/data-order.service';
     CertificateService,
     CertificatesService,
     CertificateStorageService,
+    CartCacheService,
     DataService,
     DataTokenService,
     DataCertificateService,

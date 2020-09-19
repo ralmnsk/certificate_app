@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {config} from '../config';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {Certificate} from '../certificates/certificate';
+import {throttleTime} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,10 @@ export class CertificateService {
   }
 
   getCertificate(id: number): any {
+    if (id === null || id === undefined || id === 0 ){
+      return new Error('Incompatible type of the certificate id');
+    }
+    console.log('2.1 certificate service, getCertificate start:', Date.now());
     const token = this.tokenStorage.getToken();
     let headers;
     if (token === null || token === undefined) {
@@ -24,7 +29,7 @@ export class CertificateService {
         .set('Content-Type', 'application/json; charset=UTF-8')
         .set('Authorization', this.tokenStorage.getToken());
     }
-    // console.log(config.Url + '/certificates/' + id);
+    console.log('2.2 certificate service, getCertificate before getting:', Date.now());
     return this.http.get(config.Url + '/certificates/' + id, {headers});
   }
 
@@ -63,7 +68,7 @@ export class CertificateService {
   }
 
   addCertificatesToOrder(id: number, certificateIds: Set<number>): any {
-    console.log('cerficate service, addCertificatesToOrder');
+    console.log('certificate service, addCertificatesToOrder');
     const headers = new HttpHeaders()
       .set('Content-Type', 'application/json; charset=UTF-8')
       .set('Authorization', this.tokenStorage.getToken());

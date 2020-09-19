@@ -40,6 +40,7 @@ export class OrderStorageService {
     order.totalCost = Number(localStorage.getItem(TOTAL_COST));
     order.created = new Date(localStorage.getItem(CREATED));
     order.completed = Boolean(localStorage.getItem(COMPLETED));
+    console.log('order storage,getOrder:', order);
     return order;
   }
 
@@ -56,7 +57,7 @@ export class OrderStorageService {
   }
 
   setCertificateIds(set: Set<number>): void {
-    // console.log('order-storage, set:', set);
+    console.log('order-storage, set:', set);
     const count = set.size;
     let num = 0;
 
@@ -86,5 +87,6 @@ export class OrderStorageService {
       localStorage.removeItem(CERTIFICATE_ID + i);
     }
     localStorage.removeItem(CERTIFICATE_COUNT);
+    console.log('order-storage cancel order');
   }
 }

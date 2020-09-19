@@ -1,4 +1,16 @@
-<app-modal></app-modal>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div>
+      <p>{{this.windowMessage}}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="no()">No</button>
+      <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="yes()">Yes</button>
+    </div>
+  </div>
+</div>
 <div class="users-container">
   <app-header></app-header>
   <app-navigation></app-navigation>
@@ -7,9 +19,15 @@
       Cart [Certificates to buy]
     </div>
     <div class="users-list" *ngIf="isProcessBar ===true">
-      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+<!--      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>-->
+      <h1>LOADING...</h1>
+<!--      Loading...-->
     </div>
-    <mat-progress-spinner mode="indeterminate" *ngIf="isProcessSubmit === true"></mat-progress-spinner>
+<!--    <mat-progress-spinner mode="indeterminate" *ngIf="isProcessSubmit === true"></mat-progress-spinner>-->
+    <div *ngIf="isProcessSubmit === true"><h1>LOADING...</h1></div>
+<!--    <div class="users-list" *ngIf="isProcessSubmit === true">-->
+<!--      Loading...-->
+<!--    </div>-->
     <br/>
     <div class="order-place cart" *ngIf="isProcessSubmit !== true && isProcessBar !== true">
 
@@ -78,6 +96,8 @@
           <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="back()">Back</button>
           <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="cancel()">Clear Cart
           </button>
+<!--          <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="test()">Test-->
+<!--        </button>-->
           <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="save()">Submit</button>
         </div>
       </div>

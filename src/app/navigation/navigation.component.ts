@@ -17,6 +17,7 @@ import {UserService} from '../user/user.service';
 import {MatMenuTrigger} from '@angular/material/menu';
 import {OrderStorageService} from '../data/order-storage.service';
 import {DataOrderService} from '../data/data-order.service';
+import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-navigation',
@@ -47,7 +48,7 @@ export class NavigationComponent implements OnInit {
   userRole: string;
 
   isShowSearchBar: boolean;
-  pathsWithoutSearchBar: Set<string>;
+  pathsWithSearchBar: Set<string>;
 
   @ViewChild(MatMenuTrigger) trigger: MatMenuTrigger;
   purchaseCount: number;
@@ -63,19 +64,11 @@ export class NavigationComponent implements OnInit {
               private dataTagService: DataTagService,
               private userService: UserService,
               private orderStorage: OrderStorageService,
-              private dataOrderService: DataOrderService
+              private dataOrderService: DataOrderService,
+              private cartCacheService: CartCacheService
   ) {
-    this.pathsWithoutSearchBar = new Set<string>();
-    this.pathsWithoutSearchBar.add('/user');
-    this.pathsWithoutSearchBar.add('/users');
-    this.pathsWithoutSearchBar.add('/order');
-    this.pathsWithoutSearchBar.add('/orders');
-    this.pathsWithoutSearchBar.add('/certificate');
-    this.pathsWithoutSearchBar.add('/create-certificate');
-    this.pathsWithoutSearchBar.add('/login');
-    this.pathsWithoutSearchBar.add('/order-view');
-    this.pathsWithoutSearchBar.add('/order-admin-view');
-
+    this.pathsWithSearchBar = new Set<string>();
+    this.pathsWithSearchBar.add('/certificates');
   }
 
   ngOnInit(): void {
@@ -136,17 +129,11 @@ export class NavigationComponent implements OnInit {
 
   manageSearchBar(): void {
     const url = this.router.url;
-    if (this.pathsWithoutSearchBar.has(url)) {
-      this.isShowSearchBar = false;
+    if (this.pathsWithSearchBar.has(url)) {
+      this.isShowSearchBar = true;
       return;
     }
-    for (const path of this.pathsWithoutSearchBar) {
-      if (url.indexOf(path) >= 0) {
-        this.isShowSearchBar = false;
-        return;
-      }
-    }
-    this.isShowSearchBar = true;
+    this.isShowSearchBar = false;
   }
 
 
@@ -197,6 +184,9 @@ export class NavigationComponent implements OnInit {
           this.last = data.totalPage;
           this.page = data.page;
           this.certificates = data.elements.content as Array<Certificate>;
+          for (const certificate of this.certificates) {
+            this.cartCacheService.addCertificate(certificate);
+          }
           this.sendPagination();
           this.dataCertificateService.changeMessage(new Date().toString());
         }, error => {

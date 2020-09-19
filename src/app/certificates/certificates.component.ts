@@ -11,6 +11,7 @@ import {OrderStorageService} from '../data/order-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {DataOrderService} from '../data/data-order.service';
 import {UserService} from '../user/user.service';
+import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-certificates',
@@ -50,7 +51,8 @@ export class CertificatesComponent implements OnInit {
               private orderStorage: OrderStorageService,
               private tokenStorage: TokenStorageService,
               private dataOrderService: DataOrderService,
-              private userService: UserService
+              private userService: UserService,
+              private cartCacheService: CartCacheService
   ) {
     this.scale = 1;
   }
@@ -99,15 +101,24 @@ export class CertificatesComponent implements OnInit {
           this.page = data.page;
           this.certificates = data.elements.content as Array<Certificate>;
           this.markAdded();
+          for (const certificate of this.certificates) {
+            this.cartCacheService.addCertificate(certificate);
+          }
         }, error => {
           console.log(error.message);
-          this.message = 'Error happened during certficates search.';
+          this.message = 'Error happened during certificates search.';
         }
       );
   }
 
   markAdded(): void {
+    const url = this.router.url;
+    if (url !== '/certificates') {
+      console.log('certificates, markAdded, url:', url);
+      return;
+    }
     const set = this.orderStorage.getCertificateIds();
+    console.log('certificates, markAdded set ids start:', set);
     for (const id of set) {
       const shopCart = document.getElementById(id.toString());
       const span = document.getElementById('cart' + id);
@@ -119,11 +130,14 @@ export class CertificatesComponent implements OnInit {
       }
       span.innerText = 'Drop from the cart';
       set.add(id);
+
       shopCart.style.backgroundColor = 'lightgreen';
 
       this.orderStorage.setCertificateIds(set);
-      this.dataOrderService.changeMessage('change-cart-mark');
+      console.log('certificates, markAdded set ids end:', set);
     }
+    this.dataOrderService.changeMessage('change-cart-mark');
+    console.log('certificates, message change-cart-mark');
   }
 
   loadOnScrollDown(startWidth: number, currentWidth: number, scale: number): void {
@@ -146,6 +160,7 @@ export class CertificatesComponent implements OnInit {
           for (let i = 0; i < downLoadCertificates.length; i++) {
             if (certificates !== undefined) {
               certificates.push(downLoadCertificates[i]);
+              this.cartCacheService.addCertificate(downLoadCertificates[i]);
             }
           }
           this.markAdded();

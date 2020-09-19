@@ -16,9 +16,11 @@ export class DataModalService {
 
   changeMessage(message: string): void {
     this.messageSource.next(message);
+    console.log('dataModalService, changeMessage:', message);
   }
 
   changeBackMessage(backMessage: string): void {
     this.backMessageSource.next(backMessage);
+    console.log('dataModalService, changeBackMessage:', backMessage);
   }
 }

@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DataTagEditService} from '../data/data-tag-edit.service';
 import {CertificateService} from './certificate.service';
 import {Certificate} from '../certificates/certificate';
@@ -12,6 +12,7 @@ import {IDropdownSettings, ListItem} from 'ng-multiselect-dropdown/multiselect.m
 import {DataModalService} from '../data/data-modal.service';
 import {DELETE, FALSE, UPDATE} from '../modal/modal.component';
 import {TokenStorageService} from '../auth/token-storage.service';
+import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-certificate',
@@ -56,7 +57,8 @@ export class CertificateComponent implements OnInit {
               private certificateStorageService: CertificateStorageService,
               private fb: FormBuilder,
               private dataModal: DataModalService,
-              private tokenStorage: TokenStorageService
+              private tokenStorage: TokenStorageService,
+              private cartCacheService: CartCacheService
   ) {
   }
 
@@ -68,6 +70,7 @@ export class CertificateComponent implements OnInit {
       .subscribe(data => {
         if (data === UPDATE) {
           this.save();
+          console.log('certificate, received message to update');
         }
         if (data === DELETE) {
           this.delete();
@@ -112,28 +115,28 @@ export class CertificateComponent implements OnInit {
   }
 
   onItemSelect(item: any): void {
-    console.log(item);
+    // console.log(item);
   }
 
   onSelectAll(items: any): void {
-    console.log(items);
+    // console.log(items);
   }
 
 
   initialGetCertificate(): void {
     this.isProcessing = true;
-    console.log('certificate initial get, id', this.id);
-    this.certificateService.getCertificate(this.id)
-      .subscribe(data => {
-          this.certificate = data as Certificate;
-          console.log('certificate component, certificate:', this.certificate);
-          this.fillValues();
-          this.loadTags();
-        }, error => {
-          console.log('initialGetCertificate error:', error.message);
-          // this.message = 'Error happened during certificate getting';
-        }
-      );
+    // console.log('certificate initial get, id', this.id);
+    // this.certificateService.getCertificate(this.id)
+    //   .subscribe(data => {
+    this.certificate = this.cartCacheService.getCertificateById(this.id);
+    // console.log('certificate component, certificate:', this.certificate);
+    this.fillValues();
+    this.loadTags();
+    //   }, error => {
+    //     console.log('initialGetCertificate error:', error.message);
+    //     // this.message = 'Error happened during certificate getting';
+    //   }
+    // );
   }
 
   fillValues(): void {
@@ -156,7 +159,7 @@ export class CertificateComponent implements OnInit {
           this.tags = data.elements.content as Array<Tag>;
           this.multiSelectDropDown();
           this.isProcessing = false;
-          console.log('certificate component, load tags:', this.tags);
+          // console.log('certificate component, load tags:', this.tags);
         }, error => {
           console.log(error.message);
           this.isProcessing = false;
@@ -175,7 +178,7 @@ export class CertificateComponent implements OnInit {
   save(): void {
     this.isProcessing = true;
     if (!this.isSaveEnabled()) {
-      console.log('isDisabled');
+      // console.log('isDisabled');
       return;
     }
     this.disableSave();
@@ -189,16 +192,18 @@ export class CertificateComponent implements OnInit {
           this.certificate = data as Certificate;
           this.fillValues();
           this.loadTags();
+          this.cartCacheService.addCertificate(this.certificate);
           this.messageCrudOperations = 'Certificate data was updated.';
+          this.isProcessing = false;
           console.log('certificate data was updated');
           this.enableSave();
-          this.isProcessing = false;
         }, error => {
           console.log(error.message);
           this.message = error.error.message;
           if (this.message.indexOf('certificate was included in some orders') > 0) {
             this.message = 'Certificate was included in some orders, so it could not be saved or deleted.';
           }
+          this.isProcessing = false;
           this.enableSave();
         }
       );
@@ -232,7 +237,7 @@ export class CertificateComponent implements OnInit {
 
   delete(): void {
     if (!this.isDeleteEnabled()) {
-      console.log('isDisabled');
+      // console.log('isDisabled');
       return;
     }
     this.isProcessing = true;
@@ -240,6 +245,7 @@ export class CertificateComponent implements OnInit {
     this.certificateService.delete(this.certificate.id)
       .subscribe(data => {
           this.message = 'Certificate data was deleted.';
+          this.cartCacheService.removeCertificateById(this.certificate.id);
           this.certificate = null;
           this.router.navigate(['certificate-deleted']);
           this.enableDelete();
@@ -274,14 +280,14 @@ export class CertificateComponent implements OnInit {
   }
 
   tagAddition(value: string): void {
-    console.log('tag addition', this.addTag.value);
+    // console.log('tag addition', this.addTag.value);
     if (value === '' || value === null || value === undefined) {
       return;
     }
     this.tagsService.create(value)
       .subscribe(data => {
           const tag = data as Tag;
-          console.log('tag created(got) from db:', tag);
+          // console.log('tag created(got) from db:', tag);
           if (!this.isContainTag(tag)) {
             this.certificateService.addTagToCertificate(this.certificate.id, tag.id)
               .pipe(debounceTime(1000))
@@ -337,12 +343,7 @@ export class CertificateComponent implements OnInit {
 
   onItemDeselect($event: ListItem): void {
     const id = $event.id;
-    console.log('item deselect', id);
+    // console.log('item deselect', id);
     this.removeTag(Number(id));
-  }
-
-  @HostListener('alert')
-  onAlert(): void{
-    console.log('alert');
   }
 }

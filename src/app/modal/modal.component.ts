@@ -8,7 +8,8 @@ export const UPDATE = 'update';
 export const CREATE = 'create';
 export const EMPTY = '';
 export const ORDER = 'order';
-export const SUBMIT = 'submit';
+// export const SUBMIT = 'submit';
+export const SAVE_ORDER_EXECUTE = 'save-order-execute';
 export const ORDER_VIEW = 'order-view';
 export const ORDER_MESSAGE = 'Do you really want to clear your cart?';
 export const ORDER_VIEW_MESSAGE = 'Do you really want to complete?';
@@ -19,7 +20,8 @@ export const CERTIFICATE_UPDATE_MESSAGE = 'Do you really want to update?';
 export const CERTIFICATE_DELETE = 'certificate-delete';
 export const CERTIFICATE_DELETE_MESSAGE = 'Do you really want to delete?';
 export const SUBMIT_ORDER_MESSAGE = 'Do you really want to submit?';
-export const SUBMIT_ORDER = 'submit-order';
+// export const SUBMIT_ORDER = 'submit-order';
+export const SAVE_ORDER = 'save-order';
 
 @Component({
   selector: 'app-modal',
@@ -29,12 +31,15 @@ export const SUBMIT_ORDER = 'submit-order';
 export class ModalComponent implements OnInit {
   modalMessage: string;
   backMessage: string;
+
   constructor(private dataOrderService: DataModalService) {
   }
 
   ngOnInit(): void {
+    console.log('modal init:', Date.now());
     this.dataOrderService.currentMessage
       .subscribe(data => {
+        console.log('modal, ngOnInit, currentMessage.subscribe:', data, Date.now());
         switch (data) {
           case ORDER: {
             this.showModal();
@@ -66,10 +71,10 @@ export class ModalComponent implements OnInit {
             this.backMessage = DELETE;
             break;
           }
-          case SUBMIT_ORDER: {
+          case SAVE_ORDER: {
             this.showModal();
             this.modalMessage = SUBMIT_ORDER_MESSAGE;
-            this.backMessage = SUBMIT;
+            this.backMessage = SAVE_ORDER_EXECUTE;
             break;
           }
           case FALSE: {
@@ -78,18 +83,21 @@ export class ModalComponent implements OnInit {
             break;
           }
         }
-
       });
   }
 
   no(): void {
     this.hide();
-    this.dataOrderService.changeBackMessage('false');
+    this.dataOrderService.changeBackMessage(FALSE);
+    this.dataOrderService.changeMessage(FALSE);
+    console.log('modal no:', FALSE);
   }
 
   yes(): void {
     this.hide();
     this.dataOrderService.changeBackMessage(this.backMessage);
+    this.dataOrderService.changeMessage(FALSE);
+    console.log('modal yes:', this.backMessage);
   }
 
   private showModal(): void {

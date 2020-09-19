@@ -12,6 +12,7 @@ import {ListItem} from 'ng-multiselect-dropdown/multiselect.model';
 import {DataTagEditService} from '../data/data-tag-edit.service';
 import {DataModalService} from '../data/data-modal.service';
 import {CERTIFICATE_CREATE, CREATE, FALSE} from '../modal/modal.component';
+import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-create-certificate',
@@ -48,7 +49,8 @@ export class CreateCertificateComponent implements OnInit {
               private certificateStorageService: CertificateStorageService,
               private fb: FormBuilder,
               private dataTagEditService: DataTagEditService,
-              private dataModalService: DataModalService
+              private dataModalService: DataModalService,
+              private cartCacheService: CartCacheService
   ) {
   }
 
@@ -215,6 +217,7 @@ export class CreateCertificateComponent implements OnInit {
         result => {
           this.certificate = result as Certificate;
           this.certificateStorageService.setCurrentCertificate(this.certificate.id);
+          this.cartCacheService.addCertificate(this.certificate);
           this.message = 'Certificate was created.';
           this.saveTagsOfCreatedCertificate();
           this.router.navigate(['certificate']);
