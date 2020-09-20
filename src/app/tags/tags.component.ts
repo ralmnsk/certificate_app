@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {TagsPagination} from './tags-pagination';
 import {TagsService} from './tags.service';
 import {Tag} from './tag';
@@ -9,7 +9,7 @@ import {DataTagService} from '../data/data-tag.service';
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.css']
 })
-export class TagsComponent implements OnInit {
+export class TagsComponent implements OnInit, AfterViewChecked {
   private pagination: TagsPagination;
   tags: Array<Tag>;
 
@@ -27,6 +27,12 @@ export class TagsComponent implements OnInit {
     this.receiveTags();
   }
 
+  ngAfterViewChecked(): void{
+    for (const tag of this.tags) {
+      this.randomBgColor(tag.id);
+    }
+  }
+
   receiveTags(): void {
     this.disableButtons();
     this.tagsService.getTags(this.pagination.getPage(), this.pagination.getSize(),
@@ -36,6 +42,9 @@ export class TagsComponent implements OnInit {
           this.pagination.setTags(data.elements.content as Array<Tag>);
           this.tags = data.elements.content as Array<Tag>;
           this.pagination.setLast(data.totalPage);
+          // for (const tag of this.tags) {
+          //   this.randomBgColor(tag.id);
+          // }
         }, error => {
           console.log(error.message);
         }
@@ -86,5 +95,20 @@ export class TagsComponent implements OnInit {
   setTagName(name: string): void {
     console.log('set tag name:', name);
     this.dataTagService.changeMessage(name);
+  }
+
+  randomBgColor(id: number): void {
+    console.log('randomBgColor');
+    const x = Math.floor(Math.random() * 256);
+    const y = Math.floor(Math.random() * 256);
+    const z = Math.floor(Math.random() * 256);
+    const rgb = 'rgb(' + x + ',' + y + ',' + z + ')';
+    const tagElement = document.getElementById(id.toString());
+    console.log('randomBgColor, element:', tagElement);
+    if (tagElement !== null && tagElement !== undefined) {
+      console.log('rgb:', rgb);
+      tagElement.style.color = rgb;
+      tagElement.style.backgroundColor = 'white';
+    }
   }
 }

@@ -6,7 +6,8 @@
       <div class="square" (click)="setTagName(tag.name)"><img class="icon icon-dynamic" src="assets/images/tree.jfif"
                                                               alt="img" width="60px" height="75px">
       </div>
-      <a class="tag-name">{{tag.name}}</a></div>
+      <a id={{tag.id}} class="tag-name icon icon-dynamic">{{tag.name}}</a>
+    </div>
   </div>
   <div id="right" class="certificate-header-arrow left" (click)="next()">
     <img class="icon icon-dynamic" src="assets/icons/caret-right-fill.svg" alt="left" width="50px" height="50px"></div>

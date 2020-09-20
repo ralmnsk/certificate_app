@@ -870,6 +870,7 @@ body {
   /*position: relative;*/
   /*transform: translateY(5px);*/
   font-size: 15px;
+  text-align: center;
 }
 
 .user-input {
