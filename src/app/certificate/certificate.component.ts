@@ -24,13 +24,6 @@ export class CertificateComponent implements OnInit {
   id: number;
   certificate: Certificate;
 
-  nameControl = new FormControl('');
-  description = new FormControl('');
-  file = new FormControl('');
-  creation = new FormControl('');
-  modification = new FormControl('');
-  duration = new FormControl('');
-  price = new FormControl('');
 
   tags: Array<Tag>;
   // addTag = new FormControl('');
@@ -49,6 +42,12 @@ export class CertificateComponent implements OnInit {
   addTag = new FormControl();
   userRole: string;
   isProcessing: boolean;
+  nameControl: FormControl;
+  description: FormControl;
+  creation: FormControl;
+  modification: FormControl;
+  duration: FormControl;
+  price: FormControl;
 
   constructor(private dataTagEditService: DataTagEditService,
               private certificateService: CertificateService,
@@ -63,30 +62,39 @@ export class CertificateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.certificate = new Certificate();
+    this.nameControl = new FormControl('');
+    this.description = new FormControl('');
+    this.creation = new FormControl('');
+    this.modification = new FormControl('');
+    this.duration = new FormControl('');
+    this.price = new FormControl('');
+    this.myForm = this.fb.group({
+      tagsControl: [this.selectedItems]
+    });
     this.isProcessing = false;
     this.userRole = this.tokenStorage.getRole();
+    this.initialGetCertificate();
     this.dataModal.changeMessage(FALSE);
     this.dataModal.backMessage
       .subscribe(data => {
         if (data === UPDATE) {
-          this.save();
+          this.update();
           console.log('certificate, received message to update');
         }
         if (data === DELETE) {
           this.delete();
         }
       });
-    this.myForm = this.fb.group({
-      tagsControl: [this.selectedItems]
-    });
+
     this.dataTagEditService.currentMessage.subscribe(message => {
       this.id = Number(message);
       this.initialGetCertificate();
     });
-    if (this.id === 0 || this.id === undefined) {
-      this.id = this.certificateStorageService.getCurrentCertificateId();
-      this.initialGetCertificate();
-    }
+    // if (this.id === 0 || this.id === undefined) {
+    //   this.id = this.certificateStorageService.getCurrentCertificateId();
+
+    // }
     this.addTag.valueChanges
       .pipe(
         debounceTime(1000),
@@ -94,6 +102,7 @@ export class CertificateComponent implements OnInit {
       .subscribe(() => {
         this.tagAddition(this.addTag.value);
       });
+
   }
 
   multiSelectDropDown(): void {
@@ -125,18 +134,23 @@ export class CertificateComponent implements OnInit {
 
   initialGetCertificate(): void {
     this.isProcessing = true;
-    // console.log('certificate initial get, id', this.id);
-    // this.certificateService.getCertificate(this.id)
-    //   .subscribe(data => {
-    this.certificate = this.cartCacheService.getCertificateById(this.id);
-    // console.log('certificate component, certificate:', this.certificate);
-    this.fillValues();
-    this.loadTags();
-    //   }, error => {
-    //     console.log('initialGetCertificate error:', error.message);
-    //     // this.message = 'Error happened during certificate getting';
-    //   }
-    // );
+    this.id = this.certificateStorageService.getCurrentCertificateId();
+    this.certificateService.getCertificate(this.id).subscribe(
+      data => {
+        this.certificate = data as Certificate;
+        this.cartCacheService.addCertificate(this.certificate);
+        this.fillValues();
+        this.loadTags();
+        this.isProcessing = false;
+        console.log('4certificate, initialGetCertificate: certificate:', this.certificate);
+      },
+      error => {
+        console.log('certificate, initialGetCertificate, error happened during getting certificate');
+        this.isProcessing = false;
+      }
+    );
+    // }
+    console.log('certificate initialGetCertificate, this.certificate:', this.certificate);
   }
 
   fillValues(): void {
@@ -171,11 +185,11 @@ export class CertificateComponent implements OnInit {
     this.router.navigate(['certificates']);
   }
 
-  preSave(): void {
+  preUpdate(): void {
     this.dataModal.changeMessage('certificate-update');
   }
 
-  save(): void {
+  update(): void {
     this.isProcessing = true;
     if (!this.isSaveEnabled()) {
       // console.log('isDisabled');
@@ -190,23 +204,25 @@ export class CertificateComponent implements OnInit {
     this.certificateService.update(this.certificate)
       .subscribe(data => {
           this.certificate = data as Certificate;
+          this.isProcessing = false;
           this.fillValues();
           this.loadTags();
           this.cartCacheService.addCertificate(this.certificate);
           this.messageCrudOperations = 'Certificate data was updated.';
-          this.isProcessing = false;
           console.log('certificate data was updated');
+          this.isProcessing = false;
           this.enableSave();
         }, error => {
-          console.log(error.message);
+          this.isProcessing = false;
+          console.log(error.message, error.error.message);
           this.message = error.error.message;
-          if (this.message.indexOf('certificate was included in some orders') > 0) {
+          if (this.message !== null && this.message !== undefined) {
             this.message = 'Certificate was included in some orders, so it could not be saved or deleted.';
           }
-          this.isProcessing = false;
           this.enableSave();
         }
       );
+    this.isProcessing = false;
   }
 
   disableSave(): void {
@@ -251,8 +267,17 @@ export class CertificateComponent implements OnInit {
           this.enableDelete();
           this.isProcessing = false;
         }, error => {
-          console.log(error.message);
+          this.isProcessing = false;
+          console.log(error.error.message);
+          if (error.error.message !== null && error.error.message !== undefined) {
+            const errorMessage = error.error.message;
+            const maybeMessage = 'certificate was included';
+            if (errorMessage.indexOf(maybeMessage) >= 0) {
+              this.message = 'Certificate delete: certificate was included in some orders. It can not be deleted.';
+            }
+          }
           this.enableDelete();
+          this.isProcessing = false;
         }
       );
   }

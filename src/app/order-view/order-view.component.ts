@@ -11,6 +11,7 @@ import {CertificateStorageService} from '../data/certificate-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {DataModalService} from '../data/data-modal.service';
 import {FALSE, ORDER_VIEW} from '../modal/modal.component';
+import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-order-view',
@@ -40,7 +41,8 @@ export class OrderViewComponent implements OnInit {
               private router: Router,
               private certificateStorage: CertificateStorageService,
               private tokenStorage: TokenStorageService,
-              private dataModal: DataModalService
+              private dataModal: DataModalService,
+              private cartCacheService: CartCacheService
   ) {
   }
 
@@ -85,6 +87,9 @@ export class OrderViewComponent implements OnInit {
           this.certificates = data.elements.content as Array<Certificate>;
           this.page = data.elements.page;
           this.last = data.elements.totalPage - 1;
+          for (const certificate of this.certificates) {
+            this.cartCacheService.addCertificate(certificate);
+          }
           this.isProcessBar = false;
         },
         error => {
@@ -133,6 +138,7 @@ export class OrderViewComponent implements OnInit {
 
   view(certificateId: number): void {
     this.certificateStorage.setCurrentCertificate(certificateId);
+    console.log('order-view set current certificate id:', certificateId);
     this.router.navigate(['certificate']);
   }
 }
