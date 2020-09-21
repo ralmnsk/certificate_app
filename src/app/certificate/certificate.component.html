@@ -1,4 +1,16 @@
-<app-modal></app-modal>
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div>
+      <p>{{this.windowMessage}}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="register-form-btn" mat-raised-button color="lightgreen" (click)="no()">No</button>
+      <button class="register-form-btn gray" mat-raised-button color="lightgreen" (click)="yes()">Yes</button>
+    </div>
+  </div>
+</div>
 <app-header></app-header>
 <app-navigation></app-navigation>
 <main class="main main-order">

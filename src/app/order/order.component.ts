@@ -9,7 +9,6 @@ import {OrderService} from './order.service';
 import {DataModalService} from '../data/data-modal.service';
 import {DataOrderService} from '../data/data-order.service';
 import {TokenStorageService} from '../auth/token-storage.service';
-import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-order',
@@ -36,8 +35,8 @@ export class OrderComponent implements OnInit {
               private orderService: OrderService,
               private dataModalService: DataModalService,
               private dataOrderService: DataOrderService,
-              private tokenStorage: TokenStorageService,
-              private cartCacheService: CartCacheService
+              // private cartCacheService: CartCacheService,
+              private tokenStorage: TokenStorageService
   ) {
   }
 
@@ -66,54 +65,27 @@ export class OrderComponent implements OnInit {
     if (size === 0) {
       this.isProcessBar = false;
     }
-    // let counter = 0;
-    // const ids = Array.from(this.certificateIds);
-    // this.getCertificate(ids, counter);
+    let counter = 0;
     for (const id of this.certificateIds) {
       console.log('2 order component, getCertificates before getting, id:', id, Date.now());
-      const certificate = this.cartCacheService.getCertificateById(id);
-      this.certificates.push(certificate);
-      this.calculateTotalCost();
-      this.isProcessBar = false;
-      // this.certificateService.getCertificate(id)
-      //   .subscribe(data => {
-      //       const certificate = data as Certificate;
-      //       this.certificates.push(certificate);
-      //       console.log('3 order component, getCertificate every certificate:', certificate, Date.now());
-      //       counter++;
-      //       if (counter === size) {
-      //         this.calculateTotalCost();
-      //         this.isProcessBar = false;
-      //         console.log('4 order component, getCertificates end calculation, time:', Date.now());
-      //       }
-      //     }, error => {
-      //       console.log(error.message);
-      //       this.message = 'Order component getting certificates error';
-      //     }
-      //   );
+      // const certificate = this.cartCacheService.getCertificateById(id);
+      this.certificateService.getCertificate(id)
+        .subscribe(
+          data => {
+            const certificate = data as Certificate;
+            this.certificates.push(certificate);
+            counter++;
+            if (counter === this.certificateIds.size) {
+              this.calculateTotalCost();
+              this.isProcessBar = false;
+            }
+          }, error => {
+            this.message = 'Error happened during certificate getting';
+            this.isProcessBar = false;
+          }
+        );
     }
   }
-
-  // getCertificate(ids: Array<number>, counter: number): void {
-  //   this.certificateService.getCertificate(ids[counter])
-  //     .subscribe(data => {
-  //         const certificate = data as Certificate;
-  //         this.certificates.push(certificate);
-  //         console.log('3 order component, getCertificate every certificate:', certificate, Date.now());
-  //         counter++;
-  //         if (counter === (ids.length - 1)) {
-  //           this.calculateTotalCost();
-  //           this.isProcessBar = false;
-  //           return;
-  //           console.log('4 order component, getCertificates end calculation, time:', Date.now());
-  //         }
-  //         this.getCertificate(ids, counter);
-  //       }, error => {
-  //         console.log(error.message);
-  //         this.message = 'Order component getting certificates error';
-  //       }
-  //     );
-  // }
 
   back(): void {
     this.router.navigate(['certificates']);

@@ -52,8 +52,8 @@ export class CertificatesComponent implements OnInit {
               private orderStorage: OrderStorageService,
               private tokenStorage: TokenStorageService,
               private dataOrderService: DataOrderService,
-              private userService: UserService,
-              private cartCacheService: CartCacheService
+              // private cartCacheService: CartCacheService,
+              private userService: UserService
   ) {
     this.scale = 1;
   }
@@ -103,9 +103,9 @@ export class CertificatesComponent implements OnInit {
           this.page = data.page;
           this.certificates = data.elements.content as Array<Certificate>;
           this.markAdded();
-          for (const certificate of this.certificates) {
-            this.cartCacheService.addCertificate(certificate);
-          }
+          // for (const certificate of this.certificates) {
+          //   this.cartCacheService.addCertificate(certificate);
+          // }
         }, error => {
           console.log(error.message);
           this.message = 'Error happened during certificates search.';
@@ -160,7 +160,7 @@ export class CertificatesComponent implements OnInit {
           for (let i = 0; i < downLoadCertificates.length; i++) {
             if (certificates !== undefined) {
               certificates.push(downLoadCertificates[i]);
-              this.cartCacheService.addCertificate(downLoadCertificates[i]);
+          //     this.cartCacheService.addCertificate(downLoadCertificates[i]);
             }
           }
           this.showLoading();

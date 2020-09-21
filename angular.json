@@ -72,7 +72,7 @@
             "vendorChunk": true,
             "aot": true,
             "hmr": true,
-            "sourceMap": false
+            "sourceMap": true
           },
           "configurations": {
             "production": {

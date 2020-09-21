@@ -50,6 +50,9 @@ export class CertificateComponent implements OnInit {
   duration: FormControl;
   price: FormControl;
 
+  windowMessage: string;
+  private modalWindowAction: string;
+
   constructor(private dataTagEditService: DataTagEditService,
               private certificateService: CertificateService,
               private router: Router,
@@ -58,7 +61,7 @@ export class CertificateComponent implements OnInit {
               private fb: FormBuilder,
               private dataModal: DataModalService,
               private tokenStorage: TokenStorageService,
-              private cartCacheService: CartCacheService,
+              // private cartCacheService: CartCacheService,
               private orderStorage: OrderStorageService
   ) {
   }
@@ -78,16 +81,19 @@ export class CertificateComponent implements OnInit {
     this.userRole = this.tokenStorage.getRole();
     this.initialGetCertificate();
     this.dataModal.changeMessage(FALSE);
-    this.dataModal.backMessage
-      .subscribe(data => {
-        if (data === UPDATE) {
-          this.update();
-          console.log('certificate, received message to update');
-        }
-        if (data === DELETE) {
-          this.delete();
-        }
-      });
+    // this.dataModal.backMessage
+    //   .subscribe(data => {
+    //     if (data === UPDATE) {
+    //       this.enableSave();
+    //       this.update();
+    //       console.log('certificate, received message to update');
+    //     }
+    //     if (data === DELETE) {
+    //       this.enableSave();
+    //       this.delete();
+    //       console.log('certificate, received message to delete');
+    //     }
+    //   });
 
     this.dataTagEditService.currentMessage.subscribe(message => {
       this.id = Number(message);
@@ -104,7 +110,7 @@ export class CertificateComponent implements OnInit {
       .subscribe(() => {
         this.tagAddition(this.addTag.value);
       });
-
+    this.enableSave();
   }
 
   multiSelectDropDown(): void {
@@ -115,8 +121,6 @@ export class CertificateComponent implements OnInit {
       singleSelection: false,
       idField: 'id',
       textField: 'name',
-      // selectAllText: 'Select All',
-      // unSelectAllText: 'UnSelect All',
       enableCheckAll: false,
       itemsShowLimit: 10,
       allowSearchFilter: this.ShowFilter,
@@ -140,7 +144,7 @@ export class CertificateComponent implements OnInit {
     this.certificateService.getCertificate(this.id).subscribe(
       data => {
         this.certificate = data as Certificate;
-        this.cartCacheService.addCertificate(this.certificate);
+        // this.cartCacheService.addCertificate(this.certificate);
         this.fillValues();
         this.loadTags();
         this.isProcessing = false;
@@ -188,13 +192,16 @@ export class CertificateComponent implements OnInit {
   }
 
   preUpdate(): void {
-    this.dataModal.changeMessage('certificate-update');
+    // this.dataModal.changeMessage('certificate-update');
+    this.windowMessage = 'Do you really want to Update?';
+    this.modalWindowAction = 'update';
+    this.showModal();
   }
 
   update(): void {
     this.isProcessing = true;
     if (!this.isSaveEnabled()) {
-      // console.log('isDisabled');
+      console.log('certificate update isSaveEnabled:', this.isSaveEnabled());
       this.isProcessing = false;
       return;
     }
@@ -210,7 +217,7 @@ export class CertificateComponent implements OnInit {
           this.isProcessing = false;
           this.fillValues();
           this.loadTags();
-          this.cartCacheService.addCertificate(this.certificate);
+          // this.cartCacheService.addCertificate(this.certificate);
           this.messageCrudOperations = 'Certificate data was updated.';
           console.log('certificate data was updated');
           this.isProcessing = false;
@@ -251,22 +258,28 @@ export class CertificateComponent implements OnInit {
   }
 
   preDelete(): void {
-    this.dataModal.changeMessage('certificate-delete');
+    // this.dataModal.changeMessage('certificate-delete');
+    this.windowMessage = 'Do you really want to delete?';
+    this.modalWindowAction = 'delete';
+    this.showModal();
   }
 
   delete(): void {
     if (!this.isDeleteEnabled()) {
-      // console.log('isDisabled');
+      console.log('certificate delete isDisabled');
+      this.isProcessing = false;
       return;
     }
+    const currentId = this.certificateStorageService.getCurrentCertificateId();
+    console.log('certificate, before delete, certificate id:', currentId);
     this.isProcessing = true;
     this.disableDelete();
-    this.certificateService.delete(this.certificate.id)
+    this.certificateService.delete(currentId)
       .subscribe(data => {
           this.message = 'Certificate data was deleted.';
-          this.cartCacheService.removeCertificateById(this.certificate.id);
+          // this.cartCacheService.removeCertificateById(currentId);
           const set = this.orderStorage.getCertificateIds();
-          set.delete(this.certificate.id);
+          set.delete(currentId);
           this.orderStorage.setCertificateIds(set);
           this.certificate = null;
           this.router.navigate(['certificate-deleted']);
@@ -275,12 +288,10 @@ export class CertificateComponent implements OnInit {
         }, error => {
           this.isProcessing = false;
           console.log(error.error.message);
-          if (error.error.message !== null && error.error.message !== undefined) {
-            const errorMessage = error.error.message;
-            const maybeMessage = 'certificate was included';
-            if (errorMessage.indexOf(maybeMessage) >= 0) {
-              this.message = 'Certificate delete: certificate was included in some orders. It can not be deleted.';
-            }
+          this.message = 'Certificate could not be deleted';
+          const errorMessage = error.error.message;
+          if (errorMessage !== null && errorMessage !== undefined) {
+            this.message = 'Certificate delete: certificate was included in some orders. It can not be deleted.';
           }
           this.enableDelete();
           this.isProcessing = false;
@@ -376,5 +387,34 @@ export class CertificateComponent implements OnInit {
     const id = $event.id;
     // console.log('item deselect', id);
     this.removeTag(Number(id));
+  }
+
+  showModal(): void {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'block';
+  }
+
+  hide(): void {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none';
+  }
+
+  no(): void {
+    this.hide();
+  }
+
+  yes(): void {
+    switch (this.modalWindowAction) {
+      case 'update': {
+        this.update();
+        this.hide();
+        break;
+      }
+      case 'delete': {
+        this.delete();
+        this.hide();
+        break;
+      }
+    }
   }
 }
