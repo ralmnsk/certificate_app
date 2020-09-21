@@ -13,6 +13,7 @@ import {DataModalService} from '../data/data-modal.service';
 import {DELETE, FALSE, UPDATE} from '../modal/modal.component';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {CartCacheService} from '../cache/cart-cache.service';
+import {OrderStorageService} from '../data/order-storage.service';
 
 @Component({
   selector: 'app-certificate',
@@ -57,7 +58,8 @@ export class CertificateComponent implements OnInit {
               private fb: FormBuilder,
               private dataModal: DataModalService,
               private tokenStorage: TokenStorageService,
-              private cartCacheService: CartCacheService
+              private cartCacheService: CartCacheService,
+              private orderStorage: OrderStorageService
   ) {
   }
 
@@ -193,6 +195,7 @@ export class CertificateComponent implements OnInit {
     this.isProcessing = true;
     if (!this.isSaveEnabled()) {
       // console.log('isDisabled');
+      this.isProcessing = false;
       return;
     }
     this.disableSave();
@@ -262,6 +265,9 @@ export class CertificateComponent implements OnInit {
       .subscribe(data => {
           this.message = 'Certificate data was deleted.';
           this.cartCacheService.removeCertificateById(this.certificate.id);
+          const set = this.orderStorage.getCertificateIds();
+          set.delete(this.certificate.id);
+          this.orderStorage.setCertificateIds(set);
           this.certificate = null;
           this.router.navigate(['certificate-deleted']);
           this.enableDelete();
