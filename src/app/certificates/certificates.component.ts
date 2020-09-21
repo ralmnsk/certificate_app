@@ -139,7 +139,6 @@ export class CertificatesComponent implements OnInit {
   }
 
   loadOnScrollDown(startWidth: number, currentWidth: number, scale: number): void {
-    this.isProcessing = true;
     const st: number = window.pageYOffset || document.documentElement.scrollTop;
     const scrollHeight: number = document.documentElement.scrollHeight;
     const clientHeight: number = document.documentElement.clientHeight;
@@ -148,10 +147,11 @@ export class CertificatesComponent implements OnInit {
       this.load(this.certificates);
       this.position = st;
     }
-    this.isProcessing = false;
   }
 
   load(certificates: Array<Certificate>): void {
+    this.isProcessing = true;
+    console.log('certificates, load, isProcessing:', this.isProcessing);
     this.nextPage();
     let downLoadCertificates = new Array<Certificate>();
     this.certificateService.getCertificates(this.page, this.size, this.tagName, this.certificateName, this.sort)
@@ -163,7 +163,8 @@ export class CertificatesComponent implements OnInit {
               this.cartCacheService.addCertificate(downLoadCertificates[i]);
             }
           }
-          this.isProcessing = false;
+          this.showLoading();
+          console.log('certificates, load, isProcessing:', this.isProcessing);
           this.markAdded();
         },
         (error) => {
@@ -172,6 +173,12 @@ export class CertificatesComponent implements OnInit {
           this.isProcessing = false;
         }
       );
+  }
+
+  showLoading(): void {
+    setTimeout(() => {
+      this.isProcessing = false;
+    }, 3000);
   }
 
   nextPage(): void {
