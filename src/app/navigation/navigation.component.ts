@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
-import {TokenStorageService} from '../auth/token-storage.service';
+import {TOKEN, TokenStorageService} from '../auth/token-storage.service';
 import {DataTokenService} from '../data/data-token.service';
 import {CertificatesService} from '../certificates/certificates.service';
 import {Certificate} from '../certificates/certificate';
@@ -69,9 +69,32 @@ export class NavigationComponent implements OnInit {
   ) {
     this.pathsWithSearchBar = new Set<string>();
     this.pathsWithSearchBar.add('/certificates');
+    // window.addEventListener('storage', this.storageEventListener.bind(this));
   }
 
   ngOnInit(): void {
+    window.addEventListener('storage', (event) => {
+      if (event.storageArea === localStorage) {
+        const token = localStorage.getItem(TOKEN);
+        if (token === undefined || token === null) {
+          this.logout();
+          console.log('I`m logging out');
+        }
+      }
+    });
+    // this.tokenStorage.currentMessage.subscribe(
+    //   logoutMessage => {
+    //     if (logoutMessage === 'logout'){
+    //       this.router.navigate(['login']);
+    //       console.log('logout');
+    //     }
+    //   }
+    // );
+    // this.tokenStorage.valueChange.subscribe(
+    //   data => {
+    //     console.log('token storage emits logout:', data);
+    // }
+    // );
     this.isShowSearchBar = true;
     this.initPagination();
     this.login = 'Login';
@@ -113,6 +136,14 @@ export class NavigationComponent implements OnInit {
       }
     );
   }
+
+  // storageEventListener(event: StorageEvent): void {
+  //   if (event.storageArea === localStorage) {
+  //     console.log('event from local storage', event);
+  //     const value = JSON.parse(event.newValue);
+  //     console.log('event from local storage, value:', value);
+  //   }
+  // }
 
   initUserInfo(): void {
     this.userLogin = this.tokenStorage.getEmail();

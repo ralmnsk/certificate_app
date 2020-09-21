@@ -1,7 +1,8 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Output, EventEmitter} from '@angular/core';
 import {DataTokenService} from '../data/data-token.service';
 import {NavigationEnd, Router} from '@angular/router';
 import {filter} from 'rxjs/operators';
+import {BehaviorSubject} from 'rxjs';
 
 export const TOKEN = 'Token';
 export const SURNAME = 'Surname';
@@ -19,6 +20,11 @@ export const CURRENT_URL = 'Current';
 export class TokenStorageService {
   registerMessage: string;
 
+  // private logoutSource = new BehaviorSubject('');
+  // currentMessage = this.logoutSource.asObservable();
+  // @Output() valueChange = new EventEmitter();
+
+
   constructor(private dataTokenService: DataTokenService,
               private router: Router
   ) {
@@ -35,6 +41,10 @@ export class TokenStorageService {
         localStorage.setItem(CURRENT_URL, event.url);
       });
   }
+
+  // logoutMessage(message: string): void {
+  //   this.logoutSource.next(message);
+  // }
 
   newMessage(): void {
     this.dataTokenService.changeMessage(this.registerMessage);
@@ -88,7 +98,9 @@ export class TokenStorageService {
 
   logout(): void {
     localStorage.clear();
-    localStorage.clear();
+    // localStorage.clear();
+    // this.valueChange.emit('logoutProcess');
+    // this.logoutMessage('logout');
   }
 
   setId(id: string): void {
