@@ -40,11 +40,15 @@
         </div>
       </div>
     </div>
+    <div *ngIf="isProcessing === true"><h1>LOADING...</h1></div>
+    <div *ngIf="isProcessing === true">
+      <mat-progress-spinner></mat-progress-spinner>
+    </div>
     <!--    </div>-->
     <!--    certificates end-->
-    <a class="button" (click)="toPageTop()"><img class="icon" src="assets/icons/caret-up.svg" alt="menu" width="35px"
+    <a class="button" (click)="toPageTop()"><img class="icon icon-dynamic black" src="assets/icons/caret-up.svg" alt="menu" width="35px"
                                                  height="35px"></a>
-    <a class="button down" (click)="toPageBottom()"><img class="icon" src="assets/icons/caret-down.svg" alt="menu"
+    <a class="button down" (click)="toPageBottom()"><img class="icon icon-dynamic black" src="assets/icons/caret-down.svg" alt="menu"
                                                          width="35px"
                                                          height="35px"></a>
   </div>

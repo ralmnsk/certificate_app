@@ -42,6 +42,7 @@ export class CertificatesComponent implements OnInit {
   private message: string;
   cart = 'cart';
   role: string;
+  isProcessing: boolean;
 
   constructor(private certificateService: CertificatesService,
               private dataCertificateService: DataCertificateService,
@@ -58,6 +59,7 @@ export class CertificatesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isProcessing = false;
     this.userService.getLoggedIn.subscribe(
       value => {
         this.role = this.tokenStorage.getRole();
@@ -114,11 +116,9 @@ export class CertificatesComponent implements OnInit {
   markAdded(): void {
     const url = this.router.url;
     if (url !== '/certificates') {
-      console.log('certificates, markAdded, url:', url);
       return;
     }
     const set = this.orderStorage.getCertificateIds();
-    console.log('certificates, markAdded set ids start:', set);
     for (const id of set) {
       const shopCart = document.getElementById(id.toString());
       const span = document.getElementById('cart' + id);
@@ -134,13 +134,12 @@ export class CertificatesComponent implements OnInit {
       shopCart.style.backgroundColor = 'lightgreen';
 
       this.orderStorage.setCertificateIds(set);
-      console.log('certificates, markAdded set ids end:', set);
     }
     this.dataOrderService.changeMessage('change-cart-mark');
-    console.log('certificates, message change-cart-mark');
   }
 
   loadOnScrollDown(startWidth: number, currentWidth: number, scale: number): void {
+    this.isProcessing = true;
     const st: number = window.pageYOffset || document.documentElement.scrollTop;
     const scrollHeight: number = document.documentElement.scrollHeight;
     const clientHeight: number = document.documentElement.clientHeight;
@@ -149,6 +148,7 @@ export class CertificatesComponent implements OnInit {
       this.load(this.certificates);
       this.position = st;
     }
+    this.isProcessing = false;
   }
 
   load(certificates: Array<Certificate>): void {
@@ -163,11 +163,13 @@ export class CertificatesComponent implements OnInit {
               this.cartCacheService.addCertificate(downLoadCertificates[i]);
             }
           }
+          this.isProcessing = false;
           this.markAdded();
         },
         (error) => {
           console.log(error.message);
           this.message = 'Error happened during certificates loading.';
+          this.isProcessing = false;
         }
       );
   }

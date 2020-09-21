@@ -27,9 +27,11 @@ export class TagsComponent implements OnInit, AfterViewChecked {
     this.receiveTags();
   }
 
-  ngAfterViewChecked(): void{
-    for (const tag of this.tags) {
-      this.randomBgColor(tag.id);
+  ngAfterViewChecked(): void {
+    if (this.tags !== null && this.tags !== undefined) {
+      for (const tag of this.tags) {
+        this.randomBgColor(tag.id);
+      }
     }
   }
 
@@ -98,15 +100,15 @@ export class TagsComponent implements OnInit, AfterViewChecked {
   }
 
   randomBgColor(id: number): void {
-    console.log('randomBgColor');
+    // console.log('randomBgColor');
     const x = Math.floor(Math.random() * 256);
     const y = Math.floor(Math.random() * 256);
     const z = Math.floor(Math.random() * 256);
     const rgb = 'rgb(' + x + ',' + y + ',' + z + ')';
     const tagElement = document.getElementById(id.toString());
-    console.log('randomBgColor, element:', tagElement);
+    // console.log('randomBgColor, element:', tagElement);
     if (tagElement !== null && tagElement !== undefined) {
-      console.log('rgb:', rgb);
+      // console.log('rgb:', rgb);
       tagElement.style.color = rgb;
       tagElement.style.backgroundColor = 'white';
     }

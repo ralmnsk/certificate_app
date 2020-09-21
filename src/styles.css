@@ -535,7 +535,7 @@ input[type="file"] {
 /*button back to top*/
 .button {
   display: inline-block;
-  background-color: lightgray;
+  background-color: white;
   width: 50px;
   height: 50px;
   text-align: center;
@@ -558,16 +558,16 @@ input[type="file"] {
   font-style: normal;
   font-size: 2em;
   line-height: 50px;
-  color: #fff;
+  color: white;
 }
 
 .button:hover {
   cursor: pointer;
-  background-color: lightgreen;
+  background-color: white;
 }
 
 .button:active {
-  background-color: green;
+  background-color: white;
 }
 
 .show {
@@ -925,4 +925,13 @@ body {
 
 .two-btn {
   width: 400px;
+}
+
+.transparent {
+  opacity: 0.4;
+}
+
+.black {
+  color: black;
+  opacity: 1;
 }
