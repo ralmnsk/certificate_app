@@ -28,6 +28,7 @@ export class UsersComponent implements OnInit {
   isProcessBar: boolean;
 
   displayedColumns: string[] = ['View', 'Id', 'Surname', 'Name'];
+  surname: string;
 
   constructor(private userService: UserService,
               private router: Router,
@@ -36,26 +37,29 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isProcessBar = true;
+    this.surname = '';
     this.getUsers(this.page, this.limit);
   }
 
   getUsers(page: number, limit: number): void {
+    this.isProcessBar = true;
     this.disableNavigationButtons();
-    this.userService.getAllUsers(page, limit)
+    this.userService.getAllUsersBySurname(this.surname, page, limit)
       .subscribe(
         data => {
           this.usersPage = data as UsersPage;
           this.first = 0;
           this.page = this.usersPage.page;
           this.last = this.usersPage.totalPage.valueOf() - 1;
-          this.isProcessBar = false;
           this.users = this.usersPage.elements.content as Array<UserInfo>;
           this.enableNavigationButtons();
+          this.isProcessBar = false;
         },
         (error) => {
           if (error.error !== undefined) {
             console.log(error.error.message);
+            this.isProcessBar = false;
+            this.enableNavigationButtons();
           }
           this.enableNavigationButtons();
         }
@@ -66,12 +70,18 @@ export class UsersComponent implements OnInit {
     if (this.isButtonsDisabled()) {
       return;
     }
+    if (this.page === this.first) {
+      return;
+    }
     this.getUsers(0, this.limit);
   }
 
 
   toPreviousPage(): void {
     if (this.isButtonsDisabled()) {
+      return;
+    }
+    if (this.page === this.first) {
       return;
     }
     this.page = this.page.valueOf() - 1;
@@ -85,6 +95,9 @@ export class UsersComponent implements OnInit {
     if (this.isButtonsDisabled()) {
       return;
     }
+    if (this.page === this.last) {
+      return;
+    }
     this.page = this.page.valueOf() + 1;
     if (this.page > this.last) {
       this.page = this.last;
@@ -94,6 +107,9 @@ export class UsersComponent implements OnInit {
 
   toLastPage(): void {
     if (this.isButtonsDisabled()) {
+      return;
+    }
+    if (this.page === this.last) {
       return;
     }
     this.page = this.last;
@@ -127,8 +143,13 @@ export class UsersComponent implements OnInit {
 
   searchUser(): void {
     const surname = this.findUserControl.value;
+    this.surname = surname;
+    if (surname === '' || surname === null || surname === undefined) {
+      this.surname = '';
+    }
+    this.isProcessBar = true;
     this.disableNavigationButtons();
-    this.userService.getAllUsersBySurname(surname, 0, 10)
+    this.userService.getAllUsersBySurname(surname, 0, this.limit)
       .subscribe(
         data => {
           this.usersPage = data as UsersPage;
@@ -137,10 +158,12 @@ export class UsersComponent implements OnInit {
           this.last = this.usersPage.totalPage.valueOf() - 1;
           this.users = this.usersPage.elements.content as Array<UserInfo>;
           this.enableNavigationButtons();
+          this.isProcessBar = false;
         },
         (error) => {
           this.message = error.error.message;
           this.enableNavigationButtons();
+          this.isProcessBar = false;
         }
       );
   }
