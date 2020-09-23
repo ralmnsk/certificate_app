@@ -30,7 +30,7 @@ export class OrdersComponent implements OnInit {
               private orderViewStorage: OrderViewStorageService
   ) {
     this.first = 0;
-    this.size = 5;
+    this.size = 10;
     this.isProcessBar = true;
   }
 
@@ -52,8 +52,6 @@ export class OrdersComponent implements OnInit {
           this.orders = orders;
           this.isProcessBar = false;
           this.enableButtons();
-          // const loadedOrders = new Array<Order>();
-          // let count = 0;
           for (const order of orders) {
             if (order.totalCost === 0 || order.totalCost === null || order.totalCost === undefined) {
               this.orderService.getOrder(order.id)
@@ -68,21 +66,6 @@ export class OrdersComponent implements OnInit {
                 );
             }
           }
-          //   this.orderService.getOrder(order.id)
-          //     .subscribe(data => {
-          //         loadedOrders.push(data as Order);
-          //         count++;
-          //         if (count === orders.length) {
-          //           this.orders = loadedOrders.sort((a, b) => b.id - a.id);
-          //           this.isProcessBar = false;
-          //           this.enableButtons();
-          //         }
-          //         // console.log('saved orders:', data as Order);
-          //       }, error => {
-          //         console.log('error:', error);
-          //       }
-          //     );
-          // }
         }, error => {
           console.log(error.message);
           this.message = error.error.message;
@@ -90,42 +73,12 @@ export class OrdersComponent implements OnInit {
       );
   }
 
-  // getOrders(userId: number, page?: number, size?: number): void {
-  //   this.isProcessBar = true;
-  //   this.orderService.getOrders(userId, page, size)
-  //     .pipe(debounceTime(250))
-  //     .subscribe(
-  //       result => {
-  //         this.last = result.totalPage - 1;
-  //         this.page = result.page;
-  //         const orders = result.elements.content as Array<Order>;
-  //         const loadedOrders = new Array<Order>();
-  //         let count = 0;
-  //         for (const order of orders) {
-  //           this.orderService.getOrder(order.id)
-  //             .subscribe(data => {
-  //                 loadedOrders.push(data as Order);
-  //                 count++;
-  //                 if (count === orders.length) {
-  //                   this.orders = loadedOrders.sort((a, b) => b.id - a.id);
-  //                   this.isProcessBar = false;
-  //                   this.enableButtons();
-  //                 }
-  //                 // console.log('saved orders:', data as Order);
-  //               }, error => {
-  //                 console.log('error:', error);
-  //               }
-  //             );
-  //         }
-  //       }, error => {
-  //         console.log(error.message);
-  //         this.message = error.error.message;
-  //       }
-  //     );
-  // }
-
   toFirstPage(): void {
+    console.log('page:', this.page, ' first:', this.first);
     if (this.isButtonsDisabled()) {
+      return;
+    }
+    if (this.page === this.first){
       return;
     }
     this.disableButtons();
@@ -134,6 +87,9 @@ export class OrdersComponent implements OnInit {
 
   toPreviousPage(): void {
     if (this.isButtonsDisabled()) {
+      return;
+    }
+    if (this.page === this.first){
       return;
     }
     this.disableButtons();
@@ -148,6 +104,9 @@ export class OrdersComponent implements OnInit {
     if (this.isButtonsDisabled()) {
       return;
     }
+    if (this.page === this.last){
+      return;
+    }
     this.disableButtons();
     this.page = this.page + 1;
     if (this.page > this.last) {
@@ -158,6 +117,9 @@ export class OrdersComponent implements OnInit {
 
   toLastPage(): void {
     if (this.isButtonsDisabled()) {
+      return;
+    }
+    if (this.page === this.last){
       return;
     }
     this.disableButtons();

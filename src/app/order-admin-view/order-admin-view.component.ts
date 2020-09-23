@@ -94,11 +94,18 @@ export class OrderAdminViewComponent implements OnInit {
     if (this.isOrderButtonsDisabled()) {
       return;
     }
+    if (this.currentOrderPage === this.firstOrderPage) {
+      return;
+    }
+    this.currentOrderPage = this.firstOrderPage;
     this.viewOrders(this.userViewId, this.userSurnameView, this.userNameView, 0);
   }
 
   toPreviousOrderPage(): void {
     if (this.isOrderButtonsDisabled()) {
+      return;
+    }
+    if (this.currentOrderPage === this.firstOrderPage) {
       return;
     }
     this.currentOrderPage = this.currentOrderPage.valueOf() - 1;
@@ -112,8 +119,11 @@ export class OrderAdminViewComponent implements OnInit {
     if (this.isOrderButtonsDisabled()) {
       return;
     }
+    if (this.currentOrderPage === this.lastOrderPage - 1) {
+      return;
+    }
     this.currentOrderPage = this.currentOrderPage.valueOf() + 1;
-    if (this.currentOrderPage > this.lastOrderPage) {
+    if (this.currentOrderPage >= this.lastOrderPage) {
       this.currentOrderPage = this.lastOrderPage;
     }
     this.viewOrders(this.userViewId, this.userSurnameView, this.userNameView, this.currentOrderPage);
@@ -123,7 +133,10 @@ export class OrderAdminViewComponent implements OnInit {
     if (this.isOrderButtonsDisabled()) {
       return;
     }
-    this.currentOrderPage = this.lastOrderPage;
+    if (this.currentOrderPage === this.lastOrderPage - 1) {
+      return;
+    }
+    this.currentOrderPage = this.lastOrderPage - 1;
     this.viewOrders(this.userViewId, this.userSurnameView, this.userNameView, this.currentOrderPage);
   }
 

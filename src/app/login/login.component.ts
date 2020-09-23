@@ -82,6 +82,7 @@ export class LoginComponent implements OnInit {
           // console.log('userLink:', this.userLink);
           this.userService.setUserInStorage(this.userLink);
           this.router.navigate(['certificates']);
+          this.messageLogin = null;
           this.isProcessBar = false;
         }, error => {
           console.log('error: ', error.message);

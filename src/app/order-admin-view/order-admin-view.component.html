@@ -62,7 +62,14 @@
                                                                    src="assets/icons/skip-forward-fill.svg" alt="menu"
                                                                    width="35px"
                                                                    height="35px"></div>
-      <div class="pagination-number">{{lastOrderPage + 1}}</div>
+      <div class="pagination-number">
+        <div *ngIf="lastOrderPage > 0">
+        {{lastOrderPage}}
+        </div>
+        <div *ngIf="lastOrderPage === null || lastOrderPage === undefined || lastOrderPage <=0">
+          1
+        </div>
+      </div>
     </div>
   </main>
 </div>
