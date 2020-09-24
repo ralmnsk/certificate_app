@@ -15,7 +15,6 @@ import {UserService} from '../user/user.service';
   styleUrls: ['./order-admin-view.component.css']
 })
 export class OrderAdminViewComponent implements OnInit {
-  // userId: number;
   userSurnameView: string;
   userNameView: string;
   orders: Array<Order>;
@@ -56,7 +55,6 @@ export class OrderAdminViewComponent implements OnInit {
     this.userViewId = this.userAdminViewStorageService.getCurrentUserId();
     this.userSurnameView = this.userAdminViewStorageService.getSurname();
     this.userNameView = this.userAdminViewStorageService.getName();
-    console.log('order-admin-view:', this.userViewId, this.userSurnameView, this.userNameView);
     this.viewOrders(this.userViewId, this.userSurnameView, this.userNameView, 0);
   }
 
@@ -80,7 +78,6 @@ export class OrderAdminViewComponent implements OnInit {
         data => {
           this.orders = data.elements.content as Array<Order>;
           this.lastOrderPage = data.totalPage;
-          console.log('user orders:', this.orders);
           this.enableOrderNavigationButtons();
           this.isProcessBar = false;
         },
@@ -146,7 +143,6 @@ export class OrderAdminViewComponent implements OnInit {
         document.getElementById(i.toString()).className = 'disabled';
       }
     }
-    console.log('disabled navigation buttons');
   }
 
   enableOrderNavigationButtons(): void {
@@ -155,7 +151,6 @@ export class OrderAdminViewComponent implements OnInit {
         document.getElementById(i.toString()).className = 'nav-btn';
       }
     }
-    console.log('enable navigation buttons');
   }
 
   isOrderButtonsDisabled(): boolean {

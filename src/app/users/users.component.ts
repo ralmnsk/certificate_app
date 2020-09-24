@@ -122,7 +122,6 @@ export class UsersComponent implements OnInit {
         document.getElementById(i.toString()).className = 'disabled';
       }
     }
-    console.log('disabled navigation buttons');
   }
 
   enableNavigationButtons(): void {
@@ -131,7 +130,6 @@ export class UsersComponent implements OnInit {
         document.getElementById(i.toString()).className = 'nav-btn';
       }
     }
-    console.log('enable navigation buttons');
   }
 
   isButtonsDisabled(): boolean {

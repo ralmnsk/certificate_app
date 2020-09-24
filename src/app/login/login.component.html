@@ -2,7 +2,6 @@
   <app-header></app-header>
   <app-navigation></app-navigation>
   <main class="main">
-    <!--    <div class="mat-error">{{messageLogin}}</div>-->
     <form class="register-form" *ngIf="isProcessBar !==true" method="post" [formGroup]="loginForm">
       <mat-card class="login-place">
         <div class="logo-big">
@@ -25,11 +24,9 @@
         <br/>
         <button class="login-form-btn gray" mat-raised-button color="lightgray" (click)="toRegisterPage()">Sign Up
         </button>
-        <!--        <div class="mat-error">{{messageLogin}}</div>-->
       </mat-card>
     </form>
     <div class="users-list register-input" *ngIf="isProcessBar ===true">
-<!--      <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>-->
       <div><h1>LOADING...</h1></div>
     </div>
   </main>

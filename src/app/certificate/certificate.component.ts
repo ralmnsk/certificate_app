@@ -81,28 +81,10 @@ export class CertificateComponent implements OnInit {
     this.userRole = this.tokenStorage.getRole();
     this.initialGetCertificate();
     this.dataModal.changeMessage(FALSE);
-    // this.dataModal.backMessage
-    //   .subscribe(data => {
-    //     if (data === UPDATE) {
-    //       this.enableSave();
-    //       this.update();
-    //       console.log('certificate, received message to update');
-    //     }
-    //     if (data === DELETE) {
-    //       this.enableSave();
-    //       this.delete();
-    //       console.log('certificate, received message to delete');
-    //     }
-    //   });
-
     this.dataTagEditService.currentMessage.subscribe(message => {
       this.id = Number(message);
       this.initialGetCertificate();
     });
-    // if (this.id === 0 || this.id === undefined) {
-    //   this.id = this.certificateStorageService.getCurrentCertificateId();
-
-    // }
     this.addTag.valueChanges
       .pipe(
         debounceTime(1000),
@@ -114,7 +96,6 @@ export class CertificateComponent implements OnInit {
   }
 
   multiSelectDropDown(): void {
-    // console.log('this.tags:', this.tags);
     this.tagsToSelect = this.tags;
     this.selectedItems = this.tags;
     this.dropdownSettings = {
@@ -126,15 +107,12 @@ export class CertificateComponent implements OnInit {
       allowSearchFilter: this.ShowFilter,
       allowRemoteDataSearch: true
     };
-    // console.log('this.tags:', this.tags);
   }
 
   onItemSelect(item: any): void {
-    // console.log(item);
   }
 
   onSelectAll(items: any): void {
-    // console.log(items);
   }
 
 
@@ -155,7 +133,6 @@ export class CertificateComponent implements OnInit {
         this.isProcessing = false;
       }
     );
-    // }
     console.log('certificate initialGetCertificate, this.certificate:', this.certificate);
   }
 
@@ -179,7 +156,6 @@ export class CertificateComponent implements OnInit {
           this.tags = data.elements.content as Array<Tag>;
           this.multiSelectDropDown();
           this.isProcessing = false;
-          // console.log('certificate component, load tags:', this.tags);
         }, error => {
           console.log(error.message);
           this.isProcessing = false;
@@ -192,7 +168,6 @@ export class CertificateComponent implements OnInit {
   }
 
   preUpdate(): void {
-    // this.dataModal.changeMessage('certificate-update');
     this.windowMessage = 'Do you really want to Update?';
     this.modalWindowAction = 'update';
     this.showModal();
@@ -217,9 +192,8 @@ export class CertificateComponent implements OnInit {
           this.isProcessing = false;
           this.fillValues();
           this.loadTags();
-          // this.cartCacheService.addCertificate(this.certificate);
           this.messageCrudOperations = 'Certificate data was updated.';
-          console.log('certificate data was updated');
+          // console.log('certificate data was updated');
           this.isProcessing = false;
           this.enableSave();
         }, error => {
@@ -258,7 +232,6 @@ export class CertificateComponent implements OnInit {
   }
 
   preDelete(): void {
-    // this.dataModal.changeMessage('certificate-delete');
     this.windowMessage = 'Do you really want to delete?';
     this.modalWindowAction = 'delete';
     this.showModal();
@@ -277,7 +250,6 @@ export class CertificateComponent implements OnInit {
     this.certificateService.delete(currentId)
       .subscribe(data => {
           this.message = 'Certificate data was deleted.';
-          // this.cartCacheService.removeCertificateById(currentId);
           const set = this.orderStorage.getCertificateIds();
           set.delete(currentId);
           this.orderStorage.setCertificateIds(set);
@@ -322,14 +294,12 @@ export class CertificateComponent implements OnInit {
   }
 
   tagAddition(value: string): void {
-    // console.log('tag addition', this.addTag.value);
     if (value === '' || value === null || value === undefined) {
       return;
     }
     this.tagsService.create(value)
       .subscribe(data => {
           const tag = data as Tag;
-          // console.log('tag created(got) from db:', tag);
           if (!this.isContainTag(tag)) {
             this.certificateService.addTagToCertificate(this.certificate.id, tag.id)
               .pipe(debounceTime(1000))
@@ -355,10 +325,6 @@ export class CertificateComponent implements OnInit {
   }
 
   isContainTag(tag: Tag): boolean {
-    // if (this.tags === null || this.tags === undefined) {
-    //   this.tags = new Array<Tag>();
-    //   return false;
-    // }
     for (let i = 0; i < this.tags.length; i++) {
       if (this.tags[i].name === tag.name) {
         return true;
@@ -368,7 +334,6 @@ export class CertificateComponent implements OnInit {
   }
 
   removeTag(tagId: number): void {
-    // console.log('remove tag');
     this.tagsService.remove(this.certificate.id, tagId)
       .subscribe((data) => {
           this.loadTags();
@@ -385,7 +350,6 @@ export class CertificateComponent implements OnInit {
 
   onItemDeselect($event: ListItem): void {
     const id = $event.id;
-    // console.log('item deselect', id);
     this.removeTag(Number(id));
   }
 

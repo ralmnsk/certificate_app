@@ -5,8 +5,6 @@
     <app-tags></app-tags>
   </div>
   <div class="certificate-place" id="certificate-place">
-    <!--            certificates-->
-    <!--    <div class="certificates">-->
     <div class="certificate" *ngFor="let certificate of certificates">
       <div class="certificate-main">
         <img class="icon icon-dynamic" src="assets/images/car.jfif" alt="menu" width="320px"
@@ -27,7 +25,6 @@
               <span id=cart{{certificate.id}} class="tooltiptext">Add to the cart</span>
             </div>
           </a>
-          <!--          <div *ngIf="role === roleString">-->
           <a>
             <div class="tooltip">
               <mat-icon pointer class="icon icon-dynamic" (click)="toEdit(certificate.id)">
@@ -36,16 +33,9 @@
               <span class="tooltiptext">View</span>
             </div>
           </a>
-          <!--          </div>-->
         </div>
       </div>
     </div>
-<!--    <div *ngIf="isProcessing === true"><h1>LOADING...</h1></div>-->
-    <!--    <div *ngIf="isProcessing === true">-->
-    <!--      <mat-progress-spinner></mat-progress-spinner>-->
-    <!--    </div>-->
-    <!--    </div>-->
-    <!--    certificates end-->
     <a class="button" (click)="toPageTop()"><img class="icon icon-dynamic black" src="assets/icons/caret-up.svg"
                                                  alt="menu" width="35px"
                                                  height="35px"></a>

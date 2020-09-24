@@ -85,22 +85,16 @@ export class UserComponent implements OnInit {
   }
 
   saveUser(): void {
-    console.log('userComponent surname:', this.userForm.get('surname').value);
-    console.log('userComponent name:', this.userForm.get('name').value);
-    console.log('userComponent password:', this.userForm.get('password').value);
     if (this.userForm.get('surname').invalid) {
       this.userMessage = 'Surname is invalid. Surname has to be 2-30 latin letters.';
-      // console.log(this.userMessage);
       return;
     }
     if (this.userForm.get('name').invalid) {
       this.userMessage = 'Name is invalid. Name has to be 2-30 latin letters.';
-      // console.log(this.userMessage);
       return;
     }
     if (this.userForm.get('password').value === null || this.userForm.get('password').value === '' || !this.isPasswordValid(this.userForm.get('password').value)) {
       this.userMessage = 'Password is invalid and has to be 4-30 latin letters';
-      // console.log(this.userMessage);
       return;
     }
     this.password = this.userForm.get('password').value;

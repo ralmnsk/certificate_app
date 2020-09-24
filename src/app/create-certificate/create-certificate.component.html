@@ -6,7 +6,6 @@
     New certificate
   </div>
   <br/>
-<!--  <mat-progress-spinner mode="indeterminate" *ngIf="isProcessing === true"></mat-progress-spinner>-->
   <div *ngIf="isProcessing === true"><h1>LOADING...</h1></div>
   <div class="order-place" *ngIf="isProcessing !== true">
     <form class="order-form" method="post">
@@ -48,7 +47,6 @@
                                    (onSelectAll)="onSelectAll($event)">
           </ng-multiselect-dropdown>
         </form>
-
       </div>
       <br/>
       <div class="message-error">{{messageDescriptionError}}</div>

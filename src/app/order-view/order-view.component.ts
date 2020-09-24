@@ -54,7 +54,6 @@ export class OrderViewComponent implements OnInit {
     this.size = 50;
     this.orderId = this.orderViewStorage.getCurrentOrderId();
     this.getOrder(this.orderId);
-    console.log('order view ng init');
     this.dataModal.backMessage.subscribe(
       data => {
         if (data === 'true') {
@@ -71,7 +70,6 @@ export class OrderViewComponent implements OnInit {
           this.order = order;
           this.description.setValue(this.order.description);
           this.description.disable();
-          console.log('getOrder in order view:', order);
           this.getCertificates(this.orderId, this.page, this.size);
         },
         error => {
@@ -128,7 +126,6 @@ export class OrderViewComponent implements OnInit {
       .subscribe(
         data => {
           this.order = data as Order;
-          console.log('order view save:', this.order);
         },
         error => {
           console.log(error.error.message);
@@ -138,7 +135,6 @@ export class OrderViewComponent implements OnInit {
 
   view(certificateId: number): void {
     this.certificateStorage.setCurrentCertificate(certificateId);
-    console.log('order-view set current certificate id:', certificateId);
     this.router.navigate(['certificate']);
   }
 }

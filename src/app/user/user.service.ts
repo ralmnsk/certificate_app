@@ -24,12 +24,9 @@ export class UserService {
       .set('Access-Control-Allow-Origin', url)
       .set('Access-Control-Allow-Methods', 'GET,PUT,POST,PATCH,DELETE')
       .set('Content-Type', 'application/json; charset=UTF-8')
-      // .set('Access-Control-Request-Method', 'GET,PUT,POST,DELETE')
       .set('Authorization', this.tokenStorage.getToken());
-    // console.log('userService url:', url, ',getUserDataByUrl: token:', this.tokenStorage.getToken());
     return this.http.get<User>(url, {headers})
       .subscribe(result => {
-        // console.log('userService result:', result);
         this.tokenStorage.setId(result.id.toString());
         this.tokenStorage.setSurname(result.surname);
         this.tokenStorage.setName(result.name);
@@ -50,7 +47,6 @@ export class UserService {
       .set('Authorization', this.tokenStorage.getToken());
     return this.http.put<User>(this.url, updateUser, {headers})
       .subscribe(result => {
-        // console.log('userService result:', result);
         this.setUserInStorage(this.url);
       }, error => {
         console.log('userService error:', error);

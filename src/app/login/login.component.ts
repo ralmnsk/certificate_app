@@ -71,7 +71,6 @@ export class LoginComponent implements OnInit {
       if (this.loginForm.get('password').invalid) {
         this.passwordError = 'Password has to be 4-30 latin letters';
       }
-      // console.log('login or password is invalid');
       this.isProcessBar = false;
       return;
     }
@@ -79,7 +78,6 @@ export class LoginComponent implements OnInit {
       this.authService.login(this.loginForm.value).subscribe(result => {
           this.tokenStorage.setToken(result.token);
           this.userLink = result.user_link.replace(config.ServerUrl, config.Url);
-          // console.log('userLink:', this.userLink);
           this.userService.setUserInStorage(this.userLink);
           this.router.navigate(['certificates']);
           this.messageLogin = null;

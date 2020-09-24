@@ -44,9 +44,6 @@ export class TagsComponent implements OnInit, AfterViewChecked {
           this.pagination.setTags(data.elements.content as Array<Tag>);
           this.tags = data.elements.content as Array<Tag>;
           this.pagination.setLast(data.totalPage);
-          // for (const tag of this.tags) {
-          //   this.randomBgColor(tag.id);
-          // }
         }, error => {
           console.log(error.message);
         }
@@ -90,25 +87,20 @@ export class TagsComponent implements OnInit, AfterViewChecked {
     if (document.getElementById('left_disabled') === null) {
       return false;
     }
-    console.log(document.getElementById('left_disabled'));
     return true;
   }
 
   setTagName(name: string): void {
-    console.log('set tag name:', name);
     this.dataTagService.changeMessage(name);
   }
 
   randomBgColor(id: number): void {
-    // console.log('randomBgColor');
     const x = Math.floor(Math.random() * 256);
     const y = Math.floor(Math.random() * 256);
     const z = Math.floor(Math.random() * 256);
     const rgb = 'rgb(' + x + ',' + y + ',' + z + ')';
     const tagElement = document.getElementById(id.toString());
-    // console.log('randomBgColor, element:', tagElement);
     if (tagElement !== null && tagElement !== undefined) {
-      // console.log('rgb:', rgb);
       tagElement.style.color = rgb;
       tagElement.style.backgroundColor = 'white';
     }

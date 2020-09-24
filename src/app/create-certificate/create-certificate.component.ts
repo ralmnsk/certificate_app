@@ -75,12 +75,8 @@ export class CreateCertificateComponent implements OnInit {
         debounceTime(1000),
       )
       .subscribe(() => {
-        console.log('addTag valueChanges:', this.addTag.value);
         if (!this.isContainTag(this.addTag.value)) {
           this.tagAddition(this.addTag.value);
-          console.log('add tag value changes, tags:', this.tags, ' selectedItems:',
-            this.selectedItems, ' tags to select:', this.tagsToSelect);
-
         }
       });
     this.deleteTag.valueChanges
@@ -140,15 +136,12 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   removeTag(name: string): void {
-    console.log('remove Tag, name:', name);
-    console.log('remove Tag, selected items start:', this.selectedItems);
     for (let i = 0; i < this.selectedItems.length; i++) {
       if (this.selectedItems[i].name === name) {
         this.selectedItems.splice(i, 1);
         this.message = 'Tag' + name + 'was removed';
       }
     }
-    console.log('remove Tag, selected items end:', this.selectedItems);
   }
 
   tagAddition(value: string): void {
@@ -183,7 +176,6 @@ export class CreateCertificateComponent implements OnInit {
   }
 
   isContainTag(tag: Tag): boolean {
-    console.log('isContainTag selected items:', this.selectedItems);
     for (let i = 0; i < this.selectedItems.length; i++) {
       if (this.selectedItems[i].name === tag.name) {
         return true;
@@ -249,43 +241,6 @@ export class CreateCertificateComponent implements OnInit {
     }
   }
 
-  // private isFormValid(): boolean {
-  //   this.name.validator = Validators.compose([
-  //     Validators.minLength(2),
-  //     Validators.maxLength(256),
-  //     Validators.required
-  //   ]);
-  //   if (this.name.invalid) {
-  //     return false;
-  //   }
-  //   this.description.validator = Validators.compose([
-  //     Validators.minLength(0),
-  //     Validators.maxLength(999),
-  //     Validators.required
-  //   ]);
-  //   if (this.description.invalid) {
-  //     return false;
-  //   }
-  //   this.duration.validator = Validators.compose([
-  //     Validators.min(0),
-  //     Validators.max(10000),
-  //     Validators.required
-  //   ]);
-  //   if (this.duration.invalid) {
-  //     return false;
-  //   }
-  //   this.price.validator = Validators.compose([
-  //     Validators.min(0),
-  //     Validators.max(1000000),
-  //     Validators.required
-  //   ]);
-  //   if (this.price.invalid) {
-  //     return false;
-  //   }
-  //   console.log('form is valid');
-  //   return true;
-  // }
-
   onFilterTextChange($event: ListItem): void {
     const value = String($event);
     this.addTag.setValue(value);
@@ -311,14 +266,10 @@ export class CreateCertificateComponent implements OnInit {
       singleSelection: false,
       idField: 'id',
       textField: 'name',
-      // selectAllText: 'Select All',
-      // unSelectAllText: 'UnSelect All',
       enableCheckAll: false,
       itemsShowLimit: 10,
       allowSearchFilter: this.ShowFilter,
       allowRemoteDataSearch: true
     };
-    console.log('multi select drop down:');
   }
-
 }

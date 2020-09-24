@@ -11,7 +11,6 @@ import {OrderStorageService} from '../data/order-storage.service';
 import {TokenStorageService} from '../auth/token-storage.service';
 import {DataOrderService} from '../data/data-order.service';
 import {UserService} from '../user/user.service';
-import {CartCacheService} from '../cache/cart-cache.service';
 
 @Component({
   selector: 'app-certificates',
@@ -52,7 +51,6 @@ export class CertificatesComponent implements OnInit {
               private orderStorage: OrderStorageService,
               private tokenStorage: TokenStorageService,
               private dataOrderService: DataOrderService,
-              // private cartCacheService: CartCacheService,
               private userService: UserService
   ) {
     this.scale = 1;
@@ -103,9 +101,6 @@ export class CertificatesComponent implements OnInit {
           this.page = data.page;
           this.certificates = data.elements.content as Array<Certificate>;
           this.markAdded();
-          // for (const certificate of this.certificates) {
-          //   this.cartCacheService.addCertificate(certificate);
-          // }
         }, error => {
           console.log(error.message);
           this.message = 'Error happened during certificates search.';
@@ -130,9 +125,7 @@ export class CertificatesComponent implements OnInit {
       }
       span.innerText = 'Drop from the cart';
       set.add(id);
-
       shopCart.style.backgroundColor = 'lightgreen';
-
       this.orderStorage.setCertificateIds(set);
     }
     this.dataOrderService.changeMessage('change-cart-mark');
@@ -151,7 +144,6 @@ export class CertificatesComponent implements OnInit {
 
   load(certificates: Array<Certificate>): void {
     this.isProcessing = true;
-    console.log('certificates, load, isProcessing:', this.isProcessing);
     this.nextPage();
     let downLoadCertificates = new Array<Certificate>();
     this.certificateService.getCertificates(this.page, this.size, this.tagName, this.certificateName, this.sort)
@@ -160,11 +152,9 @@ export class CertificatesComponent implements OnInit {
           for (let i = 0; i < downLoadCertificates.length; i++) {
             if (certificates !== undefined) {
               certificates.push(downLoadCertificates[i]);
-          //     this.cartCacheService.addCertificate(downLoadCertificates[i]);
             }
           }
           this.showLoading();
-          console.log('certificates, load, isProcessing:', this.isProcessing);
           this.markAdded();
         },
         (error) => {

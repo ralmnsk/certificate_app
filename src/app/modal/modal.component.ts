@@ -8,7 +8,6 @@ export const UPDATE = 'update';
 export const CREATE = 'create';
 export const EMPTY = '';
 export const ORDER = 'order';
-// export const SUBMIT = 'submit';
 export const SAVE_ORDER_EXECUTE = 'save-order-execute';
 export const ORDER_VIEW = 'order-view';
 export const ORDER_MESSAGE = 'Do you really want to clear your cart?';
@@ -20,7 +19,6 @@ export const CERTIFICATE_UPDATE_MESSAGE = 'Do you really want to update?';
 export const CERTIFICATE_DELETE = 'certificate-delete';
 export const CERTIFICATE_DELETE_MESSAGE = 'Do you really want to delete?';
 export const SUBMIT_ORDER_MESSAGE = 'Do you really want to submit?';
-// export const SUBMIT_ORDER = 'submit-order';
 export const SAVE_ORDER = 'save-order';
 
 @Component({
@@ -90,14 +88,12 @@ export class ModalComponent implements OnInit {
     this.hide();
     this.dataOrderService.changeBackMessage(FALSE);
     this.dataOrderService.changeMessage(FALSE);
-    console.log('modal no:', FALSE);
   }
 
   yes(): void {
     this.hide();
     this.dataOrderService.changeBackMessage(this.backMessage);
     this.dataOrderService.changeMessage(FALSE);
-    console.log('modal yes:', this.backMessage);
   }
 
   private showModal(): void {

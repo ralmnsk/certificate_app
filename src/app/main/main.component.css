@@ -6,14 +6,12 @@
   align-items: center;
   justify-content: center;
   flex-basis: 100%;
-  /*height: 80vh;*/
   min-height: 600px;
 }
 
 .main-order {
   background-color: white;
   justify-content: flex-start;
-  /*height: 800px;*/
 }
 
 
@@ -25,7 +23,6 @@
 
   background-color: gray;
   width: 100%;
-  /*height: 70px;*/
   color: white;
   font-size: 25px;
 }
@@ -36,7 +33,6 @@
   justify-items: flex-start;
   padding: 20px;
   font-size: 20px;
-  /*width: 70px;*/
 }
 
 .square {
@@ -53,7 +49,6 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  /*overflow-y: hidden;*/
 }
 
 .certificate {
@@ -87,7 +82,6 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  /*background-color: red;*/
 }
 
 .text {
@@ -126,7 +120,6 @@
 
 .icon {
   position: relative;
-  /*transform: translateY(5px);*/
 }
 
 .icon-dynamic {
@@ -153,7 +146,6 @@
   transition: background-color .3s,
   opacity .5s, visibility .5s;
   opacity: 1;
-  /*visibility: hidden;*/
   z-index: 1000;
 }
 
@@ -162,8 +154,6 @@
 }
 
 .button::after {
-  /*content: "\f077";*/
-  /*font-family: FontAwesome;*/
   font-weight: normal;
   font-style: normal;
   font-size: 2em;
@@ -182,7 +172,6 @@
 
 .show {
   opacity: 1;
-  /*visibility: visible;*/
 }
 
 @media (min-width: 500px) {

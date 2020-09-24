@@ -46,11 +46,9 @@
                placeholder="All Categories" [(ngModel)]="tagName" [formControl]="searchTag" autocomplete="off">
       </div>
 
-      <!--          <div id="dropDown" class="dropdown-content">-->
       <div id="inDropDown" class="dropdown-content">
         <a style="display: block;" *ngFor="let tag of tags" (click)="setTagName(tag.name)">{{tag.name}}</a>
       </div>
-      <!--          </div>-->
     </div>
   </div>
 

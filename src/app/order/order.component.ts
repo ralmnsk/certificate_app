@@ -59,7 +59,6 @@ export class OrderComponent implements OnInit {
   }
 
   getCertificates(): void {
-    console.log('1 order component, getCertificates, time:', Date.now());
     this.certificateIds = this.orderStorage.getCertificateIds();
     const size = this.certificateIds.size;
     if (size === 0) {
@@ -67,8 +66,6 @@ export class OrderComponent implements OnInit {
     }
     let counter = 0;
     for (const id of this.certificateIds) {
-      console.log('2 order component, getCertificates before getting, id:', id, Date.now());
-      // const certificate = this.cartCacheService.getCertificateById(id);
       this.certificateService.getCertificate(id)
         .subscribe(
           data => {
@@ -102,7 +99,6 @@ export class OrderComponent implements OnInit {
     this.totalCost = 0;
     this.initOrder();
     this.dataOrderService.changeMessage('change-cart-mark');
-    console.log('order component, realCancel');
   }
 
   save(): void {
@@ -151,25 +147,17 @@ export class OrderComponent implements OnInit {
     this.isProcessSubmit = true;
     const order = this.orderStorage.getOrder();
     this.certificateIds = this.orderStorage.getCertificateIds();
-    console.log('order component, realSave, order:', order);
-    console.log('order component, realSave, certificateIds:', this.certificateIds);
     if (this.certificateIds.size === 0) {
       this.message = 'There are no certificates to save';
-      console.log('order component, realSave:', this.message);
       return;
     }
     order.description = this.description.value;
-    console.log('order component, order description:', order.description);
     this.orderService.save(order)
       .subscribe(data => {
           const savedOrder = data as Order;
-          console.log('order component, save order:', savedOrder, Date.now());
           this.certificateService.addCertificatesToOrder(savedOrder.id, this.certificateIds)
             .subscribe(result => {
-                console.log('certificates added to order:', result.elements.content, ', order id:', savedOrder.id);
                 this.isProcessSubmit = false;
-                // this.dataModalService.changeMessage(FALSE);
-                // this.dataModalService.changeBackMessage(FALSE);
                 this.router.navigate(['orders']);
                 this.orderService.getOrder(savedOrder.id);
                 this.realCancel();
@@ -189,10 +177,8 @@ export class OrderComponent implements OnInit {
             this.message = 'The user did not log in. ';
           }
           this.isProcessSubmit = false;
-          // this.dataModalService.changeBackMessage(FALSE);
         }
       );
-    // this.dataModalService.changeBackMessage(FALSE);
   }
 
   calculateTotalCost(): void {
@@ -200,14 +186,12 @@ export class OrderComponent implements OnInit {
     for (const certificate of this.certificates) {
       this.totalCost = this.totalCost + certificate.price;
     }
-    console.log('order component, total cost, price:', this.totalCost);
   }
 
   remove(id: number): void {
     this.certificateIds.delete(id);
     const certificates = new Array<Certificate>();
     this.orderStorage.setCertificateIds(this.certificateIds);
-    // let found = null;
     for (let i = 0; i < this.certificates.length; i++) {
       if (this.certificates[i].id !== id) {
         certificates.push(this.certificates[i]);

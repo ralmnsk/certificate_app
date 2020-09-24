@@ -69,7 +69,6 @@ export class NavigationComponent implements OnInit {
   ) {
     this.pathsWithSearchBar = new Set<string>();
     this.pathsWithSearchBar.add('/certificates');
-    // window.addEventListener('storage', this.storageEventListener.bind(this));
   }
 
   ngOnInit(): void {
@@ -82,19 +81,6 @@ export class NavigationComponent implements OnInit {
         }
       }
     });
-    // this.tokenStorage.currentMessage.subscribe(
-    //   logoutMessage => {
-    //     if (logoutMessage === 'logout'){
-    //       this.router.navigate(['login']);
-    //       console.log('logout');
-    //     }
-    //   }
-    // );
-    // this.tokenStorage.valueChange.subscribe(
-    //   data => {
-    //     console.log('token storage emits logout:', data);
-    // }
-    // );
     this.isShowSearchBar = true;
     this.initPagination();
     this.login = 'Login';
@@ -136,14 +122,6 @@ export class NavigationComponent implements OnInit {
       }
     );
   }
-
-  // storageEventListener(event: StorageEvent): void {
-  //   if (event.storageArea === localStorage) {
-  //     console.log('event from local storage', event);
-  //     const value = JSON.parse(event.newValue);
-  //     console.log('event from local storage, value:', value);
-  //   }
-  // }
 
   initUserInfo(): void {
     this.userLogin = this.tokenStorage.getEmail();

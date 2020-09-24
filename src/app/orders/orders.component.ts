@@ -43,7 +43,6 @@ export class OrdersComponent implements OnInit {
   getOrders(userId: number, page?: number, size?: number): void {
     this.isProcessBar = true;
     this.orderService.getOrders(userId, page, size)
-    // .pipe(debounceTime(250))
       .subscribe(
         result => {
           this.last = result.totalPage - 1;
@@ -74,7 +73,6 @@ export class OrdersComponent implements OnInit {
   }
 
   toFirstPage(): void {
-    console.log('page:', this.page, ' first:', this.first);
     if (this.isButtonsDisabled()) {
       return;
     }
